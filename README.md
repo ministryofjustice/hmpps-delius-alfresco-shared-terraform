@@ -113,6 +113,11 @@ source env_configs/dev.properties
 ```
 Now navigate to the directory for your configuration (e.g. service-jenkins-eng) and run terragrunt commands as normal?
 
+```
+terragrunt plan -detailed-exitcode --out ${TG_ENVIRONMENT_TYPE}.plan
+terragrunt apply ${TG_ENVIRONMENT_TYPE}.plan
+```
+
 INSPEC
 ======
 
