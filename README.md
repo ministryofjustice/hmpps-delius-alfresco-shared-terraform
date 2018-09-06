@@ -17,9 +17,6 @@ To retrive the key type command below
 terragrunt output ssh_private_key_pem
 ```
 
-```
-
-
 ## ASG setup
 
 ```
