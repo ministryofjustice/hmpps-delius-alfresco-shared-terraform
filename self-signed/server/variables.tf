@@ -10,10 +10,6 @@ variable "remote_state_bucket_name" {
   description = "Terraform remote state bucket name"
 }
 
-variable "tags" {
-  type = "map"
-}
-
 variable "self_signed_server_algorithm" {}
 
 variable "self_signed_server_rsa_bits" {

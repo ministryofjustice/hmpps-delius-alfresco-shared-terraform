@@ -37,6 +37,8 @@ locals {
     "cert_signing",
     "crl_signing",
   ]
+
+  tags = "${data.terraform_remote_state.common.common_tags}"
 }
 
 ############################################
@@ -74,5 +76,5 @@ module "create_parameter_ca_cert" {
   description    = "${var.environment_identifier}-${var.alfresco_app_name}-self-signed-ca-crt"
   type           = "String"
   value          = "${module.ca_cert.cert_pem}"
-  tags           = "${var.tags}"
+  tags           = "${local.tags}"
 }
