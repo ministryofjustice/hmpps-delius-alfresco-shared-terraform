@@ -18,6 +18,10 @@ variable "remote_state_bucket_name" {
   description = "Terraform remote state bucket name"
 }
 
+variable "tags" {
+  type = "map"
+}
+
 variable "s3_lb_policy_file" {}
 
 variable "lb_account_id" {}

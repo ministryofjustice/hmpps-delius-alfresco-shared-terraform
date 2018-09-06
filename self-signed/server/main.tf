@@ -52,7 +52,6 @@ locals {
     common_name  = "${data.terraform_remote_state.common.common_private_zone_name}"
     organization = "${var.environment_identifier}-${var.alfresco_app_name}"
   }
-  tags = "${data.terraform_remote_state.common.common_tags}"
 }
 
 ############################################
@@ -114,7 +113,7 @@ module "create_parameter_cert" {
   description    = "${var.environment_identifier}-${var.alfresco_app_name}-self-signed-crt"
   type           = "String"
   value          = "${module.server_cert.cert_pem}"
-  tags           = "${local.tags}"
+  tags           = "${var.tags}"
 }
 
 module "create_parameter_key" {
@@ -123,5 +122,5 @@ module "create_parameter_key" {
   description    = "${var.environment_identifier}-${var.alfresco_app_name}-self-signed-private-key"
   type           = "SecureString"
   value          = "${module.server_key.private_key}"
-  tags           = "${local.tags}"
+  tags           = "${var.tags}"
 }
