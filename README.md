@@ -9,9 +9,9 @@ Bucket name: [tf-eu-west-2-hmpps-delius-core-dev-remote-state](https://s3.consol
 DEPLOYER KEY
 ============
 
-The deployer created is stored in the remote state bucket in the ssh-key state file as an output.
+The deployer key is stored in AWS [Parameter store](https://eu-west-2.console.aws.amazon.com/systems-manager/parameters/tf-eu-west-2-hmpps-delius-core-dev-alfresco-ssh-private-key/description?region=eu-west-2)
 
-To retrive the key type command below
+
 
 ```
 terragrunt output ssh_private_key_pem
