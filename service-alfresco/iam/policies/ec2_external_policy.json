@@ -1,0 +1,113 @@
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "ecrAuth",
+            "Effect": "Allow",
+            "Action": [
+                "ecr:GetAuthorizationToken"
+            ],
+            "Resource": [
+                "*"
+            ]
+        },
+        {
+            "Sid": "ecrInstanceRole",
+            "Effect": "Allow",
+            "Action": [
+                "ecr:GetDownloadUrlForLayer",
+                "ecr:BatchGetImage",
+                "ecr:BatchCheckLayerAvailability",
+                "ecr:InitiateLayerUpload",
+                "ecr:DescribeRepositories",
+                "ecr:GetRepositoryPolicy",
+                "ecr:ListImages"
+            ],
+            "Resource": [
+                "*"
+            ]
+        },
+        {
+            "Sid": "ecsInstanceRole",
+            "Effect": "Allow",
+            "Action": [
+                "ecs:DeregisterContainerInstance",
+                "ecs:DiscoverPollEndpoint",
+                "ecs:Poll",
+                "ecs:RegisterContainerInstance",
+                "ecs:Submit*",
+                "ecs:StartTelemetrySession"
+            ],
+            "Resource": [
+                "*"
+            ]
+        },
+        {
+            "Sid": "ec2InstanceRole",
+            "Effect": "Allow",
+            "Action": [
+                "ec2:Describe*"
+            ],
+            "Resource": [
+                "*"
+            ]
+        },
+        {
+            "Sid": "allowLoggingToCloudWatch",
+            "Effect": "Allow",
+            "Action": [
+                "logs:CreateLogGroup",
+                "logs:CreateLogStream",
+                "logs:PutLogEvents",
+                "logs:DescribeLogStreams"
+            ],
+            "Resource": [
+                "arn:aws:logs:*:*:*"
+            ]
+        },
+        {
+            "Sid": "ListAllBuckets",
+            "Effect": "Allow",
+            "Action": [
+                "s3:ListAllMyBuckets"
+            ],
+            "Resource": [
+                "arn:aws:s3:::*"
+            ]
+        },
+        {
+            "Sid": "allowAccessToS3Buckets",
+            "Effect": "Allow",
+            "Action": [
+                "s3:GetObject",
+                "s3:ListBucket"
+            ],
+            "Resource": [
+                "arn:aws:s3:::${s3-config-bucket}",
+                "arn:aws:s3:::${s3-config-bucket}/*"
+            ]
+        },
+        {
+            "Effect": "Allow",
+            "Sid": "allowSSMReadOnly",
+            "Action": [
+                "ssm:Describe*",
+                "ssm:Get*",
+                "ssm:List*"
+            ],
+            "Resource": "*"
+        },
+        {
+            "Sid": "allowRoute53Update",
+            "Effect": "Allow",
+            "Action": [
+                "route53:GetHostedZone",
+                "route53:ListHostedZones",
+                "route53:ChangeResourceRecordSets",
+                "route53:ListResourceRecordSets",
+                "route53:ListHostedZonesByName"
+            ],
+            "Resource": "*"
+        }
+    ]
+}
