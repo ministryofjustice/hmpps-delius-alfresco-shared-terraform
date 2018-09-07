@@ -52,17 +52,17 @@ data "terraform_remote_state" "security_groups" {
 }
 
 #-------------------------------------------------------------
-### Getting the rds db password
+## Getting the rds db password
 #-------------------------------------------------------------
-# data "aws_ssm_parameter" "db_password" {
-#   name = "/${var.environment}/${var.alfresco_app_name}/rds/db_instance/db_password"
-# }
+data "aws_ssm_parameter" "db_password" {
+  name = "${var.environment_identifier}-${var.alfresco_app_name}-rds-db-password"
+}
 
 locals {
   common_name = "${var.environment_identifier}-${var.alfresco_app_name}-rds"
   dns_name    = "${var.alfresco_app_name}-db"
   db_identity = "${var.alfresco_app_name}${var.environment}"
-  db_password =  "123456sdfghjkk" #"${data.aws_ssm_parameter.db_password.value}"
+  db_password = "${data.aws_ssm_parameter.db_password.value}"
   tags        = "${data.terraform_remote_state.common.common_tags}"
 }
 

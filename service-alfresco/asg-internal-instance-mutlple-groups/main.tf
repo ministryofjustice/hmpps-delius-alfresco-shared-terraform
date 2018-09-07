@@ -160,9 +160,9 @@ data "terraform_remote_state" "rds" {
 #-------------------------------------------------------------
 ### Getting the rds db password
 #-------------------------------------------------------------
-# data "aws_ssm_parameter" "db_password" {
-#   name = "/${var.environment}/${var.alfresco_app_name}/rds/db_instance/db_password"
-# }
+data "aws_ssm_parameter" "db_password" {
+  name = "${var.environment_identifier}-${var.alfresco_app_name}-rds-db-password"
+}
 
 ############################################
 # LOCALS
@@ -173,7 +173,7 @@ locals {
   lb_name               = "${var.short_environment_identifier}-${var.alfresco_app_name}-az"
   common_label          = "${var.environment_identifier}-${var.alfresco_app_name}-az"
   common_prefix         = "${var.environment_identifier}-${var.alfresco_app_name}"
-  db_password           = "123456sdfghjkk"                                                  #"${data.aws_ssm_parameter.db_password.value}"
+  db_password           = "${data.aws_ssm_parameter.db_password.value}"
   tags                  = "${data.terraform_remote_state.common.common_tags}"
   monitoring_server_url = "test"                                                            #"${data.terraform_remote_state.monitoring-server.monitoring_internal_dns}"
 
