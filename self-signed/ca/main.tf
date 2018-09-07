@@ -28,6 +28,8 @@ data "terraform_remote_state" "common" {
 # Locals
 ####################################################
 locals {
+  tags = "${data.terraform_remote_state.common.common_tags}"
+
   subject = {
     common_name  = "ca.${data.terraform_remote_state.common.common_private_zone_name}"
     organization = "${var.environment_identifier}-${var.alfresco_app_name}"
@@ -44,7 +46,7 @@ locals {
 ############################################
 # CA KEY 
 module "ca_key" {
-  source    = "git::https://github.com/ministryofjustice/hmpps-terraform-modules.git?ref=master//modules//tls//tls_private_key"
+  source    = "git::https://github.com/ministryofjustice/hmpps-terraform-modules.git?ref=pre-shared-vpc//modules//tls//tls_private_key"
   algorithm = "${var.self_signed_ca_algorithm}"
   rsa_bits  = "${var.self_signed_ca_rsa_bits}"
 }
@@ -54,7 +56,7 @@ module "ca_key" {
 ############################################
 # # CA CERT
 module "ca_cert" {
-  source                = "git::https://github.com/ministryofjustice/hmpps-terraform-modules.git?ref=master//modules//tls//tls_self_signed_cert"
+  source                = "git::https://github.com/ministryofjustice/hmpps-terraform-modules.git?ref=pre-shared-vpc//modules//tls//tls_self_signed_cert"
   key_algorithm         = "${var.self_signed_ca_algorithm}"
   private_key_pem       = "${module.ca_key.private_key}"
   subject               = ["${local.subject}"]
@@ -69,10 +71,10 @@ module "ca_cert" {
 ############################################
 # Add to SSM
 module "create_parameter_ca_cert" {
-  source         = "git::https://github.com/ministryofjustice/hmpps-terraform-modules.git?ref=master//modules//ssm//parameter_store_file"
+  source         = "git::https://github.com/ministryofjustice/hmpps-terraform-modules.git?ref=pre-shared-vpc//modules//ssm//parameter_store_file"
   parameter_name = "${var.environment_identifier}-${var.alfresco_app_name}-self-signed-ca-crt"
   description    = "${var.environment_identifier}-${var.alfresco_app_name}-self-signed-ca-crt"
   type           = "String"
   value          = "${module.ca_cert.cert_pem}"
-  tags           = "${var.tags}"
+  tags           = "${local.tags}"
 }

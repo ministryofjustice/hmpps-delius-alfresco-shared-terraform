@@ -106,7 +106,7 @@ resource "aws_security_group" "vpc-sg-outbound" {
 # ### S3 bucket for config
 # #--------------------------------------------
 module "s3config_bucket" {
-  source         = "git::https://github.com/ministryofjustice/hmpps-terraform-modules.git?ref=master//modules//s3bucket//s3bucket_without_policy"
+  source         = "git::https://github.com/ministryofjustice/hmpps-terraform-modules.git?ref=pre-shared-vpc//modules//s3bucket//s3bucket_without_policy"
   s3_bucket_name = "${var.environment_identifier}-${var.alfresco_app_name}"
   tags           = "${local.tags}"
 }
@@ -115,7 +115,7 @@ module "s3config_bucket" {
 # ### S3 bucket for logs
 # #--------------------------------------------
 module "s3_lb_logs_bucket" {
-  source         = "git::https://github.com/ministryofjustice/hmpps-terraform-modules.git?ref=master//modules//s3bucket//s3bucket_without_policy"
+  source         = "git::https://github.com/ministryofjustice/hmpps-terraform-modules.git?ref=pre-shared-vpc//modules//s3bucket//s3bucket_without_policy"
   s3_bucket_name = "${var.environment_identifier}-${var.alfresco_app_name}-lb-logs"
   tags           = "${local.tags}"
 }
@@ -136,7 +136,7 @@ data "template_file" "s3alb_logs_policy" {
 }
 
 module "s3alb_logs_policy" {
-  source       = "git::https://github.com/ministryofjustice/hmpps-terraform-modules.git?ref=master//modules//s3bucket//s3bucket_policy"
+  source       = "git::https://github.com/ministryofjustice/hmpps-terraform-modules.git?ref=pre-shared-vpc//modules//s3bucket//s3bucket_policy"
   s3_bucket_id = "${module.s3_lb_logs_bucket.s3_bucket_name}"
   policyfile   = "${data.template_file.s3alb_logs_policy.rendered}"
 }
@@ -146,7 +146,7 @@ module "s3alb_logs_policy" {
 ############################################
 
 module "ssh_key" {
-  source   = "git::https://github.com/ministryofjustice/hmpps-terraform-modules.git?ref=master//modules//ssh_key"
+  source   = "git::https://github.com/ministryofjustice/hmpps-terraform-modules.git?ref=pre-shared-vpc//modules//ssh_key"
   keyname  = "${var.environment_identifier}-${var.alfresco_app_name}"
   rsa_bits = "4096"
 }
@@ -154,7 +154,7 @@ module "ssh_key" {
 
 # Add to SSM
 module "create_parameter_ssh_key_private" {
-  source         = "git::https://github.com/ministryofjustice/hmpps-terraform-modules.git?ref=master//modules//ssm//parameter_store_file"
+  source         = "git::https://github.com/ministryofjustice/hmpps-terraform-modules.git?ref=pre-shared-vpc//modules//ssm//parameter_store_file"
   parameter_name = "${var.environment_identifier}-${var.alfresco_app_name}-ssh-private-key"
   description    = "${var.environment_identifier}-${var.alfresco_app_name}-ssh-private-key"
   type           = "SecureString"
@@ -164,7 +164,7 @@ module "create_parameter_ssh_key_private" {
 
 
 module "create_parameter_ssh_key" {
-  source         = "git::https://github.com/ministryofjustice/hmpps-terraform-modules.git?ref=master//modules//ssm//parameter_store_file"
+  source         = "git::https://github.com/ministryofjustice/hmpps-terraform-modules.git?ref=pre-shared-vpc//modules//ssm//parameter_store_file"
   parameter_name = "${var.environment_identifier}-${var.alfresco_app_name}-ssh-public-key"
   description    = "${var.environment_identifier}-${var.alfresco_app_name}-ssh-public-key"
   type           = "String"

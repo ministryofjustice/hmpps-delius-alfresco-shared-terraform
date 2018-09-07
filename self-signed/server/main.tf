@@ -39,6 +39,8 @@ data "terraform_remote_state" "ca" {
 }
 
 locals {
+  tags = "${data.terraform_remote_state.common.common_tags}"
+
   allowed_uses = [
     "key_encipherment",
     "digital_signature",
@@ -59,14 +61,14 @@ locals {
 ############################################
 # KEY 
 module "server_key" {
-  source    = "git::https://github.com/ministryofjustice/hmpps-terraform-modules.git?ref=master//modules//tls//tls_private_key"
+  source    = "git::https://github.com/ministryofjustice/hmpps-terraform-modules.git?ref=pre-shared-vpc//modules//tls//tls_private_key"
   algorithm = "${var.self_signed_server_algorithm}"
   rsa_bits  = "${var.self_signed_server_rsa_bits}"
 }
 
 # csr
 module "server_csr" {
-  source          = "git::https://github.com/ministryofjustice/hmpps-terraform-modules.git?ref=master//modules//tls//tls_cert_request"
+  source          = "git::https://github.com/ministryofjustice/hmpps-terraform-modules.git?ref=pre-shared-vpc//modules//tls//tls_cert_request"
   key_algorithm   = "${var.self_signed_server_algorithm}"
   private_key_pem = "${module.server_key.private_key}"
   subject         = ["${local.subject}"]
@@ -78,7 +80,7 @@ module "server_csr" {
 ############################################
 # cert
 module "server_cert" {
-  source             = "git::https://github.com/ministryofjustice/hmpps-terraform-modules.git?ref=master//modules//tls//tls_locally_signed_cert"
+  source             = "git::https://github.com/ministryofjustice/hmpps-terraform-modules.git?ref=pre-shared-vpc//modules//tls//tls_locally_signed_cert"
   cert_request_pem   = "${module.server_csr.cert_request_pem}"
   ca_key_algorithm   = "${var.self_signed_server_algorithm}"
   ca_private_key_pem = "${data.terraform_remote_state.ca.self_signed_ca_private_key}"
@@ -95,7 +97,7 @@ module "server_cert" {
 ############################################
 # upload to IAM
 module "iam_server_certificate" {
-  source            = "git::https://github.com/ministryofjustice/hmpps-terraform-modules.git?ref=master//modules//iam_certificate"
+  source            = "git::https://github.com/ministryofjustice/hmpps-terraform-modules.git?ref=pre-shared-vpc//modules//iam_certificate"
   name_prefix       = "${data.terraform_remote_state.common.common_private_zone_name}-cert"
   certificate_body  = "${module.server_cert.cert_pem}"
   private_key       = "${module.server_key.private_key}"
@@ -108,19 +110,19 @@ module "iam_server_certificate" {
 ############################################
 # CERT
 module "create_parameter_cert" {
-  source         = "git::https://github.com/ministryofjustice/hmpps-terraform-modules.git?ref=master//modules//ssm//parameter_store_file"
+  source         = "git::https://github.com/ministryofjustice/hmpps-terraform-modules.git?ref=pre-shared-vpc//modules//ssm//parameter_store_file"
   parameter_name = "${var.environment_identifier}-${var.alfresco_app_name}-self-signed-crt"
   description    = "${var.environment_identifier}-${var.alfresco_app_name}-self-signed-crt"
   type           = "String"
   value          = "${module.server_cert.cert_pem}"
-  tags           = "${var.tags}"
+  tags           = "${local.tags}"
 }
 
 module "create_parameter_key" {
-  source         = "git::https://github.com/ministryofjustice/hmpps-terraform-modules.git?ref=master//modules//ssm//parameter_store_file"
+  source         = "git::https://github.com/ministryofjustice/hmpps-terraform-modules.git?ref=pre-shared-vpc//modules//ssm//parameter_store_file"
   parameter_name = "${var.environment_identifier}-${var.alfresco_app_name}-self-signed-private-key"
   description    = "${var.environment_identifier}-${var.alfresco_app_name}-self-signed-private-key"
   type           = "SecureString"
   value          = "${module.server_key.private_key}"
-  tags           = "${var.tags}"
+  tags           = "${local.tags}"
 }

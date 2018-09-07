@@ -85,7 +85,7 @@ data "terraform_remote_state" "self_signed" {
 
   config {
     bucket = "${var.remote_state_bucket_name}"
-    key    = "self-signed/server/terraform.tfstate"
+    key    = "${var.alfresco_app_name}/self-signed/server/terraform.tfstate"
     region = "${var.region}"
   }
 }
@@ -98,7 +98,7 @@ data "terraform_remote_state" "self_signed_ca" {
 
   config {
     bucket = "${var.remote_state_bucket_name}"
-    key    = "self-signed/ca/terraform.tfstate"
+    key    = "${var.alfresco_app_name}/self-signed/ca/terraform.tfstate"
     region = "${var.region}"
   }
 }
@@ -106,36 +106,12 @@ data "terraform_remote_state" "self_signed_ca" {
 #-------------------------------------------------------------
 ### Getting the latest amazon ami
 #-------------------------------------------------------------
-# data "aws_ami" "amazon_ami" {
-#   most_recent = true
-
-#   filter {
-#     name   = "name"
-#     values = ["HMPPS Alfresco master*"]
-#   }
-
-#   filter {
-#     name   = "architecture"
-#     values = ["x86_64"]
-#   }
-
-#   filter {
-#     name   = "virtualization-type"
-#     values = ["hvm"]
-#   }
-
-#   filter {
-#     name   = "root-device-type"
-#     values = ["ebs"]
-#   }
-# }
-
 data "aws_ami" "amazon_ami" {
   most_recent = true
 
   filter {
-    name   = "description"
-    values = ["Amazon Linux AMI *"]
+    name   = "name"
+    values = ["HMPPS Alfresco master*"]
   }
 
   filter {
@@ -152,8 +128,6 @@ data "aws_ami" "amazon_ami" {
     name   = "root-device-type"
     values = ["ebs"]
   }
-
-  owners = ["591542846629"] # AWS
 }
 
 #-------------------------------------------------------------
@@ -195,13 +169,13 @@ data "terraform_remote_state" "rds" {
 ############################################
 
 locals {
-  common_name   = "${var.alfresco_app_name}-az"
-  lb_name       = "${var.short_environment_identifier}-${var.alfresco_app_name}-az"
-  common_label  = "${var.environment_identifier}-${var.alfresco_app_name}-az"
-  common_prefix = "${var.environment_identifier}-${var.alfresco_app_name}"
-  db_password   =  "123456sdfghjkk" #"${data.aws_ssm_parameter.db_password.value}"
-  tags          = "${data.terraform_remote_state.common.common_tags}"
-  monitoring_server_url   = "test" #"${data.terraform_remote_state.monitoring-server.monitoring_internal_dns}"
+  common_name           = "${var.alfresco_app_name}-az"
+  lb_name               = "${var.short_environment_identifier}-${var.alfresco_app_name}-az"
+  common_label          = "${var.environment_identifier}-${var.alfresco_app_name}-az"
+  common_prefix         = "${var.environment_identifier}-${var.alfresco_app_name}"
+  db_password           = "123456sdfghjkk"                                                  #"${data.aws_ssm_parameter.db_password.value}"
+  tags                  = "${data.terraform_remote_state.common.common_tags}"
+  monitoring_server_url = "test"                                                            #"${data.terraform_remote_state.monitoring-server.monitoring_internal_dns}"
 
   subnet_ids = [
     "${data.terraform_remote_state.vpc.vpc_private-subnet-az1}",
@@ -232,7 +206,7 @@ locals {
 ############################################
 
 module "create_app_elb" {
-  source          = "git::https://github.com/ministryofjustice/hmpps-terraform-modules.git?ref=master//modules//loadbalancer//elb//create_elb"
+  source          = "git::https://github.com/ministryofjustice/hmpps-terraform-modules.git?ref=pre-shared-vpc//modules//loadbalancer//elb//create_elb"
   name            = "${local.lb_name}"
   subnets         = ["${local.subnet_ids}"]
   security_groups = ["${local.lb_security_groups}"]
@@ -258,7 +232,6 @@ resource "aws_app_cookie_stickiness_policy" "alfresco_app_cookie_policy" {
   cookie_name   = "JSESSIONID"
 }
 
-
 ###############################################
 # Create route53 entry for elb
 ###############################################
@@ -272,7 +245,7 @@ resource "aws_route53_record" "dns_entry" {
 }
 
 module "create_loggroup" {
-  source                   = "git::https://github.com/ministryofjustice/hmpps-terraform-modules.git?ref=master//modules//cloudwatch//loggroup"
+  source                   = "git::https://github.com/ministryofjustice/hmpps-terraform-modules.git?ref=pre-shared-vpc//modules//cloudwatch//loggroup"
   log_group_path           = "${var.environment_identifier}"
   loggroupname             = "${local.common_name}"
   cloudwatch_log_retention = "${var.cloudwatch_log_retention}"
@@ -323,7 +296,7 @@ data "template_file" "user_data" {
 
 # AZ1 
 module "launch_cfg_az1" {
-  source                      = "git::https://github.com/ministryofjustice/hmpps-terraform-modules.git?ref=master//modules//launch_configuration//blockdevice"
+  source                      = "git::https://github.com/ministryofjustice/hmpps-terraform-modules.git?ref=pre-shared-vpc//modules//launch_configuration//blockdevice"
   launch_configuration_name   = "${local.common_label}1"
   image_id                    = "${var.alfresco_instance_ami["az1"] != "" ? var.alfresco_instance_ami["az1"] : data.aws_ami.amazon_ami.id}"
   instance_type               = "${var.instance_type}"
@@ -345,7 +318,7 @@ module "launch_cfg_az1" {
 
 #AZ2
 module "launch_cfg_az2" {
-  source                      = "git::https://github.com/ministryofjustice/hmpps-terraform-modules.git?ref=master//modules//launch_configuration//blockdevice"
+  source                      = "git::https://github.com/ministryofjustice/hmpps-terraform-modules.git?ref=pre-shared-vpc//modules//launch_configuration//blockdevice"
   launch_configuration_name   = "${local.common_label}2"
   image_id                    = "${var.alfresco_instance_ami["az2"] != "" ? var.alfresco_instance_ami["az2"] : data.aws_ami.amazon_ami.id}"
   instance_type               = "${var.instance_type}"
@@ -367,7 +340,7 @@ module "launch_cfg_az2" {
 
 #AZ3
 module "launch_cfg_az3" {
-  source                      = "git::https://github.com/ministryofjustice/hmpps-terraform-modules.git?ref=master//modules//launch_configuration//blockdevice"
+  source                      = "git::https://github.com/ministryofjustice/hmpps-terraform-modules.git?ref=pre-shared-vpc//modules//launch_configuration//blockdevice"
   launch_configuration_name   = "${local.common_label}3"
   image_id                    = "${var.alfresco_instance_ami["az3"] != "" ? var.alfresco_instance_ami["az3"] : data.aws_ami.amazon_ami.id}"
   instance_type               = "${var.instance_type}"
@@ -393,7 +366,7 @@ module "launch_cfg_az3" {
 
 #AZ1
 module "auto_scale_az1" {
-  source               = "git::https://github.com/ministryofjustice/hmpps-terraform-modules.git?ref=master//modules//autoscaling//group//asg_classic_lb"
+  source               = "git::https://github.com/ministryofjustice/hmpps-terraform-modules.git?ref=pre-shared-vpc//modules//autoscaling//group//asg_classic_lb"
   asg_name             = "${local.common_label}1"
   subnet_ids           = ["${local.az1_subnet}"]
   asg_min              = "${var.az_asg_min["az1"]}"
@@ -406,7 +379,7 @@ module "auto_scale_az1" {
 
 #AZ2
 module "auto_scale_az2" {
-  source               = "git::https://github.com/ministryofjustice/hmpps-terraform-modules.git?ref=master//modules//autoscaling//group//asg_classic_lb"
+  source               = "git::https://github.com/ministryofjustice/hmpps-terraform-modules.git?ref=pre-shared-vpc//modules//autoscaling//group//asg_classic_lb"
   asg_name             = "${local.common_label}2"
   subnet_ids           = ["${local.az2_subnet}"]
   asg_min              = "${var.az_asg_min["az2"]}"
@@ -419,7 +392,7 @@ module "auto_scale_az2" {
 
 #AZ3
 module "auto_scale_az3" {
-  source               = "git::https://github.com/ministryofjustice/hmpps-terraform-modules.git?ref=master//modules//autoscaling//group//asg_classic_lb"
+  source               = "git::https://github.com/ministryofjustice/hmpps-terraform-modules.git?ref=pre-shared-vpc//modules//autoscaling//group//asg_classic_lb"
   asg_name             = "${local.common_label}3"
   subnet_ids           = ["${local.az3_subnet}"]
   asg_min              = "${var.az_asg_min["az3"]}"

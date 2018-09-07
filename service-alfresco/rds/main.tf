@@ -71,7 +71,7 @@ locals {
 ############################################
 
 module "kms_key" {
-  source       = "git::https://github.com/ministryofjustice/hmpps-terraform-modules.git?ref=master//modules//kms"
+  source       = "git::https://github.com/ministryofjustice/hmpps-terraform-modules.git?ref=pre-shared-vpc//modules//kms"
   kms_key_name = "${local.common_name}"
   tags         = "${local.tags}"
 }
@@ -85,7 +85,7 @@ module "kms_key" {
 #-------------------------------------------------------------
 
 module "rds_monitoring_role" {
-  source     = "git::https://github.com/ministryofjustice/hmpps-terraform-modules.git?ref=master//modules//iam//role"
+  source     = "git::https://github.com/ministryofjustice/hmpps-terraform-modules.git?ref=pre-shared-vpc//modules//iam//role"
   rolename   = "${local.common_name}-monitoring"
   policyfile = "rds_monitoring.json"
 }
@@ -99,7 +99,7 @@ resource "aws_iam_role_policy_attachment" "enhanced_monitoring" {
 # CREATE DB SUBNET GROUP
 ############################################
 module "db_subnet_group" {
-  source      = "git::https://github.com/ministryofjustice/hmpps-terraform-modules.git?ref=master//modules//rds//db_subnet_group"
+  source      = "git::https://github.com/ministryofjustice/hmpps-terraform-modules.git?ref=pre-shared-vpc//modules//rds//db_subnet_group"
   create      = "${var.create_db_subnet_group}"
   identifier  = "${local.common_name}"
   name_prefix = "${local.common_name}-"
@@ -116,7 +116,7 @@ module "db_subnet_group" {
 # CREATE PARAMETER GROUP
 ############################################
 module "db_parameter_group" {
-  source = "git::https://github.com/ministryofjustice/hmpps-terraform-modules.git?ref=master//modules//rds//db_parameter_group"
+  source = "git::https://github.com/ministryofjustice/hmpps-terraform-modules.git?ref=pre-shared-vpc//modules//rds//db_parameter_group"
 
   create      = "${var.create_db_parameter_group}"
   identifier  = "${local.common_name}"
@@ -132,7 +132,7 @@ module "db_parameter_group" {
 # CREATE DB OPTIONS
 ############################################
 module "db_option_group" {
-  source                   = "git::https://github.com/ministryofjustice/hmpps-terraform-modules.git?ref=master//modules//rds//db_option_group"
+  source                   = "git::https://github.com/ministryofjustice/hmpps-terraform-modules.git?ref=pre-shared-vpc//modules//rds//db_option_group"
   create                   = "${var.create_db_option_group}"
   identifier               = "${local.common_name}"
   name_prefix              = "${local.common_name}-"
@@ -150,7 +150,7 @@ module "db_option_group" {
 ############################################
 
 module "db_instance" {
-  source = "git::https://github.com/ministryofjustice/hmpps-terraform-modules.git?ref=master//modules//rds//db_instance"
+  source = "git::https://github.com/ministryofjustice/hmpps-terraform-modules.git?ref=pre-shared-vpc//modules//rds//db_instance"
 
   create            = "${var.create_db_instance}"
   identifier        = "${local.common_name}"

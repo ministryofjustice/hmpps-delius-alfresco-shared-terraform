@@ -124,18 +124,18 @@ data "template_file" "iam_policy_app_int" {
 }
 
 module "create-iam-app-role-int" {
-  source     = "git::https://github.com/ministryofjustice/hmpps-terraform-modules.git?ref=master//modules//iam//role"
+  source     = "git::https://github.com/ministryofjustice/hmpps-terraform-modules.git?ref=pre-shared-vpc//modules//iam//role"
   rolename   = "${local.common_name}-int-ec2"
   policyfile = "${var.ec2_policy_file}"
 }
 
 module "create-iam-instance-profile-int" {
-  source = "git::https://github.com/ministryofjustice/hmpps-terraform-modules.git?ref=master//modules//iam//instance_profile"
+  source = "git::https://github.com/ministryofjustice/hmpps-terraform-modules.git?ref=pre-shared-vpc//modules//iam//instance_profile"
   role   = "${module.create-iam-app-role-int.iamrole_name}"
 }
 
 module "create-iam-app-policy-int" {
-  source     = "git::https://github.com/ministryofjustice/hmpps-terraform-modules.git?ref=master//modules//iam//rolepolicy"
+  source     = "git::https://github.com/ministryofjustice/hmpps-terraform-modules.git?ref=pre-shared-vpc//modules//iam//rolepolicy"
   policyfile = "${data.template_file.iam_policy_app_int.rendered}"
   rolename   = "${module.create-iam-app-role-int.iamrole_name}"
 }
