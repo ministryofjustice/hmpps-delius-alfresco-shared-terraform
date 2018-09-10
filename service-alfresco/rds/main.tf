@@ -1,55 +1,6 @@
-terraform {
-  # The configuration for this backend will be filled in by Terragrunt
-  backend "s3" {}
-}
-
-provider "aws" {
-  region  = "${var.region}"
-  version = "~> 1.16"
-}
-
 ####################################################
 # DATA SOURCE MODULES FROM OTHER TERRAFORM BACKENDS
 ####################################################
-
-#-------------------------------------------------------------
-### Getting the current vpc
-#-------------------------------------------------------------
-data "terraform_remote_state" "vpc" {
-  backend = "s3"
-
-  config {
-    bucket = "${var.remote_state_bucket_name}"
-    key    = "vpc/terraform.tfstate"
-    region = "${var.region}"
-  }
-}
-
-#-------------------------------------------------------------
-### Getting the common details
-#-------------------------------------------------------------
-data "terraform_remote_state" "common" {
-  backend = "s3"
-
-  config {
-    bucket = "${var.remote_state_bucket_name}"
-    key    = "${var.alfresco_app_name}/common/terraform.tfstate"
-    region = "${var.region}"
-  }
-}
-
-#-------------------------------------------------------------
-### Getting the security groups
-#-------------------------------------------------------------
-data "terraform_remote_state" "security_groups" {
-  backend = "s3"
-
-  config {
-    bucket = "${var.remote_state_bucket_name}"
-    key    = "${var.alfresco_app_name}/service-alfresco/security-groups/terraform.tfstate"
-    region = "${var.region}"
-  }
-}
 
 #-------------------------------------------------------------
 ## Getting the rds db password
@@ -63,7 +14,7 @@ locals {
   dns_name    = "${var.alfresco_app_name}-db"
   db_identity = "${var.alfresco_app_name}${var.environment}"
   db_password = "${data.aws_ssm_parameter.db_password.value}"
-  tags        = "${data.terraform_remote_state.common.common_tags}"
+  tags        = "${var.tags}"
 }
 
 ############################################
@@ -103,13 +54,8 @@ module "db_subnet_group" {
   create      = "${var.create_db_subnet_group}"
   identifier  = "${local.common_name}"
   name_prefix = "${local.common_name}-"
-
-  subnet_ids = ["${data.terraform_remote_state.vpc.vpc_db-subnet-az1}",
-    "${data.terraform_remote_state.vpc.vpc_db-subnet-az2}",
-    "${data.terraform_remote_state.vpc.vpc_db-subnet-az3}",
-  ]
-
-  tags = "${local.tags}"
+  subnet_ids  = ["${var.subnet_ids}"]
+  tags        = "${local.tags}"
 }
 
 ############################################
@@ -174,7 +120,7 @@ module "db_instance" {
   snapshot_identifier = "${var.snapshot_identifier}"
 
   vpc_security_group_ids = [
-    "${data.terraform_remote_state.security_groups.service_alfresco_security_groups_sg_rds_id}",
+    "${var.security_group_ids}",
   ]
 
   db_subnet_group_name = "${module.db_subnet_group.db_subnet_group_id}"
@@ -211,9 +157,9 @@ module "db_instance" {
 ###############################################
 
 resource "aws_route53_record" "rds_dns_entry" {
-  name    = "${local.dns_name}.${data.terraform_remote_state.common.common_private_zone_name}"
+  name    = "${local.dns_name}.${var.internal_domain}"
   type    = "CNAME"
-  zone_id = "${data.terraform_remote_state.common.common_private_zone_id}"
+  zone_id = "${var.zone_id}"
   ttl     = 300
   records = ["${module.db_instance.db_instance_address}"]
 }

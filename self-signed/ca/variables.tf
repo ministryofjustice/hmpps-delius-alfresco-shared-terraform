@@ -6,10 +6,6 @@ variable "environment_identifier" {
   description = "resource label or name"
 }
 
-variable "remote_state_bucket_name" {
-  description = "Terraform remote state bucket name"
-}
-
 variable "self_signed_ca_algorithm" {}
 
 variable "self_signed_ca_rsa_bits" {
@@ -25,3 +21,16 @@ variable "is_ca_certificate" {
 }
 
 variable "alfresco_app_name" {}
+
+variable "internal_domain" {}
+
+variable "common_name" {}
+
+variable "tags" {
+  type = "map"
+}
+
+variable depends_on {
+  default = []
+  type    = "list"
+}

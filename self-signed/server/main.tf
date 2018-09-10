@@ -1,45 +1,10 @@
-terraform {
-  # The configuration for this backend will be filled in by Terragrunt
-  backend "s3" {}
-}
-
-provider "aws" {
-  region  = "${var.region}"
-  version = "~> 1.16"
-}
-
 ####################################################
 # DATA SOURCE MODULES FROM OTHER TERRAFORM BACKENDS
 ####################################################
 
-#-------------------------------------------------------------
-### Getting the current vpc
-#-------------------------------------------------------------
-data "terraform_remote_state" "common" {
-  backend = "s3"
-
-  config {
-    bucket = "${var.remote_state_bucket_name}"
-    key    = "${var.alfresco_app_name}/common/terraform.tfstate"
-    region = "${var.region}"
-  }
-}
-
-#-------------------------------------------------------------
-### Getting the ca
-#-------------------------------------------------------------
-data "terraform_remote_state" "ca" {
-  backend = "s3"
-
-  config {
-    bucket = "${var.remote_state_bucket_name}"
-    key    = "${var.alfresco_app_name}/self-signed/ca/terraform.tfstate"
-    region = "${var.region}"
-  }
-}
-
 locals {
-  tags = "${data.terraform_remote_state.common.common_tags}"
+  tags        = "${var.tags}"
+  common_name = "${var.common_name}"
 
   allowed_uses = [
     "key_encipherment",
@@ -48,12 +13,15 @@ locals {
     "client_auth",
   ]
 
-  dns_names = ["*.${data.terraform_remote_state.common.common_private_zone_name}"]
+  dns_names = ["*.${var.internal_domain}"]
 
   subject = {
-    common_name  = "${data.terraform_remote_state.common.common_private_zone_name}"
-    organization = "${var.environment_identifier}-${var.alfresco_app_name}"
+    common_name  = "${var.internal_domain}"
+    organization = "${var.common_name}"
   }
+
+  ca_cert_pem     = "${var.ca_cert_pem}"
+  internal_domain = "${var.internal_domain}"
 }
 
 ############################################
@@ -80,12 +48,11 @@ module "server_csr" {
 ############################################
 # cert
 module "server_cert" {
-  source             = "git::https://github.com/ministryofjustice/hmpps-terraform-modules.git?ref=pre-shared-vpc//modules//tls//tls_locally_signed_cert"
-  cert_request_pem   = "${module.server_csr.cert_request_pem}"
-  ca_key_algorithm   = "${var.self_signed_server_algorithm}"
-  ca_private_key_pem = "${data.terraform_remote_state.ca.self_signed_ca_private_key}"
-  ca_cert_pem        = "${data.terraform_remote_state.ca.self_signed_ca_cert_pem}"
-
+  source                = "git::https://github.com/ministryofjustice/hmpps-terraform-modules.git?ref=pre-shared-vpc//modules//tls//tls_locally_signed_cert"
+  cert_request_pem      = "${module.server_csr.cert_request_pem}"
+  ca_key_algorithm      = "${var.self_signed_server_algorithm}"
+  ca_private_key_pem    = "${var.ca_private_key_pem}"
+  ca_cert_pem           = "${local.ca_cert_pem}"
   validity_period_hours = "${var.self_signed_server_validity_period_hours}"
   early_renewal_hours   = "${var.self_signed_server_early_renewal_hours}"
 
@@ -98,10 +65,10 @@ module "server_cert" {
 # upload to IAM
 module "iam_server_certificate" {
   source            = "git::https://github.com/ministryofjustice/hmpps-terraform-modules.git?ref=pre-shared-vpc//modules//iam_certificate"
-  name_prefix       = "${data.terraform_remote_state.common.common_private_zone_name}-cert"
+  name_prefix       = "${local.internal_domain}-cert"
   certificate_body  = "${module.server_cert.cert_pem}"
   private_key       = "${module.server_key.private_key}"
-  certificate_chain = "${data.terraform_remote_state.ca.self_signed_ca_cert_pem}"
+  certificate_chain = "${local.ca_cert_pem}"
   path              = "/${var.environment_identifier}/"
 }
 
@@ -111,8 +78,8 @@ module "iam_server_certificate" {
 # CERT
 module "create_parameter_cert" {
   source         = "git::https://github.com/ministryofjustice/hmpps-terraform-modules.git?ref=pre-shared-vpc//modules//ssm//parameter_store_file"
-  parameter_name = "${var.environment_identifier}-${var.alfresco_app_name}-self-signed-crt"
-  description    = "${var.environment_identifier}-${var.alfresco_app_name}-self-signed-crt"
+  parameter_name = "${local.common_name}-self-signed-crt"
+  description    = "${local.common_name}-self-signed-crt"
   type           = "String"
   value          = "${module.server_cert.cert_pem}"
   tags           = "${local.tags}"
@@ -120,8 +87,8 @@ module "create_parameter_cert" {
 
 module "create_parameter_key" {
   source         = "git::https://github.com/ministryofjustice/hmpps-terraform-modules.git?ref=pre-shared-vpc//modules//ssm//parameter_store_file"
-  parameter_name = "${var.environment_identifier}-${var.alfresco_app_name}-self-signed-private-key"
-  description    = "${var.environment_identifier}-${var.alfresco_app_name}-self-signed-private-key"
+  parameter_name = "${local.common_name}-self-signed-private-key"
+  description    = "${local.common_name}-self-signed-private-key"
   type           = "SecureString"
   value          = "${module.server_key.private_key}"
   tags           = "${local.tags}"

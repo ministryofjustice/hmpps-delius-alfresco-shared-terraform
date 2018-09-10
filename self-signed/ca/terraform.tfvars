@@ -7,5 +7,3 @@ terragrunt = {
     paths = ["../../common"]
   }
 }
-
-is_ca_certificate = true

@@ -1,17 +1,55 @@
 variable "environment_identifier" {}
-variable "region" {}
 
 variable "environment" {}
 
+variable "region" {}
+
 variable "alfresco_app_name" {}
 
-variable "role_arn" {}
-
-variable "remote_state_bucket_name" {
-  description = "Terraform remote state bucket name"
+variable "private_subnet_ids" {
+  type = "map"
 }
 
+variable depends_on {
+  default = []
+  type    = "list"
+}
+
+variable "tags" {
+  type = "map"
+}
+
+variable "db_name" {}
+variable "db_host" {}
+variable "db_username" {}
+
+variable "ami_id" {}
+
+variable "account_id" {}
+
+variable "access_logs_bucket" {}
+
+variable "lb_security_groups" {
+  type = "list"
+}
+
+variable "instance_security_groups" {
+  type = "list"
+}
+
+variable "internal_domain" {}
+
+variable "zone_id" {}
+
+variable "alfresco_s3bucket" {}
+
+variable "bucket_kms_key_id" {}
+
+variable "ssh_deployer_key" {}
+
 variable "short_environment_identifier" {}
+
+variable "instance_profile" {}
 
 variable "internal" {
   description = "If true, ELB will be an internal ELB"
@@ -80,8 +118,6 @@ variable "az_asg_min" {
 }
 
 variable "associate_public_ip_address" {}
-
-variable "route53_sub_domain" {}
 
 variable "cache_home" {}
 

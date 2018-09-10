@@ -1,36 +1,14 @@
-terraform {
-  # The configuration for this backend will be filled in by Terragrunt
-  backend "s3" {}
-}
-
-provider "aws" {
-  region  = "${var.region}"
-  version = "~> 1.16"
-}
-
 ####################################################
 # DATA SOURCE MODULES FROM OTHER TERRAFORM BACKENDS
 ####################################################
-
-#-------------------------------------------------------------
-### Getting the common details
-#-------------------------------------------------------------
-data "terraform_remote_state" "common" {
-  backend = "s3"
-
-  config {
-    bucket = "${var.remote_state_bucket_name}"
-    key    = "${var.alfresco_app_name}/common/terraform.tfstate"
-    region = "${var.region}"
-  }
-}
 
 ####################################################
 # Locals
 ####################################################
 
 locals {
-  tags = "${data.terraform_remote_state.common.common_tags}"
+  common_name = "${var.environment_identifier}-${var.alfresco_app_name}"
+  tags        = "${var.tags}"
 }
 
 ############################################
@@ -39,7 +17,7 @@ locals {
 
 module "kms_key" {
   source       = "git::https://github.com/ministryofjustice/hmpps-terraform-modules.git?ref=pre-shared-vpc//modules//kms"
-  kms_key_name = "${var.environment_identifier}-${var.alfresco_app_name}"
+  kms_key_name = "${local.common_name}"
   tags         = "${local.tags}"
 }
 
@@ -52,7 +30,7 @@ module "kms_key" {
 # #--------------------------------------------
 module "s3bucket" {
   source            = "git::https://github.com/ministryofjustice/hmpps-terraform-modules.git?ref=pre-shared-vpc//modules//s3bucket//s3bucket_logging_encryption"
-  s3_bucket_name    = "${var.environment_identifier}-${var.alfresco_app_name}-storage"
+  s3_bucket_name    = "${local.common_name}-storage"
   kms_master_key_id = "${module.kms_key.kms_key_id}"
   target_bucket     = "${module.s3bucket-logs.s3_bucket_name}"
   tags              = "${local.tags}"
@@ -64,7 +42,7 @@ module "s3bucket" {
 
 module "s3bucket-logs" {
   source         = "git::https://github.com/ministryofjustice/hmpps-terraform-modules.git?ref=pre-shared-vpc//modules//s3bucket//s3bucket_without_policy"
-  s3_bucket_name = "${var.environment_identifier}-${var.alfresco_app_name}-logs"
+  s3_bucket_name = "${local.common_name}-logs"
   acl            = "log-delivery-write"
   tags           = "${local.tags}"
 }
@@ -74,7 +52,7 @@ module "s3bucket-logs" {
 # #--------------------------------------------
 module "s3cloudtrail_bucket" {
   source         = "git::https://github.com/ministryofjustice/hmpps-terraform-modules.git?ref=pre-shared-vpc//modules//s3bucket//s3bucket_without_policy"
-  s3_bucket_name = "${var.environment_identifier}-${var.alfresco_app_name}-cloudtrail"
+  s3_bucket_name = "${local.common_name}-cloudtrail"
   tags           = "${local.tags}"
 }
 
@@ -83,7 +61,7 @@ module "s3cloudtrail_bucket" {
 #--------------------------------------------
 
 data "template_file" "s3cloudtrail_policy" {
-  template = "${file("policies/s3_cloudtrail_policy.json")}"
+  template = "${var.s3cloudtrail_policy_file}"
 
   vars {
     s3_bucket_arn = "${module.s3cloudtrail_bucket.s3_bucket_arn}"
@@ -102,7 +80,7 @@ module "s3cloudtrail_policy" {
 module "cloudtrail" {
   source         = "git::https://github.com/ministryofjustice/hmpps-terraform-modules.git?ref=pre-shared-vpc//modules//cloudtrail//s3bucket"
   s3_bucket_name = "${module.s3cloudtrail_bucket.s3_bucket_name}"
-  cloudtrailname = "${var.environment_identifier}-${var.alfresco_app_name}"
+  cloudtrailname = "${local.common_name}"
   globalevents   = false
   multiregion    = false
   s3_bucket_arn  = "${module.s3bucket.s3_bucket_arn}"
