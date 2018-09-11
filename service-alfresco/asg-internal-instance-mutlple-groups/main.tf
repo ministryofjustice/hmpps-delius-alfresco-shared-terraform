@@ -1,161 +1,6 @@
-terraform {
-  # The configuration for this backend will be filled in by Terragrunt
-  backend "s3" {}
-}
-
-provider "aws" {
-  region  = "${var.region}"
-  version = "~> 1.16"
-}
-
 ####################################################
 # DATA SOURCE MODULES FROM OTHER TERRAFORM BACKENDS
 ####################################################
-
-#-------------------------------------------------------------
-### Getting the current vpc
-#-------------------------------------------------------------
-data "terraform_remote_state" "vpc" {
-  backend = "s3"
-
-  config {
-    bucket = "${var.remote_state_bucket_name}"
-    key    = "vpc/terraform.tfstate"
-    region = "${var.region}"
-  }
-}
-
-#-------------------------------------------------------------
-### Getting the common details
-#-------------------------------------------------------------
-data "terraform_remote_state" "common" {
-  backend = "s3"
-
-  config {
-    bucket = "${var.remote_state_bucket_name}"
-    key    = "${var.alfresco_app_name}/common/terraform.tfstate"
-    region = "${var.region}"
-  }
-}
-
-#-------------------------------------------------------------
-### Getting IAM roles
-#-------------------------------------------------------------
-data "terraform_remote_state" "iam" {
-  backend = "s3"
-
-  config {
-    bucket = "${var.remote_state_bucket_name}"
-    key    = "${var.alfresco_app_name}/service-alfresco/iam/terraform.tfstate"
-    region = "${var.region}"
-  }
-}
-
-#-------------------------------------------------------------
-### Getting Security Groups
-#-------------------------------------------------------------
-data "terraform_remote_state" "sgs" {
-  backend = "s3"
-
-  config {
-    bucket = "${var.remote_state_bucket_name}"
-    key    = "${var.alfresco_app_name}/service-alfresco/security-groups/terraform.tfstate"
-    region = "${var.region}"
-  }
-}
-
-#-------------------------------------------------------------
-### Getting Monitoring Server
-#-------------------------------------------------------------
-data "terraform_remote_state" "monitoring-server" {
-  backend = "s3"
-
-  config {
-    bucket = "${var.remote_state_bucket_name}"
-    key    = "monitoring-server/terraform.tfstate"
-    region = "${var.region}"
-  }
-}
-
-#-------------------------------------------------------------
-### Getting self signed cert
-#-------------------------------------------------------------
-data "terraform_remote_state" "self_signed" {
-  backend = "s3"
-
-  config {
-    bucket = "${var.remote_state_bucket_name}"
-    key    = "${var.alfresco_app_name}/self-signed/server/terraform.tfstate"
-    region = "${var.region}"
-  }
-}
-
-#-------------------------------------------------------------
-### Getting self signed ca
-#-------------------------------------------------------------
-data "terraform_remote_state" "self_signed_ca" {
-  backend = "s3"
-
-  config {
-    bucket = "${var.remote_state_bucket_name}"
-    key    = "${var.alfresco_app_name}/self-signed/ca/terraform.tfstate"
-    region = "${var.region}"
-  }
-}
-
-#-------------------------------------------------------------
-### Getting the latest amazon ami
-#-------------------------------------------------------------
-data "aws_ami" "amazon_ami" {
-  most_recent = true
-
-  filter {
-    name   = "name"
-    values = ["HMPPS Alfresco master*"]
-  }
-
-  filter {
-    name   = "architecture"
-    values = ["x86_64"]
-  }
-
-  filter {
-    name   = "virtualization-type"
-    values = ["hvm"]
-  }
-
-  filter {
-    name   = "root-device-type"
-    values = ["ebs"]
-  }
-}
-
-#-------------------------------------------------------------
-### Getting the s3 bucket
-#-------------------------------------------------------------
-
-data "terraform_remote_state" "s3-buckets" {
-  backend = "s3"
-
-  config {
-    bucket = "${var.remote_state_bucket_name}"
-    key    = "${var.alfresco_app_name}/service-alfresco/s3bucket/terraform.tfstate"
-    region = "${var.region}"
-  }
-}
-
-#-------------------------------------------------------------
-### Getting rds data
-#-------------------------------------------------------------
-data "terraform_remote_state" "rds" {
-  backend = "s3"
-
-  config {
-    bucket = "${var.remote_state_bucket_name}"
-    key    = "${var.alfresco_app_name}/service-alfresco/rds/terraform.tfstate"
-    region = "${var.region}"
-  }
-}
 
 #-------------------------------------------------------------
 ### Getting the rds db password
@@ -174,31 +19,28 @@ locals {
   common_label          = "${var.environment_identifier}-${var.alfresco_app_name}-az"
   common_prefix         = "${var.environment_identifier}-${var.alfresco_app_name}"
   db_password           = "${data.aws_ssm_parameter.db_password.value}"
-  tags                  = "${data.terraform_remote_state.common.common_tags}"
+  tags                  = "${var.tags}"
   monitoring_server_url = "test"                                                            #"${data.terraform_remote_state.monitoring-server.monitoring_internal_dns}"
 
   subnet_ids = [
-    "${data.terraform_remote_state.vpc.vpc_private-subnet-az1}",
-    "${data.terraform_remote_state.vpc.vpc_private-subnet-az2}",
-    "${data.terraform_remote_state.vpc.vpc_private-subnet-az3}",
+    "${var.private_subnet_ids["az1"]}",
+    "${var.private_subnet_ids["az2"]}",
+    "${var.private_subnet_ids["az3"]}",
   ]
 
-  az1_subnet = "${data.terraform_remote_state.vpc.vpc_private-subnet-az1}"
+  az1_subnet = "${var.private_subnet_ids["az1"]}"
 
-  az2_subnet = "${data.terraform_remote_state.vpc.vpc_private-subnet-az2}"
+  az2_subnet = "${var.private_subnet_ids["az2"]}"
 
-  az3_subnet = "${data.terraform_remote_state.vpc.vpc_private-subnet-az3}"
+  az3_subnet = "${var.private_subnet_ids["az3"]}"
 
   log_groups = ["secure", "messages", "dmesg", "${var.alfresco_app_name}"]
 
-  access_logs_bucket = "${data.terraform_remote_state.common.common_s3_lb_logs_bucket}"
+  access_logs_bucket = "${var.access_logs_bucket}"
 
-  lb_security_groups = ["${data.terraform_remote_state.sgs.service_alfresco_security_groups_sg_internal_lb_id}"]
+  lb_security_groups = ["${var.lb_security_groups}"]
 
-  instance_security_groups = [
-    "${data.terraform_remote_state.sgs.service_alfresco_security_groups_sg_internal_instance_id}",
-    "${data.terraform_remote_state.common.common_sg_outbound_id}",
-  ]
+  instance_security_groups = ["${var.instance_security_groups}"]
 }
 
 ############################################
@@ -226,7 +68,7 @@ module "create_app_elb" {
 }
 
 resource "aws_app_cookie_stickiness_policy" "alfresco_app_cookie_policy" {
-  name          = "${local.common_prefix}-alfresco-app-cookie-policy"
+  name          = "${local.common_prefix}-app-cookie-policy"
   load_balancer = "${module.create_app_elb.environment_elb_name}"
   lb_port       = 80
   cookie_name   = "JSESSIONID"
@@ -237,9 +79,9 @@ resource "aws_app_cookie_stickiness_policy" "alfresco_app_cookie_policy" {
 ###############################################
 
 resource "aws_route53_record" "dns_entry" {
-  name    = "${local.common_name}.${data.terraform_remote_state.common.common_private_zone_name}"
+  name    = "${local.common_name}.${var.internal_domain}"
   type    = "CNAME"
-  zone_id = "${data.terraform_remote_state.common.common_private_zone_id}"
+  zone_id = "${var.zone_id}"
   ttl     = 300
   records = ["${module.create_app_elb.environment_elb_dns_name}"]
 }
@@ -268,25 +110,25 @@ data "template_file" "user_data" {
     cache_home              = "${var.cache_home}"
     ebs_device              = "${var.ebs_device_name}"
     app_name                = "${var.alfresco_app_name}"
-    route53_sub_domain      = "${data.terraform_remote_state.vpc.environment_name}"
-    private_domain          = "${data.terraform_remote_state.common.common_private_zone_name}"
-    account_id              = "${data.terraform_remote_state.vpc.vpc_account_id}"
-    internal_domain         = "${data.terraform_remote_state.common.common_private_zone_name}"
+    route53_sub_domain      = "${var.alfresco_app_name}.${var.environment}"
+    private_domain          = "${var.internal_domain}"
+    account_id              = "${var.account_id}"
+    internal_domain         = "${var.internal_domain}"
     monitoring_server_url   = "${local.monitoring_server_url}"
     monitoring_cluster_name = "${var.short_environment_identifier}-es-cluster"
     cluster_subnet          = ""
     cluster_name            = "${var.environment_identifier}-public-ecs-cluster"
-    db_name                 = "${data.terraform_remote_state.rds.service_alfresco_rds_db_instance_database_name}"
-    db_host                 = "${data.terraform_remote_state.rds.service_alfresco_rds_db_instance_endpoint_cname}"
-    db_user                 = "${data.terraform_remote_state.rds.service_alfresco_rds_db_instance_username}"
+    db_name                 = "${var.db_name}"
+    db_host                 = "${var.db_host}"
+    db_user                 = "${var.db_username}"
     db_password             = "${local.db_password}"
     server_mode             = "TEST"
 
     #s3 config data
-    bucket_name         = "${data.terraform_remote_state.s3-buckets.service_alfresco_s3bucket}"
+    bucket_name         = "${var.alfresco_s3bucket}"
     bucket_encrypt_type = "kms"
-    bucket_key_id       = "${data.terraform_remote_state.s3-buckets.service_alfresco_s3bucket_kms_id}"
-    external_fqdn       = "${local.common_name}.${data.terraform_remote_state.common.common_private_zone_name}"
+    bucket_key_id       = "${var.bucket_kms_key_id}"
+    external_fqdn       = "${local.common_name}.${var.internal_domain}"
   }
 }
 
@@ -298,11 +140,11 @@ data "template_file" "user_data" {
 module "launch_cfg_az1" {
   source                      = "git::https://github.com/ministryofjustice/hmpps-terraform-modules.git?ref=pre-shared-vpc//modules//launch_configuration//blockdevice"
   launch_configuration_name   = "${local.common_label}1"
-  image_id                    = "${var.alfresco_instance_ami["az1"] != "" ? var.alfresco_instance_ami["az1"] : data.aws_ami.amazon_ami.id}"
+  image_id                    = "${var.alfresco_instance_ami["az1"] != "" ? var.alfresco_instance_ami["az1"] : var.ami_id}"
   instance_type               = "${var.instance_type}"
   volume_size                 = "${var.volume_size}"
-  instance_profile            = "${data.terraform_remote_state.iam.service_alfresco_iam_policy_int_app_instance_profile_name}"
-  key_name                    = "${data.terraform_remote_state.common.common_ssh_deployer_key}"
+  instance_profile            = "${var.instance_profile}"
+  key_name                    = "${var.ssh_deployer_key}"
   ebs_device_name             = "${var.ebs_device_name}"
   ebs_volume_type             = "${var.ebs_volume_type}"
   ebs_volume_size             = "${var.ebs_volume_size}"
@@ -320,11 +162,11 @@ module "launch_cfg_az1" {
 module "launch_cfg_az2" {
   source                      = "git::https://github.com/ministryofjustice/hmpps-terraform-modules.git?ref=pre-shared-vpc//modules//launch_configuration//blockdevice"
   launch_configuration_name   = "${local.common_label}2"
-  image_id                    = "${var.alfresco_instance_ami["az2"] != "" ? var.alfresco_instance_ami["az2"] : data.aws_ami.amazon_ami.id}"
+  image_id                    = "${var.alfresco_instance_ami["az2"] != "" ? var.alfresco_instance_ami["az2"] : var.ami_id}"
   instance_type               = "${var.instance_type}"
   volume_size                 = "${var.volume_size}"
-  instance_profile            = "${data.terraform_remote_state.iam.service_alfresco_iam_policy_int_app_instance_profile_name}"
-  key_name                    = "${data.terraform_remote_state.common.common_ssh_deployer_key}"
+  instance_profile            = "${var.instance_profile}"
+  key_name                    = "${var.ssh_deployer_key}"
   ebs_device_name             = "${var.ebs_device_name}"
   ebs_volume_type             = "${var.ebs_volume_type}"
   ebs_volume_size             = "${var.ebs_volume_size}"
@@ -342,11 +184,11 @@ module "launch_cfg_az2" {
 module "launch_cfg_az3" {
   source                      = "git::https://github.com/ministryofjustice/hmpps-terraform-modules.git?ref=pre-shared-vpc//modules//launch_configuration//blockdevice"
   launch_configuration_name   = "${local.common_label}3"
-  image_id                    = "${var.alfresco_instance_ami["az3"] != "" ? var.alfresco_instance_ami["az3"] : data.aws_ami.amazon_ami.id}"
+  image_id                    = "${var.alfresco_instance_ami["az3"] != "" ? var.alfresco_instance_ami["az3"] : var.ami_id}"
   instance_type               = "${var.instance_type}"
   volume_size                 = "${var.volume_size}"
-  instance_profile            = "${data.terraform_remote_state.iam.service_alfresco_iam_policy_int_app_instance_profile_name}"
-  key_name                    = "${data.terraform_remote_state.common.common_ssh_deployer_key}"
+  instance_profile            = "${var.instance_profile}"
+  key_name                    = "${var.ssh_deployer_key}"
   ebs_device_name             = "${var.ebs_device_name}"
   ebs_volume_type             = "${var.ebs_volume_type}"
   ebs_volume_size             = "${var.ebs_volume_size}"

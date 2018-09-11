@@ -30,7 +30,7 @@ output "service_alfresco_asg_internal_instance_mutlple_groups_elb_zone_id" {
 }
 
 output "service_alfresco_asg_internal_instance_mutlple_groups_elb_dns_cname" {
-  value = "${local.common_name}.${data.terraform_remote_state.common.common_private_zone_name}"
+  value = "${local.common_name}.${var.internal_domain}"
 }
 
 # Launch config
@@ -112,5 +112,5 @@ output "service_alfresco_asg_internal_instance_mutlple_groups_loggroup_name" {
 
 # AMI
 output "service_alfresco_asg_internal_instance_mutlple_groups_latest_ami" {
-  value = "${data.aws_ami.amazon_ami.id}"
+  value = "${var.ami_id}"
 }

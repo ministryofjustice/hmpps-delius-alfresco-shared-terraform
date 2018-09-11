@@ -1,17 +1,17 @@
+variable depends_on {
+  default = []
+  type    = "list"
+}
+
+variable "subnet_ids" {
+  type = "list"
+}
+
 variable "environment_identifier" {}
-variable "region" {}
 
 variable "alfresco_app_name" {}
 
 variable "environment" {}
-
-variable "role_arn" {}
-
-variable "remote_state_bucket_name" {
-  description = "Terraform remote state bucket name"
-}
-
-variable "short_environment_identifier" {}
 
 variable "create_db_subnet_group" {
   description = "Whether to create a database subnet group"
@@ -172,4 +172,16 @@ variable "timezone" {
 variable "character_set_name" {
   description = "(Optional) The character set name to use for DB encoding in Oracle instances. This can't be changed. See Oracle Character Sets Supported in Amazon RDS for more information."
   default     = ""
+}
+
+variable "tags" {
+  type = "map"
+}
+
+variable "internal_domain" {}
+
+variable "zone_id" {}
+
+variable "security_group_ids" {
+  type = "list"
 }

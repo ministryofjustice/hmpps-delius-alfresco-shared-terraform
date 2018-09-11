@@ -18,10 +18,6 @@ variable "remote_state_bucket_name" {
   description = "Terraform remote state bucket name"
 }
 
-variable "tags" {
-  type = "map"
-}
-
 variable "s3_lb_policy_file" {}
 
 variable "lb_account_id" {}
@@ -31,3 +27,13 @@ variable "role_arn" {}
 variable "route53_hosted_zone_id" {}
 
 variable "alfresco_app_name" {}
+
+variable "vpc_id" {}
+variable "cidr_block" {}
+variable "internal_domain" {}
+
+variable "tags" {
+  type = "map"
+}
+
+variable "common_name" {}

@@ -4,4 +4,4 @@ terragrunt = {
   }
 }
 
-s3_lb_policy_file = "s3_alb_policy.json"
+s3_lb_policy_file = "policies/s3_alb_policy.json"

@@ -66,7 +66,7 @@ output "service_alfresco_rds_db_instance_endpoint" {
 
 output "service_alfresco_rds_db_instance_endpoint_cname" {
   description = "The connection endpoint"
-  value       = "${local.dns_name}.${data.terraform_remote_state.common.common_private_zone_name}"
+  value       = "${local.dns_name}.${var.internal_domain}"
 }
 
 output "service_alfresco_rds_db_instance_hosted_zone_id" {

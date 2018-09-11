@@ -1,38 +1,17 @@
-terraform {
-  # The configuration for this backend will be filled in by Terragrunt
-  backend "s3" {}
-}
-
-provider "aws" {
-  region  = "${var.region}"
-  version = "~> 1.16"
-}
-
 ####################################################
 # DATA SOURCE MODULES FROM OTHER TERRAFORM BACKENDS
 ####################################################
-#-------------------------------------------------------------
-### Getting the common details
-#-------------------------------------------------------------
-data "terraform_remote_state" "common" {
-  backend = "s3"
-
-  config {
-    bucket = "${var.remote_state_bucket_name}"
-    key    = "${var.alfresco_app_name}/common/terraform.tfstate"
-    region = "${var.region}"
-  }
-}
 
 ####################################################
 # Locals
 ####################################################
 locals {
-  tags = "${data.terraform_remote_state.common.common_tags}"
+  tags        = "${var.tags}"
+  common_name = "${var.common_name}"
 
   subject = {
-    common_name  = "ca.${data.terraform_remote_state.common.common_private_zone_name}"
-    organization = "${var.environment_identifier}-${var.alfresco_app_name}"
+    common_name  = "ca.${var.internal_domain}"
+    organization = "${var.common_name}"
   }
 
   allowed_uses = [
@@ -72,8 +51,8 @@ module "ca_cert" {
 # Add to SSM
 module "create_parameter_ca_cert" {
   source         = "git::https://github.com/ministryofjustice/hmpps-terraform-modules.git?ref=pre-shared-vpc//modules//ssm//parameter_store_file"
-  parameter_name = "${var.environment_identifier}-${var.alfresco_app_name}-self-signed-ca-crt"
-  description    = "${var.environment_identifier}-${var.alfresco_app_name}-self-signed-ca-crt"
+  parameter_name = "${local.common_name}-self-signed-ca-crt"
+  description    = "${local.common_name}-self-signed-ca-crt"
   type           = "String"
   value          = "${module.ca_cert.cert_pem}"
   tags           = "${local.tags}"
