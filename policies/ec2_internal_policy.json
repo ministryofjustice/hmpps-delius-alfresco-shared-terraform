@@ -89,7 +89,7 @@
                 "kms:GenerateDataKey*",
                 "kms:DescribeKey"
             ],
-            "Resource": "arn:aws:kms:eu-west-2:563502482979:key/17f02fb6-0a9a-42de-af9b-8f4278568f6d"
+            "Resource": "${s3bucket_kms_arn}"
         },
         {
             "Sid": "AllowAttachmentOfPersistentResources",

@@ -1,6 +1,23 @@
 # hmpps-delius-alfresco-shared-terraform
 Terraform Repo for the Alfresco in the shared VPC
 
+USING TERRAFORM
+================
+
+A shell script has been created to automate the running of terraform.
+Script takes the following arguments
+
+* environment_type: Target environment eg dev - prod - int
+* action_type: Operation to be completed eg plan - apply - test - output
+* AWS_TOKEN: token to use when running locally eg hmpps-token
+
+Example
+
+```
+sh run.sh plan hmpps-token
+```
+
+
 REMOTE STATE
 ============
 
@@ -135,7 +152,7 @@ Script __scripts/aws-get-temp-creds.sh__ has been written up to automate the pro
 sh scripts/generate-terraform-outputs.sh
 sh scripts/aws-get-temp-creds.sh
 source env_configs/inspec-creds.properties
-inspec exec ${inspec_profile} -t aws://${TG_REGION} --attrs ${attributes_file}
+inspec exec ${inspec_profile} -t aws://${TG_REGION}
 ```
 
 #### To remove the creds
