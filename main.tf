@@ -111,7 +111,7 @@ locals {
   environment_identifier       = "${var.environment_identifier}"
   short_environment_identifier = "${var.short_environment_identifier}"
   remote_state_bucket_name     = "${var.remote_state_bucket_name}"
-  s3_lb_policy_file            = "common/policies/s3_alb_policy.json"
+  s3_lb_policy_file            = "policies/s3_alb_policy.json"
   environment                  = "${var.environment}"
   tags                         = "${merge(data.terraform_remote_state.vpc.tags, map("sub-project", "${var.alfresco_app_name}"))}"
   aws_ecr_arn                  = "${data.terraform_remote_state.ecr.ecr_repo_repository_arn_alfresco}"
@@ -153,7 +153,7 @@ locals {
 # Common
 ####################################################
 module "common" {
-  source                       = "./common"
+  source                       = "git::https://github.com/ministryofjustice/hmpps-terraform-modules.git?ref=master//projects//alfresco//common"
   alfresco_app_name            = "${local.alfresco_app_name}"
   cidr_block                   = "${local.cidr_block}"
   common_name                  = "${local.common_name}"
@@ -175,7 +175,7 @@ module "common" {
 # Self Signed CA
 ####################################################
 module "self_signed_ca" {
-  source                               = "./self-signed/ca"
+  source                               = "git::https://github.com/ministryofjustice/hmpps-terraform-modules.git?ref=master//projects//alfresco//self-signed//ca"
   is_ca_certificate                    = true
   internal_domain                      = "${local.internal_domain}"
   region                               = "${local.region}"
@@ -194,7 +194,7 @@ module "self_signed_ca" {
 # Self Signed Cert
 ####################################################
 module "self_signed_cert" {
-  source                                   = "./self-signed/server"
+  source                                   = "git::https://github.com/ministryofjustice/hmpps-terraform-modules.git?ref=master//projects//alfresco//self-signed//server"
   alfresco_app_name                        = "${local.alfresco_app_name}"
   ca_cert_pem                              = "${module.self_signed_ca.self_signed_ca_cert_pem}"
   ca_private_key_pem                       = "${module.self_signed_ca.self_signed_ca_private_key}"
@@ -218,7 +218,7 @@ module "self_signed_cert" {
 # Security Groups - Application Specific
 ####################################################
 module "security_groups" {
-  source                  = "./service-alfresco/security-groups"
+  source                  = "git::https://github.com/ministryofjustice/hmpps-terraform-modules.git?ref=master//projects//alfresco//security-groups"
   alfresco_app_name       = "${local.alfresco_app_name}"
   allowed_cidr_block      = ["${local.cidr_block}"]
   common_name             = "${local.common_name}"
@@ -244,7 +244,7 @@ module "security_groups" {
 # S3 bucket - Application Specific
 ####################################################
 module "s3bucket" {
-  source                   = "./service-alfresco/s3bucket"
+  source                   = "git::https://github.com/ministryofjustice/hmpps-terraform-modules.git?ref=master//projects//alfresco//s3bucket"
   alfresco_app_name        = "${local.alfresco_app_name}"
   environment_identifier   = "${local.environment_identifier}"
   tags                     = "${local.tags}"
@@ -255,7 +255,7 @@ module "s3bucket" {
 # IAM - Application Specific
 ####################################################
 module "iam" {
-  source                   = "./service-alfresco/iam"
+  source                   = "git::https://github.com/ministryofjustice/hmpps-terraform-modules.git?ref=master//projects//alfresco//iam"
   alfresco_app_name        = "${local.alfresco_app_name}"
   environment_identifier   = "${local.environment_identifier}"
   tags                     = "${local.tags}"
@@ -282,7 +282,7 @@ module "iam" {
 # RDS - Application Specific
 ####################################################
 module "rds" {
-  source                    = "./service-alfresco/rds"
+  source                    = "git::https://github.com/ministryofjustice/hmpps-terraform-modules.git?ref=master//projects//alfresco//rds"
   alfresco_app_name         = "${local.alfresco_app_name}"
   environment_identifier    = "${local.environment_identifier}"
   tags                      = "${local.tags}"
@@ -318,7 +318,7 @@ module "rds" {
 # ASG - Application Specific
 ####################################################
 module "asg" {
-  source                       = "./service-alfresco/asg-internal-instance-mutlple-groups"
+  source                       = "git::https://github.com/ministryofjustice/hmpps-terraform-modules.git?ref=master//projects//alfresco//asg-internal-instance-mutlple-groups"
   alfresco_app_name            = "${local.alfresco_app_name}"
   environment_identifier       = "${local.environment_identifier}"
   tags                         = "${local.tags}"
