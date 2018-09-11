@@ -119,15 +119,15 @@ output "self_signed_server_ssm_private_key_name" {
 ####################################################
 # SECURITY GROUPS - Application specific
 ####################################################
-output "service_alfresco_security_groups_sg_internal_lb_id" {
+output "security_groups_sg_internal_lb_id" {
   value = "${module.security_groups.service_alfresco_security_groups_sg_internal_lb_id}"
 }
 
-output "service_alfresco_security_groups_sg_internal_instance_id" {
+output "security_groups_sg_internal_instance_id" {
   value = "${module.security_groups.service_alfresco_security_groups_sg_internal_instance_id}"
 }
 
-output "service_alfresco_security_groups_sg_rds_id" {
+output "security_groups_sg_rds_id" {
   value = "${module.security_groups.service_alfresco_security_groups_sg_rds_id}"
 }
 
@@ -135,29 +135,29 @@ output "service_alfresco_security_groups_sg_rds_id" {
 # S3 Buckets - Application specific
 ####################################################
 
-output "service_alfresco_s3bucket" {
+output "s3bucket" {
   value = "${module.s3bucket.service_alfresco_s3bucket}"
 }
 
-output "service_alfresco_s3bucket-logs" {
+output "s3bucket-logs" {
   value = "${module.s3bucket.service_alfresco_s3bucket-logs}"
 }
 
 # KMS Key
-output "service_alfresco_s3bucket_kms_arn" {
+output "s3bucket_kms_arn" {
   value = "${module.s3bucket.service_alfresco_s3bucket_kms_arn}"
 }
 
-output "service_alfresco_s3bucket_kms_id" {
+output "s3bucket_kms_id" {
   value = "${module.s3bucket.service_alfresco_s3bucket_kms_id}"
 }
 
 # cloudtrail
-output "service_alfresco_s3bucket_cloudtrail_arn" {
+output "s3bucket_cloudtrail_arn" {
   value = "${module.s3bucket.service_alfresco_s3bucket_cloudtrail_arn}"
 }
 
-output "service_alfresco_s3bucket_cloudtrail_id" {
+output "s3bucket_cloudtrail_id" {
   value = "${module.s3bucket.service_alfresco_s3bucket_cloudtrail_id}"
 }
 
@@ -167,16 +167,16 @@ output "service_alfresco_s3bucket_cloudtrail_id" {
 # INTERNAL
 
 # APP ROLE
-output "service_alfresco_iam_policy_int_app_role_name" {
+output "iam_policy_int_app_role_name" {
   value = "${module.iam.service_alfresco_iam_policy_int_app_role_name}"
 }
 
-output "service_alfresco_iam_policy_int_app_role_arn" {
+output "iam_policy_int_app_role_arn" {
   value = "${module.iam.service_alfresco_iam_policy_int_app_role_arn}"
 }
 
 # PROFILE
-output "service_alfresco_iam_policy_int_app_instance_profile_name" {
+output "iam_policy_int_app_instance_profile_name" {
   value = "${module.iam.service_alfresco_iam_policy_int_app_instance_profile_name}"
 }
 
@@ -184,107 +184,107 @@ output "service_alfresco_iam_policy_int_app_instance_profile_name" {
 # RDS - Application specific
 ####################################################
 # KMS Key
-output "service_alfresco_rds_kms_arn" {
+output "rds_kms_arn" {
   value = "${module.rds.service_alfresco_rds_kms_arn}"
 }
 
-output "service_alfresco_rds_kms_id" {
+output "rds_kms_id" {
   value = "${module.rds.service_alfresco_rds_kms_id}"
 }
 
 # IAM
-output "service_alfresco_rds_monitoring_role_arn" {
+output "rds_monitoring_role_arn" {
   value = "${module.rds.service_alfresco_rds_monitoring_role_arn}"
 }
 
-output "service_alfresco_rds_monitoring_role_name" {
+output "rds_monitoring_role_name" {
   value = "${module.rds.service_alfresco_rds_monitoring_role_name}"
 }
 
 # DB SUBNET GROUP
-output "service_alfresco_rds_db_subnet_group_id" {
+output "rds_db_subnet_group_id" {
   value = "${module.rds.service_alfresco_rds_db_subnet_group_id}"
 }
 
-output "service_alfresco_rds_db_subnet_group_arn" {
+output "rds_db_subnet_group_arn" {
   value = "${module.rds.service_alfresco_rds_db_subnet_group_arn}"
 }
 
 # PARAMETER GROUP
-output "service_alfresco_rds_parameter_group_id" {
+output "rds_parameter_group_id" {
   value = "${module.rds.service_alfresco_rds_parameter_group_id}"
 }
 
-output "service_alfresco_rds_parameter_group_arn" {
+output "rds_parameter_group_arn" {
   value = "${module.rds.service_alfresco_rds_parameter_group_arn}"
 }
 
 # DB OPTIONS GROUP
-output "service_alfresco_rds_db_option_group_id" {
+output "rds_db_option_group_id" {
   value = "${module.rds.service_alfresco_rds_db_option_group_id}"
 }
 
-output "service_alfresco_rds_db_option_group_arn" {
+output "rds_db_option_group_arn" {
   value = "${module.rds.service_alfresco_rds_db_option_group_arn}"
 }
 
 # DB INSTANCE
-output "service_alfresco_rds_db_instance_address" {
+output "rds_db_instance_address" {
   description = "The address of the RDS instance"
   value       = "${module.rds.service_alfresco_rds_db_instance_address}"
 }
 
-output "service_alfresco_rds_db_instance_arn" {
+output "rds_db_instance_arn" {
   description = "The ARN of the RDS instance"
   value       = "${module.rds.service_alfresco_rds_db_instance_arn}"
 }
 
-output "service_alfresco_rds_db_instance_availability_zone" {
+output "rds_db_instance_availability_zone" {
   description = "The availability zone of the RDS instance"
   value       = "${module.rds.service_alfresco_rds_db_instance_availability_zone}"
 }
 
-output "service_alfresco_rds_db_instance_endpoint" {
+output "rds_db_instance_endpoint" {
   description = "The connection endpoint"
   value       = "${module.rds.service_alfresco_rds_db_instance_endpoint}"
 }
 
-output "service_alfresco_rds_db_instance_endpoint_cname" {
+output "rds_db_instance_endpoint_cname" {
   description = "The connection endpoint"
   value       = "${module.rds.service_alfresco_rds_db_instance_endpoint_cname}"
 }
 
-output "service_alfresco_rds_db_instance_hosted_zone_id" {
+output "rds_db_instance_hosted_zone_id" {
   description = "The canonical hosted zone ID of the DB instance (to be used in a Route 53 Alias record)"
   value       = "${module.rds.service_alfresco_rds_db_instance_hosted_zone_id}"
 }
 
-output "service_alfresco_rds_db_instance_id" {
+output "rds_db_instance_id" {
   description = "The RDS instance ID"
   value       = "${module.rds.service_alfresco_rds_db_instance_id}"
 }
 
-output "service_alfresco_rds_db_instance_resource_id" {
+output "rds_db_instance_resource_id" {
   description = "The RDS Resource ID of this instance"
   value       = "${module.rds.service_alfresco_rds_db_instance_resource_id}"
 }
 
-output "service_alfresco_rds_db_instance_status" {
+output "rds_db_instance_status" {
   description = "The RDS instance status"
   value       = "${module.rds.service_alfresco_rds_db_instance_status}"
 }
 
-output "service_alfresco_rds_db_instance_database_name" {
+output "rds_db_instance_database_name" {
   description = "The database name"
   value       = "${module.rds.service_alfresco_rds_db_instance_database_name}"
 }
 
-output "service_alfresco_rds_db_instance_username" {
+output "rds_db_instance_username" {
   description = "The master username for the database"
   value       = "${module.rds.service_alfresco_rds_db_instance_username}"
 }
 
-output "service_alfresco_rds_db_instance_port" {
+output "rds_db_instance_port" {
   description = "The database port"
   value       = "${module.rds.service_alfresco_rds_db_instance_port}"
 }
@@ -293,118 +293,118 @@ output "service_alfresco_rds_db_instance_port" {
 # ASG - Application specific
 ####################################################
 # ELB
-output "service_alfresco_asg_internal_instance_mutlple_groups_elb_id" {
+output "asg_elb_id" {
   description = "The name of the ELB"
-  value       = "${module.asg.service_alfresco_asg_internal_instance_mutlple_groups_elb_id}"
+  value       = "${module.asg.asg_elb_id}"
 }
 
-output "service_alfresco_asg_internal_instance_mutlple_groups_elb_name" {
+output "asg_elb_name" {
   description = "The name of the ELB"
-  value       = "${module.asg.service_alfresco_asg_internal_instance_mutlple_groups_elb_name}"
+  value       = "${module.asg.asg_elb_name}"
 }
 
-output "service_alfresco_asg_internal_instance_mutlple_groups_elb_dns_name" {
+output "asg_elb_dns_name" {
   description = "The DNS name of the ELB"
-  value       = "${module.asg.service_alfresco_asg_internal_instance_mutlple_groups_elb_dns_name}"
+  value       = "${module.asg.asg_elb_dns_name}"
 }
 
-output "service_alfresco_asg_internal_instance_mutlple_groups_elb_instances" {
+output "asg_elb_instances" {
   description = "The list of instances in the ELB (if may be outdated, because instances are attached using elb_attachment resource)"
-  value       = ["${module.asg.service_alfresco_asg_internal_instance_mutlple_groups_elb_instances}"]
+  value       = ["${module.asg.asg_elb_instances}"]
 }
 
-output "service_alfresco_asg_internal_instance_mutlple_groups_elb_source_security_group_id" {
+output "asg_elb_source_security_group_id" {
   description = "The ID of the security group that you can use as part of your inbound rules for your load balancer's back-end application instances"
-  value       = "${module.asg.service_alfresco_asg_internal_instance_mutlple_groups_elb_source_security_group_id}"
+  value       = "${module.asg.asg_elb_source_security_group_id}"
 }
 
-output "service_alfresco_asg_internal_instance_mutlple_groups_elb_zone_id" {
+output "asg_elb_zone_id" {
   description = "The canonical hosted zone ID of the ELB (to be used in a Route 53 Alias record)"
-  value       = "${module.asg.service_alfresco_asg_internal_instance_mutlple_groups_elb_zone_id}"
+  value       = "${module.asg.asg_elb_zone_id}"
 }
 
-output "service_alfresco_asg_internal_instance_mutlple_groups_elb_dns_cname" {
-  value = "${module.asg.service_alfresco_asg_internal_instance_mutlple_groups_elb_dns_cname}"
+output "asg_elb_dns_cname" {
+  value = "${module.asg.asg_elb_dns_cname}"
 }
 
 # Launch config
 # AZ1
-output "service_alfresco_asg_internal_instance_mutlple_groups_launch_id_az1" {
-  value = "${module.asg.service_alfresco_asg_internal_instance_mutlple_groups_launch_id_az1}"
+output "asg_launch_id_az1" {
+  value = "${module.asg.asg_launch_id_az1}"
 }
 
-output "service_alfresco_asg_internal_instance_mutlple_groups_launch_name_az1" {
-  value = "${module.asg.service_alfresco_asg_internal_instance_mutlple_groups_launch_id_az1}"
+output "asg_launch_name_az1" {
+  value = "${module.asg.asg_launch_id_az1}"
 }
 
 # AZ2
-output "service_alfresco_asg_internal_instance_mutlple_groups_launch_id_az2" {
-  value = "${module.asg.service_alfresco_asg_internal_instance_mutlple_groups_launch_id_az2}"
+output "asg_launch_id_az2" {
+  value = "${module.asg.asg_launch_id_az2}"
 }
 
-output "service_alfresco_asg_internal_instance_mutlple_groups_launch_name_az2" {
-  value = "${module.asg.service_alfresco_asg_internal_instance_mutlple_groups_launch_name_az2}"
+output "asg_launch_name_az2" {
+  value = "${module.asg.asg_launch_name_az2}"
 }
 
 # AZ3
-output "service_alfresco_asg_internal_instance_mutlple_groups_launch_id_az3" {
-  value = "${module.asg.service_alfresco_asg_internal_instance_mutlple_groups_launch_id_az3}"
+output "asg_launch_id_az3" {
+  value = "${module.asg.asg_launch_id_az3}"
 }
 
-output "service_alfresco_asg_internal_instance_mutlple_groups_launch_name_az3" {
-  value = "${module.asg.service_alfresco_asg_internal_instance_mutlple_groups_launch_name_az3}"
+output "asg_launch_name_az3" {
+  value = "${module.asg.asg_launch_name_az3}"
 }
 
 # ASG
 #AZ1
-output "service_alfresco_asg_internal_instance_mutlple_groups_autoscale_id_az1" {
-  value = "${module.asg.service_alfresco_asg_internal_instance_mutlple_groups_autoscale_id_az1}"
+output "asg_autoscale_id_az1" {
+  value = "${module.asg.asg_autoscale_id_az1}"
 }
 
-output "service_alfresco_asg_internal_instance_mutlple_groups_autoscale_arn_az1" {
-  value = "${module.asg.service_alfresco_asg_internal_instance_mutlple_groups_autoscale_arn_az1}"
+output "asg_autoscale_arn_az1" {
+  value = "${module.asg.asg_autoscale_arn_az1}"
 }
 
-output "service_alfresco_asg_internal_instance_mutlple_groups_autoscale_name_az1" {
-  value = "${module.asg.service_alfresco_asg_internal_instance_mutlple_groups_autoscale_name_az1}"
+output "asg_autoscale_name_az1" {
+  value = "${module.asg.asg_autoscale_name_az1}"
 }
 
 #AZ2
-output "service_alfresco_asg_internal_instance_mutlple_groups_autoscale_id_az2" {
-  value = "${module.asg.service_alfresco_asg_internal_instance_mutlple_groups_autoscale_id_az2}"
+output "asg_autoscale_id_az2" {
+  value = "${module.asg.asg_autoscale_id_az2}"
 }
 
-output "service_alfresco_asg_internal_instance_mutlple_groups_autoscale_arn_az2" {
-  value = "${module.asg.service_alfresco_asg_internal_instance_mutlple_groups_autoscale_arn_az2}"
+output "asg_autoscale_arn_az2" {
+  value = "${module.asg.asg_autoscale_arn_az2}"
 }
 
-output "service_alfresco_asg_internal_instance_mutlple_groups_autoscale_name_az2" {
-  value = "${module.asg.service_alfresco_asg_internal_instance_mutlple_groups_autoscale_name_az2}"
+output "asg_autoscale_name_az2" {
+  value = "${module.asg.asg_autoscale_name_az2}"
 }
 
 #AZ3
-output "service_alfresco_asg_internal_instance_mutlple_groups_autoscale_id_az3" {
-  value = "${module.asg.service_alfresco_asg_internal_instance_mutlple_groups_autoscale_id_az3}"
+output "asg_autoscale_id_az3" {
+  value = "${module.asg.asg_autoscale_id_az3}"
 }
 
-output "service_alfresco_asg_internal_instance_mutlple_groups_autoscale_arn_az3" {
-  value = "${module.asg.service_alfresco_asg_internal_instance_mutlple_groups_autoscale_arn_az3}"
+output "asg_autoscale_arn_az3" {
+  value = "${module.asg.asg_autoscale_arn_az3}"
 }
 
-output "service_alfresco_asg_internal_instance_mutlple_groups_autoscale_name_az3" {
-  value = "${module.asg.service_alfresco_asg_internal_instance_mutlple_groups_autoscale_name_az3}"
+output "asg_autoscale_name_az3" {
+  value = "${module.asg.asg_autoscale_name_az3}"
 }
 
 # LOG GROUPS
-output "service_alfresco_asg_internal_instance_mutlple_groups_loggroup_arn" {
-  value = "${module.asg.service_alfresco_asg_internal_instance_mutlple_groups_loggroup_arn}"
+output "asg_loggroup_arn" {
+  value = "${module.asg.asg_loggroup_arn}"
 }
 
-output "service_alfresco_asg_internal_instance_mutlple_groups_loggroup_name" {
-  value = "${module.asg.service_alfresco_asg_internal_instance_mutlple_groups_loggroup_name}"
+output "asg_loggroup_name" {
+  value = "${module.asg.asg_loggroup_name}"
 }
 
 # AMI
-output "service_alfresco_asg_internal_instance_mutlple_groups_latest_ami" {
-  value = "${module.asg.service_alfresco_asg_internal_instance_mutlple_groups_latest_ami}"
+output "asg_latest_ami" {
+  value = "${module.asg.asg_latest_ami}"
 }
