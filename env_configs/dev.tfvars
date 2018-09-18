@@ -47,7 +47,7 @@ self_signed_server_early_renewal_hours = 336
 
 # ALLOWED CIDRS
 
-alfresco_allowed_ip_cidrs = [
+allowed_cidr_block = [
   "51.148.142.120/32",  #Brett Home
   "109.148.137.148/32", #Don Home
   "81.134.202.29/32",   #Moj VPN
@@ -70,23 +70,25 @@ alfresco_instance_ami = {
 az_asg_desired = {
   az1 = "1"
 
-  az2 = "1"
+  az2 = "0"
 
-  az3 = "1"
+  az3 = "0"
 }
 
 az_asg_max = {
   az1 = "2"
 
-  az2 = "2"
+  az2 = "0"
 
-  az3 = "2"
+  az3 = "0"
 }
 
 az_asg_min = {
   az1 = "1"
 
-  az2 = "1"
+  az2 = "0"
 
-  az3 = "1"
+  az3 = "0"
 }
+
+asg_instance_type = "t2.large"

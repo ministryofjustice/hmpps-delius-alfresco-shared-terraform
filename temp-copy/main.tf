@@ -12,6 +12,11 @@ provider "aws" {
 # DATA SOURCE MODULES FROM OTHER TERRAFORM BACKENDS
 ####################################################
 #-------------------------------------------------------------
+### Getting current
+#-------------------------------------------------------------
+data "aws_region" "current" {}
+
+#-------------------------------------------------------------
 ### Getting the vpc details
 #-------------------------------------------------------------
 data "terraform_remote_state" "vpc" {
@@ -20,6 +25,19 @@ data "terraform_remote_state" "vpc" {
   config {
     bucket = "${var.remote_state_bucket_name}"
     key    = "vpc/terraform.tfstate"
+    region = "${var.region}"
+  }
+}
+
+#-------------------------------------------------------------
+### Getting the monitoring instance details
+#-------------------------------------------------------------
+data "terraform_remote_state" "monitor" {
+  backend = "s3"
+
+  config {
+    bucket = "${var.remote_state_bucket_name}"
+    key    = "shared-monitoring/terraform.tfstate"
     region = "${var.region}"
   }
 }
@@ -98,25 +116,30 @@ data "aws_ami" "amazon_ami" {
 ####################################################
 
 locals {
-  vpc_id                       = "${data.terraform_remote_state.vpc.vpc_id}"
-  cidr_block                   = "${data.terraform_remote_state.vpc.vpc_cidr_block}"
-  allowed_cidr_block           = ["${data.terraform_remote_state.vpc.vpc_cidr_block}"]
-  internal_domain              = "${var.alfresco_app_name}-${var.environment}.internal"
-  common_name                  = "${var.environment_identifier}-${var.alfresco_app_name}"
-  lb_account_id                = "${var.lb_account_id}"
-  region                       = "${var.region}"
-  role_arn                     = "${var.role_arn}"
-  route53_hosted_zone_id       = "${var.route53_hosted_zone_id}"
-  alfresco_app_name            = "${var.alfresco_app_name}"
-  environment_identifier       = "${var.environment_identifier}"
-  short_environment_identifier = "${var.short_environment_identifier}"
-  remote_state_bucket_name     = "${var.remote_state_bucket_name}"
-  s3_lb_policy_file            = "policies/s3_alb_policy.json"
-  environment                  = "${var.environment}"
-  tags                         = "${merge(data.terraform_remote_state.vpc.tags, map("sub-project", "${var.alfresco_app_name}"))}"
-  aws_ecr_arn                  = "${data.terraform_remote_state.ecr.ecr_repo_repository_arn_alfresco}"
-  remote_iam_role              = "${data.terraform_remote_state.remote_iam.alfresco_iam_arn}"
-  remote_config_bucket         = "${data.terraform_remote_state.remote_vpc.s3-config-bucket}"
+  vpc_id                         = "${data.terraform_remote_state.vpc.vpc_id}"
+  cidr_block                     = "${data.terraform_remote_state.vpc.vpc_cidr_block}"
+  allowed_cidr_block             = ["${data.terraform_remote_state.vpc.vpc_cidr_block}"]
+  internal_domain                = "${data.terraform_remote_state.vpc.private_zone_name}"
+  private_zone_id                = "${data.terraform_remote_state.vpc.private_zone_id}"
+  external_domain                = "${data.terraform_remote_state.vpc.public_zone_name}"
+  public_zone_id                 = "${data.terraform_remote_state.vpc.public_zone_id}"
+  common_name                    = "${var.environment_identifier}-${var.alfresco_app_name}"
+  lb_account_id                  = "${var.lb_account_id}"
+  region                         = "${var.region}"
+  role_arn                       = "${var.role_arn}"
+  alfresco_app_name              = "${var.alfresco_app_name}"
+  environment_identifier         = "${var.environment_identifier}"
+  short_environment_identifier   = "${var.short_environment_identifier}"
+  remote_state_bucket_name       = "${var.remote_state_bucket_name}"
+  s3_lb_policy_file              = "policies/s3_alb_policy.json"
+  environment                    = "${var.environment}"
+  tags                           = "${merge(data.terraform_remote_state.vpc.tags, map("sub-project", "${var.alfresco_app_name}"))}"
+  aws_ecr_arn                    = "${data.terraform_remote_state.ecr.ecr_repo_repository_arn_alfresco}"
+  remote_iam_role                = "${data.terraform_remote_state.remote_iam.alfresco_iam_arn}"
+  remote_config_bucket           = "${data.terraform_remote_state.remote_vpc.s3-config-bucket}"
+  monitoring_server_external_url = "${data.terraform_remote_state.monitor.monitoring_server_external_url}"
+  monitoring_server_internal_url = "${data.terraform_remote_state.monitor.monitoring_server_internal_url}"
+  monitoring_server_client_sg_id = "${data.terraform_remote_state.monitor.monitoring_server_client_sg_id}"
 
   private_subnet_map = {
     az1 = "${data.terraform_remote_state.vpc.vpc_private-subnet-az1}"
@@ -153,7 +176,7 @@ locals {
 # Common
 ####################################################
 module "common" {
-  source                       = "git::https://github.com/ministryofjustice/hmpps-terraform-modules.git?ref=master//projects//alfresco//common"
+  source                       = "git::https://github.com/ministryofjustice/hmpps-terraform-modules.git?ref=issue-62//projects//alfresco//common"
   alfresco_app_name            = "${local.alfresco_app_name}"
   cidr_block                   = "${local.cidr_block}"
   common_name                  = "${local.common_name}"
@@ -164,7 +187,7 @@ module "common" {
   region                       = "${local.region}"
   remote_state_bucket_name     = "${local.remote_state_bucket_name}"
   role_arn                     = "${local.role_arn}"
-  route53_hosted_zone_id       = "${local.route53_hosted_zone_id}"
+  private_zone_id              = "${local.private_zone_id}"
   s3_lb_policy_file            = "${local.s3_lb_policy_file}"
   short_environment_identifier = "${local.short_environment_identifier}"
   tags                         = "${local.tags}"
@@ -175,7 +198,7 @@ module "common" {
 # Self Signed CA
 ####################################################
 module "self_signed_ca" {
-  source                               = "git::https://github.com/ministryofjustice/hmpps-terraform-modules.git?ref=master//projects//alfresco//self-signed//ca"
+  source                               = "git::https://github.com/ministryofjustice/hmpps-terraform-modules.git?ref=issue-62//projects//alfresco//self-signed//ca"
   is_ca_certificate                    = true
   internal_domain                      = "${local.internal_domain}"
   region                               = "${local.region}"
@@ -194,7 +217,7 @@ module "self_signed_ca" {
 # Self Signed Cert
 ####################################################
 module "self_signed_cert" {
-  source                                   = "git::https://github.com/ministryofjustice/hmpps-terraform-modules.git?ref=master//projects//alfresco//self-signed//server"
+  source                                   = "git::https://github.com/ministryofjustice/hmpps-terraform-modules.git?ref=issue-62//projects//alfresco//self-signed//server"
   alfresco_app_name                        = "${local.alfresco_app_name}"
   ca_cert_pem                              = "${module.self_signed_ca.self_signed_ca_cert_pem}"
   ca_private_key_pem                       = "${module.self_signed_ca.self_signed_ca_private_key}"
@@ -218,7 +241,7 @@ module "self_signed_cert" {
 # Security Groups - Application Specific
 ####################################################
 module "security_groups" {
-  source                  = "git::https://github.com/ministryofjustice/hmpps-terraform-modules.git?ref=master//projects//alfresco//security-groups"
+  source                  = "git::https://github.com/ministryofjustice/hmpps-terraform-modules.git?ref=issue-62//projects//alfresco//security-groups"
   alfresco_app_name       = "${local.alfresco_app_name}"
   allowed_cidr_block      = ["${local.cidr_block}"]
   common_name             = "${local.common_name}"
@@ -244,7 +267,7 @@ module "security_groups" {
 # S3 bucket - Application Specific
 ####################################################
 module "s3bucket" {
-  source                   = "git::https://github.com/ministryofjustice/hmpps-terraform-modules.git?ref=master//projects//alfresco//s3bucket"
+  source                   = "git::https://github.com/ministryofjustice/hmpps-terraform-modules.git?ref=issue-62//projects//alfresco//s3bucket"
   alfresco_app_name        = "${local.alfresco_app_name}"
   environment_identifier   = "${local.environment_identifier}"
   tags                     = "${local.tags}"
@@ -255,7 +278,7 @@ module "s3bucket" {
 # IAM - Application Specific
 ####################################################
 module "iam" {
-  source                   = "git::https://github.com/ministryofjustice/hmpps-terraform-modules.git?ref=master//projects//alfresco//iam"
+  source                   = "git::https://github.com/ministryofjustice/hmpps-terraform-modules.git?ref=issue-62//projects//alfresco//iam"
   alfresco_app_name        = "${local.alfresco_app_name}"
   environment_identifier   = "${local.environment_identifier}"
   tags                     = "${local.tags}"
@@ -265,16 +288,16 @@ module "iam" {
   aws_ecr_arn              = "${local.aws_ecr_arn}"
   remote_iam_role          = "${local.remote_iam_role}"
   remote_config_bucket     = "${local.remote_config_bucket}"
-  storage_s3bucket         = "${module.s3bucket.service_alfresco_s3bucket}"
+  storage_s3bucket         = "${module.s3bucket.s3bucket}"
   s3-config-bucket         = "${module.common.common_s3-config-bucket}"
 
   depends_on = [
-    "${module.s3bucket.service_alfresco_s3bucket}",
-    "${module.s3bucket.service_alfresco_s3bucket-logs}",
-    "${module.s3bucket.service_alfresco_s3bucket_kms_arn}",
-    "${module.s3bucket.service_alfresco_s3bucket_kms_id}",
-    "${module.s3bucket.service_alfresco_s3bucket_cloudtrail_arn}",
-    "${module.s3bucket.service_alfresco_s3bucket_cloudtrail_id}",
+    "${module.s3bucket.s3bucket}",
+    "${module.s3bucket.s3bucket-logs}",
+    "${module.s3bucket.s3bucket_kms_arn}",
+    "${module.s3bucket.s3bucket_kms_id}",
+    "${module.s3bucket.s3bucket_cloudtrail_arn}",
+    "${module.s3bucket.s3bucket_cloudtrail_id}",
   ]
 }
 
@@ -282,7 +305,7 @@ module "iam" {
 # RDS - Application Specific
 ####################################################
 module "rds" {
-  source                    = "git::https://github.com/ministryofjustice/hmpps-terraform-modules.git?ref=master//projects//alfresco//rds"
+  source                    = "git::https://github.com/ministryofjustice/hmpps-terraform-modules.git?ref=issue-62//projects//alfresco//rds"
   alfresco_app_name         = "${local.alfresco_app_name}"
   environment_identifier    = "${local.environment_identifier}"
   tags                      = "${local.tags}"
@@ -302,15 +325,15 @@ module "rds" {
   backup_window             = "03:00-06:00"
   multi_az                  = true
   environment               = "${local.environment}"
-  zone_id                   = "${module.common.common_private_zone_id}"
+  zone_id                   = "${local.private_zone_id}"
   internal_domain           = "${local.internal_domain}"
-  security_group_ids        = ["${module.security_groups.service_alfresco_security_groups_sg_rds_id}"]
+  security_group_ids        = ["${module.security_groups.security_groups_sg_rds_id}"]
   rds_allocated_storage     = "${var.rds_allocated_storage}"
   rds_instance_class        = "${var.rds_instance_class}"
   rds_monitoring_interval   = "30"
 
   depends_on = [
-    "${module.security_groups.service_alfresco_security_groups_sg_rds_id}",
+    "${module.security_groups.security_groups_sg_rds_id}",
   ]
 }
 
@@ -318,33 +341,34 @@ module "rds" {
 # ASG - Application Specific
 ####################################################
 module "asg" {
-  source                       = "git::https://github.com/ministryofjustice/hmpps-terraform-modules.git?ref=master//projects//alfresco//asg-internal-instance-mutlple-groups"
+  source                       = "git::https://github.com/ministryofjustice/hmpps-terraform-modules.git?ref=issue-62//projects//alfresco//asg"
   alfresco_app_name            = "${local.alfresco_app_name}"
   environment_identifier       = "${local.environment_identifier}"
   tags                         = "${local.tags}"
   private_subnet_ids           = "${local.private_subnet_map}"
   short_environment_identifier = "${local.short_environment_identifier}"
-  instance_profile             = "${module.iam.service_alfresco_iam_policy_int_app_instance_profile_name}"
+  instance_profile             = "${module.iam.iam_policy_int_app_instance_profile_name}"
   access_logs_bucket           = "${module.common.common_s3_lb_logs_bucket}"
   ssh_deployer_key             = "${module.common.common_ssh_deployer_key}"
-  bucket_kms_key_id            = "${module.s3bucket.service_alfresco_s3bucket_kms_id}"
-  alfresco_s3bucket            = "${module.s3bucket.service_alfresco_s3bucket}"
-  lb_security_groups           = ["${module.security_groups.service_alfresco_security_groups_sg_internal_lb_id}"]
+  bucket_kms_key_id            = "${module.s3bucket.s3bucket_kms_id}"
+  alfresco_s3bucket            = "${module.s3bucket.s3bucket}"
+  lb_security_groups           = ["${module.security_groups.security_groups_sg_internal_lb_id}"]
   internal                     = true
   az_asg_desired               = "${var.az_asg_desired}"
   az_asg_min                   = "${var.az_asg_min}"
   az_asg_max                   = "${var.az_asg_max}"
   cloudwatch_log_retention     = "${var.cloudwatch_log_retention}"
-  zone_id                      = "${module.common.common_private_zone_id}"
+  zone_id                      = "${local.private_zone_id}"
   internal_domain              = "${local.internal_domain}"
-  db_name                      = "${module.rds.service_alfresco_rds_db_instance_database_name}"
-  db_username                  = "${module.rds.service_alfresco_rds_db_instance_username}"
-  db_host                      = "${module.rds.service_alfresco_rds_db_instance_endpoint_cname}"
+  db_name                      = "${module.rds.rds_db_instance_database_name}"
+  db_username                  = "${module.rds.rds_db_instance_username}"
+  db_host                      = "${module.rds.rds_db_instance_endpoint_cname}"
   environment                  = "${local.environment}"
   region                       = "${local.region}"
   ami_id                       = "${data.aws_ami.amazon_ami.id}"
   account_id                   = "${module.common.common_account_id}"
   alfresco_instance_ami        = "${var.alfresco_instance_ami}"
+  monitoring_server_url        = "${local.monitoring_server_internal_url}"
 
   listener = [
     {
@@ -378,7 +402,33 @@ module "asg" {
   cache_home                  = "/srv/cache"
 
   instance_security_groups = [
-    "${module.security_groups.service_alfresco_security_groups_sg_internal_instance_id}",
+    "${module.security_groups.security_groups_sg_internal_instance_id}",
     "${module.common.common_sg_outbound_id}",
+    "${local.monitoring_server_client_sg_id}",
+    "${local.monitoring_server_client_sg_id}",
   ]
+
+  depends_on = [
+    "${module.security_groups.security_groups_sg_internal_instance_id}",
+    "${module.common.common_sg_outbound_id}",
+    "${module.iam.iam_policy_int_app_instance_profile_name}",
+    "${module.s3bucket.s3bucket}",
+    "${module.s3bucket.s3bucket-logs}",
+    "${module.s3bucket.s3bucket_kms_arn}",
+    "${module.s3bucket.s3bucket_kms_id}",
+    "${module.self_signed_ca.self_signed_ca_cert_pem}",
+    "${module.self_signed_ca.self_signed_ca_private_key}",
+  ]
+}
+
+####################################################
+# Route53 - Public DNS entries
+####################################################
+# RDS
+resource "aws_route53_record" "rds" {
+  name    = "${local.alfresco_app_name}-db.${local.external_domain}"
+  type    = "CNAME"
+  zone_id = "${local.public_zone_id}"
+  ttl     = 300
+  records = ["${module.rds.rds_db_instance_endpoint}"]
 }

@@ -1,0 +1,68 @@
+[
+    {
+        "cpu": ${cpu_units
+        },
+        "essential": true,
+        "image": "${image_url}:${version}",
+        "memory": ${memory
+        },
+        "name": "${container_name}",
+        "mountPoints": [
+            {
+                "sourceVolume": "${data_volume_name}",
+                "containerPath": "${data_volume_host_path}",
+                "readOnly": true
+            }
+        ],
+        "environment": [
+            {
+                "name": "S3_CONFIG_BUCKET",
+                "value": "${s3_bucket_config}"
+            },
+            {
+                "name": "ALFRESCO_HOST",
+                "value": "${alfresco_host}"
+            },
+            {
+                "name": "CONFIG_FILE_PATH",
+                "value": "${config_file_path}"
+            },
+            {
+                "name": "RUNTIME_CONFIG_OVERRIDE",
+                "value": "${runtime_config_override}"
+            },
+            {
+                "name": "TOMCAT_HOST",
+                "value": "${tomcat_host}"
+            },
+            {
+                "name": "KIBANA_HOST",
+                "value": "${kibana_host}"
+            },
+            {
+                "name": "NGINX_CONFIG_FILE",
+                "value": "${nginx_config_file}"
+            }
+        ],
+        "portMappings": [
+            {
+                "hostPort": 80,
+                "protocol": "tcp",
+                "containerPort": 80
+            },
+            {
+                "hostPort": 443,
+                "protocol": "tcp",
+                "containerPort": 443
+            }
+        ],
+        "logConfiguration": {
+            "logDriver": "awslogs",
+            "options": {
+                "awslogs-group": "${log_group_name}",
+                "awslogs-region": "${log_group_region}",
+                "awslogs-stream-prefix": "ecs-${container_name}"
+            }
+        }
+    }
+]
