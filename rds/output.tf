@@ -106,11 +106,3 @@ output "rds_db_instance_port" {
   description = "The database port"
   value       = "${module.rds.rds_db_instance_port}"
 }
-
-output "rds_public_dns_name" {
-  value = "${module.rds.rds_db_instance_endpoint_cname}"
-}
-
-output "rds_public_dns_name_private" {
-  value = "${module.rds.rds_db_instance_endpoint_cname_private}"
-}

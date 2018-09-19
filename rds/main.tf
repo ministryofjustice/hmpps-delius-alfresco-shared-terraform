@@ -89,8 +89,6 @@ module "rds" {
   environment               = "${local.environment}"
   private_zone_id           = "${local.private_zone_id}"
   internal_domain           = "${local.internal_domain}"
-  external_domain           = "${local.external_domain}"
-  public_zone_id            = "${local.public_zone_id}"
   security_group_ids        = ["${local.security_group_ids}"]
   rds_allocated_storage     = "${var.rds_allocated_storage}"
   rds_instance_class        = "${var.rds_instance_class}"

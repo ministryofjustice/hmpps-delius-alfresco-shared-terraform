@@ -31,10 +31,6 @@ output "asg_elb_dns_cname" {
   value = "${module.asg.asg_elb_dns_cname}"
 }
 
-output "asg_elb_dns_cname_private" {
-  value = "${module.asg.asg_elb_dns_cname_private}"
-}
-
 # Launch config
 # AZ1
 output "asg_launch_id_az1" {
