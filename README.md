@@ -135,6 +135,45 @@ terragrunt plan -detailed-exitcode --out ${TG_ENVIRONMENT_TYPE}.plan
 terragrunt apply ${TG_ENVIRONMENT_TYPE}.plan
 ```
 
+Terraform - automated run
+==========================
+
+A python script has been written up: docker-run.py.
+
+The script takes arguments shown below:
+
+```
+python docker-run.py -h
+usage: docker-run.py [-h] --env ENV --action {apply,plan,test,output}
+                     [--component COMPONENT] [--token TOKEN]
+
+terraform docker runner
+
+optional arguments:
+  -h, --help            show this help message and exit
+  --env ENV             target environment
+  --action {apply,plan,test,output}
+                        action to perform
+  --component COMPONENT
+                        component to run task on
+  --token TOKEN         aws token for credentials
+````
+
+## Usage
+
+When running locally provide the token argument:
+
+```
+python docker-run.py --env dev --action test --token hmpps-token
+```
+
+When running in CI environment:
+
+```
+python docker-run.py --env dev --action test
+```
+
+
 INSPEC
 ======
 
