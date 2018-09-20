@@ -69,3 +69,6 @@ hs_err_pid*
 
 env_configs/inspec*.properties
 attributes/*
+venv
+__pycache__
+*.ipynb
