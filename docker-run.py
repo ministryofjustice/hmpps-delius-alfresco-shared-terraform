@@ -18,14 +18,14 @@ image_id = 'hmpps/terraform-builder:latest'
 cmd = 'sh run.sh'
 
 # docker run command
-docker_cmd = 'docker run -it --rm -v {}:/home/tools/data {}'.format(
+docker_cmd = "docker run -it --rm -v {}:/home/tools/data {}".format(
     work_dir,
     '-v ${HOME}/.aws:/home/tools/.aws -e RUNNING_IN_CONTAINER=True')
 
 if args.token:
     aws_token = args.token
-    token_args = '-e AWS_PROFILE={}'.format(aws_token)
-    run_cmd = '{docker_cmd} {token_args} {image_id} {cmd} {environment} {action} {component}'.format(
+    token_args = "-e AWS_PROFILE={}".format(aws_token)
+    run_cmd = "{docker_cmd} {token_args} {image_id} {cmd} {environment} {action} {component}".format(
         docker_cmd=docker_cmd,
         image_id=image_id,
         token_args=token_args,
@@ -35,7 +35,7 @@ if args.token:
         token='hmpps-token',
         component=component_target)
 else:
-    run_cmd = '{docker_cmd} {image_id} {cmd} {environment} {action} {component}'.format(
+    run_cmd = "{docker_cmd} {image_id} {cmd} {environment} {action} {component}".format(
         docker_cmd=docker_cmd,
         image_id=image_id,
         cmd=cmd,
@@ -43,5 +43,5 @@ else:
         action=action_type,
         component=component_target)
 
-print('Running command: {}'.format(run_cmd))
+print("Running command: {}".format(run_cmd))
 os.system(run_cmd)

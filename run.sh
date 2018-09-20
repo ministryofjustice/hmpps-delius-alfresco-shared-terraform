@@ -49,10 +49,6 @@ then
     COMPONENT="common"
 fi
 
-# Commands
-tg_planCmd="terragrunt plan -detailed-exitcode --out ${TG_ENVIRONMENT_TYPE}.plan"
-tg_applyCmd="terragrunt apply ${TG_ENVIRONMENT_TYPE}.plan"
-
 #check env vars for RUNNING_IN_CONTAINER switch
 if [[ ${RUNNING_IN_CONTAINER} == True ]]
 then
