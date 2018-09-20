@@ -58,7 +58,7 @@ locals {
 # IAM - Application Specific
 ####################################################
 module "iam" {
-  source                   = "git::https://github.com/ministryofjustice/hmpps-terraform-modules.git?ref=issue-62//projects//alfresco//iam"
+  source                   = "git::https://github.com/ministryofjustice/hmpps-terraform-modules.git?ref=master//projects//alfresco//iam"
   alfresco_app_name        = "${local.alfresco_app_name}"
   environment_identifier   = "${local.environment_identifier}"
   tags                     = "${local.tags}"

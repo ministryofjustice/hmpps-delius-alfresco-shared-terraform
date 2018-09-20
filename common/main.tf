@@ -204,7 +204,7 @@ locals {
 # Common
 ####################################################
 module "common" {
-  source                       = "git::https://github.com/ministryofjustice/hmpps-terraform-modules.git?ref=issue-62//projects//alfresco//common"
+  source                       = "git::https://github.com/ministryofjustice/hmpps-terraform-modules.git?ref=master//projects//alfresco//common"
   alfresco_app_name            = "${local.alfresco_app_name}"
   cidr_block                   = "${local.cidr_block}"
   common_name                  = "${local.common_name}"

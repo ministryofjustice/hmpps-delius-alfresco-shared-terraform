@@ -39,7 +39,7 @@ locals {
 # S3 bucket - Application Specific
 ####################################################
 module "s3bucket" {
-  source                   = "git::https://github.com/ministryofjustice/hmpps-terraform-modules.git?ref=issue-62//projects//alfresco//s3bucket"
+  source                   = "git::https://github.com/ministryofjustice/hmpps-terraform-modules.git?ref=master//projects//alfresco//s3bucket"
   alfresco_app_name        = "${local.alfresco_app_name}"
   environment_identifier   = "${local.environment_identifier}"
   tags                     = "${local.tags}"

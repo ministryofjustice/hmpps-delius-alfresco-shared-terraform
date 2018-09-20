@@ -197,7 +197,7 @@ locals {
 # NGINX - Application Specific
 ####################################################
 module "ecs-nginx" {
-  source                         = "git::https://github.com/ministryofjustice/hmpps-terraform-modules.git?ref=issue-62//projects//alfresco//nginx"
+  source                         = "git::https://github.com/ministryofjustice/hmpps-terraform-modules.git?ref=master//projects//alfresco//nginx"
   app_name                       = "${local.app_name}"
   certificate_arn                = ["${local.certificate_arn}"]
   image_url                      = "${local.image_url}"
