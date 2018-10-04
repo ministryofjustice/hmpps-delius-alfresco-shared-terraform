@@ -1,5 +1,9 @@
 #!/usr/bin/env bash
 
+yum install -y git wget python-pip
+pip install -U pip
+pip install ansible
+
 cat << EOF >> /etc/environment
 HMPPS_ROLE=${app_name}
 HMPPS_FQDN="`curl http://169.254.169.254/latest/meta-data/instance-id`.${private_domain}"
@@ -33,42 +37,55 @@ cat << EOF > ~/requirements.yml
   src: https://github.com/ministryofjustice/hmpps-beats-monitoring
 - name: alfresco
   src: https://github.com/ministryofjustice/hmpps-alfresco-bootstrap
+- name: users
+  src: singleplatform-eng.users
+
 EOF
+
+cat << EOF > ~/bootstrap_vars.yml
+mount_point: "${cache_home}" \
+device_name: "${ebs_device}" \
+monitoring_host: "${monitoring_server_url}" \
+bucket_name: "${bucket_name}"  \
+bucket_encrypt_type: "${bucket_encrypt_type}"  \
+bucket_key_id: "${bucket_key_id}"  \
+db_user: "${db_user}"  \
+db_password: "${db_password}"  \
+db_name: "${db_name}"  \
+db_host: "${db_host}"  \
+server_mode: "${server_mode}"  \
+cluster_name: "${cluster_name}"  \
+cluster_subnet: "${cluster_subnet}"  \
+monitoring_server_url: "${monitoring_server_url}"  \
+monitoring_cluster_name: "${monitoring_cluster_name}" \
+cldwatch_log_group: "${cldwatch_log_group}" \
+region: "${region}" \
+external_fqdn: "${external_fqdn}" \
+alfresco_protocol: "https" \
+alfresco_port: "443" \
+cluster_enabled: "true"
+EOF
+
+wget https://raw.githubusercontent.com/ministryofjustice/hmpps-delius-ansible/master/group_vars/bastion -O users.yml
 
 cat << EOF > ~/bootstrap.yml
 ---
 
 - hosts: localhost
+  vars_files:
+    - "{{ playbook_dir }}/bootstrap_vars.yml"
+    - "{{ playbook_dir }}/users.yml"
+- hosts: localhost
   roles:
      - bootstrap
      - rsyslog
      - elasticbeats
+     - users
      - alfresco
 EOF
 
 ansible-galaxy install -f -r ~/requirements.yml
-SELF_REGISTER=true ansible-playbook ~/bootstrap.yml \
-    -e mount_point="${cache_home}" \
-    -e device_name="${ebs_device}" \
-    -e monitoring_host="${monitoring_server_url}" \
-    -e bucket_name="${bucket_name}"  \
-    -e bucket_encrypt_type="${bucket_encrypt_type}"  \
-    -e bucket_key_id="${bucket_key_id}"  \
-    -e db_user="${db_user}"  \
-    -e db_password="${db_password}"  \
-    -e db_name="${db_name}"  \
-    -e db_host="${db_host}"  \
-    -e server_mode="${server_mode}"  \
-    -e cluster_name="${cluster_name}"  \
-    -e cluster_subnet="${cluster_subnet}"  \
-    -e monitoring_server_url="${monitoring_server_url}"  \
-    -e monitoring_cluster_name="${monitoring_cluster_name}" \
-    -e cldwatch_log_group="${cldwatch_log_group}" \
-    -e region="${region}" \
-    -e external_fqdn="${external_fqdn}" \
-    -e alfresco_protocol="https" \
-    -e alfresco_port="443" \
-    -e cluster_enabled="true"
+SELF_REGISTER=true ansible-playbook ~/bootstrap.yml
 
 # Currently there is a bit of oddness with the service startup, it seems we have to restart it for Alfresco to be available
 sudo service tomcat-alfresco stop
