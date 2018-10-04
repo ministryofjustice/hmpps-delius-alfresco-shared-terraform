@@ -43,7 +43,7 @@ locals {
 # Self Signed CA
 ####################################################
 module "self_signed_ca" {
-  source                               = "git::https://github.com/ministryofjustice/hmpps-terraform-modules.git?ref=issue-62//projects//alfresco//self-signed//ca"
+  source                               = "git::https://github.com/ministryofjustice/hmpps-terraform-modules.git?ref=master//projects//alfresco//self-signed//ca"
   is_ca_certificate                    = true
   internal_domain                      = "${local.internal_domain}"
   region                               = "${local.region}"
@@ -62,7 +62,7 @@ module "self_signed_ca" {
 # Self Signed Cert
 ####################################################
 module "self_signed_cert" {
-  source                                   = "git::https://github.com/ministryofjustice/hmpps-terraform-modules.git?ref=issue-62//projects//alfresco//self-signed//server"
+  source                                   = "git::https://github.com/ministryofjustice/hmpps-terraform-modules.git?ref=master//projects//alfresco//self-signed//server"
   alfresco_app_name                        = "${local.alfresco_app_name}"
   ca_cert_pem                              = "${module.self_signed_ca.self_signed_ca_cert_pem}"
   ca_private_key_pem                       = "${module.self_signed_ca.self_signed_ca_private_key}"
