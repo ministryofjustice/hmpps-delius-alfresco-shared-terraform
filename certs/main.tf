@@ -35,7 +35,7 @@ locals {
   region                 = "${var.region}"
   alfresco_app_name      = "${var.alfresco_app_name}"
   environment_identifier = "${var.environment_identifier}"
-  environment            = "${var.environment}"
+  environment            = "${var.environment_type}"
   tags                   = "${data.terraform_remote_state.common.common_tags}"
 }
 
