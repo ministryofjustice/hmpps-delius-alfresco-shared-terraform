@@ -31,7 +31,6 @@ data "terraform_remote_state" "common" {
 locals {
   vpc_id                 = "${data.terraform_remote_state.common.vpc_id}"
   cidr_block             = "${data.terraform_remote_state.common.vpc_cidr_block}"
-  allowed_cidr_block     = ["${var.allowed_cidr_block}"]
   common_name            = "${data.terraform_remote_state.common.environment_identifier}"
   region                 = "${data.terraform_remote_state.common.region}"
   alfresco_app_name      = "${data.terraform_remote_state.common.alfresco_app_name}"
@@ -42,6 +41,11 @@ locals {
   private_cidr_block     = ["${data.terraform_remote_state.common.private_cidr_block}"]
   db_cidr_block          = ["${data.terraform_remote_state.common.db_cidr_block}"]
   sg_map_ids             = "${data.terraform_remote_state.common.sg_map_ids}"
+
+  allowed_cidr_block = [
+    "${var.allowed_cidr_block}",
+    "${data.terraform_remote_state.common.nat_gateway_ips}",
+  ]
 }
 
 ####################################################
