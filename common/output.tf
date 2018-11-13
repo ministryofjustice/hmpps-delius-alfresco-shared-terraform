@@ -95,7 +95,7 @@ output "s3_lb_policy_file" {
 }
 
 output "environment" {
-  value = "${var.environment}"
+  value = "${local.environment}"
 }
 
 output "aws_ecr_arn" {

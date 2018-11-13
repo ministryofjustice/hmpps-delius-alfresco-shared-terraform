@@ -1,6 +1,14 @@
 # hmpps-delius-alfresco-shared-terraform
 Terraform Repo for the Alfresco in the shared VPC
 
+
+URL
+====
+
+Alfresco external - https://alfresco.dev.delius-core.probation.hmpps.dsd.io
+
+Alfresco internal - https://alfresco-int.delius-core-dev.internal
+
 USING TERRAFORM
 ================
 

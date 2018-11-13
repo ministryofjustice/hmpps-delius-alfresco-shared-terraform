@@ -1,5 +1,5 @@
 # Common variables
-variable "eng-remote_state_bucket_name" {
+variable "eng_remote_state_bucket_name" {
   description = "Terraform remote state bucket name"
 }
 
@@ -17,7 +17,7 @@ variable "region" {
   description = "The AWS region."
 }
 
-variable "environment" {
+variable "environment_type" {
   description = "environment"
 }
 

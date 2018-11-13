@@ -1,12 +1,5 @@
 #!/bin/bash
 
-Content-Type: multipart/mixed; boundary="==BOUNDARY=="
-MIME-Version: 1.0
-
---==BOUNDARY==
-Content-Type: text/x-shellscript; charset="us-ascii"
-#!/bin/bash
-
 # Set any ECS agent configuration options
 echo "ECS_CLUSTER=${cluster_name}" >> /etc/ecs/ecs.config
 service docker start
@@ -63,9 +56,6 @@ log_stream_name = {hostname}/{container_instance_id}/ecsaudit_logs
 datetime_format = %Y-%m-%dT%H:%M:%SZ
 EOF
 
---==BOUNDARY==
-Content-Type: text/x-shellscript; charset="us-ascii"
-#!/bin/bash
 # Set the region to send CloudWatch Logs data to (the region where the container instance is located)
 region=$(curl -s 169.254.169.254/latest/dynamic/instance-identity/document | jq -r .region)
 sed -i -e "s/region = us-east-1/region = $region/g" /etc/awslogs/awscli.conf
@@ -73,26 +63,9 @@ sed -i -e "s/region = us-east-1/region = $region/g" /etc/awslogs/awscli.conf
 # log into AWS ECR
 aws ecr get-login --no-include-email --region $region
 
---==BOUNDARY==
-Content-Type: text/upstart-job; charset="us-ascii"
-
 #upstart-job
-description "Configure and start CloudWatch Logs agent on Amazon ECS container instance"
-author "Amazon Web Services"
-start on started ecs
 
-script
-    exec 2>>/var/log/ecs/cloudwatch-logs-start.log
-    set -x
-
-    until curl -s http://localhost:51678/v1/metadata
-    do
-        sleep 1
-    done
-
-# Grab the cluster and container instance ARN from instance metadata
 host_name=$(hostname -s)
-cluster=$(curl -s http://localhost:51678/v1/metadata | jq -r '. | .Cluster')
 container_instance_id=${container_name}
 avail_zone=$(curl http://169.254.169.254/latest/meta-data/placement/availability-zone)
 
@@ -103,11 +76,8 @@ sed -i -e "s/{hostname}/$host_name/g" /etc/awslogs/awslogs.conf
 
 service awslogs start
 chkconfig awslogs on
-end script
+# end script
 
---==BOUNDARY==
-Content-Type: text/x-shellscript; charset="us-ascii"
-#!/bin/bash
 # Mount our EBS volume on boot
 
 cp /usr/share/zoneinfo/Europe/London /etc/localtime
@@ -143,6 +113,3 @@ chmod 600 ${keys_dir}
 chmod 400 ${keys_dir}/server.key
 
 chmod 600 ${keys_dir}/*crt
-
-
-end script

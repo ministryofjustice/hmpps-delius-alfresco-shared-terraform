@@ -62,7 +62,7 @@ data "terraform_remote_state" "ecr" {
   backend = "s3"
 
   config {
-    bucket   = "${var.eng-remote_state_bucket_name}"
+    bucket   = "${var.eng_remote_state_bucket_name}"
     key      = "ecr/terraform.tfstate"
     region   = "${var.region}"
     role_arn = "${var.eng_role_arn}"
@@ -76,7 +76,7 @@ data "terraform_remote_state" "remote_vpc" {
   backend = "s3"
 
   config {
-    bucket   = "${var.eng-remote_state_bucket_name}"
+    bucket   = "${var.eng_remote_state_bucket_name}"
     key      = "vpc/terraform.tfstate"
     region   = "${var.region}"
     role_arn = "${var.eng_role_arn}"
@@ -90,7 +90,7 @@ data "terraform_remote_state" "remote_iam" {
   backend = "s3"
 
   config {
-    bucket   = "${var.eng-remote_state_bucket_name}"
+    bucket   = "${var.eng_remote_state_bucket_name}"
     key      = "alfresco/iam/terraform.tfstate"
     region   = "${var.region}"
     role_arn = "${var.eng_role_arn}"
@@ -145,7 +145,7 @@ locals {
   short_environment_identifier   = "${var.short_environment_identifier}"
   remote_state_bucket_name       = "${var.remote_state_bucket_name}"
   s3_lb_policy_file              = "../policies/s3_alb_policy.json"
-  environment                    = "${var.environment}"
+  environment                    = "${var.environment_type}"
   tags                           = "${merge(data.terraform_remote_state.vpc.tags, map("sub-project", "${var.alfresco_app_name}"))}"
   aws_ecr_arn                    = "${data.terraform_remote_state.ecr.ecr_repo_repository_arn_alfresco}"
   remote_iam_role                = "${data.terraform_remote_state.remote_iam.alfresco_iam_arn}"

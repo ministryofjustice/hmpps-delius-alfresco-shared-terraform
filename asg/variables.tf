@@ -28,3 +28,7 @@ variable "alfresco_instance_ami" {
 variable "asg_instance_type" {
   default = "t2.medium"
 }
+
+variable "bastion_inventory" {
+  default = "dev"
+}

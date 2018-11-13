@@ -73,3 +73,4 @@ venv
 __pycache__
 *.ipynb
 *.pyc
+env_configs

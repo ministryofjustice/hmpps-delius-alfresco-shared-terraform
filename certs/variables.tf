@@ -7,7 +7,7 @@ variable "region" {
   description = "The AWS region."
 }
 
-variable "environment" {
+variable "environment_type" {
   description = "environment"
 }
 

@@ -135,6 +135,7 @@ locals {
   db_host                        = "${data.terraform_remote_state.rds.rds_db_instance_endpoint_cname}"
   monitoring_server_internal_url = "${data.terraform_remote_state.common.monitoring_server_internal_url}"
   app_hostnames                  = "${data.terraform_remote_state.common.app_hostnames}"
+  bastion_inventory              = "${var.bastion_inventory}"
 
   instance_security_groups = [
     "${data.terraform_remote_state.security-groups.security_groups_sg_internal_instance_id}",
@@ -177,6 +178,7 @@ module "asg" {
   account_id                   = "${local.account_id}"
   alfresco_instance_ami        = "${var.alfresco_instance_ami}"
   monitoring_server_url        = "${local.monitoring_server_internal_url}"
+  bastion_inventory            = "${local.bastion_inventory}"
 
   listener = [
     {
