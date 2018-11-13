@@ -43,27 +43,27 @@ cat << EOF > ~/requirements.yml
 EOF
 
 cat << EOF > ~/bootstrap_vars.yml
-mount_point: "${cache_home}" \
-device_name: "${ebs_device}" \
-monitoring_host: "${monitoring_server_url}" \
-bucket_name: "${bucket_name}"  \
-bucket_encrypt_type: "${bucket_encrypt_type}"  \
-bucket_key_id: "${bucket_key_id}"  \
-db_user: "${db_user}"  \
-db_password: "${db_password}"  \
-db_name: "${db_name}"  \
-db_host: "${db_host}"  \
-server_mode: "${server_mode}"  \
-cluster_name: "${cluster_name}"  \
-cluster_subnet: "${cluster_subnet}"  \
-monitoring_server_url: "${monitoring_server_url}"  \
-monitoring_cluster_name: "${monitoring_cluster_name}" \
-cldwatch_log_group: "${cldwatch_log_group}" \
-region: "${region}" \
-external_fqdn: "${external_fqdn}" \
-alfresco_protocol: "https" \
-alfresco_port: "443" \
-cluster_enabled: "true"
+- mount_point: "${cache_home}"
+- device_name: "${ebs_device}"
+- monitoring_host: "${monitoring_server_url}"
+- bucket_name: "${bucket_name}" 
+- bucket_encrypt_type: "${bucket_encrypt_type}"
+- bucket_key_id: "${bucket_key_id}"
+- db_user: "${db_user}"
+- db_password: "${db_password}"
+- db_name: "${db_name}"
+- db_host: "${db_host}"
+- server_mode: "${server_mode}"
+- cluster_name: "${cluster_name}"
+- cluster_subnet: "${cluster_subnet}"
+- monitoring_server_url: "${monitoring_server_url}"
+- monitoring_cluster_name: "${monitoring_cluster_name}"
+- cldwatch_log_group: "${cldwatch_log_group}"
+- region: "${region}"
+- external_fqdn: "${external_fqdn}"
+- alfresco_protocol: "https"
+- alfresco_port: "443"
+- cluster_enabled: "true"
 EOF
 
 wget https://raw.githubusercontent.com/ministryofjustice/hmpps-delius-ansible/master/group_vars/${bastion_inventory}.yml -O users.yml
@@ -75,13 +75,12 @@ cat << EOF > ~/bootstrap.yml
   vars_files:
     - "{{ playbook_dir }}/bootstrap_vars.yml"
     - "{{ playbook_dir }}/users.yml"
-- hosts: localhost
   roles:
-     - bootstrap
-     - rsyslog
-     - elasticbeats
-     - users
-     - alfresco
+    - bootstrap
+    - rsyslog
+    - elasticbeats
+    - users
+    - alfresco
 EOF
 
 ansible-galaxy install -f -r ~/requirements.yml
