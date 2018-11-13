@@ -30,6 +30,19 @@ data "terraform_remote_state" "vpc" {
 }
 
 #-------------------------------------------------------------
+### Getting the nat gateways details
+#-------------------------------------------------------------
+data "terraform_remote_state" "nat" {
+  backend = "s3"
+
+  config {
+    bucket = "${var.remote_state_bucket_name}"
+    key    = "natgateway/terraform.tfstate"
+    region = "${var.region}"
+  }
+}
+
+#-------------------------------------------------------------
 ### Getting the monitoring instance details
 #-------------------------------------------------------------
 data "terraform_remote_state" "monitor" {
@@ -197,6 +210,12 @@ locals {
     "${data.terraform_remote_state.vpc.vpc_db-subnet-az1}",
     "${data.terraform_remote_state.vpc.vpc_db-subnet-az2}",
     "${data.terraform_remote_state.vpc.vpc_db-subnet-az3}",
+  ]
+
+  nat_gateways_ips = [
+    "${data.terraform_remote_state.nat.natgateway_common-nat-public-ip-az1}/32",
+    "${data.terraform_remote_state.nat.natgateway_common-nat-public-ip-az2}/32",
+    "${data.terraform_remote_state.nat.natgateway_common-nat-public-ip-az3}/32",
   ]
 }
 

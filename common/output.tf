@@ -179,3 +179,8 @@ output "sg_map_ids" {
 output "app_hostnames" {
   value = "${local.app_hostnames}"
 }
+
+# nat gateways
+output "nat_gateway_ips" {
+  value = "${local.nat_gateways_ips}"
+}
