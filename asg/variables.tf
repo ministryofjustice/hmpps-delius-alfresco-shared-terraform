@@ -29,6 +29,6 @@ variable "asg_instance_type" {
   default = "t2.medium"
 }
 
-variabke "bastion_inventory" {
+variable "bastion_inventory" {
   default = "dev"
 }
