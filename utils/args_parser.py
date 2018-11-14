@@ -13,6 +13,8 @@ def argsParser():
     parser.add_argument('--token', type=str,
                         help='aws token for credentials')
     parser.add_argument('--repo', type=str,
-                        help='git repo for env configs', default='https://github.com/ministryofjustice/hmpps-env-configs.git')
+                        help='git repo for env configs, defaults to hmpps-env-configs.git', default='https://github.com/ministryofjustice/hmpps-env-configs.git')
+    parser.add_argument('--branch', type=str,
+                        help='git repo branch for env configs, defaults to master branch', default='master')
 
     return parser.parse_args()
