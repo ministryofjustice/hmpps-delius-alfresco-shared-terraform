@@ -153,7 +153,8 @@ The script takes arguments shown below:
 ```
 python docker-run.py -h
 usage: docker-run.py [-h] --env ENV --action {apply,plan,test,output}
-                     [--component COMPONENT] [--token TOKEN]
+                     [--component COMPONENT] [--token TOKEN] [--repo REPO]
+                     [--branch BRANCH]
 
 terraform docker runner
 
@@ -165,6 +166,10 @@ optional arguments:
   --component COMPONENT
                         component to run task on
   --token TOKEN         aws token for credentials
+  --repo REPO           git repo for env configs, defaults to hmpps-env-
+                        configs.git
+  --branch BRANCH       git repo branch for env configs, defaults to master
+                        branch
 ````
 
 ## Usage

@@ -8,6 +8,7 @@ env_target = args.env
 action_type = args.action
 component_target = args.component
 repo = args.repo
+git_branch = args.branch
 
 # working directory
 work_dir = os.getcwd()
@@ -19,7 +20,8 @@ image_id = 'hmpps/terraform-builder:latest'
 cmd = 'sh run.sh'
 
 # docker run command
-docker_cmd = "docker run -it --rm -v {}:/home/tools/data {}".format(
+docker_cmd = "docker run -it --rm -e GIT_BRANCH={} -v {}:/home/tools/data {}".format(
+    git_branch,
     work_dir,
     '-v ${HOME}/.aws:/home/tools/.aws -e RUNNING_IN_CONTAINER=True')
 

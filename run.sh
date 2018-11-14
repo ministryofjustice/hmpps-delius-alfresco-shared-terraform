@@ -56,7 +56,8 @@ then
     workDirContainer=${3}
     echo "Output -> clone configs stage"
     rm -rf ${env_config_dir}
-    git clone ${REPO} ${env_config_dir}
+    echo "Output ---> Cloning branch: ${GIT_BRANCH}"
+    git clone -b ${GIT_BRANCH} ${REPO} ${env_config_dir}
     echo "Output -> environment stage"
     source ${env_config_dir}/${TG_ENVIRONMENT_TYPE}/${TG_ENVIRONMENT_TYPE}.properties
     exit_on_error $? !!
