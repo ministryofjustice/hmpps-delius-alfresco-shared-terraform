@@ -35,6 +35,8 @@ cat << EOF > ~/requirements.yml
   src: https://github.com/ministryofjustice/hmpps-rsyslog-role
 - name: elasticbeats
   src: https://github.com/ministryofjustice/hmpps-beats-monitoring
+- name: logstash
+  src: https://github.com/ministryofjustice/hmpps-logstash
 - name: alfresco
   src: https://github.com/ministryofjustice/hmpps-alfresco-bootstrap
 - name: users
@@ -79,6 +81,7 @@ cat << EOF > ~/bootstrap.yml
     - bootstrap
     - rsyslog
     - elasticbeats
+    - logstash
     - users
     - alfresco
 EOF
