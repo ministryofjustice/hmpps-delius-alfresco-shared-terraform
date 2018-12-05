@@ -7,10 +7,6 @@ output "ecs_nginx_lb_arn" {
   value = "${module.ecs-nginx.lb_arn}"
 }
 
-output "ecs_nginx_lb_arn_suffix" {
-  value = "${module.ecs-nginx.lb_arn_suffix}"
-}
-
 output "ecs_nginx_lb_dns_name" {
   value = "${module.ecs-nginx.lb_dns_name}"
 }
@@ -19,38 +15,8 @@ output "ecs_nginx_lb_dns_alias" {
   value = "${module.ecs-nginx.lb_dns_alias}"
 }
 
-# TARGET GROUPS
-output "ecs_nginx_target_group_id" {
-  value = "${module.ecs-nginx.target_group_id}"
-}
-
-output "ecs_nginx_target_group_arn" {
-  value = "${module.ecs-nginx.target_group_arn}"
-}
-
-output "ecs_nginx_target_group_arn_suffix" {
-  value = "${module.ecs-nginx.target_group_arn_suffix}"
-}
-
-output "ecs_nginx_target_group_name" {
-  value = "${module.ecs-nginx.target_group_name}"
-}
-
-# LISTENER
-output "ecs_nginx_https_lb_listener_id" {
-  value = "${module.ecs-nginx.https_lb_listener_id}"
-}
-
-output "ecs_nginx_https_lb_listener_arn" {
-  value = "${module.ecs-nginx.https_lb_listener_arn}"
-}
-
-output "ecs_nginx_http_lb_listener_id" {
-  value = "${module.ecs-nginx.http_lb_listener_id}"
-}
-
-output "ecs_nginx_http_lb_listener_arn" {
-  value = "${module.ecs-nginx.http_lb_listener_arn}"
+output "ecs_nginx_lb_zone_id" {
+  value = "${module.ecs-nginx.lb_zone_id}"
 }
 
 # ECS CLUSTER

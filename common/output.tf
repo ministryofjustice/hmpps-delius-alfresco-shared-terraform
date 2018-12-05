@@ -170,6 +170,14 @@ output "public_subnet_ids" {
   ]
 }
 
+output "private_subnet_ids" {
+  value = [
+    "${data.terraform_remote_state.vpc.vpc_private-subnet-az1}",
+    "${data.terraform_remote_state.vpc.vpc_private-subnet-az2}",
+    "${data.terraform_remote_state.vpc.vpc_private-subnet-az3}",
+  ]
+}
+
 # Security groups
 output "sg_map_ids" {
   value = "${local.sg_map_ids}"
