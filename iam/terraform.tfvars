@@ -4,6 +4,9 @@ terragrunt = {
   }
 
   dependencies {
-    paths = ["../common", "../s3bucket"]
+    paths = [
+      "../common",
+      "../s3bucket"
+    ]
   }
 }
