@@ -4,11 +4,12 @@ terragrunt = {
   }
 
   dependencies {
-    paths = ["../common",
-      "../securty-groups",
-      "../rds",
+    paths = [
+      "../common",
+      "../s3buckets"
       "../iam",
-      "../s3buckets",
+      "../security-groups",
+      "../rds",
     ]
   }
 }
