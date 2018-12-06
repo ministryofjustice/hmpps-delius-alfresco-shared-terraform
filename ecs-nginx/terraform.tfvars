@@ -7,7 +7,7 @@ terragrunt = {
     paths = [
       "../common",
       "../certs",
-      "../s3buckets"
+      "../s3buckets",
       "../iam",
       "../security-groups",
       "../rds",

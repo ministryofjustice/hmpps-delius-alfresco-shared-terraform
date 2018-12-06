@@ -32,3 +32,7 @@ variable "asg_instance_type" {
 variable "bastion_inventory" {
   default = "dev"
 }
+
+variable "alfresco_jvm_memory" {
+  description = "jvm memmory"
+}

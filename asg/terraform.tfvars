@@ -6,7 +6,7 @@ terragrunt = {
   dependencies {
     paths = [
       "../common",
-      "../s3buckets"
+      "../s3buckets",
       "../iam",
       "../security-groups",
       "../rds",
