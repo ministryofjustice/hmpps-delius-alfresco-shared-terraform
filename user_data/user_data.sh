@@ -90,6 +90,17 @@ ansible-galaxy install -f -r ~/requirements.yml
 SELF_REGISTER=true ansible-playbook ~/bootstrap.yml
 
 # Currently there is a bit of oddness with the service startup, it seems we have to restart it for Alfresco to be available
+export DATE=$(date +"%F-%H-%M")
+cp /etc/sysconfig/tomcat /etc/sysconfig/tomcat-$DATE
+echo 'JAVA_OPTS="-XmsMEMORY_REPLACE -XmxMEMORY_REPLACE -XX:PermSize=192m -XX:NewSize=512m -XX:MaxPermSize=1G \
+  -XX:NewRatio=4 -XX:+UseParNewGC -XX:+UseCodeCacheFlushing -XX:+DisableExplicitGC \
+  -XX:InitialCodeCacheSize=256m -XX:ReservedCodeCacheSize=256m -XX:+UseConcMarkSweepGC \
+  -XX:+CMSParallelRemarkEnabled -XX:CMSInitiatingOccupancyFraction=80 -Dsun.rmi.dgc.client.gcInterval=3600000 \
+  -Dsun.rmi.dgc.server.gcInterval=3600000 -server -Dsun.security.ssl.allowUnsafeRenegotiation=true -Duser.timezone=UTC \
+  -Dsun.security.krb5.msinterop.kstring=true"' > /etc/sysconfig/tomcat
+
+sed -i 's/MEMORY_REPLACE/${jvm_memory}/g' /etc/sysconfig/tomcat
+
 sudo service tomcat-alfresco stop
 sleep 10
 sudo service tomcat-alfresco start

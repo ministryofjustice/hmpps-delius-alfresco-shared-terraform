@@ -136,6 +136,7 @@ locals {
   monitoring_server_internal_url = "${data.terraform_remote_state.common.monitoring_server_internal_url}"
   app_hostnames                  = "${data.terraform_remote_state.common.app_hostnames}"
   bastion_inventory              = "${var.bastion_inventory}"
+  jvm_memory                     = "${var.alfresco_jvm_memory}"
 
   instance_security_groups = [
     "${data.terraform_remote_state.security-groups.security_groups_sg_internal_instance_id}",
@@ -210,6 +211,7 @@ module "asg" {
   instance_type               = "${var.asg_instance_type}"
   associate_public_ip_address = false
   cache_home                  = "/srv/cache"
+  jvm_memory                  = "${local.jvm_memory}"
 
   instance_security_groups = ["${local.instance_security_groups}"]
 }
