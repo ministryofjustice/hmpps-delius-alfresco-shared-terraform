@@ -1,10 +1,5 @@
 #!/bin/bash
 
-# Set any ECS agent configuration options
-echo "ECS_CLUSTER=${cluster_name}" >> /etc/ecs/ecs.config
-service docker start
-start ecs
-
 # Install awslogs and the jq JSON parser
 yum install -y awslogs jq
 
@@ -36,24 +31,6 @@ file = /var/log/docker
 log_group_name = ${log_group_name}
 log_stream_name = {hostname}/{container_instance_id}/docker
 datetime_format = %Y-%m-%dT%H:%M:%S.%f
-
-[/var/log/ecs/ecs-init.log]
-file = /var/log/ecs/ecs-init.log
-log_group_name = ${log_group_name}
-log_stream_name = {hostname}/{container_instance_id}/ecsinit_logs
-datetime_format = %Y-%m-%dT%H:%M:%SZ
-
-[/var/log/ecs/ecs-agent.log]
-file = /var/log/ecs/ecs-agent.log
-log_group_name = ${log_group_name}
-log_stream_name = {hostname}/{container_instance_id}/ecsagent_logs
-datetime_format = %Y-%m-%dT%H:%M:%SZ
-
-[/var/log/ecs/audit.log]
-file = /var/log/ecs/audit.log
-log_group_name = ${log_group_name}
-log_stream_name = {hostname}/{container_instance_id}/ecsaudit_logs
-datetime_format = %Y-%m-%dT%H:%M:%SZ
 EOF
 
 # Set the region to send CloudWatch Logs data to (the region where the container instance is located)
@@ -78,23 +55,10 @@ service awslogs start
 chkconfig awslogs on
 # end script
 
-# Mount our EBS volume on boot
 
 cp /usr/share/zoneinfo/Europe/London /etc/localtime
 
 mkdir -p ${keys_dir}
-
-pvcreate ${ebs_device}
-
-vgcreate data ${ebs_device}
-
-lvcreate -l100%VG -n keys data
-
-mkfs.xfs /dev/data/keys
-
-echo "/dev/mapper/data-keys ${keys_dir} xfs defaults 0 0" >> /etc/fstab
-
-mount -a
 
 # GET SECRETS FROM PARAMETER STORE
 ${ssm_get_command} "${self_signed_ca_cert}" \
@@ -113,3 +77,86 @@ chmod 600 ${keys_dir}
 chmod 400 ${keys_dir}/server.key
 
 chmod 600 ${keys_dir}/*crt
+
+# Docker setup
+
+echo '### DOCKER SETUP'
+
+yum remove  -y docker \
+    docker-client \
+    docker-client-latest \
+    docker-common \
+    docker-latest \
+    docker-latest-logrotate \
+    docker-logrotate \
+    docker-selinux \
+    docker-engine-selinux \
+    docker-engine
+
+yum install -y yum-utils \
+  device-mapper-persistent-data \
+  lvm2
+
+yum-config-manager \
+    --add-repo \
+    https://download.docker.com/linux/centos/docker-ce.repo
+
+yum install docker-ce docker-distribution -y
+
+mkdir -p /etc/docker
+
+echo '{
+    "selinux-enabled": true,
+    "log-driver": "journald",
+    "storage-opts": [
+      "dm.directlvm_device=${ebs_device}",
+      "dm.thinp_percent=95",
+      "dm.thinp_metapercent=1",
+      "dm.thinp_autoextend_threshold=80",
+      "dm.thinp_autoextend_percent=20",
+      "dm.directlvm_device_force=false"
+    ],
+    "storage-driver": "devicemapper"
+}' > /etc/docker/daemon.json
+
+systemctl enable docker
+
+systemctl restart docker
+
+# Add nginx container
+
+echo '[Unit]
+Description=${container_name} nginx container
+After=docker.service
+Requires=docker.service
+
+[Service]
+EnvironmentFile=-/etc/sysconfig/proxy
+TimeoutStartSec=0
+Restart=always
+ExecStartPre=-/usr/bin/docker stop ${container_name}
+ExecStartPre=-/usr/bin/docker rm ${container_name}
+ExecStartPre=-/usr/bin/docker pull ${image_url}:${image_version}
+ExecStart=/usr/bin/docker run --name ${container_name} \
+  -p 80:80 \
+  -p 443:443 \
+  -v ${keys_dir}:${keys_dir}:z \
+  -e "TZ=Europe/London" \
+  -e "S3_CONFIG_BUCKET=${s3_bucket_config}" \
+  -e "ALFRESCO_HOST=${alfresco_host}" \
+  -e "CONFIG_FILE_PATH=${config_file_path}" \
+  -e "RUNTIME_CONFIG_OVERRIDE=${runtime_config_override}" \
+  -e "TOMCAT_HOST=${tomcat_host}" \
+  -e "KIBANA_HOST=${kibana_host}" \
+  -e "NGINX_CONFIG_FILE=${nginx_config_file}" ${image_url}:${image_version}
+ExecStop=-/usr/bin/docker rm -f ${container_name}
+
+[Install]
+WantedBy=multi-user.target' > /etc/systemd/system/proxy.service
+
+touch /etc/sysconfig/proxy
+
+systemctl daemon-reload
+
+systemctl enable proxy.service
+systemctl start proxy.service
