@@ -26,7 +26,7 @@ variable "alfresco_instance_ami" {
 }
 
 variable "asg_instance_type" {
-  default = "t2.medium"
+  default = "m5.large"
 }
 
 variable "bastion_inventory" {

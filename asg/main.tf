@@ -204,7 +204,7 @@ module "asg" {
   service_desired_count       = "3"
   user_data                   = "../user_data/user_data.sh"
   volume_size                 = "20"
-  ebs_device_name             = "/dev/xvdb"
+  ebs_device_name             = "/dev/nvme1n1"
   ebs_volume_type             = "standard"
   ebs_volume_size             = "512"
   ebs_encrypted               = "true"
