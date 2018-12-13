@@ -50,6 +50,7 @@ locals {
   private_zone_id        = "${data.terraform_remote_state.common.private_zone_id}"
   external_domain        = "${data.terraform_remote_state.common.external_domain}"
   public_zone_id         = "${data.terraform_remote_state.common.public_zone_id}"
+  common_name            = "${data.terraform_remote_state.common.common_name}"
   environment_identifier = "${data.terraform_remote_state.common.environment_identifier}"
   region                 = "${var.region}"
   alfresco_app_name      = "${data.terraform_remote_state.common.alfresco_app_name}"
@@ -67,9 +68,10 @@ locals {
 # RDS - Application Specific
 ####################################################
 module "rds" {
-  source                    = "git::https://github.com/ministryofjustice/hmpps-terraform-modules.git?ref=master//projects//alfresco//rds"
+  source                    = "git::https://github.com/ministryofjustice/hmpps-terraform-modules.git?ref=issue-106//projects//alfresco//rds"
   alfresco_app_name         = "${local.alfresco_app_name}"
   environment_identifier    = "${local.environment_identifier}"
+  common_name               = "${local.common_name}"
   tags                      = "${local.tags}"
   subnet_ids                = "${local.db_subnet_ids}"
   create_db_subnet_group    = true

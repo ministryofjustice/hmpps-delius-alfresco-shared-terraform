@@ -118,6 +118,7 @@ locals {
   external_domain                = "${data.terraform_remote_state.common.external_domain}"
   public_zone_id                 = "${data.terraform_remote_state.common.public_zone_id}"
   environment_identifier         = "${data.terraform_remote_state.common.environment_identifier}"
+  common_name                    = "${data.terraform_remote_state.common.common_name}"
   short_environment_identifier   = "${data.terraform_remote_state.common.short_environment_identifier}"
   region                         = "${var.region}"
   alfresco_app_name              = "${data.terraform_remote_state.common.alfresco_app_name}"
@@ -149,10 +150,11 @@ locals {
 # ASG - Application Specific
 ####################################################
 module "asg" {
-  source                       = "git::https://github.com/ministryofjustice/hmpps-terraform-modules.git?ref=master//projects//alfresco//asg"
+  source                       = "git::https://github.com/ministryofjustice/hmpps-terraform-modules.git?ref=issue-106//projects//alfresco//asg"
   alfresco_app_name            = "${local.alfresco_app_name}"
   app_hostnames                = "${local.app_hostnames}"
   environment_identifier       = "${local.environment_identifier}"
+  common_name                  = "${local.common_name}"
   tags                         = "${local.tags}"
   private_subnet_ids           = "${local.private_subnet_map}"
   short_environment_identifier = "${local.short_environment_identifier}"

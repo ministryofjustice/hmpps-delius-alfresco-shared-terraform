@@ -31,7 +31,7 @@ data "terraform_remote_state" "common" {
 
 locals {
   internal_domain        = "${data.terraform_remote_state.common.internal_domain}"
-  common_name            = "${var.environment_identifier}-${var.alfresco_app_name}"
+  common_name            = "${data.terraform_remote_state.common.common_name}"
   region                 = "${var.region}"
   alfresco_app_name      = "${var.alfresco_app_name}"
   environment_identifier = "${var.environment_identifier}"
