@@ -68,7 +68,7 @@ locals {
 # RDS - Application Specific
 ####################################################
 module "rds" {
-  source                    = "git::https://github.com/ministryofjustice/hmpps-terraform-modules.git?ref=issue-106//projects//alfresco//rds"
+  source                    = "git::https://github.com/ministryofjustice/hmpps-terraform-modules.git?ref=master//projects//alfresco//rds"
   alfresco_app_name         = "${local.alfresco_app_name}"
   environment_identifier    = "${local.environment_identifier}"
   common_name               = "${local.common_name}"
