@@ -155,6 +155,7 @@ locals {
   public_zone_id                 = "${data.terraform_remote_state.common.public_zone_id}"
   environment_identifier         = "${data.terraform_remote_state.common.environment_identifier}"
   short_environment_identifier   = "${data.terraform_remote_state.common.short_environment_identifier}"
+  common_name                    = "${data.terraform_remote_state.common.common_name}"
   region                         = "${var.region}"
   app_name                       = "proxy"
   environment                    = "${data.terraform_remote_state.common.environment}"
@@ -205,6 +206,7 @@ module "ecs-nginx" {
   image_version                = "${local.image_version}"
   short_environment_identifier = "${local.short_environment_identifier}"
   environment_identifier       = "${local.environment_identifier}"
+  common_name                  = "${local.common_name}"
   environment                  = "${local.environment}"
   public_subnet_ids            = ["${local.public_subnet_ids}"]
   private_subnet_ids           = ["${local.private_subnet_ids}"]

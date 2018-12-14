@@ -31,7 +31,7 @@ data "terraform_remote_state" "common" {
 locals {
   vpc_id                 = "${data.terraform_remote_state.common.vpc_id}"
   cidr_block             = "${data.terraform_remote_state.common.vpc_cidr_block}"
-  common_name            = "${data.terraform_remote_state.common.environment_identifier}"
+  common_name            = "${data.terraform_remote_state.common.common_name}"
   region                 = "${data.terraform_remote_state.common.region}"
   alfresco_app_name      = "${data.terraform_remote_state.common.alfresco_app_name}"
   environment_identifier = "${data.terraform_remote_state.common.environment_identifier}"

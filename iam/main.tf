@@ -42,16 +42,16 @@ data "terraform_remote_state" "s3bucket" {
 ####################################################
 
 locals {
-  region                 = "${var.region}"
-  alfresco_app_name      = "${data.terraform_remote_state.common.alfresco_app_name}"
-  environment_identifier = "${data.terraform_remote_state.common.environment_identifier}"
-  tags                   = "${data.terraform_remote_state.common.common_tags}"
-  storage_s3bucket       = "${data.terraform_remote_state.s3bucket.s3bucket}"
-  s3-config-bucket       = "${data.terraform_remote_state.common.common_s3-config-bucket}"
-  remote_config_bucket   = "${data.terraform_remote_state.common.remote_config_bucket}"
-  aws_ecr_arn            = "${data.terraform_remote_state.common.aws_ecr_arn}"
-  remote_iam_role        = "${data.terraform_remote_state.common.remote_iam_role}"
-  s3bucket_kms_arn       = "${data.terraform_remote_state.s3bucket.s3bucket_kms_arn}"
+  region               = "${var.region}"
+  alfresco_app_name    = "${data.terraform_remote_state.common.alfresco_app_name}"
+  common_name          = "${data.terraform_remote_state.common.common_name}"
+  tags                 = "${data.terraform_remote_state.common.common_tags}"
+  storage_s3bucket     = "${data.terraform_remote_state.s3bucket.s3bucket}"
+  s3-config-bucket     = "${data.terraform_remote_state.common.common_s3-config-bucket}"
+  remote_config_bucket = "${data.terraform_remote_state.common.remote_config_bucket}"
+  aws_ecr_arn          = "${data.terraform_remote_state.common.aws_ecr_arn}"
+  remote_iam_role      = "${data.terraform_remote_state.common.remote_iam_role}"
+  s3bucket_kms_arn     = "${data.terraform_remote_state.s3bucket.s3bucket_kms_arn}"
 }
 
 ####################################################
@@ -59,8 +59,7 @@ locals {
 ####################################################
 module "iam" {
   source                   = "git::https://github.com/ministryofjustice/hmpps-terraform-modules.git?ref=master//projects//alfresco//iam"
-  alfresco_app_name        = "${local.alfresco_app_name}"
-  environment_identifier   = "${local.environment_identifier}"
+  common_name              = "${local.common_name}"
   tags                     = "${local.tags}"
   ec2_role_policy_file     = "${file("../policies/ec2_role_policy.json")}"
   ecs_role_policy_file     = "${file("../policies/ecs_role_policy.json")}"

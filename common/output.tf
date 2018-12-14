@@ -63,7 +63,7 @@ output "public_zone_id" {
 }
 
 output "common_name" {
-  value = "${var.environment_identifier}-${var.alfresco_app_name}"
+  value = "${local.common_name}"
 }
 
 output "lb_account_id" {

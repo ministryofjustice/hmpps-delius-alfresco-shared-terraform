@@ -149,7 +149,7 @@ locals {
   private_zone_id                = "${data.terraform_remote_state.vpc.private_zone_id}"
   external_domain                = "${data.terraform_remote_state.vpc.public_zone_name}"
   public_zone_id                 = "${data.terraform_remote_state.vpc.public_zone_id}"
-  common_name                    = "${var.environment_identifier}-${var.alfresco_app_name}"
+  common_name                    = "${var.environment_identifier}-app"
   lb_account_id                  = "${var.lb_account_id}"
   region                         = "${var.region}"
   role_arn                       = "${var.role_arn}"
