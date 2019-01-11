@@ -79,10 +79,10 @@ module "rds" {
   create_db_option_group    = true
   create_db_instance        = true
   parameters                = []
-  family                    = "postgres9.6"
+  family                    = "postgres9.4"
   engine                    = "postgres"
-  major_engine_version      = "9.6"
-  engine_version            = "9.6.6"
+  major_engine_version      = "9.4"
+  engine_version            = "9.4.7"
   port                      = "5432"
   storage_encrypted         = true
   maintenance_window        = "Mon:00:00-Mon:03:00"
