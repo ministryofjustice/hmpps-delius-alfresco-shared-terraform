@@ -94,21 +94,21 @@ locals {
 ####################################################
 # subnet group
 module "subnet_group" {
-  source  = "git::https://github.com/ministryofjustice/hmpps-terraform-modules.git?ref=issue-111//modules//elastiCache//subnet_group"
+  source  = "git::https://github.com/ministryofjustice/hmpps-terraform-modules.git?ref=master//modules//elastiCache//subnet_group"
   name    = "${local.common_name}"
   subnets = "${local.private_subnet_ids}"
 }
 
 #parameter_group
 module "parameter_group" {
-  source = "git::https://github.com/ministryofjustice/hmpps-terraform-modules.git?ref=issue-111//modules//elastiCache//parameter_group"
+  source = "git::https://github.com/ministryofjustice/hmpps-terraform-modules.git?ref=master//modules//elastiCache//parameter_group"
   name   = "${local.common_name}"
   family = "memcached1.5"
 }
 
 # cluster
 module "memcached" {
-  source               = "git::https://github.com/ministryofjustice/hmpps-terraform-modules.git?ref=issue-111//modules//elastiCache//memcached"
+  source               = "git::https://github.com/ministryofjustice/hmpps-terraform-modules.git?ref=master//modules//elastiCache//memcached"
   cluster_id           = "${local.short_environment_identifier}-cache"
   engine_version       = "${local.engine_version}"
   instance_type        = "${local.instance_type}"
