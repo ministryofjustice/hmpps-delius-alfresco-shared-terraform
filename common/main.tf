@@ -175,6 +175,7 @@ locals {
 
   sg_map_ids = {
     internal_inst_sg_id = "${data.terraform_remote_state.security-groups.sg_alfresco_api_in}"
+    elasticache_sg_id   = "${data.terraform_remote_state.security-groups.sg_alfresco_elasticache_in}"
     db_sg_id            = "${data.terraform_remote_state.security-groups.sg_alfresco_db_in}"
     external_lb_sg_id   = "${data.terraform_remote_state.security-groups.sg_alfresco_external_lb_in}"
     internal_lb_sg_id   = "${data.terraform_remote_state.security-groups.sg_alfresco_internal_lb_in}"
