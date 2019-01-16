@@ -187,6 +187,14 @@ pipeline {
           }
         }
 
+        stage('Delius | Alfresco ElastiCache') {
+          steps {
+            script {
+              do_terraform(project.config, environment_name, project.alfresco, 'elasticache-memcached')
+            }
+          }
+        }
+
         stage('Delius | Alfresco ASG') {
           steps {
             script {
