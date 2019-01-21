@@ -74,3 +74,4 @@ __pycache__
 *.ipynb
 *.pyc
 env_configs
+.DS_Store
