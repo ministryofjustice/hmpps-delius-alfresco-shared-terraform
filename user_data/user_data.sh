@@ -108,6 +108,9 @@ sed -i 's/MEMORY_REPLACE/${jvm_memory}/g' /etc/sysconfig/tomcat
 
 
 sudo systemctl enable tomcat
+sudo systemctl start tomcat
+
+sleep 60
 sudo systemctl stop tomcat
 sudo cp /usr/share/tomcat/shared/classes/extension/log4j.properties /usr/share/tomccat/webapps/alfresco/WEB-INF/classes/.
 sudo systemctl start tomcat
