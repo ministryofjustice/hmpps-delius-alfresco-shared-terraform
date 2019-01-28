@@ -80,7 +80,7 @@ locals {
 # EFS content
 ####################################################
 module "efs_content" {
-  source                 = "./modules/efs"
+  source                 = "git::https://github.com/ministryofjustice/hmpps-terraform-modules.git?ref=issue-113//modules//efs"
   environment_identifier = "${local.environment_identifier}"
   tags                   = "${local.tags}"
   encrypted              = true
@@ -98,7 +98,7 @@ module "efs_content" {
 # EFS content_deleted
 ####################################################
 module "efs_content_deleted" {
-  source                 = "./modules/efs"
+  source                 = "git::https://github.com/ministryofjustice/hmpps-terraform-modules.git?ref=issue-113//modules//efs"
   environment_identifier = "${local.environment_identifier}"
   tags                   = "${local.tags}"
   encrypted              = true
