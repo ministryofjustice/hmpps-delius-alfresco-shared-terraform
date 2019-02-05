@@ -39,7 +39,7 @@ locals {
   db_subnet_ids = ["${data.terraform_remote_state.common.db_subnet_ids}"]
 
   db_security_groups = [
-    "sg-0cf7b889af05c6714",
+    "${data.terraform_remote_state.security-groups.security_groups_sg_rds_id}",
     "${data.terraform_remote_state.common.common_sg_outbound_id}",
     "${data.terraform_remote_state.common.monitoring_server_client_sg_id}",
   ]
