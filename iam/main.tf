@@ -49,7 +49,6 @@ locals {
   storage_s3bucket     = "${data.terraform_remote_state.s3bucket.s3bucket}"
   s3-config-bucket     = "${data.terraform_remote_state.common.common_s3-config-bucket}"
   remote_config_bucket = "${data.terraform_remote_state.common.remote_config_bucket}"
-  aws_ecr_arn          = "${data.terraform_remote_state.common.aws_ecr_arn}"
   remote_iam_role      = "${data.terraform_remote_state.common.remote_iam_role}"
   s3bucket_kms_arn     = "${data.terraform_remote_state.s3bucket.s3bucket_kms_arn}"
 }
@@ -58,7 +57,7 @@ locals {
 # IAM - Application Specific
 ####################################################
 module "iam" {
-  source                   = "git::https://github.com/ministryofjustice/hmpps-terraform-modules.git?ref=master//projects//alfresco//iam"
+  source                   = "git::https://github.com/ministryofjustice/hmpps-terraform-modules.git?ref=issue-113//projects//alfresco//iam"
   common_name              = "${local.common_name}"
   tags                     = "${local.tags}"
   ec2_role_policy_file     = "${file("../policies/ec2_role_policy.json")}"
@@ -66,7 +65,6 @@ module "iam" {
   ec2_policy_file          = "ec2_policy.json"
   ecs_policy_file          = "ecs_policy.json"
   ec2_internal_policy_file = "${file("../policies/ec2_internal_policy.json")}"
-  aws_ecr_arn              = "${local.aws_ecr_arn}"
   remote_iam_role          = "${local.remote_iam_role}"
   remote_config_bucket     = "${local.remote_config_bucket}"
   storage_s3bucket         = "${local.storage_s3bucket}"
