@@ -72,7 +72,8 @@ data "template_file" "db_userdata" {
 module "db" {
   source                      = "git::https://github.com/ministryofjustice/hmpps-terraform-modules.git?ref=master//modules//ec2"
   app_name                    = "${local.environment_identifier}-db-ec2"
-  ami_id                      = "${data.aws_ami.db_ami.id}"
+  ami_id                      = "ami-040a6b0a7ab65fb01"
+//  ami_id                      = "${data.aws_ami.db_ami.id}"
   instance_type               = "${var.asg_instance_type}"
   subnet_id                   = "${local.db_subnet_ids[0]}"                                                                      #"${local.private_subnet_map["az1"]}"
   iam_instance_profile        = "${local.instance_profile}"
