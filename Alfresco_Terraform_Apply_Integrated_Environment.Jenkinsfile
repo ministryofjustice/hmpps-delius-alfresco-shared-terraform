@@ -202,14 +202,6 @@ pipeline {
             }
           }
         }
-
-        stage('Delius | Alfresco ECS Nginx') {
-          steps {
-            script {
-              do_terraform(project.config, environment_name, project.alfresco, 'ecs-nginx')
-            }
-          }
-        }
     }
 
     post {

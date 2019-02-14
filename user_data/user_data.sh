@@ -39,7 +39,6 @@ cat << EOF > ~/requirements.yml
   src: https://github.com/ministryofjustice/hmpps-logstash
 - name: alfresco
   src: https://github.com/ministryofjustice/hmpps-alfresco-bootstrap
-  version: trialEFS
 - name: users
   src: singleplatform-eng.users
 
@@ -67,10 +66,6 @@ cat << EOF > ~/bootstrap_vars.yml
 - alfresco_protocol: "https"
 - alfresco_port: "443"
 - cluster_enabled: "true"
-
-# EFS Vas
-- content_store_id: "${efs_contentstore_id}"
-- content_store_deleted_id: "${efs_contentstore_deleted_id}"
 EOF
 
 wget https://raw.githubusercontent.com/ministryofjustice/hmpps-delius-ansible/master/group_vars/${bastion_inventory}.yml -O ~/users.yml
@@ -106,10 +101,11 @@ echo 'JAVA_OPTS="-XmsMEMORY_REPLACE -XmxMEMORY_REPLACE -XX:PermSize=192m -XX:New
 
 sed -i 's/MEMORY_REPLACE/${jvm_memory}/g' /etc/sysconfig/tomcat
 
+# stop tomcat-alfresco service
+sudo systemctl stop tomcat-alfresco
+sleep 10
+sudo systemctl disable tomcat-alfresco
 
+# start tomcat service
 sudo systemctl enable tomcat
 sudo systemctl start tomcat
-
-sleep 60
-sudo cp /usr/share/tomcat/shared/classes/extension/log4j.properties /usr/share/tomcat/webapps/alfresco/WEB-INF/classes/.
-sudo systemctl restart tomcat

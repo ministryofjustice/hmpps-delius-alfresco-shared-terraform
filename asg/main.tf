@@ -188,15 +188,9 @@ locals {
 
   instance_security_groups = [
     "${data.terraform_remote_state.security-groups.security_groups_sg_internal_instance_id}",
-    "${data.terraform_remote_state.security-groups.security_groups_sg_efs_sg_id}",
     "${data.terraform_remote_state.common.common_sg_outbound_id}",
     "${data.terraform_remote_state.common.monitoring_server_client_sg_id}",
   ]
-
-  efs_shares = {
-    content_store_id         = "${data.terraform_remote_state.efs.content_store_efs_id}"
-    content_store_deleted_id = "${data.terraform_remote_state.efs.content_store_deleted_efs_id}"
-  }
 }
 
 ####################################################
@@ -227,7 +221,7 @@ module "asg" {
   internal_domain              = "${local.internal_domain}"
   db_name                      = "${local.db_name}"
   db_username                  = "${local.db_username}"
-  db_host                      = "${module.db.private_ip}"                                                                                      #"${local.db_host}"
+  db_host                      = "${local.db_host}"
   environment                  = "${local.environment}"
   region                       = "${local.region}"
   ami_id                       = "${local.ami_id}"
@@ -244,7 +238,6 @@ module "asg" {
   certificate_arn              = "${local.certificate_arn}"
   public_subnet_ids            = ["${local.public_subnet_ids}"]
   public_zone_id               = "${local.public_zone_id}"
-  efs_shares                   = "${local.efs_shares}"
 
   listener = [
     {

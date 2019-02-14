@@ -135,7 +135,7 @@ locals {
   private_zone_id                = "${data.terraform_remote_state.vpc.private_zone_id}"
   external_domain                = "${data.terraform_remote_state.vpc.public_zone_name}"
   public_zone_id                 = "${data.terraform_remote_state.vpc.public_zone_id}"
-  common_name                    = "${var.environment_identifier}-app"
+  common_name                    = "${var.environment_identifier}-${var.alfresco_app_name}"
   lb_account_id                  = "${var.lb_account_id}"
   region                         = "${var.region}"
   role_arn                       = "${var.role_arn}"
@@ -166,7 +166,6 @@ locals {
     internal_lb_sg_id   = "${data.terraform_remote_state.security-groups.sg_alfresco_internal_lb_in}"
     external_inst_sg_id = "${data.terraform_remote_state.security-groups.sg_alfresco_nginx_in}"
     bastion_in_sg_id    = "${data.terraform_remote_state.security-groups.sg_ssh_bastion_in_id}"
-    efs_sg_id           = "${data.terraform_remote_state.security-groups.sg_alfresco_efs_in}"
   }
 
   private_subnet_map = {

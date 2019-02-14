@@ -109,7 +109,7 @@ module "parameter_group" {
 # cluster
 module "memcached" {
   source               = "git::https://github.com/ministryofjustice/hmpps-terraform-modules.git?ref=master//modules//elastiCache//memcached"
-  cluster_id           = "${local.short_environment_identifier}-cache"
+  cluster_id           = "${local.short_environment_identifier}-ec"
   engine_version       = "${local.engine_version}"
   instance_type        = "${local.instance_type}"
   tags                 = "${local.tags}"
