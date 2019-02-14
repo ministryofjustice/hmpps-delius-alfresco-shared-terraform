@@ -31,7 +31,9 @@ cat << EOF > ~/requirements.yml
   version: centos
 - name: users
   src: singleplatform-eng.users
-
+- name: bootstrap
+  src: https://github.com/ministryofjustice/hmpps-bootstrap
+  version: centos
 EOF
 
 wget https://raw.githubusercontent.com/ministryofjustice/hmpps-delius-ansible/master/group_vars/${bastion_inventory}.yml -O ~/users.yml
@@ -45,6 +47,11 @@ cat << EOF > ~/bootstrap.yml
   roles:
     - bootstrap
     - users
+  tasks:
+    - name: Install docker
+      include_role:
+        name: bootstrap
+        tasks_from: docker.yml
 EOF
 
 ansible-galaxy install -f -r ~/requirements.yml
@@ -53,48 +60,48 @@ SELF_REGISTER=true ansible-playbook ~/bootstrap.yml
 # Docker setup
 cp /usr/share/zoneinfo/Europe/London /etc/localtime
 
-echo '### DOCKER SETUP'
+#echo '### DOCKER SETUP'
+#
+#yum remove  -y docker \
+#    docker-client \
+#    docker-client-latest \
+#    docker-common \
+#    docker-latest \
+#    docker-latest-logrotate \
+#    docker-logrotate \
+#    docker-selinux \
+#    docker-engine-selinux \
+#    docker-engine
+#
+#yum install -y yum-utils \
+#  device-mapper-persistent-data \
+#  lvm2
+#
+#yum-config-manager \
+#    --add-repo \
+#    https://download.docker.com/linux/centos/docker-ce.repo
+#
+#yum install docker-ce docker-distribution -y
 
-yum remove  -y docker \
-    docker-client \
-    docker-client-latest \
-    docker-common \
-    docker-latest \
-    docker-latest-logrotate \
-    docker-logrotate \
-    docker-selinux \
-    docker-engine-selinux \
-    docker-engine
-
-yum install -y yum-utils \
-  device-mapper-persistent-data \
-  lvm2
-
-yum-config-manager \
-    --add-repo \
-    https://download.docker.com/linux/centos/docker-ce.repo
-
-yum install docker-ce docker-distribution -y
-
-mkdir -p /etc/docker
-
-echo '{
-    "selinux-enabled": true,
-    "log-driver": "journald",
-    "storage-opts": [
-      "dm.directlvm_device=${ebs_device}",
-      "dm.thinp_percent=95",
-      "dm.thinp_metapercent=1",
-      "dm.thinp_autoextend_threshold=80",
-      "dm.thinp_autoextend_percent=20",
-      "dm.directlvm_device_force=false"
-    ],
-    "storage-driver": "devicemapper"
-}' > /etc/docker/daemon.json
-
-systemctl enable docker
-
-systemctl restart docker
+#mkdir -p /etc/docker
+#
+#echo '{
+#    "selinux-enabled": false,
+#    "log-driver": "journald",
+#    "storage-opts": [
+#      "dm.directlvm_device=${ebs_device}",
+#      "dm.thinp_percent=95",
+#      "dm.thinp_metapercent=1",
+#      "dm.thinp_autoextend_threshold=80",
+#      "dm.thinp_autoextend_percent=20",
+#      "dm.directlvm_device_force=false"
+#    ],
+#    "storage-driver": "devicemapper"
+#}' > /etc/docker/daemon.json
+#
+#systemctl enable docker
+#
+#systemctl restart docker
 
 # Add Postgres container
 
