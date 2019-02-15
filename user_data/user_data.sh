@@ -101,6 +101,8 @@ echo 'JAVA_OPTS="-XmsMEMORY_REPLACE -XmxMEMORY_REPLACE -XX:PermSize=192m -XX:New
 
 sed -i 's/MEMORY_REPLACE/${jvm_memory}/g' /etc/sysconfig/tomcat
 
+chown -R tomcat:tomcat /srv/cache
+
 # stop tomcat-alfresco service
 sudo systemctl stop tomcat-alfresco
 sleep 10

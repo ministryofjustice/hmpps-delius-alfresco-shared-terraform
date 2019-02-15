@@ -25,6 +25,19 @@ data "terraform_remote_state" "common" {
 }
 
 #-------------------------------------------------------------
+### Getting the security groups details
+#-------------------------------------------------------------
+data "terraform_remote_state" "self_certs" {
+  backend = "s3"
+
+  config {
+    bucket = "${var.remote_state_bucket_name}"
+    key    = "alfresco/certs/terraform.tfstate"
+    region = "${var.region}"
+  }
+}
+
+#-------------------------------------------------------------
 ### Getting the s3 details
 #-------------------------------------------------------------
 data "terraform_remote_state" "s3bucket" {
@@ -59,6 +72,19 @@ data "terraform_remote_state" "rds" {
   config {
     bucket = "${var.remote_state_bucket_name}"
     key    = "alfresco/rds/terraform.tfstate"
+    region = "${var.region}"
+  }
+}
+
+#-------------------------------------------------------------
+### Getting the efs details
+#-------------------------------------------------------------
+data "terraform_remote_state" "efs" {
+  backend = "s3"
+
+  config {
+    bucket = "${var.remote_state_bucket_name}"
+    key    = "alfresco/efs/terraform.tfstate"
     region = "${var.region}"
   }
 }
@@ -103,6 +129,15 @@ data "aws_ami" "amazon_ami" {
   }
 }
 
+#-------------------------------------------------------------
+### Getting ACM Cert
+#-------------------------------------------------------------
+data "aws_acm_certificate" "cert" {
+  domain      = "*.${data.terraform_remote_state.common.external_domain}"
+  types       = ["AMAZON_ISSUED"]
+  most_recent = true
+}
+
 ####################################################
 # Locals
 ####################################################
@@ -115,8 +150,8 @@ locals {
   allowed_cidr_block             = ["${data.terraform_remote_state.common.vpc_cidr_block}"]
   internal_domain                = "${data.terraform_remote_state.common.internal_domain}"
   private_zone_id                = "${data.terraform_remote_state.common.private_zone_id}"
-  external_domain                = "${data.terraform_remote_state.common.external_domain}"
   public_zone_id                 = "${data.terraform_remote_state.common.public_zone_id}"
+  external_domain                = "${data.terraform_remote_state.common.external_domain}"
   environment_identifier         = "${data.terraform_remote_state.common.environment_identifier}"
   common_name                    = "${data.terraform_remote_state.common.common_name}"
   short_environment_identifier   = "${data.terraform_remote_state.common.short_environment_identifier}"
@@ -125,7 +160,7 @@ locals {
   environment                    = "${data.terraform_remote_state.common.environment}"
   tags                           = "${data.terraform_remote_state.common.common_tags}"
   private_subnet_map             = "${data.terraform_remote_state.common.private_subnet_map}"
-  lb_security_groups             = ["${data.terraform_remote_state.security-groups.security_groups_sg_internal_lb_id}"]
+  lb_security_groups             = ["${data.terraform_remote_state.security-groups.security_groups_sg_external_lb_id}"]
   instance_profile               = "${data.terraform_remote_state.iam.iam_policy_int_app_instance_profile_name}"
   access_logs_bucket             = "${data.terraform_remote_state.common.common_s3_lb_logs_bucket}"
   ssh_deployer_key               = "${data.terraform_remote_state.common.common_ssh_deployer_key}"
@@ -138,6 +173,18 @@ locals {
   app_hostnames                  = "${data.terraform_remote_state.common.app_hostnames}"
   bastion_inventory              = "${var.bastion_inventory}"
   jvm_memory                     = "${var.alfresco_jvm_memory}"
+  image_url                      = "mojdigitalstudio/hmpps-nginx-non-confd"
+  image_version                  = "latest"
+  config-bucket                  = "${data.terraform_remote_state.common.common_s3-config-bucket}"
+  tomcat_host                    = "alfresco"
+  certificate_arn                = "${data.aws_acm_certificate.cert.arn}"
+  public_subnet_ids              = ["${data.terraform_remote_state.common.public_subnet_ids}"]
+
+  self_signed_ssm = {
+    ca_cert = "${data.terraform_remote_state.self_certs.self_signed_ca_ssm_cert_pem_name}"
+    cert    = "${data.terraform_remote_state.self_certs.self_signed_server_ssm_cert_pem_name}"
+    key     = "${data.terraform_remote_state.self_certs.self_signed_server_ssm_private_key_name}"
+  }
 
   instance_security_groups = [
     "${data.terraform_remote_state.security-groups.security_groups_sg_internal_instance_id}",
@@ -164,7 +211,7 @@ module "asg" {
   bucket_kms_key_id            = "${local.s3bucket_kms_id}"
   alfresco_s3bucket            = "${local.s3bucket}"
   lb_security_groups           = ["${local.lb_security_groups}"]
-  internal                     = true
+  internal                     = false
   az_asg_desired               = "${var.az_asg_desired}"
   az_asg_min                   = "${var.az_asg_min}"
   az_asg_max                   = "${var.az_asg_max}"
@@ -182,10 +229,19 @@ module "asg" {
   alfresco_instance_ami        = "${var.alfresco_instance_ami}"
   monitoring_server_url        = "${local.monitoring_server_internal_url}"
   bastion_inventory            = "${local.bastion_inventory}"
+  keys_dir                     = "/opt/keys"
+  image_url                    = "${local.image_url}"
+  image_version                = "${local.image_version}"
+  self_signed_ssm              = "${local.self_signed_ssm}"
+  config_bucket                = "${local.config-bucket}"
+  tomcat_host                  = "${local.tomcat_host}"
+  certificate_arn              = "${local.certificate_arn}"
+  public_subnet_ids            = ["${local.public_subnet_ids}"]
+  public_zone_id               = "${local.public_zone_id}"
 
   listener = [
     {
-      instance_port     = "8080"
+      instance_port     = "80"
       instance_protocol = "HTTP"
       lb_port           = "80"
       lb_protocol       = "HTTP"
@@ -194,7 +250,7 @@ module "asg" {
 
   health_check = [
     {
-      target              = "HTTP:8080/alfresco/"
+      target              = "HTTP:80/alfresco/"
       interval            = 30
       healthy_threshold   = 2
       unhealthy_threshold = 2

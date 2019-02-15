@@ -24,3 +24,7 @@ output "security_groups_sg_external_instance_id" {
 output "security_groups_sg_elasticache_sg_id" {
   value = "${module.security_groups.security_groups_sg_elasticache_sg_id}"
 }
+
+output "security_groups_map" {
+  value = "${local.sg_map_ids}"
+}

@@ -6,7 +6,7 @@ output "parameter-group-id" {
   value = "${module.parameter_group.id}"
 }
 
-# cluster
+#cluster 
 output "cluster_address" {
   value = "${module.memcached.cluster_address}"
 }

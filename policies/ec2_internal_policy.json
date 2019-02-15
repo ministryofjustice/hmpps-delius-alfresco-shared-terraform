@@ -105,6 +105,14 @@
                     "kms:GrantIsForAWSResource": "true"
                 }
             }
+        },
+        {
+            "Effect": "Allow",
+            "Sid": "EC2Perms",
+            "Action": [
+                "ec2:DescribeInstances"
+            ],
+            "Resource": "*"
         }
     ]
 }

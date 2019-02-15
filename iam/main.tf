@@ -49,7 +49,6 @@ locals {
   storage_s3bucket     = "${data.terraform_remote_state.s3bucket.s3bucket}"
   s3-config-bucket     = "${data.terraform_remote_state.common.common_s3-config-bucket}"
   remote_config_bucket = "${data.terraform_remote_state.common.remote_config_bucket}"
-  aws_ecr_arn          = "${data.terraform_remote_state.common.aws_ecr_arn}"
   remote_iam_role      = "${data.terraform_remote_state.common.remote_iam_role}"
   s3bucket_kms_arn     = "${data.terraform_remote_state.s3bucket.s3bucket_kms_arn}"
 }
@@ -66,7 +65,6 @@ module "iam" {
   ec2_policy_file          = "ec2_policy.json"
   ecs_policy_file          = "ecs_policy.json"
   ec2_internal_policy_file = "${file("../policies/ec2_internal_policy.json")}"
-  aws_ecr_arn              = "${local.aws_ecr_arn}"
   remote_iam_role          = "${local.remote_iam_role}"
   remote_config_bucket     = "${local.remote_config_bucket}"
   storage_s3bucket         = "${local.storage_s3bucket}"

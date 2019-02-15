@@ -187,18 +187,18 @@ pipeline {
           }
         }
 
-        stage('Delius | Alfresco ASG') {
+        stage('Delius | Alfresco ElastiCache') {
           steps {
             script {
-              do_terraform(project.config, environment_name, project.alfresco, 'asg')
+              do_terraform(project.config, environment_name, project.alfresco, 'elasticache-memcached')
             }
           }
         }
 
-        stage('Delius | Alfresco ECS Nginx') {
+        stage('Delius | Alfresco ASG') {
           steps {
             script {
-              do_terraform(project.config, environment_name, project.alfresco, 'ecs-nginx')
+              do_terraform(project.config, environment_name, project.alfresco, 'asg')
             }
           }
         }

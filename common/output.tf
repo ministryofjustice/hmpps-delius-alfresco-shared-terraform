@@ -98,10 +98,6 @@ output "environment" {
   value = "${local.environment}"
 }
 
-output "aws_ecr_arn" {
-  value = "${data.terraform_remote_state.ecr.ecr_repo_repository_arn_alfresco}"
-}
-
 output "remote_iam_role" {
   value = "${data.terraform_remote_state.remote_iam.alfresco_iam_arn}"
 }

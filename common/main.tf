@@ -69,20 +69,6 @@ data "terraform_remote_state" "security-groups" {
 }
 
 #-------------------------------------------------------------
-### Getting the engineering ecr repos
-#-------------------------------------------------------------
-data "terraform_remote_state" "ecr" {
-  backend = "s3"
-
-  config {
-    bucket   = "${var.eng_remote_state_bucket_name}"
-    key      = "ecr/terraform.tfstate"
-    region   = "${var.region}"
-    role_arn = "${var.eng_role_arn}"
-  }
-}
-
-#-------------------------------------------------------------
 ### Getting the engineer vpc
 #-------------------------------------------------------------
 data "terraform_remote_state" "remote_vpc" {
@@ -149,7 +135,7 @@ locals {
   private_zone_id                = "${data.terraform_remote_state.vpc.private_zone_id}"
   external_domain                = "${data.terraform_remote_state.vpc.public_zone_name}"
   public_zone_id                 = "${data.terraform_remote_state.vpc.public_zone_id}"
-  common_name                    = "${var.environment_identifier}-app"
+  common_name                    = "${var.environment_identifier}-${var.alfresco_app_name}"
   lb_account_id                  = "${var.lb_account_id}"
   region                         = "${var.region}"
   role_arn                       = "${var.role_arn}"
@@ -160,7 +146,6 @@ locals {
   s3_lb_policy_file              = "../policies/s3_alb_policy.json"
   environment                    = "${var.environment_type}"
   tags                           = "${merge(data.terraform_remote_state.vpc.tags, map("sub-project", "${var.alfresco_app_name}"))}"
-  aws_ecr_arn                    = "${data.terraform_remote_state.ecr.ecr_repo_repository_arn_alfresco}"
   remote_iam_role                = "${data.terraform_remote_state.remote_iam.alfresco_iam_arn}"
   remote_config_bucket           = "${data.terraform_remote_state.remote_vpc.s3-config-bucket}"
   monitoring_server_external_url = "${data.terraform_remote_state.monitor.monitoring_server_external_url}"
