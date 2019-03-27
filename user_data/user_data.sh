@@ -104,10 +104,10 @@ sed -i 's/MEMORY_REPLACE/${jvm_memory}/g' /etc/sysconfig/tomcat
 chown -R tomcat:tomcat /srv/cache
 
 # stop tomcat-alfresco service
-sudo systemctl stop tomcat-alfresco
-sleep 10
-sudo systemctl disable tomcat-alfresco
+#sudo systemctl stop tomcat-alfresco
+#sleep 10
+#sudo systemctl disable tomcat-alfresco
 
 # start tomcat service
-sudo systemctl enable tomcat
+sudo systemctl stop tomcat
 sudo systemctl start tomcat
