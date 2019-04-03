@@ -42,7 +42,6 @@ def apply_submodule(env_name, git_project_dir, submodule_name) {
         #!/usr/env/bin bash
         echo "TF APPLY for ${env_name} | ${submodule_name} - component from git project ${git_project_dir}"
         set +e
-        cp -R -n "${config_dir}" "${git_project_dir}/env_configs"
         cd "${git_project_dir}"
         python docker-run.py --env ${env_name} --component ${submodule_name} --action apply
         set -e
