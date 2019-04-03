@@ -5,7 +5,7 @@ set -e
 #Usage
 # Scripts takes 2 arguments: environment_type and action
 # environment_type: target environment example dev prod
-# ACTION_TYPE: task to complete example plan apply test clean 
+# ACTION_TYPE: task to complete example plan apply test clean
 # AWS_TOKEN: token to use when running locally eg hmpps-token
 
 # Error handler function
@@ -29,7 +29,16 @@ REPO=${4}
 if [ -z "${TG_ENVIRONMENT_TYPE}" ]
 then
     echo "environment_type argument not supplied, please provide an argument!"
-    exit 1 
+    exit 1
+fi
+
+#Apply overides if character count is greater than 17
+#To address names too long
+if [ $(echo ${TG_ENVIRONMENT_TYPE} | wc -m) -ge 17 ]; then
+    export TG_ENVIRONMENT_IDENTIFIER="tf-${TG_PROJECT_NAME}-${TG_ENVIRONMENT_TYPE}"
+    export TG_SHORT_ENVIRONMENT_IDENTIFIER="tf-${TG_PROJECT_NAME_ABBREVIATED}-${TG_ENVIRONMENT_TYPE}"
+    export TG_ENVIRONMENT_NAME="${TG_PROJECT_NAME}-${TG_ENVIRONMENT_TYPE}"
+    export TG_SHORT_ENVIRONMENT_NAME="${TG_PROJECT_NAME_ABBREVIATED}-${TG_ENVIRONMENT_TYPE}"
 fi
 
 echo "Output -> environment_type set to: ${TG_ENVIRONMENT_TYPE}"
