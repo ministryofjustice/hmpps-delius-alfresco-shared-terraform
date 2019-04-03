@@ -64,8 +64,10 @@ then
     echo "Output ---> set environment stage complete"
     # set runCmd
     ACTION_TYPE="docker-${ACTION_TYPE}"
-    cd ${workDirContainer}
-    echo "Output -> Container workDir: $(pwd)"
+    export workDir=${workDirContainer}
+    cd ${workDir}
+    export PLAN_RET_FILE=${HOME}/data/${workDirContainer}_plan_ret
+    echo "Output -> Container workDir: ${workDir}"
 fi
 
 #Apply overides if character count is greater than 17
@@ -85,7 +87,12 @@ case ${ACTION_TYPE} in
     rm -rf .terraform *.plan
     terragrunt init
     exit_on_error $? !!
-    terragrunt plan -detailed-exitcode --out ${TG_ENVIRONMENT_TYPE}.plan
+    terragrunt plan -detailed-exitcode --out ${TG_ENVIRONMENT_TYPE}.plan || export tf_exit_code="$?"
+    if [ -z ${tf_exit_code} ]
+    then
+      export tf_exit_code="0"
+    fi
+    echo "export exitcode=${tf_exit_code}" > ${PLAN_RET_FILE}
     exit_on_error $? !!
     ;;
   docker-apply)
