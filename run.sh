@@ -71,17 +71,18 @@ fi
 #Apply overides if character count is greater than 17
 #To address names too long
 if [ $(echo ${TG_ENVIRONMENT_TYPE} | wc -m) -ge 13 ]; then
-    export TG_ENVIRONMENT_IDENTIFIER="tf-${TG_PROJECT_NAME_ABBREVIATED}-${TG_ENVIRONMENT_TYPE}"
-    export TG_SHORT_ENVIRONMENT_IDENTIFIER="tf-${TG_PROJECT_NAME_ABBREVIATED}-${TG_ENVIRONMENT_TYPE}"
-    export TG_ENVIRONMENT_NAME="${TG_PROJECT_NAME_ABBREVIATED}-${TG_ENVIRONMENT_TYPE}"
-    export TG_SHORT_ENVIRONMENT_NAME="${TG_PROJECT_NAME_ABBREVIATED}-${TG_ENVIRONMENT_TYPE}"
+    export TG_ENVIRONMENT_IDENTIFIER="tf-${TG_PROJECT_NAME_ABBREVIATED}-alf"
+    export TG_SHORT_ENVIRONMENT_IDENTIFIER="tf-${TG_PROJECT_NAME_ABBREVIATED}"
+    export TG_SHORT_ENVIRONMENT_NAME="${TG_ENVIRONMENT_IDENTIFIER}"
+    export TF_VAR_short_environment_identifier=${TG_SHORT_ENVIRONMENT_IDENTIFIER}
+    export TF_VAR_environment_identifier=${TG_ENVIRONMENT_IDENTIFIER}
+    export TF_VAR_short_environment_name=${TG_SHORT_ENVIRONMENT_NAME}
 fi
 
 case ${ACTION_TYPE} in
   docker-plan)
     echo "Running docker plan action"
     rm -rf .terraform *.plan
-    echo ${TG_ENVIRONMENT_IDENTIFIER}
     terragrunt init
     exit_on_error $? !!
     terragrunt plan -detailed-exitcode --out ${TG_ENVIRONMENT_TYPE}.plan
