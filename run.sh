@@ -82,10 +82,10 @@ case ${ACTION_TYPE} in
     echo "Running docker plan action"
     rm -rf .terraform *.plan
     echo ${TG_ENVIRONMENT_IDENTIFIER}
-    # terragrunt init
-    # exit_on_error $? !!
-    # terragrunt plan -detailed-exitcode --out ${TG_ENVIRONMENT_TYPE}.plan
-    # exit_on_error $? !!
+    terragrunt init
+    exit_on_error $? !!
+    terragrunt plan -detailed-exitcode --out ${TG_ENVIRONMENT_TYPE}.plan
+    exit_on_error $? !!
     ;;
   docker-apply)
     echo "Running docker apply action"
