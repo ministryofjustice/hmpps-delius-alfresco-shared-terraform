@@ -69,4 +69,4 @@ export AWS_SESSION_TOKEN=$(echo ${temp_role} | jq .Credentials.SessionToken | xa
 source ${OUTPUT_FILE}
 rm -rf ${OUTPUT_FILE}
 
-aws s3 sync s3://${SRC_S3_BUCKET}/TRN200/Alfresco/ s3://${DEST_S3_BUCKET}/restore_data --dryrun
+aws s3 sync s3://${SRC_S3_BUCKET}/TRN200/Alfresco/ s3://${DEST_S3_BUCKET}/restore_data
