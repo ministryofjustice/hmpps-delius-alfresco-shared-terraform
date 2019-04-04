@@ -23,6 +23,7 @@ env_config_dir="${HOME}/data/env_configs"
 TG_ENVIRONMENT_TYPE=$1
 GIT_BRANCH=$2
 REPO=${3}
+REGION=${4}
 
 echo "Output -> clone configs stage"
 rm -rf ${env_config_dir}
@@ -34,10 +35,6 @@ source ${env_config_dir}/${TG_ENVIRONMENT_TYPE}/${TG_ENVIRONMENT_TYPE}.propertie
 
 exit_on_error $? !!
 echo "Output ---> set environment stage complete"
-
-
-# set region
-REGION=$(curl -s http://169.254.169.254/latest/meta-data/placement/availability-zone | sed 's/\(.*\)[a-z]/\1/')
 
 # source s3 bucket
 SRC_S3_BUCKET="${TG_ENVIRONMENT_IDENTIFIER}-backups-s3bucket"
