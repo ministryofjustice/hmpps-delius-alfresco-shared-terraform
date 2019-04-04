@@ -16,5 +16,7 @@ def argsParser():
                         help='git repo for env configs, defaults to hmpps-env-configs.git', default='https://github.com/ministryofjustice/hmpps-env-configs.git')
     parser.add_argument('--branch', type=str,
                         help='git repo branch for env configs, defaults to master branch', default='master')
+    parser.add_argument('--image', type=str,
+                        help='docker terraform image', default='mojdigitalstudio/hmpps-terraform-builder ')
 
     return parser.parse_args()

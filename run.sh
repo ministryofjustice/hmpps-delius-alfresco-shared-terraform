@@ -5,7 +5,7 @@ set -e
 #Usage
 # Scripts takes 2 arguments: environment_type and action
 # environment_type: target environment example dev prod
-# ACTION_TYPE: task to complete example plan apply test clean 
+# ACTION_TYPE: task to complete example plan apply test clean
 # AWS_TOKEN: token to use when running locally eg hmpps-token
 
 # Error handler function
@@ -29,7 +29,7 @@ REPO=${4}
 if [ -z "${TG_ENVIRONMENT_TYPE}" ]
 then
     echo "environment_type argument not supplied, please provide an argument!"
-    exit 1 
+    exit 1
 fi
 
 echo "Output -> environment_type set to: ${TG_ENVIRONMENT_TYPE}"
@@ -64,8 +64,21 @@ then
     echo "Output ---> set environment stage complete"
     # set runCmd
     ACTION_TYPE="docker-${ACTION_TYPE}"
-    cd ${workDirContainer}
-    echo "Output -> Container workDir: $(pwd)"
+    export workDir=${workDirContainer}
+    cd ${workDir}
+    export PLAN_RET_FILE=${HOME}/data/${workDirContainer}_plan_ret
+    echo "Output -> Container workDir: ${workDir}"
+fi
+
+#Apply overides if character count is greater than 17
+#To address names too long
+if [ $(echo ${TG_ENVIRONMENT_TYPE} | wc -m) -ge 13 ]; then
+    export TG_ENVIRONMENT_IDENTIFIER="tf-${TG_PROJECT_NAME_ABBREVIATED}"
+    export TG_SHORT_ENVIRONMENT_IDENTIFIER="tf-${TG_PROJECT_NAME_ABBREVIATED}"
+    export TG_SHORT_ENVIRONMENT_NAME="${TG_ENVIRONMENT_IDENTIFIER}"
+    export TF_VAR_short_environment_identifier=${TG_SHORT_ENVIRONMENT_IDENTIFIER}
+    export TF_VAR_environment_identifier=${TG_ENVIRONMENT_IDENTIFIER}
+    export TF_VAR_short_environment_name=${TG_SHORT_ENVIRONMENT_NAME}
 fi
 
 case ${ACTION_TYPE} in
@@ -74,7 +87,12 @@ case ${ACTION_TYPE} in
     rm -rf .terraform *.plan
     terragrunt init
     exit_on_error $? !!
-    terragrunt plan -detailed-exitcode --out ${TG_ENVIRONMENT_TYPE}.plan
+    terragrunt plan -detailed-exitcode --out ${TG_ENVIRONMENT_TYPE}.plan || export tf_exit_code="$?"
+    if [ -z ${tf_exit_code} ]
+    then
+      export tf_exit_code="0"
+    fi
+    echo "export exitcode=${tf_exit_code}" > ${PLAN_RET_FILE}
     exit_on_error $? !!
     ;;
   docker-apply)

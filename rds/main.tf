@@ -88,7 +88,7 @@ module "rds" {
   maintenance_window        = "Mon:00:00-Mon:03:00"
   backup_window             = "03:00-06:00"
   multi_az                  = true
-  environment               = "${local.environment}"
+  environment               = "${replace("${local.environment}", "-", "")}"
   private_zone_id           = "${local.private_zone_id}"
   internal_domain           = "${local.internal_domain}"
   security_group_ids        = ["${local.security_group_ids}"]

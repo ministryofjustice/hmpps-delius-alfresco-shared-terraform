@@ -1,16 +1,26 @@
-# hmpps-delius-alfresco-shared-terraform
+## hmpps-delius-alfresco-shared-terraform
 Terraform Repo for the Alfresco in the shared VPC
 
 
-URL
-====
+## URLS
 
-Alfresco external - https://alfresco.dev.delius-core.probation.hmpps.dsd.io
 
-Alfresco internal - https://alfresco-int.delius-core-dev.internal
+### Alfresco Dev
 
-USING TERRAFORM
-================
+Alfresco external - [alfresco.dev.alfresco.probation.hmpps.dsd.io](alfresco.dev.alfresco.probation.hmpps.dsd.io)
+
+
+### Alfresco Int
+
+Alfresco external - [https://alfresco.dev.delius-core.probation.hmpps.dsd.io](https://alfresco.dev.delius-core.probation.hmpps.dsd.io)
+
+### Alfresco Training Test
+
+Alfresco external - [https://alfresco.training-test.delius.probation.hmpps.dsd.io](https://alfresco.training-test.delius.probation.hmpps.dsd.io)
+
+
+## USING TERRAFORM
+
 
 A shell script has been created to automate the running of terraform.
 Script takes the following arguments
@@ -26,13 +36,13 @@ sh run.sh plan hmpps-token
 ```
 
 
-REMOTE STATE
-============
+## REMOTE STATE
+
 
 Bucket name: [tf-eu-west-2-hmpps-delius-core-dev-remote-state](https://s3.console.aws.amazon.com/s3/object/tf-eu-west-2-hmpps-delius-core-dev-remote-state/vpc/terraform.tfstate?region=eu-west-2&tab=overview)
 
-DEPLOYER KEY
-============
+## DEPLOYER KEY
+
 
 The deployer key is stored in AWS [Parameter store](https://eu-west-2.console.aws.amazon.com/systems-manager/parameters/tf-eu-west-2-hmpps-delius-core-dev-alfresco-ssh-private-key/description?region=eu-west-2)
 
@@ -84,10 +94,10 @@ az_asg_min = {
 
 Above controls ASG sizes
 
-TERRAGRUNT
-===========
+## TERRAGRUNT
 
-## DOCKER CONTAINER IMAGE
+
+### DOCKER CONTAINER IMAGE
 
 Container repo [hmpps-engineering-tools](https://github.com/ministryofjustice/hmpps-engineering-tools)
 
@@ -143,8 +153,8 @@ terragrunt plan -detailed-exitcode --out ${TG_ENVIRONMENT_TYPE}.plan
 terragrunt apply ${TG_ENVIRONMENT_TYPE}.plan
 ```
 
-Terraform - automated run
-==========================
+## Terraform - automated run
+
 
 A python script has been written up: docker-run.py.
 
@@ -187,12 +197,11 @@ python docker-run.py --env dev --action test
 ```
 
 
-INSPEC
-======
+## INSPEC
 
 [Reference material](https://www.inspec.io/docs/reference/resources/#aws-resources)
 
-## TERRAFORM TESTING
+### TERRAFORM TESTING
 
 #### Temporary AWS creds 
 
