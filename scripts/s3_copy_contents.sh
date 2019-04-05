@@ -78,12 +78,14 @@ aws s3 sync s3://${SRC_S3_BUCKET}/TRN200/Alfresco/contentstore s3://${DEST_S3_BU
 exit_on_error $? !!
 
 aws s3 sync s3://${SRC_S3_BUCKET}/TRN200/Alfresco/contentstore.deleted s3://${DEST_S3_BUCKET}/contentstore.deleted
-
-aws s3 sync s3://${SRC_S3_BUCKET}/TRN200/Alfresco s3://${DEST_S3_BUCKET}/restore_data
 exit_on_error $? !!
 
 ALFRESCO_SQL_FILE="alfresco.sql"
+
 aws s3 sync s3://${SRC_S3_BUCKET}/TRN200/Alfresco/alfresco_db_s3_support.sql alfresco_db_support.sql
+
+echo "------> SYNC DONE"
+ls 
 
 cat alfresco_db_support.sql | grep -v '^(CREATE\ EXTENSION|COMMENT\ ON)' > ${ALFRESCO_SQL_FILE} 
 
