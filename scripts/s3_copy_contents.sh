@@ -71,13 +71,13 @@ exit_on_error $? !!
 rm -rf ${OUTPUT_FILE}
 exit_on_error $? !!
 
-aws s3 rm s3://${DEST_S3_BUCKET} --recursive
+aws s3 rm s3://${DEST_S3_BUCKET} --recursive --dryrun
 exit_on_error $? !!
 
-aws s3 sync s3://${SRC_S3_BUCKET}/TRN200/Alfresco/contentstore s3://${DEST_S3_BUCKET}/contentstore
+aws s3 sync s3://${SRC_S3_BUCKET}/TRN200/Alfresco/contentstore s3://${DEST_S3_BUCKET}/contentstore --dryrun
 exit_on_error $? !!
 
-aws s3 sync s3://${SRC_S3_BUCKET}/TRN200/Alfresco/contentstore.deleted s3://${DEST_S3_BUCKET}/contentstore.deleted
+aws s3 sync s3://${SRC_S3_BUCKET}/TRN200/Alfresco/contentstore.deleted s3://${DEST_S3_BUCKET}/contentstore.deleted --dryrun
 exit_on_error $? !!
 
 echo "------> SYNC DONE"
@@ -95,3 +95,15 @@ rm -rf *.sql
 ## Remove extension creation commands from our sql file
 # cat <pgdump_file> | grep -v -E '^(CREATE\ EXTENSION|COMMENT\ ON)' ><pg_dump_no_ext.sql
 
+# psql
+# drop database alfrescotrainingtest;
+# create database alfrescotrainingtest;
+# create role postgres;
+# grant postgres to alfrescotrainingtest;
+# create role alfresco;
+# grant alfresco to alfrescotrainingtest;
+
+# restore cmd
+# aws s3 cp s3://tf-dtt-alfresco-storage-s3bucket/restore_data/alfresco.sql ~/
+# psql -h alfresco-db.delius-training-test.internal -U alfrescotrainingtest -d alfrescotrainingtest -f ~/alfresco.sql
+# rm -rf ~/alfresco.sql
