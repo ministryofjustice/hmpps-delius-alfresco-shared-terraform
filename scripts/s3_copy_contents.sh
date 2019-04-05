@@ -79,3 +79,6 @@ exit_on_error $? !!
 
 aws s3 sync s3://${SRC_S3_BUCKET}/TRN200/Alfresco s3://${DEST_S3_BUCKET}/restore_data
 exit_on_error $? !!
+
+## Remove extension creation commands from our sql file
+# cat <pgdump_file> | grep -v -E '^(CREATE\ EXTENSION|COMMENT\ ON)' ><pg_dump_no_ext.sql
