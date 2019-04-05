@@ -67,10 +67,12 @@ export AWS_SECRET_ACCESS_KEY=$(echo ${temp_role} | jq .Credentials.SecretAccessK
 export AWS_SESSION_TOKEN=$(echo ${temp_role} | jq .Credentials.SessionToken | xargs)" > ${OUTPUT_FILE}
 
 source ${OUTPUT_FILE}
+exit_on_error $? !!
 rm -rf ${OUTPUT_FILE}
+exit_on_error $? !!
 
-#aws s3 rm s3://${DEST_S3_BUCKET} --recursive --dry-run
+aws s3 rm s3://${DEST_S3_BUCKET} --recursive --dry-run
+exit_on_error $? !!
 
-aws s3 sync s3://${SRC_S3_BUCKET}/TRN200/Alfresco/contentstore s3://${DEST_S3_BUCKET}/ --dry-run 
-
-aws s3 ls s3://${DEST_S3_BUCKET}
+aws s3 sync s3://${SRC_S3_BUCKET}/TRN200/Alfresco/contentstore s3://${DEST_S3_BUCKET}/ --dryrun
+exit_on_error $? !!
