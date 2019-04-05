@@ -71,21 +71,22 @@ exit_on_error $? !!
 rm -rf ${OUTPUT_FILE}
 exit_on_error $? !!
 
-# aws s3 rm s3://${DEST_S3_BUCKET} --recursive
-# exit_on_error $? !!
+aws s3 rm s3://${DEST_S3_BUCKET} --recursive
+exit_on_error $? !!
 
-# aws s3 sync s3://${SRC_S3_BUCKET}/TRN200/Alfresco/contentstore s3://${DEST_S3_BUCKET}/contentstore
-# exit_on_error $? !!
+aws s3 sync s3://${SRC_S3_BUCKET}/TRN200/Alfresco/contentstore s3://${DEST_S3_BUCKET}/contentstore
+exit_on_error $? !!
 
-# aws s3 sync s3://${SRC_S3_BUCKET}/TRN200/Alfresco/contentstore.deleted s3://${DEST_S3_BUCKET}/contentstore.deleted
-# exit_on_error $? !!
+aws s3 sync s3://${SRC_S3_BUCKET}/TRN200/Alfresco/contentstore.deleted s3://${DEST_S3_BUCKET}/contentstore.deleted
+exit_on_error $? !!
+
+echo "------> SYNC DONE"
 
 ALFRESCO_SQL_FILE="alfresco.sql"
 
-echo "------> SYNC DONE"
-aws s3 cp s3://${SRC_S3_BUCKET}/TRN200/Alfresco/alfresco_db_s3_support.sql alfresco_db_support.sql
+aws s3 cp s3://${SRC_S3_BUCKET}/TRN200/Alfresco/alfresco_db_s3_support.sql raw_${ALFRESCO_SQL_FILE}
 
-cat alfresco_db_support.sql | grep -v '^(CREATE\ EXTENSION|COMMENT\ ON)' > ${ALFRESCO_SQL_FILE} 
+cat raw_${ALFRESCO_SQL_FILE} | grep -v '^(CREATE\ EXTENSION|COMMENT\ ON)' > ${ALFRESCO_SQL_FILE} 
 
 aws s3 cp ${ALFRESCO_SQL_FILE} s3://${DEST_S3_BUCKET}/restore_data/${ALFRESCO_SQL_FILE}
 
