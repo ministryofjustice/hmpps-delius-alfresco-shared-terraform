@@ -82,9 +82,9 @@ exit_on_error $? !!
 
 # ALFRESCO_SQL_FILE="alfresco.sql"
 
-# aws s3 sync s3://${SRC_S3_BUCKET}/TRN200/Alfresco/alfresco_db_s3_support.sql alfresco_db_support.sql
-
 echo "------> SYNC DONE"
+aws s3 sync s3://${SRC_S3_BUCKET}/TRN200/Alfresco/alfresco_db_s3_support.sql alfresco_db_support.sql
+
 ls 
 
 cat alfresco_db_support.sql | grep -v '^(CREATE\ EXTENSION|COMMENT\ ON)' > ${ALFRESCO_SQL_FILE} 
