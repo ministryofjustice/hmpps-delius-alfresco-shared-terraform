@@ -71,7 +71,7 @@ exit_on_error $? !!
 rm -rf ${OUTPUT_FILE}
 exit_on_error $? !!
 
-aws s3 rm s3://${DEST_S3_BUCKET} --recursive --dry-run
+aws s3 rm s3://${DEST_S3_BUCKET} --recursive --dryrun
 exit_on_error $? !!
 
 aws s3 sync s3://${SRC_S3_BUCKET}/TRN200/Alfresco/contentstore s3://${DEST_S3_BUCKET}/ --dryrun
