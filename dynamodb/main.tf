@@ -37,7 +37,7 @@ locals {
 
 module "dynamodb-table" {
   source     = "git::https://github.com/ministryofjustice/hmpps-terraform-modules.git?ref=pre-shared-vpc//modules//dynamodb-tables"
-  table_name = "${local.environment_identifier}-restore-table"
+  table_name = "${local.common_name}-restore-table"
   tags       = "${local.tags}"
   hash_key   = "InstanceId"
 }
