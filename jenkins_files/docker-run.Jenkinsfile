@@ -127,6 +127,14 @@ pipeline {
           }
         }
 
+        stage('Delius | Alfresco Dynamodb') {
+          steps {
+            script {
+              do_terraform(environment_name, project.alfresco, 'dynamodb')
+            }
+          }
+        }
+
         stage('Delius | Alfresco S3 Buckets') {
           steps {
             script {
