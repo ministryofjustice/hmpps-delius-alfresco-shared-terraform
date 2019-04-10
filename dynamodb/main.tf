@@ -31,7 +31,7 @@ data "terraform_remote_state" "common" {
 locals {
   region            = "${var.region}"
   alfresco_app_name = "${data.terraform_remote_state.common.alfresco_app_name}"
-  common_name       = "${data.terraform_remote_state.common.common_name}"
+  common_name       = "${data.terraform_remote_state.common.environment_identifier}"
   tags              = "${data.terraform_remote_state.common.common_tags}"
 }
 
@@ -39,5 +39,5 @@ module "dynamodb-table" {
   source     = "git::https://github.com/ministryofjustice/hmpps-terraform-modules.git?ref=pre-shared-vpc//modules//dynamodb-tables"
   table_name = "${local.common_name}-restore-table"
   tags       = "${local.tags}"
-  hash_key   = "InstanceId"
+  hash_key   = "task"
 }
