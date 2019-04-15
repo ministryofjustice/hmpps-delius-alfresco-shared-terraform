@@ -231,12 +231,14 @@ rm -rf env_configs/inspec-creds.properties
 
 #### PSQL binary
 
-Reduce ALfresco ASG to a single instance. SSH on the reamining Alfresco instance execute the commands below 
+Reduce Alfresco ASG to a single instance. SSH on the reamining Alfresco instance execute the commands below 
 
 ```
 systemctl stop alfresco
 yum install postgresql -y
 ```
+
+All commands should be run on the Alfresco instance unless otherwise indicated.
 
 #### AWS S3bucket
 
