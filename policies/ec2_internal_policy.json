@@ -113,6 +113,31 @@
                 "ec2:DescribeInstances"
             ],
             "Resource": "*"
+        },
+        {
+            "Sid": "dynamodbPerms",
+            "Effect": "Allow",
+            "Action": [
+                "dynamodb:DeleteItem",
+                "dynamodb:UpdateGlobalTable",
+                "dynamodb:DescribeTable",
+                "dynamodb:GetItem",
+                "dynamodb:BatchGetItem",
+                "dynamodb:BatchWriteItem",
+                "dynamodb:UpdateTimeToLive",
+                "dynamodb:ConditionCheckItem",
+                "dynamodb:PutItem",
+                "dynamodb:Scan",
+                "dynamodb:DescribeStream",
+                "dynamodb:Query",
+                "dynamodb:UpdateItem",
+                "dynamodb:DescribeGlobalTableSettings",
+                "dynamodb:DescribeGlobalTable",
+                "dynamodb:GetShardIterator",
+                "dynamodb:DescribeBackup",
+                "dynamodb:GetRecords"
+            ],
+            "Resource": "${restore_dynamodb_table_arn}"
         }
     ]
 }

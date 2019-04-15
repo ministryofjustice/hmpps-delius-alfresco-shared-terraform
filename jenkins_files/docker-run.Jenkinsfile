@@ -115,7 +115,7 @@ pipeline {
                   git url: 'git@github.com:ministryofjustice/' + project.network, branch: 'master', credentialsId: 'f44bc5f1-30bd-4ab9-ad61-cc32caf1562a'
                 }
                 dir( project.alfresco ) {
-                  git url: 'git@github.com:ministryofjustice/' + project.alfresco, branch: 'master', credentialsId: 'f44bc5f1-30bd-4ab9-ad61-cc32caf1562a'
+                  git url: 'git@github.com:ministryofjustice/' + project.alfresco, branch: 'issue-67-add-copy-scripts', credentialsId: 'f44bc5f1-30bd-4ab9-ad61-cc32caf1562a'
                 }
 
                 prepare_env()
@@ -126,6 +126,14 @@ pipeline {
           steps {
             script {
               do_terraform(environment_name, project.alfresco, 'common')
+            }
+          }
+        }
+
+        stage('Delius | Alfresco Dynamodb') {
+          steps {
+            script {
+              do_terraform(environment_name, project.alfresco, 'dynamodb')
             }
           }
         }
