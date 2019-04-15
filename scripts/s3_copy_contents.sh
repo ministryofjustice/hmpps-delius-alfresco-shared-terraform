@@ -33,6 +33,8 @@ echo "Output -> environment stage"
 
 source ${env_config_dir}/${TG_ENVIRONMENT_TYPE}/${TG_ENVIRONMENT_TYPE}.properties
 
+source ${HOME}/data/alf_env_configs/${TG_ENVIRONMENT_TYPE}.properties
+
 exit_on_error $? !!
 echo "Output ---> set environment stage complete"
 
@@ -71,39 +73,45 @@ exit_on_error $? !!
 rm -rf ${OUTPUT_FILE}
 exit_on_error $? !!
 
-aws s3 rm s3://${DEST_S3_BUCKET} --recursive --dryrun
-exit_on_error $? !!
+if [ ${RUN_MODE} == "enabled"]
+then
+  echo "Run mode set to ${RUN_MODE}, no dry-run set"
+  aws s3 rm s3://${DEST_S3_BUCKET} --recursive
+  exit_on_error $? !!
 
-aws s3 sync s3://${SRC_S3_BUCKET}/TRN200/Alfresco/contentstore s3://${DEST_S3_BUCKET}/contentstore --dryrun
-exit_on_error $? !!
+  aws s3 sync s3://${SRC_S3_BUCKET}/${SRC_BUCKET_PATH}/contentstore s3://${DEST_S3_BUCKET}/contentstore
+  exit_on_error $? !!
 
-aws s3 sync s3://${SRC_S3_BUCKET}/TRN200/Alfresco/contentstore.deleted s3://${DEST_S3_BUCKET}/contentstore.deleted --dryrun
-exit_on_error $? !!
+  aws s3 sync s3://${SRC_S3_BUCKET}/${SRC_BUCKET_PATH}/contentstore.deleted s3://${DEST_S3_BUCKET}/contentstore.deleted
+  exit_on_error $? !!
 
-echo "------> SYNC DONE"
+  echo "------> SYNC DONE"
 
-ALFRESCO_SQL_FILE="alfresco.sql"
+  ALFRESCO_SQL_FILE="alfresco.sql"
 
-aws s3 cp s3://${SRC_S3_BUCKET}/TRN200/Alfresco/alfresco_db_s3_support.sql raw_${ALFRESCO_SQL_FILE}
+  aws s3 cp s3://${SRC_S3_BUCKET}/${SRC_BUCKET_PATH}/${SRC_SQL_FILE} raw_${ALFRESCO_SQL_FILE}
+  exit_on_error $? !!
 
-cat raw_${ALFRESCO_SQL_FILE} | grep -v '^(CREATE\ EXTENSION|COMMENT\ ON)' > ${ALFRESCO_SQL_FILE} 
+  cat raw_${ALFRESCO_SQL_FILE} | grep -v '^(CREATE\ EXTENSION|COMMENT\ ON)' > ${ALFRESCO_SQL_FILE} 
+  exit_on_error $? !!
 
-aws s3 cp ${ALFRESCO_SQL_FILE} s3://${DEST_S3_BUCKET}/restore_data/${ALFRESCO_SQL_FILE}
+  aws s3 cp ${ALFRESCO_SQL_FILE} s3://${DEST_S3_BUCKET}/restore_data/${ALFRESCO_SQL_FILE}
+  exit_on_error $? !!
 
-rm -rf *.sql
+  rm -rf *.sql
+  exit_on_error $? !!
+else [ ${RUN_MODE} == "disabled"]
+  echo "Run mode set to ${RUN_MODE}, dry-run flags set"
+  aws s3 rm s3://${DEST_S3_BUCKET} --recursive --dryrun
+  exit_on_error $? !!
 
+  aws s3 sync s3://${SRC_S3_BUCKET}/${SRC_BUCKET_PATH}/contentstore s3://${DEST_S3_BUCKET}/contentstore --dryrun
+  exit_on_error $? !!
+
+  aws s3 sync s3://${SRC_S3_BUCKET}/${SRC_BUCKET_PATH}/contentstore.deleted s3://${DEST_S3_BUCKET}/contentstore.deleted --dryrun
+  exit_on_error $? !!
+
+  echo "------> DRY RUN SYNC DONE"
+fi
 ## Remove extension creation commands from our sql file
 # cat <pgdump_file> | grep -v -E '^(CREATE\ EXTENSION|COMMENT\ ON)' ><pg_dump_no_ext.sql
-
-# psql
-# drop database alfrescotrainingtest;
-# create database alfrescotrainingtest;
-# create role postgres;
-# grant postgres to alfrescotrainingtest;
-# create role alfresco;
-# grant alfresco to alfrescotrainingtest;
-
-# restore cmd
-# aws s3 cp s3://tf-dtt-alfresco-storage-s3bucket/restore_data/alfresco.sql ~/
-# psql -h alfresco-db.delius-training-test.internal -U alfrescotrainingtest -d alfrescotrainingtest -f ~/alfresco.sql
-# rm -rf ~/alfresco.sql
