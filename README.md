@@ -226,3 +226,78 @@ export AWS_PROFILE=hmpps-token
 source env_configs/dev.properties
 rm -rf env_configs/inspec-creds.properties
 ```
+
+# Alfresco DB Restore
+
+## Procedure
+
+#### PSQL binary
+
+Reduce ALfresco ASG to a single instance. SSH on the reamining Alfresco instance execute the commands below 
+
+```
+systemctl stop alfresco
+yum install postgresql -y
+```
+
+#### AWS S3bucket
+
+Jenkins job [s3-copy-alfresco-backups](https://jenkins.engineering-dev.probation.hmpps.dsd.io/job/Alfresco/job/s3-copy-alfresco-backups/)
+
+Run the jenkins job above giving the environment name as a parameter
+
+#### Prepare database
+
+Please run the following steps in psql. Replace the following with appropriate details.
+
+- alfresco-db-host
+- alfresco-user
+
+
+```
+psql -h alfresco-db-host -U alfresco-user -d postgres
+drop database alfresco-database;
+create database alfresco-database;
+create role postgres;
+grant postgres to alfresco-user;
+create role alfresco;
+grant alfresco to alfresco-user;
+```
+
+#### Restore database
+
+Replace the following
+
+- alfresco-storage-s3bucket
+- alfresco-db-host
+- alfresco-user
+
+
+```
+aws s3 cp s3://alfresco-storage-s3bucket/restore_data/alfresco.sql ~/
+psql -h alfresco-db-host -U alfresco-user -d alfresco-database -f ~/alfresco.sql
+rm -rf ~/alfresco.sql
+```
+
+#### Startup Alfresco
+
+Empty the Alfresco log file:  /usr/share/tomcat/alfresco.log
+
+```
+> /usr/share/tomcat/alfresco.log
+```
+
+Rename the license file: /usr/share/tomcat/shared/classes/alfresco/extension/license/alfresco-ent-5.2-NOMS.lic.installed
+
+```
+mv /usr/share/tomcat/shared/classes/alfresco/extension/license/alfresco-ent-5.2-NOMS.lic.installed /usr/share/tomcat/shared/classes/alfresco/extension/license/alfresco-ent-5.2-NOMS.lic
+```
+
+Start up the tomcat service
+
+```
+systemctl start tomcat
+```
+
+Watch the log file /usr/share/tomcat/alfresco.log for any errors.
+
