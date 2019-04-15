@@ -229,8 +229,6 @@ rm -rf env_configs/inspec-creds.properties
 
 # Alfresco DB Restore
 
-## Procedure
-
 #### PSQL binary
 
 Reduce ALfresco ASG to a single instance. SSH on the reamining Alfresco instance execute the commands below 
