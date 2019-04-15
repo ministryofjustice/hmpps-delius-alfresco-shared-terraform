@@ -61,45 +61,50 @@ fi
 
 echo "Using IAM role: ${TERRAGRUNT_IAM_ROLE}"
 
-OUTPUT_FILE="env_configs/temp_creds"
+export OUTPUT_FILE="env_configs/temp_creds"
 
-temp_role=$(aws sts assume-role --role-arn ${TERRAGRUNT_IAM_ROLE} --role-session-name testing --duration-seconds ${STS_DURATION})
+export temp_role=$(aws sts assume-role --role-arn ${TERRAGRUNT_IAM_ROLE} --role-session-name testing --duration-seconds ${STS_DURATION})
 
-echo "unset AWS_PROFILE
-AWS_DEFAULT_REGION=${TG_REGION}
-export AWS_ACCESS_KEY_ID=$(echo ${temp_role} | jq .Credentials.AccessKeyId | xargs)
-export AWS_SECRET_ACCESS_KEY=$(echo ${temp_role} | jq .Credentials.SecretAccessKey | xargs)
-export AWS_SESSION_TOKEN=$(echo ${temp_role} | jq .Credentials.SessionToken | xargs)" > ${OUTPUT_FILE}
+# get creds
+get_creds_aws () {
+  sh scripts/get_creds.sh
+  source ${OUTPUT_FILE}
+  exit_on_error $? !!
+  rm -rf ${OUTPUT_FILE}
+  exit_on_error $? !!
+}
 
-source ${OUTPUT_FILE}
-exit_on_error $? !!
-rm -rf ${OUTPUT_FILE}
-exit_on_error $? !!
+get_creds_aws
 
 echo "Run mode is: ${RUN_MODE}"
 
 if [ ${RUN_MODE} = true ]
 then
   echo "Run mode set to ${RUN_MODE}, no dry-run set"
+  get_creds_aws
   aws s3 rm s3://${DEST_S3_BUCKET} --recursive
   exit_on_error $? !!
 
-  aws s3 sync s3://${SRC_S3_BUCKET}/${SRC_BUCKET_PATH}/contentstore s3://${DEST_S3_BUCKET}/contentstore
+  get_creds_aws
+  aws s3 sync --only-show-errors s3://${SRC_S3_BUCKET}/${SRC_BUCKET_PATH}/contentstore s3://${DEST_S3_BUCKET}/contentstore
   exit_on_error $? !!
 
-  aws s3 sync s3://${SRC_S3_BUCKET}/${SRC_BUCKET_PATH}/contentstore.deleted s3://${DEST_S3_BUCKET}/contentstore.deleted
+  get_creds_aws
+  aws s3 sync --only-show-errors s3://${SRC_S3_BUCKET}/${SRC_BUCKET_PATH}/contentstore.deleted s3://${DEST_S3_BUCKET}/contentstore.deleted
   exit_on_error $? !!
 
   echo "------> SYNC DONE"
 
   ALFRESCO_SQL_FILE="alfresco.sql"
 
+  get_creds_aws
   aws s3 cp s3://${SRC_S3_BUCKET}/${SRC_BUCKET_PATH}/${SRC_SQL_FILE} raw_${ALFRESCO_SQL_FILE}
   exit_on_error $? !!
 
   cat raw_${ALFRESCO_SQL_FILE} | grep -v '^(CREATE\ EXTENSION|COMMENT\ ON)' > ${ALFRESCO_SQL_FILE} 
   exit_on_error $? !!
 
+  get_creds_aws
   aws s3 cp ${ALFRESCO_SQL_FILE} s3://${DEST_S3_BUCKET}/restore_data/${ALFRESCO_SQL_FILE}
   exit_on_error $? !!
 
@@ -107,12 +112,15 @@ then
   exit_on_error $? !!
 else
   echo "Run mode set to ${RUN_MODE}, dry-run flags set"
+  get_creds_aws
   aws s3 rm s3://${DEST_S3_BUCKET} --recursive --dryrun
   exit_on_error $? !!
 
+  get_creds_aws
   aws s3 sync s3://${SRC_S3_BUCKET}/${SRC_BUCKET_PATH}/contentstore s3://${DEST_S3_BUCKET}/contentstore --dryrun
   exit_on_error $? !!
 
+  get_creds_aws
   aws s3 sync s3://${SRC_S3_BUCKET}/${SRC_BUCKET_PATH}/contentstore.deleted s3://${DEST_S3_BUCKET}/contentstore.deleted --dryrun
   exit_on_error $? !!
 
