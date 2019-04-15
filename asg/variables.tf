@@ -36,3 +36,8 @@ variable "bastion_inventory" {
 variable "alfresco_jvm_memory" {
   description = "jvm memmory"
 }
+
+variable "spg_messaging_broker_url" {
+  default     = "localhost:61616"
+  description = "SPG messaging broker url"
+}
