@@ -242,7 +242,7 @@ All commands should be run on the Alfresco instance unless otherwise indicated.
 
 #### AWS S3bucket
 
-Jenkins job [s3-copy-alfresco-backups](https://jenkins.engineering-dev.probation.hmpps.dsd.io/job/Alfresco/job/s3-copy-alfresco-backups/)
+Jenkins job [Alfresco-s3-buckets-pipeline](https://jenkins.engineering-dev.probation.hmpps.dsd.io/job/Alfresco/job/Alfresco-s3-buckets-pipeline/)
 
 Run the jenkins job above giving the environment name as a parameter
 

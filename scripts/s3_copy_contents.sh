@@ -20,20 +20,23 @@ exit_on_error() {
 
 env_config_dir="${HOME}/data/env_configs"
 
-TG_ENVIRONMENT_TYPE=$1
-GIT_BRANCH=$2
-REPO=${3}
-REGION=${4}
+TG_ENVIRONMENT_TYPE=${1}
 
 echo "Output -> clone configs stage"
 rm -rf ${env_config_dir}
-echo "Output ---> Cloning branch: ${GIT_BRANCH}"
-git clone -b ${GIT_BRANCH} ${REPO} ${env_config_dir}
+echo "Output ---> Cloning branch: master"
+git clone https://github.com/ministryofjustice/hmpps-env-configs.git ${env_config_dir}
+exit_on_error $? !!
+
 echo "Output -> environment stage"
 
-source ${env_config_dir}/${TG_ENVIRONMENT_TYPE}/${TG_ENVIRONMENT_TYPE}.properties
+echo "Output -> environment_type set to: ${TG_ENVIRONMENT_TYPE}"
 
+# setting Alfresco local properties 
 source ${HOME}/data/alf_env_configs/${TG_ENVIRONMENT_TYPE}.properties
+exit_on_error $? !!
+
+source ${env_config_dir}/${TG_ENVIRONMENT_TYPE}/${TG_ENVIRONMENT_TYPE}.properties
 
 exit_on_error $? !!
 echo "Output ---> set environment stage complete"
@@ -60,10 +63,10 @@ echo "Using IAM role: ${TERRAGRUNT_IAM_ROLE}"
 
 OUTPUT_FILE="env_configs/temp_creds"
 
-temp_role=$(aws sts assume-role --role-arn ${TERRAGRUNT_IAM_ROLE} --role-session-name testing --duration-seconds 900)
+temp_role=$(aws sts assume-role --role-arn ${TERRAGRUNT_IAM_ROLE} --role-session-name testing --duration-seconds ${STS_DURATION})
 
 echo "unset AWS_PROFILE
-AWS_DEFAULT_REGION=${REGION}
+AWS_DEFAULT_REGION=${TG_REGION}
 export AWS_ACCESS_KEY_ID=$(echo ${temp_role} | jq .Credentials.AccessKeyId | xargs)
 export AWS_SECRET_ACCESS_KEY=$(echo ${temp_role} | jq .Credentials.SecretAccessKey | xargs)
 export AWS_SESSION_TOKEN=$(echo ${temp_role} | jq .Credentials.SessionToken | xargs)" > ${OUTPUT_FILE}
@@ -73,7 +76,9 @@ exit_on_error $? !!
 rm -rf ${OUTPUT_FILE}
 exit_on_error $? !!
 
-if [ ${RUN_MODE} == "enabled"]
+echo "Run mode is: ${RUN_MODE}"
+
+if [ ${RUN_MODE} = true ]
 then
   echo "Run mode set to ${RUN_MODE}, no dry-run set"
   aws s3 rm s3://${DEST_S3_BUCKET} --recursive
@@ -100,7 +105,7 @@ then
 
   rm -rf *.sql
   exit_on_error $? !!
-else [ ${RUN_MODE} == "disabled"]
+else
   echo "Run mode set to ${RUN_MODE}, dry-run flags set"
   aws s3 rm s3://${DEST_S3_BUCKET} --recursive --dryrun
   exit_on_error $? !!
@@ -112,6 +117,10 @@ else [ ${RUN_MODE} == "disabled"]
   exit_on_error $? !!
 
   echo "------> DRY RUN SYNC DONE"
+
+  echo "2" > plan_ret
+  exit_on_error $? !!
 fi
+
 ## Remove extension creation commands from our sql file
 # cat <pgdump_file> | grep -v -E '^(CREATE\ EXTENSION|COMMENT\ ON)' ><pg_dump_no_ext.sql
