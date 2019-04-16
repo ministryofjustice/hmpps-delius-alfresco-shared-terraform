@@ -1,6 +1,6 @@
 def project = [:]
 project.alfresco  = 'hmpps-delius-alfresco-shared-terraform'
-project.branch = 'master'
+project.branch = 'issue-81--copy-es-data-to-migration-bucket'
 
 def environments = [
   'delius-training-test',
@@ -15,7 +15,7 @@ def prepare_env() {
     '''
 }
 
-def do_s3_sync_dry_run(env_name, git_project_dir) {
+def do_s3_es_copy_dry_run(env_name, git_project_dir) {
     wrap([$class: 'AnsiColorBuildWrapper', 'colorMapName': 'XTerm']) {
         sh """
         #!/usr/env/bin bash
@@ -27,14 +27,14 @@ def do_s3_sync_dry_run(env_name, git_project_dir) {
         docker run --rm -v \$(pwd):/home/tools/data \
           -v \${HOME}/.aws:/home/tools/.aws \
           -e RUN_MODE=false \
-          mojdigitalstudio/hmpps-terraform-builder sh scripts/s3_copy_contents.sh ${env_name}
+          mojdigitalstudio/hmpps-terraform-builder sh scripts/s3_copy_elasticsearch.sh ${env_name}
         set -e
         """
         return readFile("${git_project_dir}/plan_ret").trim()
     }
 }
 
-def do_s3_sync_full_run(env_name, git_project_dir) {
+def do_s3_es_copy_full_run(env_name, git_project_dir) {
     wrap([$class: 'AnsiColorBuildWrapper', 'colorMapName': 'XTerm']) {
         sh """
         #!/usr/env/bin bash
@@ -46,17 +46,17 @@ def do_s3_sync_full_run(env_name, git_project_dir) {
         docker run --rm -v \$(pwd):/home/tools/data \
           -v \${HOME}/.aws:/home/tools/.aws \
           -e RUN_MODE=true \
-          mojdigitalstudio/hmpps-terraform-builder sh scripts/s3_copy_contents.sh ${env_name}
+          mojdigitalstudio/hmpps-terraform-builder sh scripts/s3_copy_elasticsearch.sh ${env_name}
         set -e
         """
     }
 }
 
-def do_s3_sync(env_name, git_project_dir) {
-    if (do_s3_sync_dry_run(env_name, git_project_dir) == "2") {
+def do_s3_es_copy(env_name, git_project_dir) {
+    if (do_s3_es_copy_dry_run(env_name, git_project_dir) == "2") {
         confirm()
         if (env.Continue == "true") {
-            do_s3_sync_full_run(env_name, git_project_dir)
+            do_s3_es_copy_full_run(env_name, git_project_dir)
         }
     }
     else {
@@ -122,7 +122,7 @@ pipeline {
         stage('Alfresco | Sync S3 Buckets') {
           steps {
             script {
-              do_s3_sync(environment_name, project.alfresco)
+              do_s3_es_copy(environment_name, project.alfresco)
             }
           }
         }
