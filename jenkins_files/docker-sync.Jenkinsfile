@@ -4,7 +4,8 @@ project.branch = 'issue-77-adjust-test-sts-duration'
 
 def environments = [
   'delius-training-test',
-  'delius-test'
+  'delius-test',
+  'delius-po-test1'
 ]
 
 def prepare_env() {
