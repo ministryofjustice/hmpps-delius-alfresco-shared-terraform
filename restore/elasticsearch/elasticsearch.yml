@@ -1,0 +1,6 @@
+path:
+  logs: /opt/elasticsearch/logs
+  data: /opt/elasticsearch/data
+  repo: ["/opt/backup"]
+bootstrap.mlockall: true
+cluster.name: es-restore
