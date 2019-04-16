@@ -18,6 +18,10 @@ Alfresco external - [https://alfresco.dev.delius-core.probation.hmpps.dsd.io](ht
 
 Alfresco external - [https://alfresco.training-test.delius.probation.hmpps.dsd.io](https://alfresco.training-test.delius.probation.hmpps.dsd.io)
 
+### Alfresco Delius Test
+
+Alfresco external - [https://alfresco.test.delius.probation.hmpps.dsd.io](https://alfresco.test.delius.probation.hmpps.dsd.io)
+
 
 ## USING TERRAFORM
 
@@ -242,7 +246,7 @@ All commands should be run on the Alfresco instance unless otherwise indicated.
 
 #### AWS S3bucket
 
-Jenkins job [Alfresco-s3-buckets-pipeline](https://jenkins.engineering-dev.probation.hmpps.dsd.io/job/Alfresco/job/Alfresco-s3-buckets-pipeline/)
+Jenkins job [Alfresco-s3-buckets-content-pipeline](https://jenkins.engineering-dev.probation.hmpps.dsd.io/job/Alfresco/job/Alfresco-s3-buckets-content-pipeline/)
 
 Run the jenkins job above giving the environment name as a parameter
 
