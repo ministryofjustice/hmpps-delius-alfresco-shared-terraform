@@ -87,7 +87,7 @@ module "efs_backups" {
   kms_key_id             = "${local.s3bucket_kms_arn}"
   performance_mode       = "generalPurpose"
   throughput_mode        = "bursting"
-  share_name             = "content_store"
+  share_name             = "${local.alfresco_app_name}-efs"
   zone_id                = "${local.private_zone_id}"
   domain                 = "${local.internal_domain}"
   subnets                = "${local.private_subnet_ids}"
