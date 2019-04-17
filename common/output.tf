@@ -174,11 +174,6 @@ output "private_subnet_ids" {
   ]
 }
 
-# Security groups
-output "sg_map_ids" {
-  value = "${local.sg_map_ids}"
-}
-
 # Alfresco hosts
 output "app_hostnames" {
   value = "${local.app_hostnames}"

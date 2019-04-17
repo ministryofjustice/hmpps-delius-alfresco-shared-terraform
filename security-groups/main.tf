@@ -24,6 +24,19 @@ data "terraform_remote_state" "common" {
   }
 }
 
+#-------------------------------------------------------------
+### Getting the sg details
+#-------------------------------------------------------------
+data "terraform_remote_state" "security-groups" {
+  backend = "s3"
+
+  config {
+    bucket = "${var.remote_state_bucket_name}"
+    key    = "security-groups/terraform.tfstate"
+    region = "${var.region}"
+  }
+}
+
 ####################################################
 # Locals
 ####################################################
@@ -40,7 +53,17 @@ locals {
   public_cidr_block      = ["${data.terraform_remote_state.common.db_cidr_block}"]
   private_cidr_block     = ["${data.terraform_remote_state.common.private_cidr_block}"]
   db_cidr_block          = ["${data.terraform_remote_state.common.db_cidr_block}"]
-  sg_map_ids             = "${data.terraform_remote_state.common.sg_map_ids}"
+
+  sg_map_ids = {
+    internal_inst_sg_id = "${data.terraform_remote_state.security-groups.sg_alfresco_api_in}"
+    elasticache_sg_id   = "${data.terraform_remote_state.security-groups.sg_alfresco_elasticache_in}"
+    db_sg_id            = "${data.terraform_remote_state.security-groups.sg_alfresco_db_in}"
+    external_lb_sg_id   = "${data.terraform_remote_state.security-groups.sg_alfresco_external_lb_in}"
+    internal_lb_sg_id   = "${data.terraform_remote_state.security-groups.sg_alfresco_internal_lb_in}"
+    external_inst_sg_id = "${data.terraform_remote_state.security-groups.sg_alfresco_nginx_in}"
+    bastion_in_sg_id    = "${data.terraform_remote_state.security-groups.sg_ssh_bastion_in_id}"
+    efs_sg_id           = "${data.terraform_remote_state.security-groups.sg_alfresco_efs_in}"
+  }
 
   allowed_cidr_block = [
     "${var.allowed_cidr_block}",
@@ -52,7 +75,7 @@ locals {
 # Security Groups - Application Specific
 ####################################################
 module "security_groups" {
-  source                  = "git::https://github.com/ministryofjustice/hmpps-terraform-modules.git?ref=master//projects//alfresco//security-groups"
+  source                  = "./modules/security-groups"
   alfresco_app_name       = "${local.alfresco_app_name}"
   allowed_cidr_block      = ["${local.allowed_cidr_block}"]
   common_name             = "${local.common_name}"
@@ -73,4 +96,25 @@ module "security_groups" {
   alfresco_smb_port       = "445"
   alfresco_arcp_port      = "7070"
   alfresco_apache_jserv   = "8009"
+}
+
+#-------------------------------------------------------------
+### efs sg
+#-------------------------------------------------------------
+resource "aws_security_group_rule" "internal_inst_sg_ingress_self" {
+  security_group_id = "${local.sg_map_ids["efs_sg_id"]}"
+  type              = "ingress"
+  from_port         = 0
+  to_port           = 0
+  protocol          = -1
+  self              = true
+}
+
+resource "aws_security_group_rule" "internal_inst_sg_egress_self" {
+  security_group_id = "${local.sg_map_ids["efs_sg_id"]}"
+  type              = "egress"
+  from_port         = 0
+  to_port           = 0
+  protocol          = -1
+  self              = true
 }
