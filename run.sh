@@ -84,8 +84,8 @@ fi
 case ${ACTION_TYPE} in
   docker-plan)
     echo "Running docker plan action"
-    rm -rf .terraform *.plan
-    terragrunt init
+    # rm -rf .terraform *.plan
+    # terragrunt init
     exit_on_error $? !!
     terragrunt plan -detailed-exitcode --out ${TG_ENVIRONMENT_TYPE}.plan || export tf_exit_code="$?"
     if [ -z ${tf_exit_code} ]
