@@ -31,3 +31,12 @@ output "s3bucket_cloudtrail_arn" {
 output "s3bucket_cloudtrail_id" {
   value = "${module.s3bucket.s3bucket_cloudtrail_id}"
 }
+
+# elasticsearch
+output "s3_elasticsearch_bucket" {
+  value = "${module.s3_elasticsearch_bucket.s3_bucket_name}"
+}
+
+output "s3_elasticsearch_bucket_arn" {
+  value = "${module.s3_elasticsearch_bucket.s3_bucket_arn}"
+}

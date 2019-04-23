@@ -17,7 +17,7 @@ data "template_file" "iam_policy_ecs_int" {
 
 module "create-iam-ecs-role-int" {
   source     = "git::https://github.com/ministryofjustice/hmpps-terraform-modules.git?ref=master//modules//iam//role"
-  rolename   = "${local.common_name}-int-ecs-svc"
+  rolename   = "${local.common_name}-es-ecs-svc"
   policyfile = "${local.ecs_policy_file}"
 }
 
@@ -39,6 +39,7 @@ data "template_file" "es" {
     app_role_arn               = "${module.create-iam-app-role-es.iamrole_arn}"
     s3bucket_kms_arn           = "${local.s3bucket_kms_arn}"
     restore_dynamodb_table_arn = "${local.restore_dynamodb_table_arn}"
+    elasticsearch_bucket       = "${local.elasticsearch_bucket}"
   }
 }
 

@@ -14,20 +14,24 @@ variable "environment_name" {}
 
 # Elasticsearch
 
+variable "es_discovery_type" {
+  default = "single-node"
+}
+
 variable "es_java_opts" {
-  default = "-Xms4g -Xmx4g -Des.enforce.bootstrap.checks=true"
+  default = "-Xms8g -Xmx8g -Des.enforce.bootstrap.checks=true"
 }
 
 variable "es_ecs_memory" {
-  default = "4096"
+  default = "12000"
 }
 
 variable "es_ecs_cpu_units" {
-  default = "256"
+  default = "500"
 }
 
 variable "es_ecs_mem_limit" {
-  default = "5120"
+  default = "11500"
 }
 
 variable "es_image_url" {
@@ -40,6 +44,10 @@ variable "es_service_desired_count" {
 
 variable "es_ebs_volume_size" {
   default = 200
+}
+
+variable "es_instance_type" {
+  default = "t2.xlarge"
 }
 
 #LB

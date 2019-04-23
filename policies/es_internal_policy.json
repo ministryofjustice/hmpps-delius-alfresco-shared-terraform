@@ -2,6 +2,21 @@
     "Version": "2012-10-17",
     "Statement": [
         {
+            "Sid": "ecsInstanceRole",
+            "Effect": "Allow",
+            "Action": [
+                "ecs:DeregisterContainerInstance",
+                "ecs:DiscoverPollEndpoint",
+                "ecs:Poll",
+                "ecs:RegisterContainerInstance",
+                "ecs:Submit*",
+                "ecs:StartTelemetrySession"
+            ],
+            "Resource": [
+                "*"
+            ]
+        },
+        {
             "Sid": "allowLoggingToCloudWatch",
             "Effect": "Allow",
             "Action": [
@@ -33,7 +48,9 @@
             ],
             "Resource": [
                 "arn:aws:s3:::${s3-config-bucket}",
-                "arn:aws:s3:::${s3-config-bucket}/*"
+                "arn:aws:s3:::${s3-config-bucket}/*",
+                "arn:aws:s3:::${elasticsearch_bucket}",
+                "arn:aws:s3:::${elasticsearch_bucket}/*"
             ]
         },
         {

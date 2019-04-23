@@ -58,9 +58,22 @@ sed -i 's/ECS_CLUSTER=default/ECS_CLUSTER=${ecs_cluster}/g' /etc/ecs/ecs.config
 # NFS
 yum install -y nfs-utils
 
-mkdir -p ${efs_mount_path}
+mkdir -p ${efs_mount_path} ${es_home_dir}
 
-sudo mount -t nfs4 -o nfsvers=4.1,rsize=1048576,wsize=1048576,hard,timeo=600,retrans=2 ${efs_share_id}:/ ${efs_mount_path}
+mount -t nfs4 -o nfsvers=4.1,rsize=1048576,wsize=1048576,hard,timeo=600,retrans=2 ${efs_dns_name}:/ ${efs_mount_path}
+
+# create lvm and mount
+pvcreate /dev/xvdb
+vgcreate esdata /dev/xvdb
+lvcreate -n esdatavol -l90%VG esdata
+mkfs.xfs -f /dev/esdata/esdatavol
+
+cat /etc/fstab | grep -v '/dev/esdata/esdatavol' > /tmp/fstab-orig
+cat /tmp/fstab-orig > /etc/fstab
+
+echo "/dev/esdata/esdatavol    ${es_home_dir}  xfs defaults 0 0" >> /etc/fstab
+
+mount -a
 
 # add elasticsearch user
 
@@ -71,6 +84,31 @@ useradd -m -g elasticsearch -u 1000 elasticsearch
 mkdir -p ${es_home_dir}/data ${es_home_dir}/logs ${es_home_dir}/config
 
 chown -R elasticsearch:elasticsearch ${es_home_dir} ${efs_mount_path}
+
+# config
+host_name=$(hostname)
+host_ip=$(hostname -i)
+echo "discovery.type: ${es_discovery_type}
+network:
+  host: 0.0.0.0
+  publish_host: $host_ip
+path:
+  logs: ${es_home_dir}/logs
+  data: ${es_home_dir}/data
+  repo: ["${efs_mount_path}"]
+bootstrap.memory_lock: true
+node.name: $host_name
+cluster.name: ${ecs_cluster}" > ${es_home_dir}/config/elasticsearch.yml
+
+echo "vm.max_map_count=262144" > /etc/sysctl.d/elasticsearch.conf
+
+sysctl -p
+
+ulimit -n 65536
+ulimit -u 2048
+ulimit -l unlimited
+
+service docker restart
 
 #restart ecs-agent
 docker rm -f ecs-agent

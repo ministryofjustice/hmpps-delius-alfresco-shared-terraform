@@ -136,7 +136,7 @@ locals {
   alfresco_app_name            = "${data.terraform_remote_state.common.alfresco_app_name}"
   environment                  = "${data.terraform_remote_state.common.environment}"
   tags                         = "${data.terraform_remote_state.common.common_tags}"
-  instance_profile             = "${data.terraform_remote_state.iam.iam-app-role-es_profile_name}"
+  instance_profile             = "${data.terraform_remote_state.iam.iam_instance_ecs_es_profile_name}"
   access_logs_bucket           = "${data.terraform_remote_state.common.common_s3_lb_logs_bucket}"
   ssh_deployer_key             = "${data.terraform_remote_state.common.common_ssh_deployer_key}"
   s3bucket_kms_id              = "${data.terraform_remote_state.s3bucket.s3bucket_kms_id}"
@@ -150,7 +150,8 @@ locals {
   certificate_arn              = "${data.aws_acm_certificate.cert.arn}"
   public_subnet_ids            = ["${data.terraform_remote_state.common.public_subnet_ids}"]
   private_subnet_ids           = ["${data.terraform_remote_state.common.private_subnet_ids}"]
-  ecs_service_role             = "${data.terraform_remote_state.iam.iam_role_int_ecs_role_arn}"
+  ecs_service_role             = "${data.terraform_remote_state.iam.iam_service_ecs_es_role_arn}"
+  ecs_instance_role            = "${data.terraform_remote_state.iam.iam_instance_ecs_es_role_arn}"
   service_desired_count        = "${var.es_service_desired_count}"
   lb_security_groups           = ["${data.terraform_remote_state.common.monitoring_server_client_sg_id}"]
 

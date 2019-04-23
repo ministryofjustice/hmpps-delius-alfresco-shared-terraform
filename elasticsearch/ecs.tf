@@ -1,7 +1,7 @@
 locals {
   efs_mount_path = "/opt/esbackup"
-  efs_share_id   = "${data.terraform_remote_state.efs.efs_id}"
-  es_home_dir    = "/opt/elasticsearch"
+  efs_dns_name   = "${data.terraform_remote_state.efs.efs_dns_name}"
+  es_home_dir    = "/usr/share/elasticsearch"
 }
 
 ############################################
@@ -165,9 +165,10 @@ data "template_file" "userdata_ecs" {
     environment          = "${local.environment}"
     common_name          = "${local.common_name}"
     ecs_cluster          = "${module.ecs_cluster.ecs_cluster_name}"
-    efs_share_id         = "${local.efs_share_id}"
+    efs_dns_name         = "${local.efs_dns_name}"
     efs_mount_path       = "${local.efs_mount_path}"
     es_home_dir          = "${local.es_home_dir}"
+    es_discovery_type    = "${var.es_discovery_type}"
   }
 }
 
@@ -177,9 +178,9 @@ data "template_file" "userdata_ecs" {
 
 module "launch_cfg" {
   source                      = "git::https://github.com/ministryofjustice/hmpps-terraform-modules.git?ref=master//modules//launch_configuration//blockdevice"
-  launch_configuration_name   = "${local.common_label}-az1"
+  launch_configuration_name   = "${local.common_name}-az1"
   image_id                    = "${data.aws_ami.ecs_ami.id}"
-  instance_type               = "t2.large"
+  instance_type               = "${var.es_instance_type}"
   volume_size                 = "30"
   instance_profile            = "${local.instance_profile}"
   key_name                    = "${local.ssh_deployer_key}"

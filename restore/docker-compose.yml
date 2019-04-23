@@ -6,11 +6,11 @@ services:
       context: ./elasticsearch
       dockerfile: Dockerfile
     volumes:
-      - /opt/elasticsearch/data:/opt/elasticsearch/data
-      - /opt/elasticsearch/logs:/opt/elasticsearch/logs
-      - /opt/backups:/opt/backup
+      - ./opt/elasticsearch/data:/opt/elasticsearch/data
+      - ./opt/elasticsearch/logs:/opt/elasticsearch/logs
+      - ./opt/backups:/opt/backup
     ports:
-      - 19300:9300
-      - 19200:9200
+      - 9300:9300
+      - 9200:9200
     ulimits:
       nofile: 65536
