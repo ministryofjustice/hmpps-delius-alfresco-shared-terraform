@@ -79,7 +79,7 @@ locals {
 ####################################################
 # EFS content
 ####################################################
-module "efs_content" {
+module "efs_backups" {
   source                 = "git::https://github.com/ministryofjustice/hmpps-terraform-modules.git?ref=master//modules//efs"
   environment_identifier = "${local.environment_identifier}"
   tags                   = "${local.tags}"
@@ -87,25 +87,7 @@ module "efs_content" {
   kms_key_id             = "${local.s3bucket_kms_arn}"
   performance_mode       = "generalPurpose"
   throughput_mode        = "bursting"
-  share_name             = "content_store"
-  zone_id                = "${local.private_zone_id}"
-  domain                 = "${local.internal_domain}"
-  subnets                = "${local.private_subnet_ids}"
-  security_groups        = ["${local.security_groups}"]
-}
-
-####################################################
-# EFS content_deleted
-####################################################
-module "efs_content_deleted" {
-  source                 = "git::https://github.com/ministryofjustice/hmpps-terraform-modules.git?ref=master//modules//efs"
-  environment_identifier = "${local.environment_identifier}"
-  tags                   = "${local.tags}"
-  encrypted              = true
-  kms_key_id             = "${local.s3bucket_kms_arn}"
-  performance_mode       = "generalPurpose"
-  throughput_mode        = "bursting"
-  share_name             = "content_store_deleted"
+  share_name             = "${local.alfresco_app_name}-efs"
   zone_id                = "${local.private_zone_id}"
   domain                 = "${local.internal_domain}"
   subnets                = "${local.private_subnet_ids}"

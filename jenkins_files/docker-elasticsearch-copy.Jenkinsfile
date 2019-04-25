@@ -1,6 +1,6 @@
 def project = [:]
 project.alfresco  = 'hmpps-delius-alfresco-shared-terraform'
-project.branch = 'issue-81--copy-es-data-to-migration-bucket'
+project.branch = 'master'
 
 def environments = [
   'delius-training-test',

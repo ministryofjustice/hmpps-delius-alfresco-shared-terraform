@@ -62,6 +62,7 @@ locals {
   storage_s3bucket           = "${data.terraform_remote_state.s3bucket.s3bucket}"
   s3-config-bucket           = "${data.terraform_remote_state.common.common_s3-config-bucket}"
   remote_config_bucket       = "${data.terraform_remote_state.common.remote_config_bucket}"
+  elasticsearch_bucket       = "${data.terraform_remote_state.s3bucket.s3_elasticsearch_bucket}"
   remote_iam_role            = "${data.terraform_remote_state.common.remote_iam_role}"
   s3bucket_kms_arn           = "${data.terraform_remote_state.s3bucket.s3bucket_kms_arn}"
   restore_dynamodb_table_arn = "${data.terraform_remote_state.dynamodb.dynamodb_table_arn}"

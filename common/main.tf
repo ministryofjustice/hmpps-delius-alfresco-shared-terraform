@@ -56,19 +56,6 @@ data "terraform_remote_state" "monitor" {
 }
 
 #-------------------------------------------------------------
-### Getting the sg details
-#-------------------------------------------------------------
-data "terraform_remote_state" "security-groups" {
-  backend = "s3"
-
-  config {
-    bucket = "${var.remote_state_bucket_name}"
-    key    = "security-groups/terraform.tfstate"
-    region = "${var.region}"
-  }
-}
-
-#-------------------------------------------------------------
 ### Getting the engineer vpc
 #-------------------------------------------------------------
 data "terraform_remote_state" "remote_vpc" {
@@ -156,16 +143,6 @@ locals {
   app_hostnames = {
     internal = "${var.alfresco_app_name}-int"
     external = "${var.alfresco_app_name}"
-  }
-
-  sg_map_ids = {
-    internal_inst_sg_id = "${data.terraform_remote_state.security-groups.sg_alfresco_api_in}"
-    elasticache_sg_id   = "${data.terraform_remote_state.security-groups.sg_alfresco_elasticache_in}"
-    db_sg_id            = "${data.terraform_remote_state.security-groups.sg_alfresco_db_in}"
-    external_lb_sg_id   = "${data.terraform_remote_state.security-groups.sg_alfresco_external_lb_in}"
-    internal_lb_sg_id   = "${data.terraform_remote_state.security-groups.sg_alfresco_internal_lb_in}"
-    external_inst_sg_id = "${data.terraform_remote_state.security-groups.sg_alfresco_nginx_in}"
-    bastion_in_sg_id    = "${data.terraform_remote_state.security-groups.sg_ssh_bastion_in_id}"
   }
 
   private_subnet_map = {

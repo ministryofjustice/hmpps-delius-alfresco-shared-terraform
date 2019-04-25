@@ -1,0 +1,16 @@
+version: "3"
+
+services:
+  elasticsearch:
+    build:
+      context: ./elasticsearch
+      dockerfile: Dockerfile
+    volumes:
+      - ./opt/elasticsearch/data:/opt/elasticsearch/data
+      - ./opt/elasticsearch/logs:/opt/elasticsearch/logs
+      - ./opt/backups:/opt/backup
+    ports:
+      - 9300:9300
+      - 9200:9200
+    ulimits:
+      nofile: 65536
