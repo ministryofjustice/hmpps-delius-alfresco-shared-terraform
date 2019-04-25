@@ -1,6 +1,6 @@
 def project = [:]
 project.alfresco  = 'hmpps-delius-alfresco-shared-terraform'
-project.branch = 'issue-85-add-docker-compose-files'
+project.branch = 'master'
 
 def environments = [
   'delius-training-test',

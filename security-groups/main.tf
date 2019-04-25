@@ -118,3 +118,18 @@ resource "aws_security_group_rule" "internal_inst_sg_egress_self" {
   protocol          = -1
   self              = true
 }
+
+# MQ
+resource "aws_security_group_rule" "internal_inst_sg_egress_mq" {
+  security_group_id = "${local.sg_map_ids["internal_inst_sg_id"]}"
+  type              = "egress"
+  from_port         = "61616"
+  to_port           = "61616"
+  protocol          = "tcp"
+
+  cidr_blocks = [
+    "${local.cidr_block}",
+  ]
+
+  description = "${local.common_name}-mq-sg"
+}
