@@ -1,0 +1,5 @@
+.dockerignore
+Dockerfile
+Dockerfile-prod
+elastico.ipynb
+**__pycache__
