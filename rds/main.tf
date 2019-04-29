@@ -78,7 +78,7 @@ module "rds" {
   create_db_parameter_group = true
   create_db_option_group    = true
   create_db_instance        = true
-  parameters                = []
+  parameters                = ["${var.db_parameters}"]
   family                    = "postgres9.4"
   engine                    = "postgres"
   major_engine_version      = "9.4"
