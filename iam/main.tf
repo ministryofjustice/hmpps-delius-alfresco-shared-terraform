@@ -50,23 +50,37 @@ data "terraform_remote_state" "dynamodb" {
   }
 }
 
+#-------------------------------------------------------------
+### Getting the Dynamodb details
+#-------------------------------------------------------------
+data "terraform_remote_state" "mon" {
+  backend = "s3"
+
+  config {
+    bucket = "${var.remote_state_bucket_name}"
+    key    = "shared-monitoring/terraform.tfstate"
+    region = "${var.region}"
+  }
+}
+
 ####################################################
 # Locals
 ####################################################
 
 locals {
-  region                     = "${var.region}"
-  alfresco_app_name          = "${data.terraform_remote_state.common.alfresco_app_name}"
-  common_name                = "${data.terraform_remote_state.common.common_name}"
-  tags                       = "${data.terraform_remote_state.common.common_tags}"
-  storage_s3bucket           = "${data.terraform_remote_state.s3bucket.s3bucket}"
-  s3-config-bucket           = "${data.terraform_remote_state.common.common_s3-config-bucket}"
-  remote_config_bucket       = "${data.terraform_remote_state.common.remote_config_bucket}"
-  elasticsearch_bucket       = "${data.terraform_remote_state.s3bucket.s3_elasticsearch_bucket}"
-  remote_iam_role            = "${data.terraform_remote_state.common.remote_iam_role}"
-  s3bucket_kms_arn           = "${data.terraform_remote_state.s3bucket.s3bucket_kms_arn}"
-  restore_dynamodb_table_arn = "${data.terraform_remote_state.dynamodb.dynamodb_table_arn}"
-  vpc_cidr                   = "${data.terraform_remote_state.common.vpc_cidr_block}"
+  region                       = "${var.region}"
+  alfresco_app_name            = "${data.terraform_remote_state.common.alfresco_app_name}"
+  common_name                  = "${data.terraform_remote_state.common.common_name}"
+  tags                         = "${data.terraform_remote_state.common.common_tags}"
+  storage_s3bucket             = "${data.terraform_remote_state.s3bucket.s3bucket}"
+  s3-config-bucket             = "${data.terraform_remote_state.common.common_s3-config-bucket}"
+  monitoring_server_bucket_arn = "${data.terraform_remote_state.mon.monitoring_server_bucket_arn}"
+  remote_config_bucket         = "${data.terraform_remote_state.common.remote_config_bucket}"
+  elasticsearch_bucket         = "${data.terraform_remote_state.s3bucket.s3_elasticsearch_bucket}"
+  remote_iam_role              = "${data.terraform_remote_state.common.remote_iam_role}"
+  s3bucket_kms_arn             = "${data.terraform_remote_state.s3bucket.s3bucket_kms_arn}"
+  restore_dynamodb_table_arn   = "${data.terraform_remote_state.dynamodb.dynamodb_table_arn}"
+  vpc_cidr                     = "${data.terraform_remote_state.common.vpc_cidr_block}"
 }
 
 ####################################################

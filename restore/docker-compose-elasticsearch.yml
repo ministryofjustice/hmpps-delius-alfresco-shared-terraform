@@ -1,0 +1,27 @@
+version: "3"
+
+services:
+  elasticsearch:
+    image: mojdigitalstudio/hmpps-elasticsearch:latest
+    container_name: es
+    environment:
+      - HMPPS_ES_CLUSTER_NAME=es-clust
+      - HMPPS_ES_NODE_NAME=es1
+      - HMPPS_ES_DISCOVERY_TYPE=single-node
+      - HMPPS_ES_NETWORK_PUBLISH_HOST=0.0.0.0
+      - HMPPS_ES_PATH_REPO=/opt/es_backups
+      - HMPPS_BOOTSTRAP_MEMORY_LOCK=true
+      - HMPPS_JVM_HEAPSIZE=2g
+    ports:
+      - 9300:9300
+      - 9200:9200
+    ulimits:
+      nofile: 65536
+  es_client:
+    build:
+      context: ./services/es_client
+      dockerfile: Dockerfile
+    environment:
+      - APP_ENVIRONMENT=test
+    depends_on:
+      - elasticsearch

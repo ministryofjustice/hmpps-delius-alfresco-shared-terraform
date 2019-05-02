@@ -77,3 +77,6 @@ env_configs
 .DS_Store
 
 *plan_ret
+
+restore/opt
+**.pytest_cache

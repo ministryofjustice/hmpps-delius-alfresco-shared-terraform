@@ -1,0 +1,21 @@
+version: "3"
+
+services:
+  alf_db: 
+    build:
+      context: ./services/db
+      dockerfile: Dockerfile
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+  alf_client:
+    build:
+      context: ./services/client
+      dockerfile: Dockerfile
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    depends_on:
+      - alf_db

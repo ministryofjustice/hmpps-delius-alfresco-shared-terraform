@@ -35,11 +35,11 @@ data "template_file" "es" {
   template = "${file("../policies/es_internal_policy.json")}"
 
   vars {
-    s3-config-bucket           = "${local.s3-config-bucket}"
-    app_role_arn               = "${module.create-iam-app-role-es.iamrole_arn}"
-    s3bucket_kms_arn           = "${local.s3bucket_kms_arn}"
-    restore_dynamodb_table_arn = "${local.restore_dynamodb_table_arn}"
-    elasticsearch_bucket       = "${local.elasticsearch_bucket}"
+    monitoring_server_bucket_arn = "${local.monitoring_server_bucket_arn}"
+    app_role_arn                 = "${module.create-iam-app-role-es.iamrole_arn}"
+    s3bucket_kms_arn             = "${local.s3bucket_kms_arn}"
+    restore_dynamodb_table_arn   = "${local.restore_dynamodb_table_arn}"
+    elasticsearch_bucket         = "${local.elasticsearch_bucket}"
   }
 }
 

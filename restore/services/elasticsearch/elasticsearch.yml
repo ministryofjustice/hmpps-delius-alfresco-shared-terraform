@@ -1,0 +1,11 @@
+path:
+  logs: /opt/elasticsearch/logs
+  data: /opt/elasticsearch/data
+  repo: ["/opt/esbackup"]
+bootstrap.memory_lock: true
+cluster.name: es-restore
+discovery:
+  type: single-node
+network:
+  host: 0.0.0.0
+node.name: kuwanda
