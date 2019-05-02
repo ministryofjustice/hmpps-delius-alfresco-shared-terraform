@@ -29,6 +29,10 @@ output "security_groups_sg_efs_sg_id" {
   value = "${local.sg_map_ids["efs_sg_id"]}"
 }
 
+output "security_groups_bastion_in_sg_id" {
+  value = "${local.sg_map_ids["bastion_in_sg_id"]}"
+}
+
 output "security_groups_map" {
   value = "${local.sg_map_ids}"
 }

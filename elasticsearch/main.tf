@@ -159,5 +159,6 @@ locals {
     "${data.terraform_remote_state.security-groups.security_groups_sg_efs_sg_id}",
     "${data.terraform_remote_state.common.common_sg_outbound_id}",
     "${data.terraform_remote_state.common.monitoring_server_client_sg_id}",
+    "${data.terraform_remote_state.security-groups.security_groups_bastion_in_sg_id}",
   ]
 }
