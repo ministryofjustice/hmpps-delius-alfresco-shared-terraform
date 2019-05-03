@@ -5,8 +5,9 @@ project.branch = 'master'
 def environments = [
   'delius-training-test',
   'delius-test',
-  'delius-po-test1'
-  'delius-po-test2'
+  'delius-po-test1',
+  'delius-po-test2',
+  'alfresco-dev'
 ]
 
 def prepare_env() {
