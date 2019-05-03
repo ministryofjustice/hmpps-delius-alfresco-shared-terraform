@@ -115,8 +115,10 @@ then
   PARAM_STORE_NAME="${TG_ENVIRONMENT_IDENTIFIER}-alfresco-rds-db-password"
 
   get_creds_aws
-  DB_PASSWORD=$(aws ssm get-parameters --names ${PARAM_STORE_NAME} --query "Parameters[*].{Name:Name,Value:Value}" \
-             | grep Value | awk '{print $2}' | sed 's/"//g')
+ # DB_PASSWORD=$(aws ssm get-parameters --names ${PARAM_STORE_NAME} --region ${TG_REGION} --query "Parameters[*].{Name:Name,Value:Value}" \
+#             | grep Value | awk '{print $2}' | sed 's/"//g')
+
+DB_PASSWORD=$(aws ssm get-parameters --with-decryption --names t${PARAM_STORE_NAME} --region ${TG_REGION} --query "Parameters[0]"."Value")
 
   psql postgresql://postgres:${DB_PASSWORD}@${RDS_DB_ENDPOINT}/postgres << EOF
       drop database ${ALFRESCO_DB};
