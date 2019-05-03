@@ -40,6 +40,9 @@ echo "Output -> environment_type set to: ${TG_ENVIRONMENT_TYPE}"
 source ${HOME}/data/alf_env_configs/${TG_ENVIRONMENT_TYPE}.properties
 exit_on_error $? !!
 
+source ${env_config_dir}/${TG_ENVIRONMENT_TYPE}/${TG_ENVIRONMENT_TYPE}.properties
+exit_on_error $? !!
+
 echo "Output ---> set environment stage complete"
 
 # source s3 bucket
