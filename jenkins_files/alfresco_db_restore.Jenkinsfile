@@ -1,6 +1,6 @@
 def project = [:]
 project.alfresco  = 'hmpps-delius-alfresco-shared-terraform'
-project.branch = 'master'
+project.branch = 'issue_88_alfresco_db_restore'
 
 def environments = [
   'delius-training-test',
