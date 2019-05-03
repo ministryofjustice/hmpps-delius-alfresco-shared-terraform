@@ -142,10 +142,10 @@ else
   echo "------> COPY of s3://${SRC_S3_BUCKET}/${SRC_BUCKET_PATH}/${SRC_SQL_FILE} to s3://${DEST_S3_BUCKET}/${DEST_BUCKET_PATH}/${ALFRESCO_SQL_FILE} DONE"
 
   ##Copy alfresco.sql from storage s3bucket to container
-  get_creds_aws
-  aws s3 cp --only-show-errors s3://${DEST_S3_BUCKET}/${DEST_BUCKET_PATH}/${ALFRESCO_SQL_FILE} ${ALFRESCO_SQL_FILE} --dryrun
-  exit_on_error $? !!
-  echo "------> COPY of s3://${DEST_S3_BUCKET}/${DEST_BUCKET_PATH}/${ALFRESCO_SQL_FILE} to container DONE"
+ # get_creds_aws
+  #aws s3 cp --only-show-errors s3://${DEST_S3_BUCKET}/${DEST_BUCKET_PATH}/${ALFRESCO_SQL_FILE} ${ALFRESCO_SQL_FILE} --dryrun
+  #exit_on_error $? !!
+  #echo "------> COPY of s3://${DEST_S3_BUCKET}/${DEST_BUCKET_PATH}/${ALFRESCO_SQL_FILE} to container DONE"
 
   echo "DRY RUN COPY DONE"
 
