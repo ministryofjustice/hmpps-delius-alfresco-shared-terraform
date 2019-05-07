@@ -24,6 +24,7 @@ def do_alfresco_db_restore_dry_run(env_name, git_project_dir) {
         echo "Alfresco DB Restore for ${env_name}"
         set +e
         cd "${git_project_dir}"
+        ls -ltr
         CURRENT_DIR=\$(pwd)
         # set region
         docker run --rm -v \$(pwd):/home/tools/data \
