@@ -13,7 +13,7 @@ def environments = [
 def prepare_env() {
     sh '''
     #!/usr/env/bin bash
-    docker pull mojdigitalstudio/hmpps-base-psql:0.0.166-alpha
+    docker pull mojdigitalstudio/hmpps-terraform-builder:latest
     '''
 }
 
@@ -24,13 +24,12 @@ def do_alfresco_db_restore_dry_run(env_name, git_project_dir) {
         echo "Alfresco DB Restore for ${env_name}"
         set +e
         cd "${git_project_dir}"
-        pwd
         CURRENT_DIR=\$(pwd)
         # set region
         docker run --rm -v \$(pwd):/home/tools/data \
           -v \${HOME}/.aws:/home/tools/.aws \
           -e RUN_MODE=false \
-          mojdigitalstudio/hmpps-base-psql:0.0.166-alpha sh scripts/alfresco_db_restore.sh ${env_name}
+          mojdigitalstudio/hmpps-terraform-builder sh scripts/alfresco_db_restore.sh ${env_name}
         set -e
         """
         return readFile("${git_project_dir}/plan_ret").trim()
@@ -51,7 +50,7 @@ def do_alfresco_db_restore_full_run(env_name, git_project_dir) {
         docker run --rm -v \$(pwd):/home/tools/data \
           -v \${HOME}/.aws:/home/tools/.aws \
           -e RUN_MODE=true \
-          mojdigitalstudio/hmpps-base-psql:0.0.166-alpha sh scripts/alfresco_db_restore.sh ${env_name}
+          mojdigitalstudio/hmpps-terraform-builder:latest sh scripts/alfresco_db_restore.sh ${env_name}
         set -e
         """
     }
