@@ -13,7 +13,7 @@ def environments = [
 def prepare_env() {
     sh '''
     #!/usr/env/bin bash
-    docker pull mojdigitalstudio/hmpps-base-psql:latest
+    docker pull mojdigitalstudio/hmpps-base-psql:0.0.166-alpha
     '''
 }
 
