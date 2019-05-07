@@ -24,7 +24,7 @@ def do_alfresco_db_restore_dry_run(env_name, git_project_dir) {
         echo "Alfresco DB Restore for ${env_name}"
         set +e
         cd "${git_project_dir}"
-        whoami
+        chmod +x scripts/alfresco_db_restore.sh
         ls -ltr scripts
         CURRENT_DIR=\$(pwd)
         # set region
