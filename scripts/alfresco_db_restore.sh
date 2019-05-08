@@ -112,7 +112,7 @@ then
   get_creds_aws
   RDS_DB_ENDPOINT="10.161.75.254"
 #  RDS_DB_ENDPOINT=$(aws rds describe-db-instances --region ${TG_REGION} --db-instance-identifier ${DB_IDENTIFIER} \
-				  --query 'DBInstances[*].[Endpoint]' | grep Address | awk '{print $2}' | sed 's/"//g')
+#				  --query 'DBInstances[*].[Endpoint]' | grep Address | awk '{print $2}' | sed 's/"//g')
   PARAM_STORE_NAME="${TG_ENVIRONMENT_IDENTIFIER}-alfresco-rds-db-password"
 
   get_creds_aws
