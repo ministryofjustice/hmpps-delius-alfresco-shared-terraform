@@ -89,13 +89,13 @@ then
 
   ##Copy alfresco.sql from backups bucket to storage s3bucket
   get_creds_aws
-  aws s3 cp --only-show-errors s3://${SRC_S3_BUCKET}/${SRC_BUCKET_PATH}/${SRC_SQL_FILE} s3://${DEST_S3_BUCKET}/${DEST_BUCKET_PATH}/${ALFRESCO_SQL_FILE}
+#  aws s3 cp --only-show-errors s3://${SRC_S3_BUCKET}/${SRC_BUCKET_PATH}/${SRC_SQL_FILE} s3://${DEST_S3_BUCKET}/${DEST_BUCKET_PATH}/${ALFRESCO_SQL_FILE}
   exit_on_error $? !!
   echo "------> COPY of s3://${SRC_S3_BUCKET}/${SRC_BUCKET_PATH}/${SRC_SQL_FILE} to s3://${DEST_S3_BUCKET}/${DEST_BUCKET_PATH}/${ALFRESCO_SQL_FILE} DONE"
 
   ##Copy alfresco.sql from storage s3bucket to container
   get_creds_aws
-  aws s3 cp --only-show-errors s3://${DEST_S3_BUCKET}/${DEST_BUCKET_PATH}/${ALFRESCO_SQL_FILE} ${ALFRESCO_SQL_FILE}
+#  aws s3 cp --only-show-errors s3://${DEST_S3_BUCKET}/${DEST_BUCKET_PATH}/${ALFRESCO_SQL_FILE} ${ALFRESCO_SQL_FILE}
   exit_on_error $? !!
   echo "------> COPY of s3://${DEST_S3_BUCKET}/${DEST_BUCKET_PATH}/${ALFRESCO_SQL_FILE} to container DONE"
 
@@ -110,15 +110,13 @@ then
   DB_IDENTIFIER="${TG_ENVIRONMENT_IDENTIFIER}-alfresco-rds"
 
   get_creds_aws
-  RDS_DB_ENDPOINT=$(aws rds describe-db-instances --region ${TG_REGION} --db-instance-identifier ${DB_IDENTIFIER} \
+  RDS_DB_ENDPOINT="10.161.75.254"
+#  RDS_DB_ENDPOINT=$(aws rds describe-db-instances --region ${TG_REGION} --db-instance-identifier ${DB_IDENTIFIER} \
 				  --query 'DBInstances[*].[Endpoint]' | grep Address | awk '{print $2}' | sed 's/"//g')
   PARAM_STORE_NAME="${TG_ENVIRONMENT_IDENTIFIER}-alfresco-rds-db-password"
 
   get_creds_aws
- # DB_PASSWORD=$(aws ssm get-parameters --names ${PARAM_STORE_NAME} --region ${TG_REGION} --query "Parameters[*].{Name:Name,Value:Value}" \
-#             | grep Value | awk '{print $2}' | sed 's/"//g')
-
-DB_PASSWORD=$(aws ssm get-parameters --with-decryption --names t${PARAM_STORE_NAME} --region ${TG_REGION} --query "Parameters[0]"."Value")
+  DB_PASSWORD=$(aws ssm get-parameters --with-decryption --names t${PARAM_STORE_NAME} --region ${TG_REGION} --query "Parameters[0]"."Value")
 
   psql postgresql://${ALF_DB_USER}:${DB_PASSWORD}@${RDS_DB_ENDPOINT}/postgres << EOF
       drop database ${ALFRESCO_DB};
