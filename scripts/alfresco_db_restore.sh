@@ -46,8 +46,8 @@ exit_on_error $? !!
 echo "Output ---> set environment stage complete"
 
 # source s3 bucket
-#SRC_S3_BUCKET="${TG_ENVIRONMENT_IDENTIFIER}-backups-s3bucket"
-SRC_S3_BUCKET="tf-alf-dev-elk-backups-s3bucket"
+SRC_S3_BUCKET="${TG_ENVIRONMENT_IDENTIFIER}-backups-s3bucket"
+#SRC_S3_BUCKET="tf-alf-dev-elk-backups-s3bucket"
 
 # dest s3 bucket
 DEST_S3_BUCKET="${TG_ENVIRONMENT_IDENTIFIER}-alfresco-storage-s3bucket"
@@ -102,6 +102,7 @@ then
 
 
   #Prepare db before dataset restore
+  echo "Commencing Alfresco DB restore"
   POSTGRES_ROLE="postgres"
   ALFRESCO_ROLE="alfresco"
   ALF_DB_USER=$(echo "alfresco${TG_ENVIRONMENT_TYPE}" | sed 's/-//')
@@ -110,26 +111,26 @@ then
   DB_IDENTIFIER="${TG_ENVIRONMENT_IDENTIFIER}-alfresco-rds"
 
   get_creds_aws
-  RDS_DB_ENDPOINT="10.161.75.254"
-#  RDS_DB_ENDPOINT=$(aws rds describe-db-instances --region ${TG_REGION} --db-instance-identifier ${DB_IDENTIFIER} \
-#				  --query 'DBInstances[*].[Endpoint]' | grep Address | awk '{print $2}' | sed 's/"//g')
+  RDS_DB_ENDPOINT=$(aws rds describe-db-instances --region ${TG_REGION} --db-instance-identifier ${DB_IDENTIFIER} \
+				  --query 'DBInstances[*].[Endpoint]' | grep Address | awk '{print $2}' | sed 's/"//g')
   PARAM_STORE_NAME="${TG_ENVIRONMENT_IDENTIFIER}-alfresco-rds-db-password"
 
   get_creds_aws
   DB_PASSWORD=$(aws ssm get-parameters --with-decryption --names t${PARAM_STORE_NAME} --region ${TG_REGION} --query "Parameters[0]"."Value")
 
-  psql postgresql://${ALF_DB_USER}:${DB_PASSWORD}@${RDS_DB_ENDPOINT}/postgres << EOF
-      drop database ${ALFRESCO_DB};
-      CREATE DATABASE ${ALFRESCO_DB};
-      CREATE ROLE ${POSTGRES_ROLE};
-      GRANT ${POSTGRES_ROLE} TO ${ALF_DB_USER};
-      CREATE ROLE ${ALFRESCO_ROLE};
-      GRANT ${ALFRESCO_ROLE} TO ${ALF_DB_USER};
-EOF
-      exit_on_error $? !!
+#  psql postgresql://${ALF_DB_USER}:${DB_PASSWORD}@${RDS_DB_ENDPOINT}/postgres << EOF
+#      drop database ${ALFRESCO_DB};
+#      CREATE DATABASE ${ALFRESCO_DB};
+#      CREATE ROLE ${POSTGRES_ROLE};
+#      GRANT ${POSTGRES_ROLE} TO ${ALF_DB_USER};
+#      CREATE ROLE ${ALFRESCO_ROLE};
+#      GRANT ${ALFRESCO_ROLE} TO ${ALF_DB_USER};
+#EOF
+#      exit_on_error $? !!
 
   #Restore db from backup
-  PGPASSWORD=${DB_PASSWORD} psql -h ${RDS_DB_ENDPOINT} -U ${ALF_DB_USER} -d ${ALFRESCO_DB} -f ${ALFRESCO_SQL_FILE}
+ # PGPASSWORD=${DB_PASSWORD} psql -h ${RDS_DB_ENDPOINT} -U ${ALF_DB_USER} -d ${ALFRESCO_DB} -f ${ALFRESCO_SQL_FILE}
+  PGPASSWORD=${DB_PASSWORD} psql -h ${RDS_DB_ENDPOINT} -U ${ALF_DB_USER} -d ${ALFRESCO_DB}
   exit_on_error $? !!
 
 else
@@ -140,12 +141,6 @@ else
   aws s3 cp --only-show-errors s3://${SRC_S3_BUCKET}/${SRC_BUCKET_PATH}/${SRC_SQL_FILE} s3://${DEST_S3_BUCKET}/${DEST_BUCKET_PATH}/${ALFRESCO_SQL_FILE} --dryrun
   exit_on_error $? !!
   echo "------> COPY of s3://${SRC_S3_BUCKET}/${SRC_BUCKET_PATH}/${SRC_SQL_FILE} to s3://${DEST_S3_BUCKET}/${DEST_BUCKET_PATH}/${ALFRESCO_SQL_FILE} DONE"
-
-  ##Copy alfresco.sql from storage s3bucket to container
- # get_creds_aws
-  #aws s3 cp --only-show-errors s3://${DEST_S3_BUCKET}/${DEST_BUCKET_PATH}/${ALFRESCO_SQL_FILE} ${ALFRESCO_SQL_FILE} --dryrun
-  #exit_on_error $? !!
-  #echo "------> COPY of s3://${DEST_S3_BUCKET}/${DEST_BUCKET_PATH}/${ALFRESCO_SQL_FILE} to container DONE"
 
   echo "DRY RUN COPY DONE"
 
