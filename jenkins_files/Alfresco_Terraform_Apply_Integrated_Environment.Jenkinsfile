@@ -1,17 +1,7 @@
 def project = [:]
 project.config    = 'hmpps-env-configs'
 project.network   = 'hmpps-delius-network-terraform'
-project.dcore     = 'hmpps-delius-core-terraform'
 project.alfresco  = 'hmpps-delius-alfresco-shared-terraform'
-project.spg       = 'hmpps-spg-terraform'
-//project.ndmis     = 'hmpps-ndmis-terraform' //
-
-def environments = [
-  // 'delius-core-sandpit',
-  // 'delius-core-playpit',
-  'delius-core-dev',
-  'delius-test',
-]
 
 def prepare_env() {
     sh '''
@@ -33,16 +23,24 @@ def plan_submodule(config_dir, env_name, git_project_dir, submodule_name) {
             -v ~/.aws:/home/tools/.aws mojdigitalstudio/hmpps-terraform-builder \
             bash -c "\
                 source env_configs/${env_name}/${env_name}.properties; \
+                if [ -f "env_configs/${env_name}/sub-projects/alfresco.properties" ]; then source env_configs/${env_name}/sub-projects/alfresco.properties; fi
                 cd ${submodule_name}; \
                 if [ -d .terraform ]; then rm -rf .terraform; fi; sleep 5; \
                 terragrunt init; \
-                terragrunt plan -detailed-exitcode --out ${env_name}.plan" \
+                terragrunt plan -detailed-exitcode --out ${env_name}.plan > tf.plan.out; \
+                exitcode=\\\"\\\$?\\\"; \
+                cat tf.plan.out; \
+                if [ \\\"\\\$exitcode\\\" == '1' ]; then exit 1; fi; \
+                if [ \\\"\\\$exitcode\\\" == '2' ]; then \
+                    parse-terraform-plan -i tf.plan.out | jq '.changedResources[] | (.action != \\\"update\\\") or (.changedAttributes | to_entries | map(.key != \\\"tags.source-hash\\\") | reduce .[] as \\\$item (false; . or \\\$item))' | jq -e -s 'reduce .[] as \\\$item (false; . or \\\$item) == false'; \
+                    if [ \\\"\\\$?\\\" == '1' ]; then exitcode=2 ; else exitcode=3; fi; \
+                fi; \
+                echo \\\"\\\$exitcode\\\" > plan_ret;" \
             || exitcode="\$?"; \
-            echo "\$exitcode" > plan_ret; \
             if [ "\$exitcode" == '1' ]; then exit 1; else exit 0; fi
         set -e
         """
-        return readFile("${git_project_dir}/plan_ret").trim()
+        return readFile("${git_project_dir}/${submodule_name}/plan_ret").trim()
     }
 }
 
@@ -88,11 +86,20 @@ def confirm() {
 }
 
 def do_terraform(config_dir, env_name, git_project, component) {
-    if (plan_submodule(config_dir, env_name, git_project, component) == "2") {
-        confirm()
+    plancode = plan_submodule(config_dir, env_name, git_project, component)
+    if (plancode == "2") {
+        if ("${confirmation}" == "true") {
+            confirm()
+        } else {
+            env.Continue = true
+        }
         if (env.Continue == "true") {
             apply_submodule(config_dir, env_name, git_project, component)
         }
+    }
+    else if (plancode == "3") {
+        apply_submodule(config_dir, env_name, git_project, component)
+        env.Continue = true
     }
     else {
         env.Continue = true
@@ -110,14 +117,6 @@ def debug_env() {
 pipeline {
 
     agent { label "jenkins_slave" }
-
-    parameters {
-        choice(
-          name: 'environment_name',
-          choices: environments,
-          description: 'Select environment for creation or updating.'
-        )
-    }
 
     stages {
 
@@ -143,6 +142,14 @@ pipeline {
           steps {
             script {
               do_terraform(project.config, environment_name, project.alfresco, 'common')
+            }
+          }
+        }
+
+        stage('Delius | Alfresco DynamoDB') {
+          steps {
+            script {
+              do_terraform(project.config, environment_name, project.alfresco, 'dynamodb')
             }
           }
         }
