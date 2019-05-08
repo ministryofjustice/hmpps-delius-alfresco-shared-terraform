@@ -129,8 +129,9 @@ then
 #      exit_on_error $? !!
 
   #Restore db from backup
+  nc -vvv ${RDS_DB_ENDPOINT}:5432
  # PGPASSWORD=${DB_PASSWORD} psql -h ${RDS_DB_ENDPOINT} -U ${ALF_DB_USER} -d ${ALFRESCO_DB} -f ${ALFRESCO_SQL_FILE}
-  PGPASSWORD=${DB_PASSWORD} psql -h ${RDS_DB_ENDPOINT} -U ${ALF_DB_USER} -d ${ALFRESCO_DB}
+ # PGPASSWORD=${DB_PASSWORD} psql -h ${RDS_DB_ENDPOINT} -U ${ALF_DB_USER} -d ${ALFRESCO_DB}
   exit_on_error $? !!
 
 else
