@@ -70,15 +70,9 @@ then
     echo "Output -> Container workDir: ${workDir}"
 fi
 
-#Apply overides if character count is greater than 17
-#To address names too long
-if [ $(echo ${TG_ENVIRONMENT_TYPE} | wc -m) -ge 13 ]; then
-    export TG_ENVIRONMENT_IDENTIFIER="tf-${TG_PROJECT_NAME_ABBREVIATED}"
-    export TG_SHORT_ENVIRONMENT_IDENTIFIER="tf-${TG_PROJECT_NAME_ABBREVIATED}"
-    export TG_SHORT_ENVIRONMENT_NAME="${TG_ENVIRONMENT_IDENTIFIER}"
-    export TF_VAR_short_environment_identifier=${TG_SHORT_ENVIRONMENT_IDENTIFIER}
-    export TF_VAR_environment_identifier=${TG_ENVIRONMENT_IDENTIFIER}
-    export TF_VAR_short_environment_name=${TG_SHORT_ENVIRONMENT_NAME}
+#Apply overrides if names are too long
+if [ -f "${env_config_dir}/${TG_ENVIRONMENT_TYPE}/sub-projects/alfresco.properties" ]; then
+    source ${env_config_dir}/${TG_ENVIRONMENT_TYPE}/sub-projects/alfresco.properties;
 fi
 
 case ${ACTION_TYPE} in
