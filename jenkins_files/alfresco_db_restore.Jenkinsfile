@@ -13,7 +13,7 @@ def environments = [
 def prepare_env() {
     sh '''
     #!/usr/env/bin bash
-    docker pull mojdigitalstudio/hmpps-base-psql:0.0.167-alpha
+    docker pull mojdigitalstudio/hmpps-base-psql:latest
     '''
 }
 
@@ -29,7 +29,7 @@ def do_alfresco_db_restore_dry_run(env_name, git_project_dir) {
         docker run --rm -v \$(pwd):/home/tools/data \
           -v \${HOME}/.aws:/home/tools/.aws \
           -e RUN_MODE=false \
-          mojdigitalstudio/hmpps-base-psql:0.0.167-alpha sh scripts/alfresco_db_restore.sh ${env_name}
+          mojdigitalstudio/hmpps-base-psql sh scripts/alfresco_db_restore.sh ${env_name}
         set -e
         """
         return readFile("${git_project_dir}/plan_ret").trim()
@@ -50,7 +50,7 @@ def do_alfresco_db_restore_full_run(env_name, git_project_dir) {
         docker run --rm -v \$(pwd):/home/tools/data \
           -v \${HOME}/.aws:/home/tools/.aws \
           -e RUN_MODE=true \
-          mojdigitalstudio/hmpps-base-psql:0.0.167-alpha sh scripts/alfresco_db_restore.sh ${env_name}
+          mojdigitalstudio/hmpps-base-psql sh scripts/alfresco_db_restore.sh ${env_name}
         set -e
         """
     }
