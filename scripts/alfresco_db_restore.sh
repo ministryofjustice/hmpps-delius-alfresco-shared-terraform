@@ -89,13 +89,13 @@ then
 
   ##Copy alfresco.sql from backups bucket to storage s3bucket
   get_creds_aws
-#  aws s3 cp --only-show-errors s3://${SRC_S3_BUCKET}/${SRC_BUCKET_PATH}/${SRC_SQL_FILE} s3://${DEST_S3_BUCKET}/${DEST_BUCKET_PATH}/${ALFRESCO_SQL_FILE}
+  aws s3 cp --only-show-errors s3://${SRC_S3_BUCKET}/${SRC_BUCKET_PATH}/${SRC_SQL_FILE} s3://${DEST_S3_BUCKET}/${DEST_BUCKET_PATH}/${ALFRESCO_SQL_FILE}
   exit_on_error $? !!
   echo "------> COPY of s3://${SRC_S3_BUCKET}/${SRC_BUCKET_PATH}/${SRC_SQL_FILE} to s3://${DEST_S3_BUCKET}/${DEST_BUCKET_PATH}/${ALFRESCO_SQL_FILE} DONE"
 
   ##Copy alfresco.sql from storage s3bucket to container
   get_creds_aws
-#  aws s3 cp --only-show-errors s3://${DEST_S3_BUCKET}/${DEST_BUCKET_PATH}/${ALFRESCO_SQL_FILE} ${ALFRESCO_SQL_FILE}
+  aws s3 cp --only-show-errors s3://${DEST_S3_BUCKET}/${DEST_BUCKET_PATH}/${ALFRESCO_SQL_FILE} ${ALFRESCO_SQL_FILE}
   exit_on_error $? !!
   echo "------> COPY of s3://${DEST_S3_BUCKET}/${DEST_BUCKET_PATH}/${ALFRESCO_SQL_FILE} to container DONE"
 
@@ -115,23 +115,24 @@ then
 				  --query 'DBInstances[*].[Endpoint]' | grep Address | awk '{print $2}' | sed 's/"//g')
   PARAM_STORE_NAME="${TG_ENVIRONMENT_IDENTIFIER}-alfresco-rds-db-password"
 
+
+  echo "Dropping/Recreating DB and roles"
   get_creds_aws
   DB_PASSWORD=$(aws ssm get-parameters --with-decryption --names ${PARAM_STORE_NAME} --region ${TG_REGION} --query "Parameters[0]"."Value" | sed 's:^.\(.*\).$:\1:')
 
-#  psql postgresql://${ALF_DB_USER}:${DB_PASSWORD}@${RDS_DB_ENDPOINT}/postgres << EOF
-#      drop database ${ALFRESCO_DB};
-#      CREATE DATABASE ${ALFRESCO_DB};
-#      CREATE ROLE ${POSTGRES_ROLE};
-#      GRANT ${POSTGRES_ROLE} TO ${ALF_DB_USER};
-#      CREATE ROLE ${ALFRESCO_ROLE};
-#      GRANT ${ALFRESCO_ROLE} TO ${ALF_DB_USER};
-#EOF
-#      exit_on_error $? !!
+  psql postgresql://${ALF_DB_USER}:${DB_PASSWORD}@${RDS_DB_ENDPOINT}/postgres << EOF
+      drop database ${ALFRESCO_DB};
+      CREATE DATABASE ${ALFRESCO_DB};
+      CREATE ROLE ${POSTGRES_ROLE};
+      GRANT ${POSTGRES_ROLE} TO ${ALF_DB_USER};
+      CREATE ROLE ${ALFRESCO_ROLE};
+      GRANT ${ALFRESCO_ROLE} TO ${ALF_DB_USER};
+EOF
+  exit_on_error $? !!
 
   #Restore db from backup
-  nc -vvv ${RDS_DB_ENDPOINT}:5432
- # PGPASSWORD=${DB_PASSWORD} psql -h ${RDS_DB_ENDPOINT} -U ${ALF_DB_USER} -d ${ALFRESCO_DB} -f ${ALFRESCO_SQL_FILE}
- PGPASSWORD=${DB_PASSWORD} psql -h ${RDS_DB_ENDPOINT} -U ${ALF_DB_USER} -d ${ALFRESCO_DB}
+ echo "Restoring ${ALFRESCO_SQL_FILE} to ${RDS_DB_ENDPOINT}"
+ PGPASSWORD=${DB_PASSWORD} psql -h ${RDS_DB_ENDPOINT} -U ${ALF_DB_USER} -d ${ALFRESCO_DB} -f ${ALFRESCO_SQL_FILE}
  exit_on_error $? !!
 
 else
