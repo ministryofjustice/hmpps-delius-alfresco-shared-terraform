@@ -50,6 +50,14 @@ set_env_stage ()
   # dest s3 bucket
   DEST_S3_BUCKET="${TG_ENVIRONMENT_IDENTIFIER}-alfresco-storage-s3bucket"
 
+  echo "Using IAM role: ${TERRAGRUNT_IAM_ROLE}"
+
+  export OUTPUT_FILE="env_configs/temp_creds"
+
+  export temp_role=$(aws sts assume-role --role-arn ${TERRAGRUNT_IAM_ROLE} --role-session-name testing --duration-seconds ${STS_DURATION})
+
+
+
    echo "Output ---> set environment stage complete"
 }
 
@@ -68,11 +76,6 @@ apply_overides ()
   fi
 }
 
-echo "Using IAM role: ${TERRAGRUNT_IAM_ROLE}"
-
-export OUTPUT_FILE="env_configs/temp_creds"
-
-export temp_role=$(aws sts assume-role --role-arn ${TERRAGRUNT_IAM_ROLE} --role-session-name testing --duration-seconds ${STS_DURATION})
 
 # get creds
 get_creds_aws () {
