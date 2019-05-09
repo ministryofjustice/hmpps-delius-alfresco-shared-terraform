@@ -159,6 +159,7 @@ EOF
     echo "2" > plan_ret
     exit_on_error $? !!
   fi
+}
 
 ##Main
 set_env_stage
