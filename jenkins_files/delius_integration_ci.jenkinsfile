@@ -1,0 +1,35 @@
+def delius_ci_environments = [
+    "delius-auto-test",
+]
+
+def deploy(environments) {
+    for (environment_name in environments) {
+        build job: "DAMS/Environments/${environment_name}/Alfresco/Deploy_infrastructure", parameters: [[$class: 'BooleanParameterValue', name: 'confirmation', value: false]], wait: false
+    }
+}
+
+pipeline {
+
+    agent { label "jenkins_slave" }
+
+    options {
+        ansiColor('xterm')
+    }
+
+    stages {
+
+        stage('setup') {
+            steps {
+                checkout scm
+            }
+        }
+
+        stage('Trigger deployment') {
+            steps {
+                deploy(delius_ci_environments)
+            }
+        }
+
+    }
+
+}
