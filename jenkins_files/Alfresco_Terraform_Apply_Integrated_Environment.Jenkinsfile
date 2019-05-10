@@ -209,6 +209,16 @@ pipeline {
             }
           }
         }
+
+        stage('Smoke test') {
+            when {
+                expression { "${environment_name}" == "delius-auto-test"}
+            }
+            steps {
+                build job: "DAMS/Environments/${environment_name}/Alfresco/Smoke_tests"
+            }
+        }
+
     }
 
     post {
