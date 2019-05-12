@@ -44,8 +44,7 @@ set_env_stage ()
   exit_on_error $? !!
 
   # source s3 bucket
-#SRC_S3_BUCKET="${TG_ENVIRONMENT_IDENTIFIER}-backups-s3bucket"
-  SRC_S3_BUCKET="tf-alf-dev-elk-backups-s3bucket"
+  SRC_S3_BUCKET="${TG_ENVIRONMENT_IDENTIFIER}-backups-s3bucket"
 
   # dest s3 bucket
   DEST_S3_BUCKET="${TG_ENVIRONMENT_IDENTIFIER}-alfresco-storage-s3bucket"
