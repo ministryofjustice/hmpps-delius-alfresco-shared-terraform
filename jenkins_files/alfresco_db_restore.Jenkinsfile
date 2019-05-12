@@ -2,14 +2,6 @@ def project = [:]
 project.alfresco  = 'hmpps-delius-alfresco-shared-terraform'
 project.branch = 'issue_88_alfresco_db_restore'
 
-def environments = [
-  'delius-training-test',
-  'delius-test',
-  'delius-po-test1',
-  'delius-po-test2',
-  'alfresco-dev'
-]
-
 def prepare_env() {
     sh '''
     #!/usr/env/bin bash
@@ -100,14 +92,6 @@ def debug_env() {
 pipeline {
 
     agent { label "jenkins_slave" }
-
-    parameters {
-        choice(
-          name: 'environment_name',
-          choices: environments,
-          description: 'Select environment for creation or updating.'
-        )
-    }
 
 	stages {
 
