@@ -254,13 +254,15 @@ Empty the Alfresco log file: /usr/share/tomcat/alfresco.log
 
 Rename the license file: /usr/share/tomcat/shared/classes/alfresco/extension/license/alfresco-ent-5.2-NOMS.lic.installed
 
+```
 mv /usr/share/tomcat/shared/classes/alfresco/extension/license/alfresco-ent-5.2-NOMS.lic.installed /usr/share/tomcat/shared/classes/alfresco/extension/license/alfresco-ent-5.2-NOMS.lic
+```
 
 
 #### Start up the tomcat service
 
-
+```
 systemctl start tomcat
-
+```
 
 Watch the log file /usr/share/tomcat/alfresco.log for any errors.
