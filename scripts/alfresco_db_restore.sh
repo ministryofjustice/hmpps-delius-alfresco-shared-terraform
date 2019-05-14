@@ -30,7 +30,7 @@ set_env_stage ()
   rm -rf ${env_config_dir}
   echo "Output ---> Cloning branch: master"
 # git clone https://github.com/ministryofjustice/hmpps-env-configs.git ${env_config_dir}
-  git clone --branch issue_213_move_alf_env_configs git@github.com:ministryofjustice/hmpps-env-configs.git ${env_config_dir}
+  git clone --branch issue_213_move_alf_env_configs https://github.com/ministryofjustice/hmpps-env-configs.git ${env_config_dir}
   exit_on_error $? !!
 
   echo "Output -> environment stage"
