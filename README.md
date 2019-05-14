@@ -207,7 +207,7 @@ python docker-run.py --env dev --action test
 
 ### TERRAFORM TESTING
 
-#### Temporary AWS creds 
+#### Temporary AWS creds
 
 Script __scripts/aws-get-temp-creds.sh__ has been written up to automate the process of generating the creds into a file __env_configs/inspec-creds.properties__
 
@@ -233,63 +233,24 @@ rm -rf env_configs/inspec-creds.properties
 
 # Alfresco DB Restore
 
-#### PSQL binary
+Below is the procedure to perform the Alfresco Database restore on the RDS Postgres DB. The restore is performed from Jenkins pipeline. The pipeline will standup a docker container: mojdigitalstudio/hmpps-base-psql. The docker container will then run a script which will start the restore process dry run, then will do an actual restore after approval. Script location is hmpps-delius-alfresco-shared-terraform/scripts/alfresco\_db_restore.sh. The script will collect the restore file (*.sql) from S3 buckets to the container, then will perform the restore to RDS from the container. Below are the steps to follow:
 
-Reduce Alfresco ASG to a single instance. SSH on the reamining Alfresco instance execute the commands below 
+#### Alfresco Env Configs
+For each env requiring Alfresco data restore, env configs are required. This file will contain the name of the Source S3 bucket where the data to restore will be stored and the name of the sql file to restore. The files are located here: hmpps-delius-alfresco-shared-terraform/alf\_env_configs/. If the file for the env you intend to restore is not present, then one should be created before proceeding with the restore.
 
-```
-systemctl stop alfresco
-yum install postgresql -y
-```
+#### Alfresco EC2 Instances
+Destroy the running Alfresco instances or ensure tomcat is not running on the Alfresco instances. There should be no connections to the RDS db during the data restore.
 
-All commands should be run on the Alfresco instance unless otherwise indicated.
+#### Perform DB Restore
+Run the Alfresco-db-restore pipeline for the env. This can be found under DAMS > Environments > ${env name} > Alfresco.
+The pipeline will ask for confirmation before it proceeds the steps to restore the DB.
 
-#### AWS S3bucket
-
-Jenkins job [Alfresco-s3-buckets-content-pipeline](https://jenkins.engineering-dev.probation.hmpps.dsd.io/job/Alfresco/job/Alfresco-s3-buckets-content-pipeline/)
-
-Run the jenkins job above giving the environment name as a parameter
-
-#### Prepare database
-
-Please run the following steps in psql. Replace the following with appropriate details.
-
-- alfresco-db-host
-- alfresco-user
-
-
-```
-psql -h alfresco-db-host -U alfresco-user -d postgres
-drop database alfresco-database;
-create database alfresco-database;
-create role postgres;
-grant postgres to alfresco-user;
-create role alfresco;
-grant alfresco to alfresco-user;
-```
-
-#### Restore database
-
-Replace the following
-
-- alfresco-storage-s3bucket
-- alfresco-db-host
-- alfresco-user
-
-
-```
-aws s3 cp s3://alfresco-storage-s3bucket/restore_data/alfresco.sql ~/
-psql -h alfresco-db-host -U alfresco-user -d alfresco-database -f ~/alfresco.sql
-rm -rf ~/alfresco.sql
-```
+#### Stand up EC2 instances
+After successful restore, stand up the Alfresco instances. Ensure tomcat is running on the EC2 instance and check /usr/share/tomcat/alfresco.log for any errors.
 
 #### Startup Alfresco
 
-Empty the Alfresco log file:  /usr/share/tomcat/alfresco.log
-
-```
-> /usr/share/tomcat/alfresco.log
-```
+Empty the Alfresco log file: /usr/share/tomcat/alfresco.log
 
 Rename the license file: /usr/share/tomcat/shared/classes/alfresco/extension/license/alfresco-ent-5.2-NOMS.lic.installed
 
@@ -297,11 +258,11 @@ Rename the license file: /usr/share/tomcat/shared/classes/alfresco/extension/lic
 mv /usr/share/tomcat/shared/classes/alfresco/extension/license/alfresco-ent-5.2-NOMS.lic.installed /usr/share/tomcat/shared/classes/alfresco/extension/license/alfresco-ent-5.2-NOMS.lic
 ```
 
-Start up the tomcat service
+
+#### Start up the tomcat service
 
 ```
 systemctl start tomcat
 ```
 
 Watch the log file /usr/share/tomcat/alfresco.log for any errors.
-
