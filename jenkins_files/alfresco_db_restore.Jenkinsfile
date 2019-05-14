@@ -1,6 +1,6 @@
 def project = [:]
 project.alfresco  = 'hmpps-delius-alfresco-shared-terraform'
-project.branch = 'issue_88_alfresco_db_restore'
+project.branch = 'master'
 
 def prepare_env() {
     sh '''

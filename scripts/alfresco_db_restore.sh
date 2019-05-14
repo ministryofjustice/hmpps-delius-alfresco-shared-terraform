@@ -29,8 +29,7 @@ set_env_stage ()
   echo "Output -> clone configs stage"
   rm -rf ${env_config_dir}
   echo "Output ---> Cloning branch: master"
-# git clone https://github.com/ministryofjustice/hmpps-env-configs.git ${env_config_dir}
-  git clone --branch issue_213_move_alf_env_configs https://github.com/ministryofjustice/hmpps-env-configs.git ${env_config_dir}
+  git clone https://github.com/ministryofjustice/hmpps-env-configs.git ${env_config_dir}
   exit_on_error $? !!
 
   echo "Output -> environment stage"
@@ -38,15 +37,15 @@ set_env_stage ()
   echo "Output -> environment_type set to: ${TG_ENVIRONMENT_TYPE}"
 
   # setting Alfresco local properties
-  source ${env_config_dir}/${TG_ENVIRONMENT_TYPE}/sub-projects/alfresco.properties
+  #source ${env_config_dir}/${TG_ENVIRONMENT_TYPE}/sub-projects/alfresco.properties
+  source ${HOME}/data/alf_env_configs/${TG_ENVIRONMENT_TYPE}.properties
   exit_on_error $? !!
 
   source ${env_config_dir}/${TG_ENVIRONMENT_TYPE}/${TG_ENVIRONMENT_TYPE}.properties
   exit_on_error $? !!
 
   # source s3 bucket
- #  SRC_S3_BUCKET="${TG_ENVIRONMENT_IDENTIFIER}-backups-s3bucket"
-  SRC_S3_BUCKET="tf-alf-dev-elk-backups-s3bucket"
+  SRC_S3_BUCKET="${TG_ENVIRONMENT_IDENTIFIER}-backups-s3bucket"
 
   # dest s3 bucket
   DEST_S3_BUCKET="${TG_ENVIRONMENT_IDENTIFIER}-alfresco-storage-s3bucket"
