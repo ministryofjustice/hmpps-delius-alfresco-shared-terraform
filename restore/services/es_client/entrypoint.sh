@@ -8,4 +8,4 @@ done
 
 echo "elasticsearch started"
 
-pytest -v 
+python manage.py test 

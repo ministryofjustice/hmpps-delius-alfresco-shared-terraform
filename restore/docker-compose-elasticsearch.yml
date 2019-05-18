@@ -10,8 +10,13 @@ services:
       - HMPPS_ES_DISCOVERY_TYPE=single-node
       - HMPPS_ES_NETWORK_PUBLISH_HOST=0.0.0.0
       - HMPPS_ES_PATH_REPO=/opt/es_backups
-      - HMPPS_BOOTSTRAP_MEMORY_LOCK=true
+      - HMPPS_ES_BOOTSTRAP_MEMORY_LOCK=true
       - HMPPS_JVM_HEAPSIZE=2g
+      - HMPPS_ES_DEPLOYMENT_TYPE=ec2
+      - HMPPS_ES_DEPLOYMENT_TAG=es_cluster_discovery
+      - HMPPS_ES_DEPLOYMENT_VALUE=test
+    volumes:
+      - ./elasticsearch.yml.tmpl:/etc/confd/templates/elasticsearch.yml.tmpl
     ports:
       - 9300:9300
       - 9200:9200
@@ -23,5 +28,7 @@ services:
       dockerfile: Dockerfile
     environment:
       - APP_ENVIRONMENT=test
+    volumes:
+      - ./services/es_client/reports:/tmp/reports
     depends_on:
       - elasticsearch

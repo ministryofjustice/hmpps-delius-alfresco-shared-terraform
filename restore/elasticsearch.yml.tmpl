@@ -1,0 +1,45 @@
+cluster.name: {{ getv "/hmpps/es/cluster/name" "docker-cluster" }}
+network.host: {{ getv "/hmpps/es/host" "0.0.0.0" }}
+{{if exists "/hmpps/es/network/bind/host" }}network.bind_host: {{ getv "/hmpps/es/network/bind/host" }}{{end}}
+{{if exists "/hmpps/es/network/publish/host" }}network.publish_host: {{ getv "/hmpps/es/network/publish/host" }}{{end}}
+
+# Data Settings
+{{if exists "/hmpps/es/path/data" }}path.data: {{ getv "/hmpps/es/path/data" }}{{end}}
+{{if exists "/hmpps/es/path/repo" }}path.repo: {{ getv "/hmpps/es/path/repo" }}{{end}}
+
+# Node settings
+node.name: {{ getv "/hmpps/es/node/name" "standalone" }}
+{{if exists "/hmpps/es/node/type" }}
+{{$nodetype := getv "/hmpps/es/node/type"}}
+{{if eq $nodetype "coord" }}
+node.master: false
+node.data: false
+node.ingest: false
+{{  end}}
+{{  if eq $nodetype "ingest" }}
+node.master: false
+node.data: false
+{{  end}}
+{{ end }}
+
+# minimum_master_nodes need to be explicitly set when bound on a public IP
+# set to 1 to allow single node clusters
+# Details: https://github.com/elastic/elasticsearch/pull/17288
+discovery.zen.minimum_master_nodes: {{ getv "/hmpps/es/min/master/nodes" "1" }}
+
+{{if ls "/hmpps/es/cluster/nodes"}}
+discovery.zen.ping.unicast.hosts: {{range getvs "/hmpps/es/cluster/nodes/*"}}
+- {{.}} {{end}}
+{{end}}
+
+{{if exists "/hmpps/es/indices/fielddata/cache/size" }}indices.fielddata.cache.size: {{ getv "/hmpps/es/indices/fielddata/cache/size" }}{{end}}
+
+{{if exists "/hmpps/es/gateway/expected/nodes" }}gateway.expected_nodes: {{ getv "/hmpps/es/gateway/expected/nodes" }}{{end}}
+{{if exists "/hmpps/es/gateway/recover/after/time" }}gateway.recover_after_time: {{ getv "/hmpps/es/gateway/recover/after/time" }}{{end}}
+{{if exists "/hmpps/es/gateway/recover/after/nodes" }}gateway.recover_after_nodes: {{ getv "/hmpps/es/gateway/recover/after/nodes" }}{{end}}
+{{if exists "/hmpps/es/reindex/remote" }}reindex.remote.whitelist: {{ getv "/hmpps/es/reindex/remote" }}:9200{{end}}
+
+{{if exists "/hmpps/es/discovery_type" }}discovery.type: {{ getv "/hmpps/es/hmpps/es/discovery_type" }}{{end}}
+
+discovery.zen.hosts_provider: ec2
+discovery.ec2.tag.es_cluster_discovery: test
