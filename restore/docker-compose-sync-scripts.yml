@@ -1,0 +1,13 @@
+version: "3"
+
+services:
+  elasticsearch-manager:
+    image: mojdigitalstudio/hmpps-elasticsearch-manager:latest
+    environment:
+      - APP_ENVIRONMENT=dev
+      - ES_HOST=elasticsearch.alfresco-dev.internal
+      - S3_BUCKET=${ES_S3_BUCKET}
+    volumes:
+      - /opt/es_backup:/opt/es_backup
+      - /opt/scripts:/opt/scripts
+    entrypoint: [ "sh", "/opt/scripts/sync-scripts.sh" ]

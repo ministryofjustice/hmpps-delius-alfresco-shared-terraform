@@ -31,7 +31,8 @@ data "terraform_remote_state" "common" {
 
 locals {
   internal_domain        = "${data.terraform_remote_state.common.internal_domain}"
-  common_name            = "${data.terraform_remote_state.common.common_name}"
+  external_domain        = "${data.terraform_remote_state.common.external_domain}"
+  common_name            = "${data.terraform_remote_state.common.short_environment_identifier}-alf"
   region                 = "${var.region}"
   alfresco_app_name      = "${var.alfresco_app_name}"
   environment_identifier = "${var.environment_identifier}"
@@ -62,13 +63,14 @@ module "self_signed_ca" {
 # Self Signed Cert
 ####################################################
 module "self_signed_cert" {
-  source                                   = "git::https://github.com/ministryofjustice/hmpps-terraform-modules.git?ref=master//projects//alfresco//self-signed//server"
+  source                                   = "git::https://github.com/ministryofjustice/hmpps-terraform-modules.git?ref=issue-166-add-external-domain-to-tls-modules//projects//alfresco//self-signed//server"
   alfresco_app_name                        = "${local.alfresco_app_name}"
   ca_cert_pem                              = "${module.self_signed_ca.self_signed_ca_cert_pem}"
   ca_private_key_pem                       = "${module.self_signed_ca.self_signed_ca_private_key}"
   common_name                              = "${local.common_name}"
   environment_identifier                   = "${local.environment_identifier}"
   internal_domain                          = "${local.internal_domain}"
+  external_domain                          = "${local.external_domain}"
   region                                   = "${local.region}"
   self_signed_server_algorithm             = "${var.self_signed_server_algorithm}"
   self_signed_server_validity_period_hours = "${var.self_signed_server_validity_period_hours}"
