@@ -62,7 +62,7 @@ mkdir -p ${es_home_dir}/data ${es_home_dir}/logs ${es_home_dir}/config /opt/scri
 
 # container sync scripts
 echo "#!/bin/bash
-aws s3 sync s3://${es-bucket}/elasticsearch/scripts /opt/scripts" > /opt/scripts/sync-scripts.sh
+aws s3 sync s3://${es-bucket}/scripts /opt/scripts" > /opt/scripts/sync-scripts.sh
 chmod +x /opt/scripts/sync-scripts.sh
 
 # set perms

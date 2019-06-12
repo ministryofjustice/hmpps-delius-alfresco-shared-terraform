@@ -16,14 +16,6 @@ done
 
 echo "elasticsearch started on host: ${ES_HOST}"
 
-rm -rf ${shared_repo_path}/*
-
-echo "--> syncing bucket ${ES_S3_BUCKET}"
-aws s3 sync s3://${ES_S3_BUCKET}/elasticsearch6/ ${shared_repo_path}/
-
-chown -R elasticsearch:elasticsearch ${repo_path}
-echo "-> syncing complete"
-
 echo "Creating repos"
 elasticsearch-manager addrepository ${shared_repo_name} --path ${shared_repo_path}
 

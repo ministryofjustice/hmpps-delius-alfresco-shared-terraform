@@ -6,8 +6,8 @@ snapshot="snapshot_1"
 repo_path="/opt/local"
 shared_repo_name="efs"
 shared_repo_path="/opt/es_backup"
-src_prefix="logstash-alfresco-2018.08"
-dst_prefix="alfresco-logstash-2018.08"
+src_prefix="logstash-alfresco"
+dst_prefix="alfresco-logstash"
 
 echo "--> syncing bucket ${ES_S3_BUCKET}"
 aws s3 sync s3://${ES_S3_BUCKET}/elasticsearch/ ${repo_path}/
