@@ -37,8 +37,8 @@ def es_5_restore(git_project_dir, docker_tls_dir) {
         source ${docker_tls_dir}/docker.properties
         docker-compose -f restore/docker-compose-es5-restore.yml up --build -d elasticsearch
         docker-compose -f restore/docker-compose-es5-restore.yml up elasticsearch-manager
-        docker-compose -f restore/docker-compose-es5-restore.yml stop
-        docker-compose -f restore/docker-compose-es5-restore.yml rm -f
+        // docker-compose -f restore/docker-compose-es5-restore.yml stop
+        // docker-compose -f restore/docker-compose-es5-restore.yml rm -f
         set -e
         """
     }
