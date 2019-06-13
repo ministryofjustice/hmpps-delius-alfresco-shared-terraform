@@ -2,12 +2,7 @@
 
 set +e
 
-repo_name="local"
-snapshot="snapshot_1"
-repo_path="/opt/local"
-shared_repo_name="efs"
-shared_repo_path="/opt/es_backup"
-src_prefix="alfresco-logstash"
+source /opt/scripts/common.properties
 
 echo "Waiting for elasticsearch..."
 while ! nc -z ${ES_HOST} 9200; do
@@ -22,6 +17,6 @@ elasticsearch-manager addrepository ${shared_repo_name} --path ${shared_repo_pat
 sleep 30
 
 echo "Running restore"
-elasticsearch-manager restore  ${shared_repo_name} --snapshot ${snapshot} --srcprefix ${src_prefix}
+elasticsearch-manager restore  ${shared_repo_name} --snapshot ${snapshot} --srcprefix ${dst_prefix}
 
 set -e
