@@ -2,7 +2,13 @@
 
 set +e
 
-source /opt/scripts/common.properties
+repo_name="local"
+snapshot="snapshot_1"
+repo_path="/opt/local"
+shared_repo_name="efs"
+shared_repo_path="/opt/es_backup"
+src_prefix="logstash-alfresco"
+dst_prefix="alfresco-logstash"
 
 echo "Waiting for elasticsearch..."
 while ! nc -z ${ES_HOST} 9200; do

@@ -29,6 +29,18 @@ def create_props(env_name, git_project_dir, docker_tls_dir) {
     }
 }
 
+def es_5_restore_copy(git_project_dir, docker_tls_dir) {
+    wrap([$class: 'AnsiColorBuildWrapper', 'colorMapName': 'XTerm']) {
+        sh """
+        #!/usr/env/bin bash
+        cd "${git_project_dir}"
+        source ${docker_tls_dir}/docker.properties
+        docker-compose -f restore/docker-compose-es5-restore.yml up --build -d elasticsearch
+        // docker-compose -f restore/docker-compose-es5-restore.yml up elasticsearch-manager
+        """
+    }
+}
+
 def es_5_restore(git_project_dir, docker_tls_dir) {
     wrap([$class: 'AnsiColorBuildWrapper', 'colorMapName': 'XTerm']) {
         sh """
@@ -37,8 +49,41 @@ def es_5_restore(git_project_dir, docker_tls_dir) {
         source ${docker_tls_dir}/docker.properties
         docker-compose -f restore/docker-compose-es5-restore.yml up --build -d elasticsearch
         docker-compose -f restore/docker-compose-es5-restore.yml up elasticsearch-manager
-        // docker-compose -f restore/docker-compose-es5-restore.yml stop
-        // docker-compose -f restore/docker-compose-es5-restore.yml rm -f
+        """
+    }
+}
+
+def es_6_restore(git_project_dir, docker_tls_dir) {
+    wrap([$class: 'AnsiColorBuildWrapper', 'colorMapName': 'XTerm']) {
+        sh """
+        #!/usr/env/bin bash
+        cd "${git_project_dir}"
+        source ${docker_tls_dir}/docker.properties
+        docker-compose -f restore/docker-compose-es6-restore.yml up elasticsearch-manager
+        """
+    }
+}
+
+def es_5_destroy(git_project_dir, docker_tls_dir) {
+    wrap([$class: 'AnsiColorBuildWrapper', 'colorMapName': 'XTerm']) {
+        sh """
+        #!/usr/env/bin bash
+        cd "${git_project_dir}"
+        source ${docker_tls_dir}/docker.properties
+        docker-compose -f restore/docker-compose-es5-restore.yml down -v
+        docker-compose -f restore/docker-compose-es5-restore.yml rm -f
+        """
+    }
+}
+
+def es_6_destroy(git_project_dir, docker_tls_dir) {
+    wrap([$class: 'AnsiColorBuildWrapper', 'colorMapName': 'XTerm']) {
+        sh """
+        #!/usr/env/bin bash
+        cd "${git_project_dir}"
+        source ${docker_tls_dir}/docker.properties
+        docker-compose -f restore/docker-compose-es6-restore.yml down -v
+        docker-compose -f restore/docker-compose-es6-restore.yml rm -f
         set -e
         """
     }
@@ -53,6 +98,19 @@ def apply_submodule(env_name, git_project_dir, submodule_name) {
         cd "${git_project_dir}"
         python docker-run.py --env ${env_name} --component ${submodule_name} --action plan
         python docker-run.py --env ${env_name} --component ${submodule_name} --action apply
+        set -e
+        """
+    }
+}
+
+def destroy_ec2(env_name, git_project_dir, submodule_name) {
+    wrap([$class: 'AnsiColorBuildWrapper', 'colorMapName': 'XTerm']) {
+        sh """
+        #!/usr/env/bin bash
+        echo "TF Destroy for ${env_name} | ${submodule_name} - component from git project ${git_project_dir}"
+        set +e
+        cd "${git_project_dir}"
+        python docker-run.py --env ${env_name} --component ${submodule_name} --action destroy
         set -e
         """
     }
@@ -128,11 +186,28 @@ pipeline {
               es_5_restore(project.alfresco, docker_tls_dir)
             }
           }
-        }        
+        }
+
+        stage('Delius | ES 6 Restore') {
+          steps {
+            script {
+              es_6_restore(project.alfresco, docker_tls_dir)
+            }
+          }
+        }                
     }
 
     post {
         always {
+            script {
+              es_5_destroy(project.alfresco, docker_tls_dir)
+            }
+            script {
+              es_6_destroy(project.alfresco, docker_tls_dir)
+            }
+            script {
+              destroy_ec2(environment_name, project.alfresco, 'es_admin')
+            }
             deleteDir()
         }
         success {

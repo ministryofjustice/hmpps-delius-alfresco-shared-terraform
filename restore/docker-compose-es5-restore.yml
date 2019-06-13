@@ -3,7 +3,7 @@ version: "3"
 
 services:
   elasticsearch-manager:
-    image: mojdigitalstudio/hmpps-elasticsearch-manager:0.0.216-alpha
+    image: mojdigitalstudio/hmpps-elasticsearch-manager:0.0.219-alpha
     environment:
       - APP_ENVIRONMENT=dev
       - VERBOSE_MODE=True

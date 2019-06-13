@@ -1,7 +1,0 @@
-export repo_name="local"
-export snapshot="snapshot_1"
-export repo_path="/opt/local"
-export shared_repo_name="efs"
-export shared_repo_path="/opt/es_backup"
-export src_prefix="logstash-alfresco"
-export dst_prefix="alfresco-logstash"
