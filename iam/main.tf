@@ -68,19 +68,21 @@ data "terraform_remote_state" "mon" {
 ####################################################
 
 locals {
-  region                       = "${var.region}"
-  alfresco_app_name            = "${data.terraform_remote_state.common.alfresco_app_name}"
-  common_name                  = "${data.terraform_remote_state.common.common_name}"
-  tags                         = "${data.terraform_remote_state.common.common_tags}"
-  storage_s3bucket             = "${data.terraform_remote_state.s3bucket.s3bucket}"
-  s3-config-bucket             = "${data.terraform_remote_state.common.common_s3-config-bucket}"
-  monitoring_server_bucket_arn = "${data.terraform_remote_state.mon.monitoring_server_bucket_arn}"
-  remote_config_bucket         = "${data.terraform_remote_state.common.remote_config_bucket}"
-  elasticsearch_bucket         = "${data.terraform_remote_state.s3bucket.s3_elasticsearch_bucket}"
-  remote_iam_role              = "${data.terraform_remote_state.common.remote_iam_role}"
-  s3bucket_kms_arn             = "${data.terraform_remote_state.s3bucket.s3bucket_kms_arn}"
-  restore_dynamodb_table_arn   = "${data.terraform_remote_state.dynamodb.dynamodb_table_arn}"
-  vpc_cidr                     = "${data.terraform_remote_state.common.vpc_cidr_block}"
+  region                     = "${var.region}"
+  alfresco_app_name          = "${data.terraform_remote_state.common.alfresco_app_name}"
+  common_name                = "${data.terraform_remote_state.common.common_name}"
+  tags                       = "${data.terraform_remote_state.common.common_tags}"
+  alfresco-storage_s3bucket  = "${data.terraform_remote_state.s3bucket.s3bucket}"
+  config-bucket              = "${data.terraform_remote_state.common.common_s3-config-bucket}"
+  monitoring_bucket_arn      = "${data.terraform_remote_state.mon.monitoring_server_bucket_arn}"
+  monitoring_bucket_name     = "${data.terraform_remote_state.mon.monitoring_server_bucket_name}"
+  remote_config_bucket       = "${data.terraform_remote_state.common.remote_config_bucket}"
+  elasticsearch_bucket       = "${data.terraform_remote_state.s3bucket.s3_elasticsearch_bucket}"
+  remote_iam_role            = "${data.terraform_remote_state.common.remote_iam_role}"
+  alfresco_kms_arn           = "${data.terraform_remote_state.s3bucket.s3bucket_kms_arn}"
+  restore_dynamodb_table_arn = "${data.terraform_remote_state.dynamodb.dynamodb_table_arn}"
+  vpc_cidr                   = "${data.terraform_remote_state.common.vpc_cidr_block}"
+  monitoring_kms_arn         = "${data.terraform_remote_state.mon.monitoring_kms_arn}"
 }
 
 ####################################################
@@ -97,8 +99,8 @@ module "iam" {
   ec2_internal_policy_file   = "${file("../policies/ec2_internal_policy.json")}"
   remote_iam_role            = "${local.remote_iam_role}"
   remote_config_bucket       = "${local.remote_config_bucket}"
-  storage_s3bucket           = "${local.storage_s3bucket}"
-  s3-config-bucket           = "${local.s3-config-bucket}"
-  s3bucket_kms_arn           = "${local.s3bucket_kms_arn}"
+  storage_s3bucket           = "${local.alfresco-storage_s3bucket}"
+  s3-config-bucket           = "${local.config-bucket}"
+  s3bucket_kms_arn           = "${local.alfresco_kms_arn}"
   restore_dynamodb_table_arn = "${local.restore_dynamodb_table_arn}"
 }

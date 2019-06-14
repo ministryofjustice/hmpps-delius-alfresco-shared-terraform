@@ -146,7 +146,7 @@ locals {
   region                       = "${var.region}"
   environment                  = "${data.terraform_remote_state.common.environment}"
   tags                         = "${data.terraform_remote_state.common.common_tags}"
-  instance_profile             = "${data.terraform_remote_state.monitoring.iam_instance_profile}"
+  instance_profile             = "${data.terraform_remote_state.iam.iam_instance_es_admin_profile_name}"
   ssh_deployer_key             = "${data.terraform_remote_state.common.common_ssh_deployer_key}"
   s3bucket                     = "${data.terraform_remote_state.s3bucket.s3bucket}"
   bastion_inventory            = "${var.bastion_inventory}"
@@ -159,6 +159,7 @@ locals {
   ssm_tls_cert                 = "${data.terraform_remote_state.certs.self_signed_server_ssm_cert_pem_name}"
   ssm_tls_ca_cert              = "${data.terraform_remote_state.certs.self_signed_ca_ssm_cert_pem_name}"
   elk_bucket_name              = "${data.terraform_remote_state.monitoring.monitoring_server_bucket_name}"
+  elk_lb_dns                   = "${data.terraform_remote_state.monitoring.elasticsearch_cluster_lb}"
 
   instance_security_groups = [
     "${data.terraform_remote_state.monitoring.instance_security_groups}",
