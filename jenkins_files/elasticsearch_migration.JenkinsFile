@@ -52,27 +52,14 @@ def es_6_restore(git_project_dir, docker_tls_dir) {
     }
 }
 
-def es_5_destroy(git_project_dir, docker_tls_dir) {
+def es_destroy(git_project_dir, docker_tls_dir) {
     wrap([$class: 'AnsiColorBuildWrapper', 'colorMapName': 'XTerm']) {
         sh """
         #!/usr/env/bin bash
         cd "${git_project_dir}"
         source ${docker_tls_dir}/docker.properties
         docker-compose -f restore/docker-compose-es5-restore.yml down -v
-        docker-compose -f restore/docker-compose-es5-restore.yml rm -f
-        """
-    }
-}
-
-def es_6_destroy(git_project_dir, docker_tls_dir) {
-    wrap([$class: 'AnsiColorBuildWrapper', 'colorMapName': 'XTerm']) {
-        sh """
-        #!/usr/env/bin bash
-        cd "${git_project_dir}"
-        source ${docker_tls_dir}/docker.properties
         docker-compose -f restore/docker-compose-es6-restore.yml down -v
-        docker-compose -f restore/docker-compose-es6-restore.yml rm -f
-        set -e
         """
     }
 }
@@ -188,10 +175,7 @@ pipeline {
     post {
         always {
             script {
-              es_5_destroy(project.alfresco, docker_tls_dir)
-            }
-            script {
-              es_6_destroy(project.alfresco, docker_tls_dir)
+              es_destroy(project.alfresco, docker_tls_dir)
             }
             script {
               destroy_ec2(environment_name, project.alfresco, 'es_admin')
