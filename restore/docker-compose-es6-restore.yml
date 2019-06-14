@@ -1,0 +1,14 @@
+version: "3"
+
+services:
+  elasticsearch-manager:
+    image: mojdigitalstudio/hmpps-elasticsearch-manager:0.0.219-alpha
+    environment:
+      - APP_ENVIRONMENT=dev
+      - VERBOSE_MODE=True
+      - ES_HOST=elasticsearch.${INTERNAL_DOMAIN}
+      - ES_S3_BUCKET=${ES_S3_BUCKET}
+    volumes:
+      - /opt/scripts:/opt/scripts
+      - /opt/local:/opt/local
+    entrypoint: [ "sh", "/opt/scripts/es6-restore.sh" ]
