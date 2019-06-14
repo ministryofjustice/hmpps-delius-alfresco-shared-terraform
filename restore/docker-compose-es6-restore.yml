@@ -7,7 +7,8 @@ services:
       - APP_ENVIRONMENT=dev
       - VERBOSE_MODE=True
       - ES_HOST=elasticsearch.${INTERNAL_DOMAIN}
-      - ES_S3_BUCKET=${ES_S3_BUCKET}
+      - CONFIG_BUCKET=${CONFIG_BUCKET}
+      - ES_LB_DNS=${ES_LB_DNS}
     volumes:
       - /opt/scripts:/opt/scripts
       - /opt/local:/opt/local

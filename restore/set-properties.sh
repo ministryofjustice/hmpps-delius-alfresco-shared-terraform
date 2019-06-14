@@ -59,12 +59,16 @@ export ES_DOCKER_HOST=$(cat $tf_data | grep es_admin_host | cut -d ' ' -f3)
 echo "export ES_DOCKER_HOST=${ES_DOCKER_HOST}" >> $outfile_docker
 exit_on_error $? !!
 
-export ES_S3_BUCKET=$(cat $tf_data | grep elk_bucket_name | cut -d ' ' -f3)
-echo "export ES_S3_BUCKET=${ES_S3_BUCKET}" >> $outfile_docker
+export CONFIG_BUCKET=$(cat $tf_data | grep config_bucket | cut -d ' ' -f3)
+echo "export CONFIG_BUCKET=${CONFIG_BUCKET}" >> $outfile_docker
 exit_on_error $? !!
 
 export INTERNAL_DOMAIN=$(cat $tf_data | grep internal_domain | cut -d ' ' -f3)
 echo "export INTERNAL_DOMAIN=${INTERNAL_DOMAIN}" >> $outfile_docker
+exit_on_error $? !!
+
+export ES_LB_DNS=$(cat $tf_data | grep elk_lb_dns | cut -d ' ' -f3)
+echo "export ES_LB_DNS=${ES_LB_DNS}" >> $outfile_docker
 exit_on_error $? !!
 
 ##################################################################################################
@@ -107,7 +111,7 @@ exit_on_error $? !!
 
 # sync scripts dir
 echo "syncing files"
-aws s3 sync ./scripts s3://${ES_S3_BUCKET}/scripts/
+aws s3 sync ./scripts s3://${CONFIG_BUCKET}/scripts/
 exit_on_error $? !!
 
 ##################################################################################################
