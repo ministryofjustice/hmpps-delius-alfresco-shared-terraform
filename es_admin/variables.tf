@@ -17,3 +17,8 @@ variable "environment_name" {}
 variable "es_admin_instance_type" {
   default = "t2.large"
 }
+
+# ELasticsearch snapshot name
+variable "es_snapshot_name" {
+  default = "snapshot_1"
+}

@@ -63,13 +63,16 @@ export CONFIG_BUCKET=$(cat $tf_data | grep config_bucket | cut -d ' ' -f3)
 echo "export CONFIG_BUCKET=${CONFIG_BUCKET}" >> $outfile_docker
 exit_on_error $? !!
 
-export INTERNAL_DOMAIN=$(cat $tf_data | grep internal_domain | cut -d ' ' -f3)
-echo "export INTERNAL_DOMAIN=${INTERNAL_DOMAIN}" >> $outfile_docker
-exit_on_error $? !!
 
 export ES_LB_DNS=$(cat $tf_data | grep elk_lb_dns | cut -d ' ' -f3)
 echo "export ES_LB_DNS=${ES_LB_DNS}" >> $outfile_docker
 exit_on_error $? !!
+
+
+export ES_SNAPSHOT_NAME=$(cat $tf_data | grep es_snapshot_name | cut -d ' ' -f3)
+echo "export ES_SNAPSHOT_NAME=${ES_SNAPSHOT_NAME}" >> $outfile_docker
+exit_on_error $? !!
+
 
 ##################################################################################################
 # get cert details
@@ -145,4 +148,5 @@ while ! nc -z ${ES_DOCKER_HOST} $DOCKER_PORT; do
 done
 echo "Docker host is up ${ES_DOCKER_HOST}"
 docker-compose -f restore/docker-compose-sync-scripts.yml up
+exit_on_error $? !!
 set -e

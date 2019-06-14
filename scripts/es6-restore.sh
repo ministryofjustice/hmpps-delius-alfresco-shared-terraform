@@ -2,8 +2,9 @@
 
 set +e
 
+
 repo_name="local"
-snapshot="snapshot_1"
+snapshot=${ES_SNAPSHOT_NAME}
 repo_path="/opt/local"
 shared_repo_name="efs"
 shared_repo_path="/opt/es_backup"
@@ -18,11 +19,11 @@ done
 echo "elasticsearch started on host: ${ES_HOST}"
 
 echo "Creating repos"
-elasticsearch-manager addrepository ${shared_repo_name} --path ${shared_repo_path}
+elasticsearch-manager addrepository ${shared_repo_name} --path ${shared_repo_path} && echo Success || exit $?
 
 sleep 30
 
 echo "Running restore"
-elasticsearch-manager restore  ${shared_repo_name} --snapshot ${snapshot} --srcprefix ${dst_prefix}
+elasticsearch-manager restore  ${shared_repo_name} --snapshot ${snapshot} --srcprefix ${dst_prefix} && echo Success || exit $?
 
 set -e

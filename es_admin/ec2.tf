@@ -29,7 +29,7 @@ data "template_file" "instance_userdata" {
     ssm_tls_cert         = "${local.ssm_tls_cert}"
     ssm_tls_ca_cert      = "${local.ssm_tls_ca_cert}"
     region               = "${var.region}"
-    es-bucket            = "${local.elk_bucket_name}"
+    config-bucket        = "${local.config-bucket}"
   }
 }
 

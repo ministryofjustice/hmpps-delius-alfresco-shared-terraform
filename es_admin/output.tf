@@ -22,3 +22,7 @@ output "internal_domain" {
 output "elk_lb_dns" {
   value = "${local.elk_lb_dns}"
 }
+
+output "es_snapshot_name" {
+  value = "${var.es_snapshot_name}"
+}
