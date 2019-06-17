@@ -2,6 +2,7 @@ FROM java:8
 
 ARG ES_HOME_DIR=/opt/elasticsearch
 ARG ES_VERSION=5.6.16
+ENV ES_JVM_MEM="2g"
 
 RUN groupadd -g 3999 elasticsearch \
     && useradd -m -d ${ES_HOME_DIR} -u 3999 -g elasticsearch elasticsearch \
@@ -9,6 +10,8 @@ RUN groupadd -g 3999 elasticsearch \
     && chown -R elasticsearch:elasticsearch ${ES_HOME_DIR}/data ${ES_HOME_DIR}/logs ${ES_HOME_DIR}/install /etc/elasticsearch /opt/es_backup /opt/local
 
 USER elasticsearch
+
+COPY ./entrypoint.sh ${ES_HOME_DIR}/entrypoint.sh
 
 RUN curl -L -o /tmp/elasticsearch.tar.gz \
     https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-${ES_VERSION}.tar.gz
@@ -23,6 +26,8 @@ RUN rm -rf /tmp/elasticsearch.tar.gz ${ES_HOME_DIR}/install/config
 
 RUN ln -sf /etc/elasticsearch /opt/elasticsearch/install/config
 
+RUN sed -e '/^-Xm/s/^/#/g' -i /etc/elasticsearch/jvm.options
+
 WORKDIR ${ES_HOME_DIR}
 
 EXPOSE 9200 9300
@@ -31,4 +36,4 @@ ADD ./elasticsearch.yml /etc/elasticsearch/elasticsearch.yml
 
 VOLUME [ "/opt/elasticsearch/data", "/opt/elasticsearch/logs"]
 
-CMD [ "/opt/elasticsearch/install/bin/elasticsearch" ]
+ENTRYPOINT [ "sh", "/opt/elasticsearch/entrypoint.sh"]

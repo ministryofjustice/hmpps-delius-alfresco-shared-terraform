@@ -2,12 +2,13 @@ version: "3"
 
 services:
   elasticsearch-manager:
-    image: mojdigitalstudio/hmpps-elasticsearch-manager:0.0.219-alpha
+    image: mojdigitalstudio/hmpps-elasticsearch-manager:latest
     environment:
       - APP_ENVIRONMENT=dev
       - VERBOSE_MODE=True
-      - ES_HOST=elasticsearch.${INTERNAL_DOMAIN}
-      - ES_S3_BUCKET=${ES_S3_BUCKET}
+      - ES_HOST=${ES_LB_DNS}
+      - ES_SNAPSHOT_NAME=${ES_SNAPSHOT_NAME}
+      - CONFIG_BUCKET=${CONFIG_BUCKET}
     volumes:
       - /opt/scripts:/opt/scripts
       - /opt/local:/opt/local

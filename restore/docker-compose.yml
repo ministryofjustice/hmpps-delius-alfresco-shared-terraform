@@ -1,9 +1,0 @@
-version: "3"
-
-services:
-  elasticsearch-manager:
-    image: mojdigitalstudio/hmpps-elasticsearch-manager:0.0.187-alpha
-    environment:
-      - APP_ENVIRONMENT=dev
-      - ES_HOST=elasticsearch.alfresco-dev.internal
-    command: --help

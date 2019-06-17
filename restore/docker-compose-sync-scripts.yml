@@ -6,7 +6,7 @@ services:
     environment:
       - APP_ENVIRONMENT=dev
       - ES_HOST=elasticsearch.alfresco-dev.internal
-      - S3_BUCKET=${ES_S3_BUCKET}
+      - S3_BUCKET=${CONFIG_BUCKET}
     volumes:
       - /opt/es_backup:/opt/es_backup
       - /opt/scripts:/opt/scripts

@@ -63,7 +63,7 @@ module "self_signed_ca" {
 # Self Signed Cert
 ####################################################
 module "self_signed_cert" {
-  source                                   = "git::https://github.com/ministryofjustice/hmpps-terraform-modules.git?ref=issue-166-add-external-domain-to-tls-modules//projects//alfresco//self-signed//server"
+  source                                   = "git::https://github.com/ministryofjustice/hmpps-terraform-modules.git?ref=master//projects//alfresco//self-signed//server"
   alfresco_app_name                        = "${local.alfresco_app_name}"
   ca_cert_pem                              = "${module.self_signed_ca.self_signed_ca_cert_pem}"
   ca_private_key_pem                       = "${module.self_signed_ca.self_signed_ca_private_key}"
