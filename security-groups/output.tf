@@ -25,6 +25,10 @@ output "security_groups_sg_elasticache_sg_id" {
   value = "${module.security_groups.security_groups_sg_elasticache_sg_id}"
 }
 
+output "security_groups_sg_monitoring_client" {
+  value = "${local.sg_map_ids["monitoring_client"]}"
+}
+
 output "security_groups_sg_efs_sg_id" {
   value = "${local.sg_map_ids["efs_sg_id"]}"
 }

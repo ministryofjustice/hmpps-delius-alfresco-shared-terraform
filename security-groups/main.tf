@@ -64,6 +64,7 @@ locals {
     bastion_in_sg_id    = "${data.terraform_remote_state.security-groups.sg_ssh_bastion_in_id}"
     efs_sg_id           = "${data.terraform_remote_state.security-groups.sg_alfresco_efs_in}"
     mon_jenkins         = "${data.terraform_remote_state.security-groups.sg_mon_jenkins}"
+    monitoring_client   = "${data.terraform_remote_state.security-groups.sg_monitoring_client}"
   }
 
   allowed_cidr_block = [
