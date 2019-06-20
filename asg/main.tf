@@ -190,7 +190,7 @@ locals {
   instance_security_groups = [
     "${data.terraform_remote_state.security-groups.security_groups_sg_internal_instance_id}",
     "${data.terraform_remote_state.common.common_sg_outbound_id}",
-    "${data.terraform_remote_state.common.monitoring_server_client_sg_id}",
+    "${data.terraform_remote_state.security-groups.security_groups_sg_monitoring_client}",
     "${data.terraform_remote_state.security-groups.security_groups_bastion_in_sg_id}",
   ]
 }
