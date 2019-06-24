@@ -1,0 +1,14 @@
+version: "3"
+
+services:
+  elasticsearch-manager:
+    image: mojdigitalstudio/hmpps-elasticsearch-manager:0.0.254-alpha
+    environment:
+      - APP_ENVIRONMENT=dev
+      - CONFIG_BUCKET=${CONFIG_BUCKET}
+      - ALF_STORAGE_BUCKET=${ALF_STORAGE_BUCKET}
+      - ALF_ASG_PREFIX=${ALF_ASG_PREFIX}
+      - DYNAMODB_TABLE_NAME=${ES_DYNAMODB_TABLE_NAME}
+    volumes:
+      - /opt/scripts:/opt/scripts
+    entrypoint: [ "sh", "/opt/scripts/alfresco-restore.sh" ]

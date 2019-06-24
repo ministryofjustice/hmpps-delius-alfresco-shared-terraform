@@ -136,6 +136,16 @@
             "Resource": "*"
         },
         {
+            "Effect": "Allow",
+            "Sid": "ASGPerms",
+            "Action": [
+                "autoscaling:UpdateAutoScalingGroup",
+                "ec2:RunInstances",
+                "autoscaling:DescribeAutoScalingGroups"
+            ],
+            "Resource": "*"
+        },
+        {
             "Sid": "dynamodbPerms",
             "Effect": "Allow",
             "Action": [

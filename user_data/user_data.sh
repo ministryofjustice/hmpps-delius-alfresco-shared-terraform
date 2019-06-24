@@ -47,6 +47,7 @@ EOF
 cat << EOF > ~/bootstrap_vars.yml
 - mount_point: "${cache_home}"
 - device_name: "${ebs_device}"
+- logstash_host: "${logstash_host_fqdn}"
 - monitoring_host: "${monitoring_server_url}"
 - bucket_name: "${bucket_name}" 
 - bucket_encrypt_type: "${bucket_encrypt_type}"

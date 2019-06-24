@@ -73,7 +73,17 @@ export ES_SNAPSHOT_NAME=$(cat $tf_data | grep es_snapshot_name | cut -d ' ' -f3)
 echo "export ES_SNAPSHOT_NAME=${ES_SNAPSHOT_NAME}" >> $outfile_docker
 exit_on_error $? !!
 
+export ALF_ASG_PREFIX=$(cat $tf_data | grep asg_prefix | cut -d ' ' -f3)
+echo "export ALF_ASG_PREFIX=${ALF_ASG_PREFIX}" >> $outfile_docker
+exit_on_error $? !!
 
+export ES_DYNAMODB_TABLE_NAME=$(cat $tf_data | grep asg_prefix | cut -d ' ' -f3)
+echo "export ES_DYNAMODB_TABLE_NAME=${ES_DYNAMODB_TABLE_NAME}" >> $outfile_docker
+exit_on_error $? !!
+
+export ALF_STORAGE_BUCKET=$(cat $tf_data | grep storage_s3bucket | cut -d ' ' -f3)
+echo "export ALF_STORAGE_BUCKET=${ALF_STORAGE_BUCKET}" >> $outfile_docker
+exit_on_error $? !!
 ##################################################################################################
 # get cert details
 comp=certs

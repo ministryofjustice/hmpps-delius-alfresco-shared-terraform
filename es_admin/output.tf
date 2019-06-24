@@ -13,6 +13,10 @@ output "config_bucket" {
   value = "${local.config-bucket}"
 }
 
+output "storage_s3bucket" {
+  value = "${local.storage_s3bucket}"
+}
+
 # region
 output "internal_domain" {
   value = "${local.internal_domain}"
@@ -25,4 +29,15 @@ output "elk_lb_dns" {
 
 output "es_snapshot_name" {
   value = "${var.es_snapshot_name}"
+}
+
+# ASG
+output "asg_prefix" {
+  value = "${local.asg_prefix}"
+}
+
+# DynamoDB
+
+output "dynamodb_table_name" {
+  value = "${local.dynamodb_table_name}"
 }
