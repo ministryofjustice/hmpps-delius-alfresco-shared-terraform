@@ -183,3 +183,12 @@ output "app_hostnames" {
 output "nat_gateway_ips" {
   value = "${local.nat_gateways_ips}"
 }
+
+# Param store
+output "rds_ssm_password_param_name" {
+  value = "${module.common.rds_ssm_password_param_name}"
+}
+
+output "rds_ssm_password_param_arn" {
+  value = "${module.common.rds_ssm_password_param_arn}"
+}

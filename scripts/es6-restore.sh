@@ -2,6 +2,10 @@
 
 set +e
 
+if [ -z "${ALF_RESTORE_STATUS}" ]
+then
+    ALF_RESTORE_STATUS="no-restore"
+fi
 
 repo_name="local"
 snapshot=${ES_SNAPSHOT_NAME}
@@ -18,12 +22,17 @@ done
 
 echo "elasticsearch started on host: ${ES_HOST}"
 
-echo "Creating repos"
-elasticsearch-manager addrepository ${shared_repo_name} --path ${shared_repo_path} && echo Success || exit $?
+if [ ${ALF_RESTORE_STATUS} = restore ]
+then
+  echo "Creating repos"
+  elasticsearch-manager addrepository ${shared_repo_name} --path ${shared_repo_path} && echo Success || exit $?
 
-sleep 30
+  sleep 30
 
-echo "Running restore"
-elasticsearch-manager restore  ${shared_repo_name} --snapshot ${snapshot} --srcprefix ${dst_prefix} && echo Success || exit $?
+  echo "Running restore"
+  elasticsearch-manager restore  ${shared_repo_name} --snapshot ${snapshot} --srcprefix ${dst_prefix} && echo Success || exit $?
+else
+  echo "Restore not completed"
+fi
 
 set -e

@@ -116,6 +116,19 @@ data "terraform_remote_state" "dynamodb" {
 }
 
 #-------------------------------------------------------------
+### Getting the rds details
+#-------------------------------------------------------------
+data "terraform_remote_state" "rds" {
+  backend = "s3"
+
+  config {
+    bucket = "${var.remote_state_bucket_name}"
+    key    = "alfresco/rds/terraform.tfstate"
+    region = "${var.region}"
+  }
+}
+
+#-------------------------------------------------------------
 ### Getting the latest amazon ami
 #-------------------------------------------------------------
 
@@ -189,6 +202,12 @@ locals {
   asg_prefix                   = "${data.terraform_remote_state.asg.common_name}"
   dynamodb_table_name          = "${data.terraform_remote_state.dynamodb.dynamodb_table_name}"
   storage_s3bucket             = "${data.terraform_remote_state.s3bucket.s3bucket}"
+  db_name                      = "${data.terraform_remote_state.rds.rds_db_instance_database_name}"
+  db_username                  = "${data.terraform_remote_state.rds.rds_db_instance_username}"
+  db_host                      = "${data.terraform_remote_state.rds.rds_db_instance_endpoint_cname}"
+  db_password_ssm              = "${data.terraform_remote_state.common.rds_ssm_password_param_name}"
+  mon_jenkins_sg               = "${data.terraform_remote_state.security-groups.security_groups_map["mon_jenkins"]}"
+  sg_rds_id                    = "${data.terraform_remote_state.security-groups.security_groups_sg_rds_id}"
 
   instance_security_groups = [
     "${data.terraform_remote_state.monitoring.instance_security_groups}",

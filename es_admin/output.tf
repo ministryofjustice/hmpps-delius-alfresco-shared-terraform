@@ -41,3 +41,34 @@ output "asg_prefix" {
 output "dynamodb_table_name" {
   value = "${local.dynamodb_table_name}"
 }
+
+# restore status
+output "alf_restore_status" {
+  value = "${var.alf_restore_status}"
+}
+
+# rds
+output "alf_db_host" {
+  value = "${local.db_host}"
+}
+
+output "alf_db_name" {
+  value = "${local.db_name}"
+}
+
+output "alf_db_username" {
+  value = "${local.db_username}"
+}
+
+output "alf_db_password_ssm" {
+  value = "${local.db_password_ssm}"
+}
+
+# env_configs
+output "terragrunt_iam_role" {
+  value = "${var.role_arn}"
+}
+
+output "region" {
+  value = "${var.region}"
+}
