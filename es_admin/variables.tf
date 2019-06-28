@@ -27,5 +27,5 @@ variable "es_snapshot_name" {
 
 # Restore mode
 variable "alf_restore_status" {
-  default = "restore"
+  default = "no-restore"
 }

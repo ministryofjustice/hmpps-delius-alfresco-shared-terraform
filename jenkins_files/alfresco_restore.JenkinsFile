@@ -232,9 +232,9 @@ pipeline {
             script {
               es_destroy(project.alfresco, docker_tls_dir)
             }
-            // script {
-            //   destroy_ec2(environment_name, project.alfresco, 'es_admin')
-            // }
+            script {
+              destroy_ec2(environment_name, project.alfresco, 'es_admin')
+            }
             deleteDir()
         }
         success {

@@ -24,7 +24,7 @@ done
 if [ ${ALF_RESTORE_STATUS} = restore ]
 then
   echo "--> syncing bucket ${CONFIG_BUCKET}"
-  aws s3 sync ${SYNC_COMMAND} && echo Success || exit $?
+  aws s3 sync --only-show-errors ${SYNC_COMMAND} && echo Success || exit $?
 
   chown -R elasticsearch:elasticsearch ${repo_path} && echo Success || exit $?
   echo "-> syncing complete"
