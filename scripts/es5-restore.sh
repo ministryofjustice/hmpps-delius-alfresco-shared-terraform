@@ -1,6 +1,11 @@
 #!/bin/bash 
 set +e
 
+if [ -z "${ALF_RESTORE_STATUS}" ]
+then
+    ALF_RESTORE_STATUS="no-restore"
+fi
+
 repo_name="local"
 snapshot=${ES_SNAPSHOT_NAME}
 repo_path="/opt/local"
@@ -9,31 +14,37 @@ shared_repo_path="/opt/es_backup"
 src_prefix="logstash-alfresco"
 dst_prefix="alfresco-logstash"
 
-echo "--> syncing bucket ${CONFIG_BUCKET}"
-aws s3 sync s3://${CONFIG_BUCKET}/restore/elasticsearch/ ${repo_path}/ && echo Success || exit $?
-
-chown -R elasticsearch:elasticsearch ${repo_path} && echo Success || exit $?
-echo "-> syncing complete"
+SYNC_COMMAND="s3://${CONFIG_BUCKET}/restore/elasticsearch/ ${repo_path}/"
 
 echo "Waiting for elasticsearch..."
 while ! nc -z ${ES_HOST} 9200; do
   sleep 0.1
 done
 
-echo "elasticsearch started on host: ${ES_HOST}"
+if [ ${ALF_RESTORE_STATUS} = restore ]
+then
+  echo "--> syncing bucket ${CONFIG_BUCKET}"
+  aws s3 sync --only-show-errors ${SYNC_COMMAND} && echo Success || exit $?
 
-echo "Creating repos"
-elasticsearch-manager addrepository ${repo_name} --path ${repo_path} && echo Success || exit $?
+  chown -R elasticsearch:elasticsearch ${repo_path} && echo Success || exit $?
+  echo "-> syncing complete"
 
-elasticsearch-manager addrepository ${shared_repo_name} --path ${shared_repo_path} && echo Success || exit $?
-sleep 30
+  echo "elasticsearch started on host: ${ES_HOST}"
 
-echo "Running restore"
-elasticsearch-manager restore  ${repo_name} --snapshot ${snapshot} --srcprefix ${src_prefix} --reindex --dstprefix ${dst_prefix} && echo Success || exit $?
+  echo "Creating repos"
+  elasticsearch-manager addrepository ${repo_name} --path ${repo_path} && echo Success || exit $?
 
-sleep 10
+  elasticsearch-manager addrepository ${shared_repo_name} --path ${shared_repo_path} && echo Success || exit $?
+  sleep 30
 
-echo "Running create snapshot"
-elasticsearch-manager createsnapshot ${snapshot} --repository ${shared_repo_name} && echo Success || exit $?
+  echo "Running restore"
+  elasticsearch-manager restore  ${repo_name} --snapshot ${snapshot} --srcprefix ${src_prefix} --reindex --dstprefix ${dst_prefix} && echo Success || exit $?
 
+  sleep 10
+
+  echo "Running create snapshot"
+  elasticsearch-manager createsnapshot ${snapshot} --repository ${shared_repo_name} && echo Success || exit $?
+else
+  aws s3 sync ${SYNC_COMMAND} --dryrun
+fi
 set -e

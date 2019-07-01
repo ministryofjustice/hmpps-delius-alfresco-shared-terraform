@@ -112,3 +112,8 @@ output "asg_loggroup_name" {
 output "asg_latest_ami" {
   value = "${module.asg.asg_latest_ami}"
 }
+
+# ES_ADMIN output
+output "common_name" {
+  value = "${local.common_name}"
+}

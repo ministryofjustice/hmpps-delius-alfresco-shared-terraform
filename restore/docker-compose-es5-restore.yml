@@ -10,6 +10,7 @@ services:
       - ES_HOST=elasticsearch
       - ES_SNAPSHOT_NAME=${ES_SNAPSHOT_NAME}
       - CONFIG_BUCKET=${CONFIG_BUCKET}
+      - ALF_RESTORE_STATUS=${ALF_RESTORE_STATUS}
     volumes:
       - /opt/scripts:/opt/scripts
       - /opt/local:/opt/local

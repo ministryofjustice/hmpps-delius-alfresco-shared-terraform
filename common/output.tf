@@ -114,6 +114,10 @@ output "monitoring_server_internal_url" {
   value = "${data.terraform_remote_state.monitor.monitoring_server_internal_url}"
 }
 
+output "logstash_host_fqdn" {
+  value = "${local.logstash_host_fqdn}"
+}
+
 output "private_subnet_map" {
   value = {
     az1 = "${data.terraform_remote_state.vpc.vpc_private-subnet-az1}"
@@ -178,4 +182,13 @@ output "app_hostnames" {
 # nat gateways
 output "nat_gateway_ips" {
   value = "${local.nat_gateways_ips}"
+}
+
+# Param store
+output "rds_ssm_password_param_name" {
+  value = "${module.common.rds_ssm_password_param_name}"
+}
+
+output "rds_ssm_password_param_arn" {
+  value = "${module.common.rds_ssm_password_param_arn}"
 }

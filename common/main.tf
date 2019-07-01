@@ -115,29 +115,37 @@ data "aws_ami" "amazon_ami" {
 ####################################################
 
 locals {
-  vpc_id                         = "${data.terraform_remote_state.vpc.vpc_id}"
-  cidr_block                     = "${data.terraform_remote_state.vpc.vpc_cidr_block}"
-  allowed_cidr_block             = ["${data.terraform_remote_state.vpc.vpc_cidr_block}"]
-  internal_domain                = "${data.terraform_remote_state.vpc.private_zone_name}"
-  private_zone_id                = "${data.terraform_remote_state.vpc.private_zone_id}"
-  external_domain                = "${data.terraform_remote_state.vpc.public_zone_name}"
-  public_zone_id                 = "${data.terraform_remote_state.vpc.public_zone_id}"
-  common_name                    = "${var.environment_identifier}-${var.alfresco_app_name}"
-  lb_account_id                  = "${var.lb_account_id}"
-  region                         = "${var.region}"
-  role_arn                       = "${var.role_arn}"
-  alfresco_app_name              = "${var.alfresco_app_name}"
-  environment_identifier         = "${var.environment_identifier}"
-  short_environment_identifier   = "${var.short_environment_identifier}"
-  remote_state_bucket_name       = "${var.remote_state_bucket_name}"
-  s3_lb_policy_file              = "../policies/s3_alb_policy.json"
-  environment                    = "${var.environment_type}"
-  tags                           = "${merge(data.terraform_remote_state.vpc.tags, map("sub-project", "${var.alfresco_app_name}"))}"
+  vpc_id                       = "${data.terraform_remote_state.vpc.vpc_id}"
+  cidr_block                   = "${data.terraform_remote_state.vpc.vpc_cidr_block}"
+  allowed_cidr_block           = ["${data.terraform_remote_state.vpc.vpc_cidr_block}"]
+  internal_domain              = "${data.terraform_remote_state.vpc.private_zone_name}"
+  private_zone_id              = "${data.terraform_remote_state.vpc.private_zone_id}"
+  external_domain              = "${data.terraform_remote_state.vpc.public_zone_name}"
+  public_zone_id               = "${data.terraform_remote_state.vpc.public_zone_id}"
+  common_name                  = "${var.environment_identifier}-${var.alfresco_app_name}"
+  lb_account_id                = "${var.lb_account_id}"
+  region                       = "${var.region}"
+  role_arn                     = "${var.role_arn}"
+  alfresco_app_name            = "${var.alfresco_app_name}"
+  environment_identifier       = "${var.environment_identifier}"
+  short_environment_identifier = "${var.short_environment_identifier}"
+  remote_state_bucket_name     = "${var.remote_state_bucket_name}"
+  s3_lb_policy_file            = "../policies/s3_alb_policy.json"
+  environment                  = "${var.environment_type}"
+
+  tags = "${merge(
+    data.terraform_remote_state.vpc.tags, 
+    map("sub-project", "${var.alfresco_app_name}"),
+    map("source-code", "ignored"),
+    map("source-hash", "ignored")
+  )}"
+
   remote_iam_role                = "${data.terraform_remote_state.remote_iam.alfresco_iam_arn}"
   remote_config_bucket           = "${data.terraform_remote_state.remote_vpc.s3-config-bucket}"
   monitoring_server_external_url = "${data.terraform_remote_state.monitor.monitoring_server_external_url}"
   monitoring_server_internal_url = "${data.terraform_remote_state.monitor.monitoring_server_internal_url}"
   monitoring_server_client_sg_id = "${data.terraform_remote_state.monitor.monitoring_server_client_sg_id}"
+  logstash_host_fqdn             = "${data.terraform_remote_state.monitor.internal_logstash_host}"
   ssh_deployer_key               = "${data.terraform_remote_state.vpc.ssh_deployer_key}"
 
   app_hostnames = {

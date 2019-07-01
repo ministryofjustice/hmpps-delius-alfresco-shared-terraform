@@ -180,6 +180,7 @@ locals {
   certificate_arn                = "${data.aws_acm_certificate.cert.arn}"
   public_subnet_ids              = ["${data.terraform_remote_state.common.public_subnet_ids}"]
   messaging_broker_url           = "${var.spg_messaging_broker_url}"
+  logstash_host_fqdn             = "${data.terraform_remote_state.common.logstash_host_fqdn}"
 
   self_signed_ssm = {
     ca_cert = "${data.terraform_remote_state.self_certs.self_signed_ca_ssm_cert_pem_name}"
@@ -230,6 +231,7 @@ module "asg" {
   account_id                   = "${local.account_id}"
   alfresco_instance_ami        = "${var.alfresco_instance_ami}"
   monitoring_server_url        = "${local.monitoring_server_internal_url}"
+  logstash_host_fqdn           = "${local.logstash_host_fqdn}"
   messaging_broker_url         = "${local.messaging_broker_url}"
   bastion_inventory            = "${local.bastion_inventory}"
   keys_dir                     = "/opt/keys"

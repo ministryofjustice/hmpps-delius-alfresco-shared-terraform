@@ -1,0 +1,29 @@
+version: "3"
+
+services:
+  elasticsearch-manager:
+    image: mojdigitalstudio/hmpps-elasticsearch-manager:master
+    environment:
+      - APP_ENVIRONMENT=dev
+      - CONFIG_BUCKET=${CONFIG_BUCKET}
+      - ALF_STORAGE_BUCKET=${ALF_STORAGE_BUCKET}
+      - ALF_ASG_PREFIX=${ALF_ASG_PREFIX}
+      - DYNAMODB_TABLE_NAME=${ES_DYNAMODB_TABLE_NAME}
+      - ALF_RESTORE_STATUS=${ALF_RESTORE_STATUS}
+    volumes:
+      - /opt/scripts:/opt/scripts
+    entrypoint: [ "sh", "/opt/scripts/alfresco-content-restore.sh" ]
+  psql:
+    image: mojdigitalstudio/hmpps-base-psql:latest
+    environment:
+      - CONFIG_BUCKET=${CONFIG_BUCKET}
+      - ALF_RESTORE_STATUS=${ALF_RESTORE_STATUS}
+      - ALF_DB_HOST=${ALF_DB_HOST}
+      - ALF_DB_NAME=${ALF_DB_NAME}
+      - ALF_DB_PASSWORD_SSM=${ALF_DB_PASSWORD_SSM}
+      - ALF_DB_USERNAME=${ALF_DB_USERNAME}
+      - TERRAGRUNT_IAM_ROLE=${TERRAGRUNT_IAM_ROLE}
+      - TG_REGION=${TG_REGION}
+    volumes:
+      - /opt/scripts:/home/tools/data
+    command: sh alfresco-database-restore.sh

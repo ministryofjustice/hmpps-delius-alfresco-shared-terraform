@@ -73,6 +73,45 @@ export ES_SNAPSHOT_NAME=$(cat $tf_data | grep es_snapshot_name | cut -d ' ' -f3)
 echo "export ES_SNAPSHOT_NAME=${ES_SNAPSHOT_NAME}" >> $outfile_docker
 exit_on_error $? !!
 
+export ALF_ASG_PREFIX=$(cat $tf_data | grep asg_prefix | cut -d ' ' -f3)
+echo "export ALF_ASG_PREFIX=${ALF_ASG_PREFIX}" >> $outfile_docker
+exit_on_error $? !!
+
+export ES_DYNAMODB_TABLE_NAME=$(cat $tf_data | grep asg_prefix | cut -d ' ' -f3)
+echo "export ES_DYNAMODB_TABLE_NAME=${ES_DYNAMODB_TABLE_NAME}" >> $outfile_docker
+exit_on_error $? !!
+
+export ALF_STORAGE_BUCKET=$(cat $tf_data | grep storage_s3bucket | cut -d ' ' -f3)
+echo "export ALF_STORAGE_BUCKET=${ALF_STORAGE_BUCKET}" >> $outfile_docker
+exit_on_error $? !!
+
+export ALF_RESTORE_STATUS=$(cat $tf_data | grep alf_restore_status | cut -d ' ' -f3)
+echo "export ALF_RESTORE_STATUS=${ALF_RESTORE_STATUS}" >> $outfile_docker
+exit_on_error $? !!
+
+# RDS
+export ALF_DB_HOST=$(cat $tf_data | grep alf_db_host | cut -d ' ' -f3)
+echo "export ALF_DB_HOST=${ALF_DB_HOST}" >> $outfile_docker
+exit_on_error $? !!
+
+export ALF_DB_NAME=$(cat $tf_data | grep alf_db_name | cut -d ' ' -f3)
+echo "export ALF_DB_NAME=${ALF_DB_NAME}" >> $outfile_docker
+exit_on_error $? !!
+
+export ALF_DB_PASSWORD_SSM=$(cat $tf_data | grep alf_db_password_ssm | cut -d ' ' -f3)
+echo "export ALF_DB_PASSWORD_SSM=${ALF_DB_PASSWORD_SSM}" >> $outfile_docker
+exit_on_error $? !!
+
+export ALF_DB_USERNAME=$(cat $tf_data | grep alf_db_username | cut -d ' ' -f3)
+echo "export ALF_DB_USERNAME=${ALF_DB_USERNAME}" >> $outfile_docker
+exit_on_error $? !!
+
+# AWS
+echo "export TERRAGRUNT_IAM_ROLE=$(cat $tf_data | grep terragrunt_iam_role | cut -d ' ' -f3)" >> $outfile_docker
+exit_on_error $? !!
+
+echo "export TG_REGION=$(cat $tf_data | grep region | cut -d ' ' -f3)" >> $outfile_docker
+exit_on_error $? !!
 
 ##################################################################################################
 # get cert details

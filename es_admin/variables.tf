@@ -1,5 +1,7 @@
 variable "region" {}
 
+variable "role_arn" {}
+
 variable "remote_state_bucket_name" {
   description = "Terraform remote state bucket name"
 }
@@ -21,4 +23,9 @@ variable "es_admin_instance_type" {
 # ELasticsearch snapshot name
 variable "es_snapshot_name" {
   default = "snapshot_1"
+}
+
+# Restore mode
+variable "alf_restore_status" {
+  default = "no-restore"
 }
