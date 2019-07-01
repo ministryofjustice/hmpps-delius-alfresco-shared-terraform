@@ -200,7 +200,7 @@ locals {
 # ASG - Application Specific
 ####################################################
 module "asg" {
-  source                       = "git::https://github.com/ministryofjustice/hmpps-terraform-modules.git?ref=issue_179_add_logstash_host_to_alfresco_asg//projects//alfresco//asg"
+  source                       = "git::https://github.com/ministryofjustice/hmpps-terraform-modules.git?ref=master//projects//alfresco//asg"
   alfresco_app_name            = "${local.alfresco_app_name}"
   app_hostnames                = "${local.app_hostnames}"
   environment_identifier       = "${local.environment_identifier}"
