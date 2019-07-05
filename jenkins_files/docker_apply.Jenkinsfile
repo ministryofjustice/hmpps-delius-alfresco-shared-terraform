@@ -117,14 +117,14 @@ pipeline {
         stage('Delius | Alfresco ElastiCache') { steps { script { do_terraform(environment_name, project.alfresco, 'elasticache-memcached')}}}
         stage('Delius | Alfresco ASG') { steps { script { do_terraform(environment_name, project.alfresco, 'asg')}}}
 
-        stage('Smoke test') {
-            when {
-                expression { "${environment_name}" == "delius-auto-test"}
-            }
-            steps {
-                build job: "DAMS/Environments/${environment_name}/Alfresco/Smoke_tests"
-            }
-        }
+        // stage('Smoke test') {
+        //     when {
+        //         expression { "${environment_name}" == "delius-auto-test"}
+        //     }
+        //     steps {
+        //         build job: "DAMS/Environments/${environment_name}/Alfresco/Smoke_tests"
+        //     }
+        // }
 
     }
 
