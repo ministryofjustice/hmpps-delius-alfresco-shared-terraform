@@ -3,8 +3,8 @@
 set -e
 
 #Usage
-# Scripts takes 2 arguments: environment_type and action
-# environment_type: target environment example dev prod
+# Scripts takes 2 arguments: environment_name and action
+# environment_name: target environment example dev prod
 # ACTION_TYPE: task to complete example plan apply test clean
 # AWS_TOKEN: token to use when running locally eg hmpps-token
 
@@ -20,19 +20,19 @@ exit_on_error() {
 
 env_config_dir="${HOME}/data/env_configs"
 
-TG_ENVIRONMENT_TYPE=$1
+ENVIRONMENT_NAME_ARG=$1
 ACTION_TYPE=$2
 COMPONENT=${3}
 REPO=${4}
 
 
-if [ -z "${TG_ENVIRONMENT_TYPE}" ]
+if [ -z "${ENVIRONMENT_NAME_ARG}" ]
 then
-    echo "environment_type argument not supplied, please provide an argument!"
+    echo "environment_name argument not supplied, please provide an argument!"
     exit 1
 fi
 
-echo "Output -> environment_type set to: ${TG_ENVIRONMENT_TYPE}"
+echo "Output -> environment_name set to: ${ENVIRONMENT_NAME_ARG}"
 
 if [ -z "${ACTION_TYPE}" ]
 then
@@ -59,7 +59,7 @@ then
     echo "Output ---> Cloning branch: ${GIT_BRANCH}"
     git clone -b ${GIT_BRANCH} ${REPO} ${env_config_dir}
     echo "Output -> environment stage"
-    source ${env_config_dir}/${TG_ENVIRONMENT_TYPE}/${TG_ENVIRONMENT_TYPE}.properties
+    source ${env_config_dir}/${ENVIRONMENT_NAME_ARG}/${ENVIRONMENT_NAME_ARG}.properties
     exit_on_error $? !!
     echo "Output ---> set environment stage complete"
     # set runCmd
@@ -71,8 +71,8 @@ then
 fi
 
 #Apply overrides if names are too long
-if [ -f "${env_config_dir}/${TG_ENVIRONMENT_TYPE}/sub-projects/alfresco.properties" ]; then
-    source ${env_config_dir}/${TG_ENVIRONMENT_TYPE}/sub-projects/alfresco.properties;
+if [ -f "${env_config_dir}/${ENVIRONMENT_NAME_ARG}/sub-projects/alfresco.properties" ]; then
+    source ${env_config_dir}/${ENVIRONMENT_NAME_ARG}/sub-projects/alfresco.properties;
 fi
 
 case ${ACTION_TYPE} in
@@ -81,7 +81,7 @@ case ${ACTION_TYPE} in
     rm -rf .terraform *.plan
     terragrunt init
     exit_on_error $? !!
-    terragrunt plan -detailed-exitcode --out ${TG_ENVIRONMENT_TYPE}.plan || export tf_exit_code="$?"
+    terragrunt plan -detailed-exitcode --out ${ENVIRONMENT_NAME_ARG}.plan || export tf_exit_code="$?"
     if [ -z ${tf_exit_code} ]
     then
       export tf_exit_code="0"
@@ -91,7 +91,7 @@ case ${ACTION_TYPE} in
     ;;
   docker-apply)
     echo "Running docker apply action"
-    terragrunt apply ${TG_ENVIRONMENT_TYPE}.plan
+    terragrunt apply ${ENVIRONMENT_NAME_ARG}.plan
     exit_on_error $? !!
     ;;
   docker-destroy)
