@@ -98,6 +98,18 @@ output "environment" {
   value = "${local.environment}"
 }
 
+output "environment_name" {
+  value = "${var.environment_name}"
+}
+
+output "project_name" {
+  value = "${var.project_name}"
+}
+
+output "credentials_ssm_path" {
+  value = "/${var.environment_name}/${var.project_name}"
+}
+
 output "remote_iam_role" {
   value = "${data.terraform_remote_state.remote_iam.alfresco_iam_arn}"
 }

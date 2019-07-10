@@ -21,6 +21,10 @@ variable "environment_type" {
   description = "environment"
 }
 
+variable "environment_name" {}
+
+variable "project_name" {}
+
 variable "remote_state_bucket_name" {
   description = "Terraform remote state bucket name"
 }

@@ -62,13 +62,14 @@ locals {
   private_subnet_map     = "${data.terraform_remote_state.common.private_subnet_map}"
   db_subnet_ids          = ["${data.terraform_remote_state.common.db_subnet_ids}"]
   security_group_ids     = ["${data.terraform_remote_state.security-groups.security_groups_sg_rds_id}"]
+  credentials_ssm_path   = "${data.terraform_remote_state.common.credentials_ssm_path}"
 }
 
 ####################################################
 # RDS - Application Specific
 ####################################################
 module "rds" {
-  source                    = "git::https://github.com/ministryofjustice/hmpps-terraform-modules.git?ref=master//projects//alfresco//rds"
+  source                    = "../modules/rds"
   alfresco_app_name         = "${local.alfresco_app_name}"
   environment_identifier    = "${local.environment_identifier}"
   common_name               = "${local.common_name}"
@@ -95,4 +96,5 @@ module "rds" {
   rds_allocated_storage     = "${var.rds_allocated_storage}"
   rds_instance_class        = "${var.rds_instance_class}"
   rds_monitoring_interval   = "30"
+  credentials_ssm_path      = "${local.credentials_ssm_path}"
 }

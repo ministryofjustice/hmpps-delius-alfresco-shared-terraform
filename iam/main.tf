@@ -89,7 +89,7 @@ locals {
 # IAM - Application Specific
 ####################################################
 module "iam" {
-  source                     = "git::https://github.com/ministryofjustice/hmpps-terraform-modules.git?ref=master//projects//alfresco//iam"
+  source                     = "../modules/iam"
   common_name                = "${local.common_name}"
   tags                       = "${local.tags}"
   ec2_role_policy_file       = "${file("../policies/ec2_role_policy.json")}"

@@ -77,7 +77,7 @@ locals {
 # Security Groups - Application Specific
 ####################################################
 module "security_groups" {
-  source                  = "./modules/security-groups"
+  source                  = "../modules/security-groups"
   alfresco_app_name       = "${local.alfresco_app_name}"
   allowed_cidr_block      = ["${local.allowed_cidr_block}"]
   common_name             = "${local.common_name}"

@@ -68,6 +68,7 @@ cat << EOF > ~/bootstrap_vars.yml
 - alfresco_port: "443"
 - cluster_enabled: "true"
 - messaging_broker_url: "${messaging_broker_url}"
+- messaging_broker_password: "${messaging_broker_password}"
 EOF
 
 wget https://raw.githubusercontent.com/ministryofjustice/hmpps-delius-ansible/master/group_vars/${bastion_inventory}.yml -O ~/users.yml
