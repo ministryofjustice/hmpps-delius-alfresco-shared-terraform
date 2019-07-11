@@ -39,7 +39,7 @@ locals {
 # S3 bucket - Application Specific
 ####################################################
 module "s3bucket" {
-  source                   = "git::https://github.com/ministryofjustice/hmpps-terraform-modules.git?ref=master//projects//alfresco//s3bucket"
+  source                   = "../modules/s3bucket"
   common_name              = "${local.common_name}"
   tags                     = "${local.tags}"
   s3cloudtrail_policy_file = "${file("../policies/s3bucket/s3_cloudtrail_policy.json")}"

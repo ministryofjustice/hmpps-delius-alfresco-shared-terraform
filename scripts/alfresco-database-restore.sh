@@ -47,21 +47,20 @@ perform_db_restore ()
     echo "Commencing Alfresco DB restore"
     POSTGRES_ROLE="postgres"
     ALFRESCO_ROLE="alfresco"
-    ALF_DB_USER=${ALF_DB_USERNAME}
     ALFRESCO_DB=${ALF_DB_NAME}
     RDS_DB_ENDPOINT=${ALF_DB_HOST}
-    PARAM_STORE_NAME=${ALF_DB_PASSWORD_SSM}
 
     # Get passsword from ssm
-    DB_PASSWORD=$(aws ssm get-parameters --with-decryption --region ${TG_REGION} --names ${PARAM_STORE_NAME} --query "Parameters[0]"."Value" --output text)
+    DB_USER=$(aws ssm get-parameters --region ${TG_REGION} --names "${ALF_DB_USERNAME_SSM}" --query "Parameters[0]"."Value" --output text)
+    DB_PASSWORD=$(aws ssm get-parameters --with-decryption --region ${TG_REGION} --names "${ALF_DB_PASSWORD_SSM}" --query "Parameters[0]"."Value" --output text)
     exit_on_error $? !!
-    psql postgresql://${ALF_DB_USER}:${DB_PASSWORD}@${RDS_DB_ENDPOINT}/postgres << EOF
+    psql postgresql://${DB_USER}:${DB_PASSWORD}@${RDS_DB_ENDPOINT}/postgres << EOF
         drop database ${ALFRESCO_DB};
         CREATE DATABASE ${ALFRESCO_DB};
         CREATE ROLE ${POSTGRES_ROLE};
-        GRANT ${POSTGRES_ROLE} TO ${ALF_DB_USER};
+        GRANT ${POSTGRES_ROLE} TO ${DB_USER};
         CREATE ROLE ${ALFRESCO_ROLE};
-        GRANT ${ALFRESCO_ROLE} TO ${ALF_DB_USER};
+        GRANT ${ALFRESCO_ROLE} TO ${DB_USER};
 EOF
     exit_on_error $? !!
   else

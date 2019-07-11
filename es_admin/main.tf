@@ -202,10 +202,10 @@ locals {
   asg_prefix                   = "${data.terraform_remote_state.asg.common_name}"
   dynamodb_table_name          = "${data.terraform_remote_state.dynamodb.dynamodb_table_name}"
   storage_s3bucket             = "${data.terraform_remote_state.s3bucket.s3bucket}"
-  db_name                      = "${data.terraform_remote_state.rds.rds_db_instance_database_name}"
-  db_username                  = "${data.terraform_remote_state.rds.rds_db_instance_username}"
+  db_username_ssm              = "${data.terraform_remote_state.rds.rds_creds["db_username_ssm_param"]}"
+  db_name                      = "${data.terraform_remote_state.rds.rds_creds["db_name"]}"
+  db_password_ssm              = "${data.terraform_remote_state.rds.rds_creds["db_password_ssm_param"]}"
   db_host                      = "${data.terraform_remote_state.rds.rds_db_instance_endpoint_cname}"
-  db_password_ssm              = "${data.terraform_remote_state.common.rds_ssm_password_param_name}"
   mon_jenkins_sg               = "${data.terraform_remote_state.security-groups.security_groups_map["mon_jenkins"]}"
   sg_rds_id                    = "${data.terraform_remote_state.security-groups.security_groups_sg_rds_id}"
 

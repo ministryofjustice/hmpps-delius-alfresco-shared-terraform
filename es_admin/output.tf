@@ -56,8 +56,8 @@ output "alf_db_name" {
   value = "${local.db_name}"
 }
 
-output "alf_db_username" {
-  value = "${local.db_username}"
+output "alf_db_username_ssm" {
+  value = "${local.db_username_ssm}"
 }
 
 output "alf_db_password_ssm" {

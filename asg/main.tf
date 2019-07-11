@@ -166,8 +166,9 @@ locals {
   ssh_deployer_key               = "${data.terraform_remote_state.common.common_ssh_deployer_key}"
   s3bucket_kms_id                = "${data.terraform_remote_state.s3bucket.s3bucket_kms_id}"
   s3bucket                       = "${data.terraform_remote_state.s3bucket.s3bucket}"
-  db_name                        = "${data.terraform_remote_state.rds.rds_db_instance_database_name}"
-  db_username                    = "${data.terraform_remote_state.rds.rds_db_instance_username}"
+  db_name                        = "${data.terraform_remote_state.rds.rds_creds["db_name"]}"
+  db_username_ssm                = "${data.terraform_remote_state.rds.rds_creds["db_username_ssm_param"]}"
+  db_password_ssm                = "${data.terraform_remote_state.rds.rds_creds["db_password_ssm_param"]}"
   db_host                        = "${data.terraform_remote_state.rds.rds_db_instance_endpoint_cname}"
   monitoring_server_internal_url = "${data.terraform_remote_state.common.monitoring_server_internal_url}"
   app_hostnames                  = "${data.terraform_remote_state.common.app_hostnames}"
@@ -181,6 +182,7 @@ locals {
   public_subnet_ids              = ["${data.terraform_remote_state.common.public_subnet_ids}"]
   messaging_broker_url           = "${var.spg_messaging_broker_url}"
   logstash_host_fqdn             = "${data.terraform_remote_state.common.logstash_host_fqdn}"
+  messaging_broker_password      = "${data.terraform_remote_state.common.credentials_ssm_path}/weblogic/spg-domain/remote_broker_password"
 
   self_signed_ssm = {
     ca_cert = "${data.terraform_remote_state.self_certs.self_signed_ca_ssm_cert_pem_name}"
@@ -200,7 +202,7 @@ locals {
 # ASG - Application Specific
 ####################################################
 module "asg" {
-  source                       = "git::https://github.com/ministryofjustice/hmpps-terraform-modules.git?ref=master//projects//alfresco//asg"
+  source                       = "../modules/asg"
   alfresco_app_name            = "${local.alfresco_app_name}"
   app_hostnames                = "${local.app_hostnames}"
   environment_identifier       = "${local.environment_identifier}"
@@ -223,7 +225,8 @@ module "asg" {
   external_domain              = "${local.external_domain}"
   internal_domain              = "${local.internal_domain}"
   db_name                      = "${local.db_name}"
-  db_username                  = "${local.db_username}"
+  db_username                  = "${local.db_username_ssm}"
+  db_password                  = "${local.db_password_ssm}"
   db_host                      = "${local.db_host}"
   environment                  = "${local.environment}"
   region                       = "${local.region}"
@@ -233,6 +236,7 @@ module "asg" {
   monitoring_server_url        = "${local.monitoring_server_internal_url}"
   logstash_host_fqdn           = "${local.logstash_host_fqdn}"
   messaging_broker_url         = "${local.messaging_broker_url}"
+  messaging_broker_password    = "${local.messaging_broker_password}"
   bastion_inventory            = "${local.bastion_inventory}"
   keys_dir                     = "/opt/keys"
   image_url                    = "${local.image_url}"

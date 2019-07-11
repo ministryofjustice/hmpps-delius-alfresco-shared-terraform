@@ -106,3 +106,8 @@ output "rds_db_instance_port" {
   description = "The database port"
   value       = "${module.rds.rds_db_instance_port}"
 }
+
+# creds
+output "rds_creds" {
+  value = "${module.rds.rds_creds}"
+}

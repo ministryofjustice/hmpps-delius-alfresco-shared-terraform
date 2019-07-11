@@ -102,8 +102,8 @@ export ALF_DB_PASSWORD_SSM=$(cat $tf_data | grep alf_db_password_ssm | cut -d ' 
 echo "export ALF_DB_PASSWORD_SSM=${ALF_DB_PASSWORD_SSM}" >> $outfile_docker
 exit_on_error $? !!
 
-export ALF_DB_USERNAME=$(cat $tf_data | grep alf_db_username | cut -d ' ' -f3)
-echo "export ALF_DB_USERNAME=${ALF_DB_USERNAME}" >> $outfile_docker
+export ALF_DB_USERNAME_SSM=$(cat $tf_data | grep alf_db_username_ssm | cut -d ' ' -f3)
+echo "export ALF_DB_USERNAME_SSM=${ALF_DB_USERNAME_SSM}" >> $outfile_docker
 exit_on_error $? !!
 
 # AWS
