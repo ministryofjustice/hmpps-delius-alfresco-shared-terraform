@@ -52,8 +52,8 @@ cat << EOF > ~/bootstrap_vars.yml
 - bucket_name: "${bucket_name}" 
 - bucket_encrypt_type: "${bucket_encrypt_type}"
 - bucket_key_id: "${bucket_key_id}"
-- db_user: "${db_user}"
-- db_password: "${db_password}"
+- db_user: "{{ lookup('aws_ssm', '${db_user}', region='${region}') }}"
+- db_password: "{{ lookup('aws_ssm', '${db_password}', decrypt=True, region='${region}') }}"
 - db_name: "${db_name}"
 - db_host: "${db_host}"
 - server_mode: "${server_mode}"
@@ -68,7 +68,7 @@ cat << EOF > ~/bootstrap_vars.yml
 - alfresco_port: "443"
 - cluster_enabled: "true"
 - messaging_broker_url: "${messaging_broker_url}"
-- messaging_broker_password: "${messaging_broker_password}"
+- messaging_broker_password: "{{ lookup('aws_ssm', '${messaging_broker_password}', decrypt=True, region='${region}') }}"
 EOF
 
 wget https://raw.githubusercontent.com/ministryofjustice/hmpps-delius-ansible/master/group_vars/${bastion_inventory}.yml -O ~/users.yml

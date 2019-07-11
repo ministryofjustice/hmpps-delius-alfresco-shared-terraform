@@ -7,9 +7,7 @@ locals {
 
   common_name               = "${var.app_hostnames["internal"]}"
   application_endpoint      = "${var.app_hostnames["external"]}"
-  lb_name                   = "${var.short_environment_identifier}-app"
-  common_label              = "${var.common_name}"
-  common_prefix             = "${var.environment_identifier}"
+  common_prefix             = "${var.short_environment_identifier}-alf"
   db_name                   = "${var.db_name}"
   db_username               = "${var.db_username}"
   db_password               = "${var.db_password}"
@@ -51,7 +49,7 @@ locals {
 # elb
 module "create_app_elb" {
   source          = "git::https://github.com/ministryofjustice/hmpps-terraform-modules.git?ref=master//modules//loadbalancer//elb//create_elb_with_https"
-  name            = "${local.lb_name}-ext"
+  name            = "${local.common_prefix}-pub"
   subnets         = ["${local.public_subnet_ids}"]
   security_groups = ["${local.lb_security_groups}"]
   internal        = "${var.internal}"
@@ -61,7 +59,7 @@ module "create_app_elb" {
   connection_draining         = "${var.connection_draining}"
   connection_draining_timeout = "${var.connection_draining_timeout}"
   bucket                      = "${local.access_logs_bucket}"
-  bucket_prefix               = "${local.lb_name}"
+  bucket_prefix               = "${local.common_prefix}"
   interval                    = 60
   ssl_certificate_id          = "${local.certificate_arn}"
   instance_port               = 80
@@ -180,7 +178,7 @@ data "template_file" "user_data" {
 # AZ1 
 module "launch_cfg_az1" {
   source                      = "git::https://github.com/ministryofjustice/hmpps-terraform-modules.git?ref=master//modules//launch_configuration//blockdevice"
-  launch_configuration_name   = "${local.common_label}-az1"
+  launch_configuration_name   = "${local.common_prefix}-az1"
   image_id                    = "${var.alfresco_instance_ami["az1"] != "" ? var.alfresco_instance_ami["az1"] : var.ami_id}"
   instance_type               = "${var.instance_type}"
   volume_size                 = "${var.volume_size}"
@@ -202,7 +200,7 @@ module "launch_cfg_az1" {
 #AZ2
 module "launch_cfg_az2" {
   source                      = "git::https://github.com/ministryofjustice/hmpps-terraform-modules.git?ref=master//modules//launch_configuration//blockdevice"
-  launch_configuration_name   = "${local.common_label}-az2"
+  launch_configuration_name   = "${local.common_prefix}-az2"
   image_id                    = "${var.alfresco_instance_ami["az2"] != "" ? var.alfresco_instance_ami["az2"] : var.ami_id}"
   instance_type               = "${var.instance_type}"
   volume_size                 = "${var.volume_size}"
@@ -224,7 +222,7 @@ module "launch_cfg_az2" {
 #AZ3
 module "launch_cfg_az3" {
   source                      = "git::https://github.com/ministryofjustice/hmpps-terraform-modules.git?ref=master//modules//launch_configuration//blockdevice"
-  launch_configuration_name   = "${local.common_label}-az3"
+  launch_configuration_name   = "${local.common_prefix}-az3"
   image_id                    = "${var.alfresco_instance_ami["az3"] != "" ? var.alfresco_instance_ami["az3"] : var.ami_id}"
   instance_type               = "${var.instance_type}"
   volume_size                 = "${var.volume_size}"
@@ -250,7 +248,7 @@ module "launch_cfg_az3" {
 #AZ1
 module "auto_scale_az1" {
   source               = "git::https://github.com/ministryofjustice/hmpps-terraform-modules.git?ref=master//modules//autoscaling//group//asg_classic_lb"
-  asg_name             = "${local.common_label}-az1"
+  asg_name             = "${local.common_prefix}-az1"
   subnet_ids           = ["${local.az1_subnet}"]
   asg_min              = "${var.az_asg_min["az1"]}"
   asg_max              = "${var.az_asg_max["az1"]}"
@@ -263,7 +261,7 @@ module "auto_scale_az1" {
 #AZ2
 module "auto_scale_az2" {
   source               = "git::https://github.com/ministryofjustice/hmpps-terraform-modules.git?ref=master//modules//autoscaling//group//asg_classic_lb"
-  asg_name             = "${local.common_label}-az2"
+  asg_name             = "${local.common_prefix}-az2"
   subnet_ids           = ["${local.az2_subnet}"]
   asg_min              = "${var.az_asg_min["az2"]}"
   asg_max              = "${var.az_asg_max["az2"]}"
@@ -276,7 +274,7 @@ module "auto_scale_az2" {
 #AZ3
 module "auto_scale_az3" {
   source               = "git::https://github.com/ministryofjustice/hmpps-terraform-modules.git?ref=master//modules//autoscaling//group//asg_classic_lb"
-  asg_name             = "${local.common_label}-az3"
+  asg_name             = "${local.common_prefix}-az3"
   subnet_ids           = ["${local.az3_subnet}"]
   asg_min              = "${var.az_asg_min["az3"]}"
   asg_max              = "${var.az_asg_max["az3"]}"
