@@ -77,7 +77,7 @@ export ALF_ASG_PREFIX=$(cat $tf_data | grep asg_prefix | cut -d ' ' -f3)
 echo "export ALF_ASG_PREFIX=${ALF_ASG_PREFIX}" >> $outfile_docker
 exit_on_error $? !!
 
-export ES_DYNAMODB_TABLE_NAME=$(cat $tf_data | grep asg_prefix | cut -d ' ' -f3)
+export ES_DYNAMODB_TABLE_NAME=$(cat $tf_data | grep dynamodb_table_name | cut -d ' ' -f3)
 echo "export ES_DYNAMODB_TABLE_NAME=${ES_DYNAMODB_TABLE_NAME}" >> $outfile_docker
 exit_on_error $? !!
 

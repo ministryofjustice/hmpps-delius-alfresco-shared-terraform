@@ -199,7 +199,7 @@ locals {
   ssm_tls_ca_cert              = "${data.terraform_remote_state.certs.self_signed_ca_ssm_cert_pem_name}"
   elk_bucket_name              = "${data.terraform_remote_state.monitoring.monitoring_server_bucket_name}"
   elk_lb_dns                   = "${data.terraform_remote_state.monitoring.monitoring_server_internal_url}"
-  asg_prefix                   = "${data.terraform_remote_state.asg.common_name}"
+  asg_prefix                   = "alf-az"
   dynamodb_table_name          = "${data.terraform_remote_state.dynamodb.dynamodb_table_name}"
   storage_s3bucket             = "${data.terraform_remote_state.s3bucket.s3bucket}"
   db_username_ssm              = "${data.terraform_remote_state.rds.rds_creds["db_username_ssm_param"]}"
