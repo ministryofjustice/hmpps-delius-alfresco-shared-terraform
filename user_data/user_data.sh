@@ -90,7 +90,7 @@ cat << EOF > ~/bootstrap.yml
 EOF
 
 ansible-galaxy install -f -r ~/requirements.yml
-SELF_REGISTER=true ansible-playbook ~/bootstrap.yml
+HAS_DOCKER=true SELF_REGISTER=true ansible-playbook ~/bootstrap.yml
 
 # Currently there is a bit of oddness with the service startup, it seems we have to restart it for Alfresco to be available
 export DATE=$(date +"%F-%H-%M")

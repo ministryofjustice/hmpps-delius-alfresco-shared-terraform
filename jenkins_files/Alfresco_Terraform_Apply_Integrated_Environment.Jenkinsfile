@@ -110,6 +110,7 @@ pipeline {
 
         stage('Delius | Alfresco Common') { steps { script { do_terraform(environment_name, project.alfresco, 'common')}}}
         stage('Delius | Alfresco S3 Buckets') { steps { script { do_terraform(environment_name, project.alfresco, 's3buckets')}}}
+        stage('Delius | Alfresco SQS') { steps { script { do_terraform(environment_name, project.alfresco, 'sqs')}}}
         stage('Delius | Alfresco Certs') { steps { script { do_terraform(environment_name, project.alfresco, 'certs')}}}
         stage('Delius | Alfresco IAM') { steps { script { do_terraform(environment_name, project.alfresco, 'iam')}}}
         stage('Delius | Alfresco Security Groups') { steps { script { do_terraform(environment_name, project.alfresco, 'security-groups')}}}

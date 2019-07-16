@@ -53,6 +53,19 @@ data "terraform_remote_state" "dynamodb" {
 #-------------------------------------------------------------
 ### Getting the Dynamodb details
 #-------------------------------------------------------------
+data "terraform_remote_state" "sqs" {
+  backend = "s3"
+
+  config {
+    bucket = "${var.remote_state_bucket_name}"
+    key    = "alfresco/sqs/terraform.tfstate"
+    region = "${var.region}"
+  }
+}
+
+#-------------------------------------------------------------
+### Getting the monitoring details
+#-------------------------------------------------------------
 data "terraform_remote_state" "mon" {
   backend = "s3"
 
@@ -83,6 +96,7 @@ locals {
   restore_dynamodb_table_arn = "${data.terraform_remote_state.dynamodb.dynamodb_table_arn}"
   vpc_cidr                   = "${data.terraform_remote_state.common.vpc_cidr_block}"
   monitoring_kms_arn         = "${data.terraform_remote_state.mon.monitoring_kms_arn}"
+  backups_sqs_queue_arn      = "${data.terraform_remote_state.sqs.backups_queue_arn}"
 }
 
 ####################################################
@@ -103,4 +117,5 @@ module "iam" {
   s3-config-bucket           = "${local.config-bucket}"
   s3bucket_kms_arn           = "${local.alfresco_kms_arn}"
   restore_dynamodb_table_arn = "${local.restore_dynamodb_table_arn}"
+  backups_sqs_queue_arn      = "${local.backups_sqs_queue_arn}"
 }
