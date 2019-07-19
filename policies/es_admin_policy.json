@@ -168,7 +168,7 @@
                 "dynamodb:DescribeBackup",
                 "dynamodb:GetRecords"
             ],
-            "Resource": "${restore_dynamodb_table_arn}"
+            "Resource": "${backups_dynamodb_table_arn}"
         }
     ]
 }

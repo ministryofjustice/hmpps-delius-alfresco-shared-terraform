@@ -10,7 +10,7 @@ data "template_file" "es" {
     app_role_arn               = "${module.create-iam-app-role-es.iamrole_arn}"
     alfresco_kms_arn           = "${local.alfresco_kms_arn}"
     alfresco-storage_s3bucket  = "${local.alfresco-storage_s3bucket}"
-    restore_dynamodb_table_arn = "${local.restore_dynamodb_table_arn}"
+    backups_dynamodb_table_arn = "${local.backups_dynamodb_table_arn}"
     monitoring_bucket_arn      = "${local.monitoring_bucket_arn}"
     monitoring_kms_arn         = "${local.monitoring_kms_arn}"
   }
