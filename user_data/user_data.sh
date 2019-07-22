@@ -69,6 +69,7 @@ cat << EOF > ~/bootstrap_vars.yml
 - cluster_enabled: "true"
 - messaging_broker_url: "${messaging_broker_url}"
 - messaging_broker_password: "{{ lookup('aws_ssm', '${messaging_broker_password}', decrypt=True, region='${region}') }}"
+- remote_user_filename: "${bastion_inventory}"
 EOF
 
 wget https://raw.githubusercontent.com/ministryofjustice/hmpps-delius-ansible/master/group_vars/${bastion_inventory}.yml -O ~/users.yml
