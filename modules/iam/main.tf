@@ -88,7 +88,6 @@ data "template_file" "iam_policy_app_int" {
     storage_s3bucket           = "${local.storage_s3bucket}"
     s3bucket_kms_arn           = "${local.s3bucket_kms_arn}"
     backups_dynamodb_table_arn = "${local.backups_dynamodb_table_arn}"
-    backups_sqs_queue_arn      = "${var.backups_sqs_queue_arn}"
   }
 }
 

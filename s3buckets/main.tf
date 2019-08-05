@@ -48,8 +48,46 @@ module "s3bucket" {
 #-------------------------------------------
 ### S3 bucket for elasticsearch
 #--------------------------------------------
-module "s3_elasticsearch_bucket" {
-  source         = "git::https://github.com/ministryofjustice/hmpps-terraform-modules.git?ref=pre-shared-vpc//modules//s3bucket//s3bucket_without_policy"
-  s3_bucket_name = "${local.common_name}-es"
-  tags           = "${local.tags}"
+resource "aws_s3_bucket" "backups" {
+  bucket = "${local.common_name}-alf-backups"
+  acl    = "private"
+
+  versioning {
+    enabled = true
+  }
+
+  lifecycle {
+    prevent_destroy = false
+  }
+
+  server_side_encryption_configuration {
+    rule {
+      apply_server_side_encryption_by_default {
+        sse_algorithm = "AES256"
+      }
+    }
+  }
+
+  lifecycle_rule {
+    id      = "backups"
+    enabled = true
+
+    prefix = "backups/"
+
+    tags = {
+      "rule"      = "backups"
+      "autoclean" = "true"
+    }
+
+    transition {
+      days          = 14
+      storage_class = "GLACIER"
+    }
+
+    expiration {
+      days = 2560
+    }
+  }
+
+  tags = "${merge(local.tags, map("Name", "${local.common_name}-alf-backups"))}"
 }

@@ -30,5 +30,3 @@ variable depends_on {
 }
 
 variable "backups_dynamodb_table_arn" {}
-
-variable "backups_sqs_queue_arn" {}

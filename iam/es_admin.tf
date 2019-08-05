@@ -13,6 +13,7 @@ data "template_file" "es" {
     backups_dynamodb_table_arn = "${local.backups_dynamodb_table_arn}"
     monitoring_bucket_arn      = "${local.monitoring_bucket_arn}"
     monitoring_kms_arn         = "${local.monitoring_kms_arn}"
+    alf_backups_bucket_arn     = "${local.alf_backups_bucket_arn}"
   }
 }
 

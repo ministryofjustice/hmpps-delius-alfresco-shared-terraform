@@ -138,28 +138,6 @@
                 "dynamodb:GetRecords"
             ],
             "Resource": "${backups_dynamodb_table_arn}"
-        },
-        {
-            "Effect": "Allow",
-            "Sid": "SQSList",
-            "Action": [
-                "sqs:ListQueues"
-            ],
-            "Resource": "*"
-        },
-        {
-            "Effect": "Allow",
-            "Sid": "SQSPerms",
-            "Action": [
-                "sqs:SendMessage",
-                "sqs:ReceiveMessage",
-                "sqs:PurgeQueue",
-                "sqs:GetQueueUrl",
-                "sqs:DeleteMessageBatch",
-                "sqs:SendMessageBatch",
-                "sqs:DeleteMessage"
-            ],
-            "Resource": "${backups_sqs_queue_arn}"
         }
     ]
 }
