@@ -30,6 +30,7 @@ data "template_file" "instance_userdata" {
     ssm_tls_ca_cert      = "${local.ssm_tls_ca_cert}"
     region               = "${var.region}"
     config-bucket        = "${local.config-bucket}"
+    alf_efs_dns_name     = "${local.alf_efs_dns_name}"
   }
 }
 

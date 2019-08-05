@@ -46,8 +46,8 @@ cat << EOF > ~/bootstrap.yml
 ---
 - hosts: localhost
   vars_files:
-  - "{{ playbook_dir }}/bootstrap_vars.yml"
-   - "{{ playbook_dir }}/users.yml"
+     - "{{ playbook_dir }}/bootstrap_vars.yml"
+     - "{{ playbook_dir }}/users.yml"
   roles:
      - bootstrap
      - rsyslog
@@ -120,3 +120,11 @@ ExecStart=/usr/bin/dockerd -H fd:// --containerd=/run/containerd/containerd.sock
 systemctl daemon-reload
 
 systemctl restart docker
+
+
+# backups vol
+ALF_BACKUPS_DIR=/srv/backups
+
+mkdir -p $ALF_BACKUPS_DIR
+
+mount -t nfs4 -o nfsvers=4.1,rsize=1048576,wsize=1048576,hard,timeo=600,retrans=2 ${alf_efs_dns_name}:/ $ALF_BACKUPS_DIR
