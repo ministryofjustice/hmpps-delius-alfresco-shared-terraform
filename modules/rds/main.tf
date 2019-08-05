@@ -14,12 +14,13 @@ data "aws_ssm_parameter" "db_password" {
 }
 
 locals {
-  common_name  = "${var.common_name}-rds"
-  dns_name     = "${var.alfresco_app_name}-db"
-  db_name      = "${var.alfresco_app_name}${var.environment}"
-  db_user_name = "${data.aws_ssm_parameter.db_user.value}"
-  db_password  = "${data.aws_ssm_parameter.db_password.value}"
-  tags         = "${var.tags}"
+  common_name         = "${var.common_name}-rds"
+  replica_common_name = "${var.common_name}-rpl"
+  dns_name            = "${var.alfresco_app_name}-db"
+  db_name             = "${var.alfresco_app_name}${var.environment}"
+  db_user_name        = "${data.aws_ssm_parameter.db_user.value}"
+  db_password         = "${data.aws_ssm_parameter.db_password.value}"
+  tags                = "${var.tags}"
 }
 
 ############################################
