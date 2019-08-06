@@ -29,11 +29,13 @@ module "kms_key" {
 # ### S3 bucket for storage
 # #--------------------------------------------
 module "s3bucket" {
-  source            = "git::https://github.com/ministryofjustice/hmpps-terraform-modules.git?ref=master//modules//s3bucket//s3bucket_logging_encryption"
-  s3_bucket_name    = "${local.common_name}-storage"
-  kms_master_key_id = "${module.kms_key.kms_key_id}"
-  target_bucket     = "${module.s3bucket-logs.s3_bucket_name}"
-  tags              = "${local.tags}"
+  source              = "../s3bucket_logging_encryption"
+  s3_bucket_name      = "${local.common_name}-storage"
+  kms_master_key_id   = "${module.kms_key.kms_key_id}"
+  target_bucket       = "${module.s3bucket-logs.s3_bucket_name}"
+  versioning          = true
+  tags                = "${local.tags}"
+  s3_lifecycle_config = "${var.s3_lifecycle_config}"
 }
 
 # #-------------------------------------------

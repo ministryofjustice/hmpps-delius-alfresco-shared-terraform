@@ -32,9 +32,9 @@ then
   echo "elasticsearch started on host: ${ES_HOST}"
 
   echo "Creating repos"
-  elasticsearch-manager addrepository ${repo_name} --path ${repo_path} && echo Success || exit $?
+  elasticsearch-manager addrepository ${repo_name} --repo-type fs --location ${repo_path} && echo Success || exit $?
 
-  elasticsearch-manager addrepository ${shared_repo_name} --path ${shared_repo_path} && echo Success || exit $?
+  elasticsearch-manager addrepository ${shared_repo_name} --repo-type fs --location ${shared_repo_path} && echo Success || exit $?
   sleep 30
 
   echo "Running restore"

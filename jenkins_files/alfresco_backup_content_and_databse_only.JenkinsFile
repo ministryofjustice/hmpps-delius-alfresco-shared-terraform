@@ -25,47 +25,36 @@ def create_props(env_name, git_project_dir, docker_tls_dir) {
     }
 }
 
-def es_5_restore(git_project_dir, docker_tls_dir) {
+
+def alfresco_content_backup(git_project_dir, docker_tls_dir) {
     wrap([$class: 'AnsiColorBuildWrapper', 'colorMapName': 'XTerm']) {
         sh """
         #!/usr/env/bin bash
         cd "${git_project_dir}"
         source ${docker_tls_dir}/docker.properties
-        docker-compose -f restore/docker-compose-es5-restore.yml up --build -d elasticsearch
-        docker-compose -f restore/docker-compose-es5-restore.yml up --exit-code-from elasticsearch-manager elasticsearch-manager
+        docker-compose -f restore/docker-compose-alfresco-backup.yml up --exit-code-from content content
         """
     }
 }
 
-def es_6_restore(git_project_dir, docker_tls_dir) {
+def elasticsearch_backup(git_project_dir, docker_tls_dir) {
     wrap([$class: 'AnsiColorBuildWrapper', 'colorMapName': 'XTerm']) {
         sh """
         #!/usr/env/bin bash
         cd "${git_project_dir}"
         source ${docker_tls_dir}/docker.properties
-        docker-compose -f restore/docker-compose-es6-restore.yml up --exit-code-from elasticsearch-manager elasticsearch-manager
+        docker-compose -f restore/docker-compose-alfresco-backup.yml up --exit-code-from elasticsearch elasticsearch
         """
     }
 }
 
-def alfresco_content_restore(git_project_dir, docker_tls_dir) {
+def alfresco_database_backup(git_project_dir, docker_tls_dir) {
     wrap([$class: 'AnsiColorBuildWrapper', 'colorMapName': 'XTerm']) {
         sh """
         #!/usr/env/bin bash
         cd "${git_project_dir}"
         source ${docker_tls_dir}/docker.properties
-        docker-compose -f restore/docker-compose-alfresco-restore.yml up --exit-code-from elasticsearch-manager elasticsearch-manager
-        """
-    }
-}
-
-def alfresco_database_restore(git_project_dir, docker_tls_dir) {
-    wrap([$class: 'AnsiColorBuildWrapper', 'colorMapName': 'XTerm']) {
-        sh """
-        #!/usr/env/bin bash
-        cd "${git_project_dir}"
-        source ${docker_tls_dir}/docker.properties
-        docker-compose -f restore/docker-compose-alfresco-restore.yml up --exit-code-from psql psql
+        docker-compose -f restore/docker-compose-alfresco-backup.yml up --exit-code-from psql psql
         """
     }
 }
@@ -76,9 +65,8 @@ def es_destroy(git_project_dir, docker_tls_dir) {
         #!/usr/env/bin bash
         cd "${git_project_dir}"
         source ${docker_tls_dir}/docker.properties
-        docker-compose -f restore/docker-compose-es5-restore.yml down -v
-        docker-compose -f restore/docker-compose-es6-restore.yml down -v
-        docker-compose -f restore/docker-compose-alfresco-restore.yml down -v
+        docker-compose -f restore/docker-compose-alfresco-backup.yml down -v
+        docker system prune -a -f
         """
     }
 }
@@ -122,19 +110,11 @@ pipeline {
                   git url: 'git@github.com:ministryofjustice/' + project.network, branch: 'master', credentialsId: 'f44bc5f1-30bd-4ab9-ad61-cc32caf1562a'
                 }
                 dir( project.alfresco ) {
-                  git url: 'git@github.com:ministryofjustice/' + project.alfresco, branch: 'master', credentialsId: 'f44bc5f1-30bd-4ab9-ad61-cc32caf1562a'
+                  git url: 'git@github.com:ministryofjustice/' + project.alfresco, branch: 'issue_123_add_docker_daemon_alfresco_instances', credentialsId: 'f44bc5f1-30bd-4ab9-ad61-cc32caf1562a'
                 }
 
                 prepare_env()
             }
-        }
-
-        stage('Delius | Alfresco Dynamodb') {
-          steps {
-            script {
-              do_terraform(environment_name, project.alfresco, 'dynamodb')
-            }
-          }
         }
 
         stage('Delius | Alfresco Certs') {
@@ -161,38 +141,20 @@ pipeline {
           }
         }
 
-        stage('Delius | Alfresco Content Restore') {
+        stage('Delius | Alfresco Database Backup') {
           steps {
             script {
-              alfresco_content_restore(project.alfresco, docker_tls_dir)
+              alfresco_database_backup(project.alfresco, docker_tls_dir)
             }
           }
         }
 
-        stage('Delius | Alfresco Database Restore') {
-          steps {
-            script {
-              alfresco_database_restore(project.alfresco, docker_tls_dir)
-            }
+        stage('Filebased backups') {
+          parallel {
+            stage('Delius | Alfresco Content Backup')     { steps { script {alfresco_content_backup(project.alfresco, docker_tls_dir)}}}
+            stage('Delius | Alfresco Elasticsearch Backup')  { steps { script {elasticsearch_backup(project.alfresco, docker_tls_dir)}}}
           }
-        }
-
-        stage('Delius | Alfresco ASG') {
-          steps {
-            script {
-              do_terraform(environment_name, project.alfresco, 'asg')
-            }
-          }
-        }
-        
-        stage('Smoke test') {
-            when {
-                expression { "${environment_name}" == "delius-auto-test"}
-            }
-            steps {
-                build job: "DAMS/Environments/${environment_name}/Alfresco/Smoke_tests"
-            }
-        }                
+        }            
     }
 
     post {

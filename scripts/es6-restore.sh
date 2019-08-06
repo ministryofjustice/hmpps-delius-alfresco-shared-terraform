@@ -25,7 +25,7 @@ echo "elasticsearch started on host: ${ES_HOST}"
 if [ ${ALF_RESTORE_STATUS} = restore ]
 then
   echo "Creating repos"
-  elasticsearch-manager addrepository ${shared_repo_name} --path ${shared_repo_path} && echo Success || exit $?
+  elasticsearch-manager addrepository ${shared_repo_name} --repo-type fs --location ${shared_repo_path} && echo Success || exit $?
 
   sleep 30
 

@@ -215,6 +215,7 @@ locals {
   asg_prefix                   = "alf-az"
   dynamodb_table_name          = "${data.terraform_remote_state.dynamodb.dynamodb_table_name}"
   storage_s3bucket             = "${data.terraform_remote_state.s3bucket.s3bucket}"
+  backups_bucket               = "${data.terraform_remote_state.s3bucket.alf_backups_bucket_name}"
   storage_kms_arn              = "${data.terraform_remote_state.s3bucket.s3bucket_kms_arn}"
   db_username_ssm              = "${data.terraform_remote_state.rds.rds_creds["db_username_ssm_param"]}"
   db_name                      = "${data.terraform_remote_state.rds.rds_creds["db_name"]}"
