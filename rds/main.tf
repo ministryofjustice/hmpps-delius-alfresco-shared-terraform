@@ -86,8 +86,8 @@ module "rds" {
   engine_version            = "9.4.20"
   port                      = "5432"
   storage_encrypted         = true
-  maintenance_window        = "Mon:00:00-Mon:03:00"
-  backup_window             = "03:00-06:00"
+  maintenance_window        = "Mon:00:00-Mon:01:00"
+  backup_window             = "22:00-00:00"
   multi_az                  = true
   environment               = "${replace("${local.environment}", "-", "")}"
   private_zone_id           = "${local.private_zone_id}"

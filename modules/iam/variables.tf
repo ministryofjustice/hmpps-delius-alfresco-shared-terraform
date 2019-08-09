@@ -29,4 +29,4 @@ variable depends_on {
   type    = "list"
 }
 
-variable "restore_dynamodb_table_arn" {}
+variable "backups_dynamodb_table_arn" {}

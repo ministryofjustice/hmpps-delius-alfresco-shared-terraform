@@ -36,13 +36,18 @@ cat << EOF > ~/requirements.yml
   src: singleplatform-eng.users
 EOF
 
+cat << EOF > ~/bootstrap_vars.yml
+- remote_user_filename: "${bastion_inventory}"
+EOF
+
 wget https://raw.githubusercontent.com/ministryofjustice/hmpps-delius-ansible/master/group_vars/${bastion_inventory}.yml -O users.yml
 
 cat << EOF > ~/bootstrap.yml
 ---
 - hosts: localhost
   vars_files:
-   - "{{ playbook_dir }}/users.yml"
+     - "{{ playbook_dir }}/bootstrap_vars.yml"
+     - "{{ playbook_dir }}/users.yml"
   roles:
      - bootstrap
      - rsyslog
@@ -84,6 +89,13 @@ yum install -y nfs-utils
 mkdir -p ${efs_mount_path} ${es_home_dir}
 
 mount -t nfs4 -o nfsvers=4.1,rsize=1048576,wsize=1048576,hard,timeo=600,retrans=2 ${efs_dns_name}:/ ${efs_mount_path}
+
+# backups vol
+ALF_BACKUPS_DIR=/opt/local
+
+mount -t nfs4 -o nfsvers=4.1,rsize=1048576,wsize=1048576,hard,timeo=600,retrans=2 ${alf_efs_dns_name}:/ $ALF_BACKUPS_DIR
+
+chown -R elasticsearch:elasticsearch $ALF_BACKUPS_DIR
 
 # docker tls
 docker_tls_dir=/opt/docker

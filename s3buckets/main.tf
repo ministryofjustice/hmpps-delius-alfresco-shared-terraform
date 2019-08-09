@@ -43,13 +43,5 @@ module "s3bucket" {
   common_name              = "${local.common_name}"
   tags                     = "${local.tags}"
   s3cloudtrail_policy_file = "${file("../policies/s3bucket/s3_cloudtrail_policy.json")}"
-}
-
-#-------------------------------------------
-### S3 bucket for elasticsearch
-#--------------------------------------------
-module "s3_elasticsearch_bucket" {
-  source         = "git::https://github.com/ministryofjustice/hmpps-terraform-modules.git?ref=pre-shared-vpc//modules//s3bucket//s3bucket_without_policy"
-  s3_bucket_name = "${local.common_name}-es"
-  tags           = "${local.tags}"
+  s3_lifecycle_config      = "${var.alf_backups_config}"
 }

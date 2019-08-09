@@ -17,6 +17,10 @@ output "storage_s3bucket" {
   value = "${local.storage_s3bucket}"
 }
 
+output "backups_bucket" {
+  value = "${local.backups_bucket}"
+}
+
 # region
 output "internal_domain" {
   value = "${local.internal_domain}"
@@ -30,6 +34,11 @@ output "elk_lb_dns" {
 output "es_snapshot_name" {
   value = "${var.es_snapshot_name}"
 }
+
+output "elk_s3_repo_name" {
+  value = "${var.es_s3_repo_name}"
+}
+
 
 # ASG
 output "asg_prefix" {

@@ -63,6 +63,16 @@ export CONFIG_BUCKET=$(cat $tf_data | grep config_bucket | cut -d ' ' -f3)
 echo "export CONFIG_BUCKET=${CONFIG_BUCKET}" >> $outfile_docker
 exit_on_error $? !!
 
+export ALF_BACKUP_BUCKET=$(cat $tf_data | grep backups_bucket | cut -d ' ' -f3)
+echo "export ALF_BACKUP_BUCKET=${ALF_BACKUP_BUCKET}" >> $outfile_docker
+exit_on_error $? !!
+
+export ELK_BACKUP_BUCKET=$(cat $tf_data | grep elk_bucket_name | cut -d ' ' -f3)
+echo "export ELK_BACKUP_BUCKET=${ELK_BACKUP_BUCKET}" >> $outfile_docker
+exit_on_error $? !!
+
+export ELK_S3_REPO_NAME=$(cat $tf_data | grep elk_s3_repo_name | cut -d ' ' -f3)
+echo "export ELK_S3_REPO_NAME=${ELK_S3_REPO_NAME}" >> $outfile_docker
 
 export ES_LB_DNS=$(cat $tf_data | grep elk_lb_dns | cut -d ' ' -f3)
 echo "export ES_LB_DNS=${ES_LB_DNS}" >> $outfile_docker

@@ -72,7 +72,9 @@
             ],
             "Resource": [
                 "arn:aws:s3:::${alfresco-storage_s3bucket}",
-                "arn:aws:s3:::${alfresco-storage_s3bucket}/*"
+                "arn:aws:s3:::${alfresco-storage_s3bucket}/*",
+                "${alf_backups_bucket_arn}",
+                "${alf_backups_bucket_arn}/*"
             ]
         },
         {
@@ -168,7 +170,7 @@
                 "dynamodb:DescribeBackup",
                 "dynamodb:GetRecords"
             ],
-            "Resource": "${restore_dynamodb_table_arn}"
+            "Resource": "${backups_dynamodb_table_arn}"
         }
     ]
 }
