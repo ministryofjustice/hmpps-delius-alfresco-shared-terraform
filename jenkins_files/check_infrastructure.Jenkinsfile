@@ -61,6 +61,7 @@ pipeline {
         stage('Delius | Alfresco RDS') { steps { script { plan_submodule(environment_name, project.alfresco, 'rds')}}}
         stage('Delius | Alfresco ElastiCache') { steps { script { plan_submodule(environment_name, project.alfresco, 'elasticache-memcached')}}}
         stage('Delius | Alfresco ASG') { steps { script { plan_submodule(environment_name, project.alfresco, 'asg')}}}
+        stage('Delius | Alfresco ES Admin') { steps { script { plan_submodule(environment_name, project.alfresco, 'es_admin')}}}
     }
 
     post {
