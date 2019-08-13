@@ -40,6 +40,24 @@ def apply_submodule(env_name, git_project_dir, submodule_name) {
     }
 }
 
+def plan_apply_submodule(env_name, git_project_dir, submodule_name) {
+    wrap([$class: 'AnsiColorBuildWrapper', 'colorMapName': 'XTerm']) {
+        sh """
+        #!/usr/env/bin bash
+        echo "TF APPLY for ${env_name} | ${submodule_name} - component from git project ${git_project_dir}"
+        set +e
+        cd "${git_project_dir}"
+        CURRENT_DIR=\$(pwd)
+        python docker-run.py --env ${env_name} --component ${submodule_name} --action plan
+        python docker-run.py --env ${env_name} --component ${submodule_name} --action apply
+        source \${CURRENT_DIR}/${submodule_name}_plan_ret
+        echo "\$exitcode" > plan_ret
+        if [ "\$exitcode" == '1' ]; then exit 1; else exit 0; fi
+        set -e
+        """
+    }
+}
+
 def confirm() {
     try {
         timeout(time: 15, unit: 'MINUTES') {
@@ -108,11 +126,11 @@ pipeline {
             }
         }
 
-        stage('Delius | Alfresco Common') { steps { script { do_terraform(environment_name, project.alfresco, 'common')}}}
+        stage('Delius | Alfresco Common') { steps { script { plan_apply_submodule(environment_name, project.alfresco, 'common')}}}
         stage('Delius | Alfresco S3 Buckets') { steps { script { do_terraform(environment_name, project.alfresco, 's3buckets')}}}
         stage('Delius | Alfresco Certs') { steps { script { do_terraform(environment_name, project.alfresco, 'certs')}}}
         stage('Delius | Alfresco IAM') { steps { script { do_terraform(environment_name, project.alfresco, 'iam')}}}
-        stage('Delius | Alfresco Security Groups') { steps { script { do_terraform(environment_name, project.alfresco, 'security-groups')}}}
+        stage('Delius | Alfresco Security Groups') { steps { script { plan_apply_submodule(environment_name, project.alfresco, 'security-groups')}}}
         stage('Delius | Alfresco RDS') { steps { script { do_terraform(environment_name, project.alfresco, 'rds')}}}
         stage('Delius | Alfresco ElastiCache') { steps { script { do_terraform(environment_name, project.alfresco, 'elasticache-memcached')}}}
         stage('Delius | Alfresco ASG') { steps { script { do_terraform(environment_name, project.alfresco, 'asg')}}}
