@@ -48,7 +48,7 @@ locals {
 
 # elb
 module "create_app_elb" {
-  source          = "git::https://github.com/ministryofjustice/hmpps-terraform-modules.git?ref=master//modules//loadbalancer//elb//create_elb_with_https"
+  source          = "../elb/create_elb_with_https"
   name            = "${local.common_prefix}-pub"
   subnets         = ["${local.public_subnet_ids}"]
   security_groups = ["${local.lb_security_groups}"]
