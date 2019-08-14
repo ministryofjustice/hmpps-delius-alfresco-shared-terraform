@@ -57,6 +57,19 @@ resource "aws_security_group_rule" "external_lb_ingress_https" {
   ]
 }
 
+resource "aws_security_group_rule" "external_lb_ingress_sharepoint" {
+  security_group_id = "${local.external_lb_sg_id}"
+  from_port         = 7070
+  to_port           = 7070
+  protocol          = "tcp"
+  type              = "ingress"
+  description       = "${local.common_name}-lb-external-sg-sharepoint"
+
+  cidr_blocks = [
+    "${local.allowed_cidr_block}",
+  ]
+}
+
 resource "aws_security_group_rule" "external_lb_egress_http" {
   security_group_id        = "${local.external_lb_sg_id}"
   type                     = "egress"
@@ -75,6 +88,16 @@ resource "aws_security_group_rule" "external_lb_egress_https" {
   protocol                 = "tcp"
   source_security_group_id = "${local.internal_inst_sg_id}"
   description              = "${local.common_name}-instance-internal-https"
+}
+
+resource "aws_security_group_rule" "external_lb_egress_sharepoint" {
+  security_group_id        = "${local.external_lb_sg_id}"
+  type                     = "egress"
+  from_port                = 7070
+  to_port                  = 7070
+  protocol                 = "tcp"
+  source_security_group_id = "${local.internal_inst_sg_id}"
+  description              = "${local.common_name}-instance-internal-sharepoint"
 }
 
 #-------------------------------------------------------------
@@ -98,6 +121,16 @@ resource "aws_security_group_rule" "internal_lb_ingress_https" {
   protocol                 = "tcp"
   source_security_group_id = "${local.external_lb_sg_id}"
   description              = "${local.common_name}-lb-ingress-https"
+}
+
+resource "aws_security_group_rule" "internal_lb_ingress_sharepoint" {
+  security_group_id        = "${local.internal_inst_sg_id}"
+  type                     = "ingress"
+  from_port                = 7070
+  to_port                  = 7070
+  protocol                 = "tcp"
+  source_security_group_id = "${local.external_lb_sg_id}"
+  description              = "${local.common_name}-lb-ingress-sharepoint"
 }
 
 resource "aws_security_group_rule" "internal_inst_sg_ingress_self" {
