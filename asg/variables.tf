@@ -41,3 +41,7 @@ variable "spg_messaging_broker_url" {
   default     = "localhost:61616"
   description = "SPG messaging broker url"
 }
+
+variable "alf_ebs_volume_size" {
+  default = "512"
+}
