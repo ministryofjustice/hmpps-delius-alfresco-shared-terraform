@@ -131,6 +131,7 @@ pipeline {
         stage('Delius | Alfresco Certs') { steps { script { do_terraform(environment_name, project.alfresco, 'certs')}}}
         stage('Delius | Alfresco IAM') { steps { script { do_terraform(environment_name, project.alfresco, 'iam')}}}
         stage('Delius | Alfresco Security Groups') { steps { script { plan_apply_submodule(environment_name, project.alfresco, 'security-groups')}}}
+        stage('Delius | Alfresco EFS') { steps { script { do_terraform(environment_name, project.alfresco, 'efs')}}}
         stage('Delius | Alfresco RDS') { steps { script { do_terraform(environment_name, project.alfresco, 'rds')}}}
         stage('Delius | Alfresco ElastiCache') { steps { script { do_terraform(environment_name, project.alfresco, 'elasticache-memcached')}}}
         stage('Delius | Alfresco ASG') { steps { script { do_terraform(environment_name, project.alfresco, 'asg')}}}
