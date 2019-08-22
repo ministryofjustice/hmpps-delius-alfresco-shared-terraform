@@ -14,12 +14,12 @@ echo "Restore mode is: ${ALF_RESTORE_STATUS}"
 
 if [ ${ALF_RESTORE_STATUS} = restore ]
 then
-  echo "Bring down ASG"
-  asg-manager asg_update --size 0 --check ${ALF_ASG_PREFIX} && echo Success || exit $?
   echo "Run mode set to ${ALF_RESTORE_STATUS}"
-  aws s3 rm --only-show-errors s3://${ALF_STORAGE_BUCKET} --recursive
-  aws s3 sync --only-show-errors ${CONTENT_STORE_CMD}
-  aws s3 sync --only-show-errors ${CONTENT_STORE_DELETED_CMD}
+  echo "Source bucket: ${CONFIG_BUCKET}"
+  echo "Storage bucket: ${ALF_STORAGE_BUCKET}"
+  aws s3 rm s3://${ALF_STORAGE_BUCKET} --recursive
+  aws s3 sync ${CONTENT_STORE_CMD}
+  aws s3 sync ${CONTENT_STORE_DELETED_CMD}
   echo "------> SYNC DONE"
 
 else

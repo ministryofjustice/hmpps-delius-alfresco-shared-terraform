@@ -22,7 +22,7 @@ fi
 perform_db_restore ()
 {
   echo "Run mode is: ${ALF_RESTORE_STATUS}"
-  temp_database_files="/tmp/restore"
+  temp_database_files="/opt/local/db"
   mkdir -p ${temp_database_files}
   exit_on_error $? !!
 
@@ -63,6 +63,7 @@ perform_db_restore ()
         GRANT ${ALFRESCO_ROLE} TO ${DB_USER};
 EOF
     exit_on_error $? !!
+    rm -rf ${temp_database_files}
   else
     echo "Run mode set to ${ALF_RESTORE_STATUS}, dry-run flags set"
 

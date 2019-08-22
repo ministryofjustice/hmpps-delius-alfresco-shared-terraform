@@ -48,24 +48,13 @@ def es_6_restore(git_project_dir, docker_tls_dir) {
     }
 }
 
-def alfresco_content_restore(git_project_dir, docker_tls_dir) {
+def docker_compose_handler(git_project_dir, docker_tls_dir, container_name) {
     wrap([$class: 'AnsiColorBuildWrapper', 'colorMapName': 'XTerm']) {
         sh """
         #!/usr/env/bin bash
         cd "${git_project_dir}"
         source ${docker_tls_dir}/docker.properties
-        docker-compose -f restore/docker-compose-alfresco-restore.yml up --exit-code-from elasticsearch-manager elasticsearch-manager
-        """
-    }
-}
-
-def alfresco_database_restore(git_project_dir, docker_tls_dir) {
-    wrap([$class: 'AnsiColorBuildWrapper', 'colorMapName': 'XTerm']) {
-        sh """
-        #!/usr/env/bin bash
-        cd "${git_project_dir}"
-        source ${docker_tls_dir}/docker.properties
-        docker-compose -f restore/docker-compose-alfresco-restore.yml up --exit-code-from psql psql
+        docker-compose -f restore/docker-compose-alfresco-restore.yml up --exit-code-from ${container_name} ${container_name}
         """
     }
 }
@@ -79,6 +68,7 @@ def es_destroy(git_project_dir, docker_tls_dir) {
         docker-compose -f restore/docker-compose-es5-restore.yml down -v
         docker-compose -f restore/docker-compose-es6-restore.yml down -v
         docker-compose -f restore/docker-compose-alfresco-restore.yml down -v
+        docker system prune -a -f
         """
     }
 }
@@ -174,25 +164,26 @@ pipeline {
           }
         }
 
+        stage('Delius | Alfresco ASG Handler') {
+          steps {
+            script {
+              docker_compose_handler(project.alfresco, docker_tls_dir, 'asg-manager')
+            }
+          }
+        }
+
         stage('Stage 1 Migration') {
           parallel {
-            stage('Delius | Alfresco Content Restore')     { steps { script {alfresco_content_restore(project.alfresco, docker_tls_dir)}}}
+            stage('Delius | Alfresco Content Restore')     { steps { script {docker_compose_handler(project.alfresco, docker_tls_dir, 'content-manager')}}}
+            stage('Delius | Alfresco Database Restore')     { steps { script {docker_compose_handler(project.alfresco, docker_tls_dir, 'psql')}}}
             stage('Delius | ES 5 Restore')  { steps { script {es_5_restore(project.alfresco, docker_tls_dir)}}}
           }
         }
 
         stage('Stage 2 Migration') {
           parallel {
-            stage('Delius | Alfresco Database Restore')     { steps { script {alfresco_database_restore(project.alfresco, docker_tls_dir)}}}
+            stage('Delius | Alfresco ASG')  { steps { script {do_terraform(environment_name, project.alfresco, 'asg')}}}
             stage('Delius | ES 6 Restore')  { steps { script {es_6_restore(project.alfresco, docker_tls_dir)}}}
-          }
-        }
-
-        stage('Delius | Alfresco ASG') {
-          steps {
-            script {
-              do_terraform(environment_name, project.alfresco, 'asg')
-            }
           }
         }
         

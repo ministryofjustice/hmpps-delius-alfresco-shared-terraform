@@ -1,20 +1,28 @@
 version: "3"
 
 services:
-  elasticsearch-manager:
+  asg-manager:
+    image: mojdigitalstudio/hmpps-elasticsearch-manager:latest
+    environment:
+      - APP_ENVIRONMENT=dev
+      - ALF_ASG_PREFIX=${ALF_ASG_PREFIX}
+      - ALF_RESTORE_STATUS=${ALF_RESTORE_STATUS}
+    volumes:
+      - /opt/scripts:/opt/scripts
+    entrypoint: [ "sh", "/opt/scripts/alfresco-asg-manager.sh" ]
+  content-manager:
     image: mojdigitalstudio/hmpps-elasticsearch-manager:latest
     environment:
       - APP_ENVIRONMENT=dev
       - CONFIG_BUCKET=${CONFIG_BUCKET}
       - ALF_STORAGE_BUCKET=${ALF_STORAGE_BUCKET}
-      - ALF_ASG_PREFIX=${ALF_ASG_PREFIX}
       - DYNAMODB_TABLE_NAME=${ES_DYNAMODB_TABLE_NAME}
       - ALF_RESTORE_STATUS=${ALF_RESTORE_STATUS}
     volumes:
       - /opt/scripts:/opt/scripts
     entrypoint: [ "sh", "/opt/scripts/alfresco-content-restore.sh" ]
   psql:
-    image: mojdigitalstudio/hmpps-base-psql:latest
+    image: mojdigitalstudio/hmpps-elasticsearch-manager:latest
     environment:
       - CONFIG_BUCKET=${CONFIG_BUCKET}
       - ALF_RESTORE_STATUS=${ALF_RESTORE_STATUS}
@@ -25,5 +33,6 @@ services:
       - TERRAGRUNT_IAM_ROLE=${TERRAGRUNT_IAM_ROLE}
       - TG_REGION=${TG_REGION}
     volumes:
-      - /opt/scripts:/home/tools/data
-    command: sh alfresco-database-restore.sh
+      - /opt/scripts:/opt/scripts
+      - /opt/local:/opt/local
+    entrypoint: [ "sh", "/opt/scripts/alfresco-database-restore.sh" ]
