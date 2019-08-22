@@ -174,35 +174,17 @@ pipeline {
           }
         }
 
-        stage('Delius | Alfresco Content Restore') {
-          steps {
-            script {
-              alfresco_content_restore(project.alfresco, docker_tls_dir)
-            }
+        stage('Stage 1 Migration') {
+          parallel {
+            stage('Delius | Alfresco Content Restore')     { steps { script {alfresco_content_restore(project.alfresco, docker_tls_dir)}}}
+            stage('Delius | ES 5 Restore')  { steps { script {es_5_restore(project.alfresco, docker_tls_dir)}}}
           }
         }
 
-        stage('Delius | Alfresco Database Restore') {
-          steps {
-            script {
-              alfresco_database_restore(project.alfresco, docker_tls_dir)
-            }
-          }
-        }
-
-        stage('Delius | ES 5 Restore') {
-          steps {
-            script {
-              es_5_restore(project.alfresco, docker_tls_dir)
-            }
-          }
-        }
-
-        stage('Delius | ES 6 Restore') {
-          steps {
-            script {
-              es_6_restore(project.alfresco, docker_tls_dir)
-            }
+        stage('Stage 2 Migration') {
+          parallel {
+            stage('Delius | Alfresco Database Restore')     { steps { script {alfresco_database_restore(project.alfresco, docker_tls_dir)}}}
+            stage('Delius | ES 6 Restore')  { steps { script {es_6_restore(project.alfresco, docker_tls_dir)}}}
           }
         }
 
