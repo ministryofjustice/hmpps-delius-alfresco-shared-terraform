@@ -41,7 +41,7 @@ case ${JOB_TYPE} in
     # Perform content sync only on Fridays
     if [[ $DAY_OF_WEEK -eq 5 ]]
     then
-      aws s3 sync --only-show-errors s3://${ALF_STORAGE_BUCKET}/ s3://${ALF_BACKUP_BUCKET}/${PREFIX_DATE}/ && echo Success || exit $?
+      aws s3 sync s3://${ALF_STORAGE_BUCKET}/ s3://${ALF_BACKUP_BUCKET}/${PREFIX_DATE}/ && echo Success || exit $?
     else
       echo "Content sync step not completed - day of week is ${DAY_OF_WEEK}"
     fi
