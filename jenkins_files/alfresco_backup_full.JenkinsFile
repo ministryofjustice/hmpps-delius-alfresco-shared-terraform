@@ -44,7 +44,6 @@ def es_destroy(git_project_dir, docker_tls_dir) {
         source ${docker_tls_dir}/docker.properties
         docker-compose -f restore/docker-compose-alfresco-backup.yml down -v
         docker system prune -a -f
-        rm -rf ${docker_tls_dir}
         """
     }
 }
@@ -130,6 +129,7 @@ pipeline {
         stage('Filebased backups') {
           parallel {
             stage('Delius | Alfresco Content Backup') { steps { script {docker_compose_handler(project.alfresco, docker_tls_dir, 'content')}}}
+            stage('Delius | Alfresco Elasticsearch Backup')  { steps { script {docker_compose_handler(project.alfresco, docker_tls_dir, 'elasticsearch')}}}
           }
         }            
     }
