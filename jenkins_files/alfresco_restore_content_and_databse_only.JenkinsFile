@@ -3,7 +3,7 @@ project.network   = 'hmpps-delius-network-terraform'
 project.dcore     = 'hmpps-delius-core-terraform'
 project.alfresco  = 'hmpps-delius-alfresco-shared-terraform'
 
-def docker_tls_dir = '${HOME}/.docker_jenkins'
+def docker_tls_dir = '${HOME}/.docker_jenkins/${environment_name}'
 
 def prepare_env() {
     sh '''
@@ -79,6 +79,8 @@ def es_destroy(git_project_dir, docker_tls_dir) {
         docker-compose -f restore/docker-compose-es5-restore.yml down -v
         docker-compose -f restore/docker-compose-es6-restore.yml down -v
         docker-compose -f restore/docker-compose-alfresco-restore.yml down -v
+        docker system prune -a -f
+        rm -rf ${docker_tls_dir}
         """
     }
 }
