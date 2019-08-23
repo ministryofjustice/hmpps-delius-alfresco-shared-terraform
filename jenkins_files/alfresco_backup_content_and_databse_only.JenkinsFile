@@ -3,7 +3,7 @@ project.network   = 'hmpps-delius-network-terraform'
 project.dcore     = 'hmpps-delius-core-terraform'
 project.alfresco  = 'hmpps-delius-alfresco-shared-terraform'
 
-def docker_tls_dir = '${HOME}/.docker_jenkins'
+def docker_tls_dir = '${HOME}/.docker_jenkins/${environment_name}'
 
 def prepare_env() {
     sh '''
