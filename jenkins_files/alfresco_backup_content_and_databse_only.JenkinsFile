@@ -67,6 +67,7 @@ def es_destroy(git_project_dir, docker_tls_dir) {
         source ${docker_tls_dir}/docker.properties
         docker-compose -f restore/docker-compose-alfresco-backup.yml down -v
         docker system prune -a -f
+        rm -rf ${docker_tls_dir}
         """
     }
 }
