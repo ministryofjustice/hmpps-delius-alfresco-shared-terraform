@@ -34,71 +34,25 @@ output "asg_elb_dns_cname" {
 }
 
 # Launch config
-# AZ1
-output "asg_launch_id_az1" {
-  value = "${module.launch_cfg_az1.launch_id}"
+output "asg_launch_id" {
+  value = "${module.launch_cfg.launch_id}"
 }
 
-output "asg_launch_name_az1" {
-  value = "${module.launch_cfg_az1.launch_name}"
-}
-
-# AZ2
-output "asg_launch_id_az2" {
-  value = "${module.launch_cfg_az2.launch_id}"
-}
-
-output "asg_launch_name_az2" {
-  value = "${module.launch_cfg_az2.launch_name}"
-}
-
-# AZ3
-output "asg_launch_id_az3" {
-  value = "${module.launch_cfg_az3.launch_id}"
-}
-
-output "asg_launch_name_az3" {
-  value = "${module.launch_cfg_az3.launch_name}"
+output "asg_launch_name" {
+  value = "${module.launch_cfg.launch_name}"
 }
 
 # ASG
-#AZ1
-output "asg_autoscale_id_az1" {
-  value = "${module.auto_scale_az1.autoscale_id}"
+output "asg_autoscale_id" {
+  value = "${module.auto_scale.autoscale_id}"
 }
 
-output "asg_autoscale_arn_az1" {
-  value = "${module.auto_scale_az1.autoscale_arn}"
+output "asg_autoscale_arn" {
+  value = "${module.auto_scale.autoscale_arn}"
 }
 
-output "asg_autoscale_name_az1" {
-  value = "${module.auto_scale_az1.autoscale_name}"
-}
-
-#AZ2
-output "asg_autoscale_id_az2" {
-  value = "${module.auto_scale_az2.autoscale_id}"
-}
-
-output "asg_autoscale_arn_az2" {
-  value = "${module.auto_scale_az2.autoscale_arn}"
-}
-
-output "asg_autoscale_name_az2" {
-  value = "${module.auto_scale_az2.autoscale_name}"
-}
-
-#AZ3
-output "asg_autoscale_id_az3" {
-  value = "${module.auto_scale_az3.autoscale_id}"
-}
-
-output "asg_autoscale_arn_az3" {
-  value = "${module.auto_scale_az3.autoscale_arn}"
-}
-
-output "asg_autoscale_name_az3" {
-  value = "${module.auto_scale_az3.autoscale_name}"
+output "asg_autoscale_name" {
+  value = "${module.auto_scale.autoscale_name}"
 }
 
 # LOG GROUPS

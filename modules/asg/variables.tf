@@ -124,26 +124,15 @@ variable "instance_type" {}
 
 variable "volume_size" {}
 
-variable "az_asg_desired" {
-  type = "map"
-}
+variable "az_asg_desired" {}
 
-variable "az_asg_max" {
-  type = "map"
-}
+variable "az_asg_max" {}
 
-variable "az_asg_min" {
-  type = "map"
-}
+variable "az_asg_min" {}
 
 variable "associate_public_ip_address" {}
 
 variable "cache_home" {}
-
-variable "alfresco_instance_ami" {
-  type    = "map"
-  default = {}
-}
 
 variable "deploy_across_all_azs" {
   default = false
@@ -164,10 +153,6 @@ variable "cloudwatch_log_retention" {}
 
 ## NGINX
 variable "keys_dir" {}
-
-variable "image_url" {}
-
-variable "image_version" {}
 
 variable "self_signed_ssm" {
   type = "map"

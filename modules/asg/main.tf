@@ -23,12 +23,6 @@ locals {
     "${var.private_subnet_ids["az3"]}",
   ]
 
-  az1_subnet = "${var.private_subnet_ids["az1"]}"
-
-  az2_subnet = "${var.private_subnet_ids["az2"]}"
-
-  az3_subnet = "${var.private_subnet_ids["az3"]}"
-
   log_groups = ["secure", "messages", "dmesg", "${var.alfresco_app_name}"]
 
   access_logs_bucket = "${var.access_logs_bucket}"
@@ -143,8 +137,6 @@ data "template_file" "user_data" {
     db_password               = "${local.db_password}"
     server_mode               = "TEST"
     keys_dir                  = "${var.keys_dir}"
-    image_url                 = "${var.image_url}"
-    image_version             = "${var.image_version}"
     tomcat_host               = "${var.tomcat_host}"
     tomcat_port               = "${var.tomcat_port}"
     config_file_path          = "${local.common_name}/config/nginx.conf"
@@ -175,55 +167,10 @@ data "template_file" "user_data" {
 # # CREATE LAUNCH CONFIG FOR EC2 RUNNING SERVICES
 # ############################################
 
-# AZ1 
-module "launch_cfg_az1" {
+module "launch_cfg" {
   source                      = "git::https://github.com/ministryofjustice/hmpps-terraform-modules.git?ref=master//modules//launch_configuration//blockdevice"
-  launch_configuration_name   = "${local.common_prefix}-az1"
-  image_id                    = "${var.alfresco_instance_ami["az1"] != "" ? var.alfresco_instance_ami["az1"] : var.ami_id}"
-  instance_type               = "${var.instance_type}"
-  volume_size                 = "${var.volume_size}"
-  instance_profile            = "${var.instance_profile}"
-  key_name                    = "${var.ssh_deployer_key}"
-  ebs_device_name             = "${var.ebs_device_name}"
-  ebs_volume_type             = "${var.ebs_volume_type}"
-  ebs_volume_size             = "${var.ebs_volume_size}"
-  ebs_encrypted               = "${var.ebs_encrypted}"
-  associate_public_ip_address = "${var.associate_public_ip_address}"
-
-  security_groups = [
-    "${local.instance_security_groups}",
-  ]
-
-  user_data = "${data.template_file.user_data.rendered}"
-}
-
-#AZ2
-module "launch_cfg_az2" {
-  source                      = "git::https://github.com/ministryofjustice/hmpps-terraform-modules.git?ref=master//modules//launch_configuration//blockdevice"
-  launch_configuration_name   = "${local.common_prefix}-az2"
-  image_id                    = "${var.alfresco_instance_ami["az2"] != "" ? var.alfresco_instance_ami["az2"] : var.ami_id}"
-  instance_type               = "${var.instance_type}"
-  volume_size                 = "${var.volume_size}"
-  instance_profile            = "${var.instance_profile}"
-  key_name                    = "${var.ssh_deployer_key}"
-  ebs_device_name             = "${var.ebs_device_name}"
-  ebs_volume_type             = "${var.ebs_volume_type}"
-  ebs_volume_size             = "${var.ebs_volume_size}"
-  ebs_encrypted               = "${var.ebs_encrypted}"
-  associate_public_ip_address = "${var.associate_public_ip_address}"
-
-  security_groups = [
-    "${local.instance_security_groups}",
-  ]
-
-  user_data = "${data.template_file.user_data.rendered}"
-}
-
-#AZ3
-module "launch_cfg_az3" {
-  source                      = "git::https://github.com/ministryofjustice/hmpps-terraform-modules.git?ref=master//modules//launch_configuration//blockdevice"
-  launch_configuration_name   = "${local.common_prefix}-az3"
-  image_id                    = "${var.alfresco_instance_ami["az3"] != "" ? var.alfresco_instance_ami["az3"] : var.ami_id}"
+  launch_configuration_name   = "${local.common_prefix}"
+  image_id                    = "${var.ami_id}"
   instance_type               = "${var.instance_type}"
   volume_size                 = "${var.volume_size}"
   instance_profile            = "${var.instance_profile}"
@@ -245,41 +192,14 @@ module "launch_cfg_az3" {
 # # CREATE AUTO SCALING GROUP
 # ############################################
 
-#AZ1
-module "auto_scale_az1" {
+module "auto_scale" {
   source               = "git::https://github.com/ministryofjustice/hmpps-terraform-modules.git?ref=master//modules//autoscaling//group//asg_classic_lb"
-  asg_name             = "${local.common_prefix}-az1"
-  subnet_ids           = ["${local.az1_subnet}"]
-  asg_min              = "${var.az_asg_min["az1"]}"
-  asg_max              = "${var.az_asg_max["az1"]}"
-  asg_desired          = "${var.az_asg_desired["az1"]}"
-  launch_configuration = "${module.launch_cfg_az1.launch_name}"
-  load_balancers       = ["${module.create_app_elb.environment_elb_name}"]
-  tags                 = "${local.tags}"
-}
-
-#AZ2
-module "auto_scale_az2" {
-  source               = "git::https://github.com/ministryofjustice/hmpps-terraform-modules.git?ref=master//modules//autoscaling//group//asg_classic_lb"
-  asg_name             = "${local.common_prefix}-az2"
-  subnet_ids           = ["${local.az2_subnet}"]
-  asg_min              = "${var.az_asg_min["az2"]}"
-  asg_max              = "${var.az_asg_max["az2"]}"
-  asg_desired          = "${var.az_asg_desired["az2"]}"
-  launch_configuration = "${module.launch_cfg_az2.launch_name}"
-  load_balancers       = ["${module.create_app_elb.environment_elb_name}"]
-  tags                 = "${local.tags}"
-}
-
-#AZ3
-module "auto_scale_az3" {
-  source               = "git::https://github.com/ministryofjustice/hmpps-terraform-modules.git?ref=master//modules//autoscaling//group//asg_classic_lb"
-  asg_name             = "${local.common_prefix}-az3"
-  subnet_ids           = ["${local.az3_subnet}"]
-  asg_min              = "${var.az_asg_min["az3"]}"
-  asg_max              = "${var.az_asg_max["az3"]}"
-  asg_desired          = "${var.az_asg_desired["az3"]}"
-  launch_configuration = "${module.launch_cfg_az3.launch_name}"
+  asg_name             = "${local.common_prefix}"
+  subnet_ids           = ["${local.subnet_ids}"]
+  asg_min              = "${var.az_asg_min}"
+  asg_max              = "${var.az_asg_max}"
+  asg_desired          = "${var.az_asg_desired}"
+  launch_configuration = "${module.launch_cfg.launch_name}"
   load_balancers       = ["${module.create_app_elb.environment_elb_name}"]
   tags                 = "${local.tags}"
 }

@@ -6,28 +6,12 @@ variable "remote_state_bucket_name" {
 }
 
 #ASG
-variable "az_asg_desired" {
-  type = "map"
-}
-
-variable "az_asg_max" {
-  type = "map"
-}
-
-variable "az_asg_min" {
-  type = "map"
-}
-
-variable "cloudwatch_log_retention" {}
-
-variable "alfresco_instance_ami" {
+variable "alfresco_asg_props" {
   type    = "map"
   default = {}
 }
 
-variable "asg_instance_type" {
-  default = "m5.large"
-}
+variable "cloudwatch_log_retention" {}
 
 variable "bastion_inventory" {
   default = "dev"
