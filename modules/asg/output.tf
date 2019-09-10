@@ -35,24 +35,24 @@ output "asg_elb_dns_cname" {
 
 # Launch config
 output "asg_launch_id" {
-  value = "${module.launch_cfg.launch_id}"
+  value = "${aws_launch_configuration.environment.id}"
 }
 
 output "asg_launch_name" {
-  value = "${module.launch_cfg.launch_name}"
+  value = "${aws_launch_configuration.environment.name}"
 }
 
 # ASG
 output "asg_autoscale_id" {
-  value = "${module.auto_scale.autoscale_id}"
+  value = "${aws_autoscaling_group.environment.id}"
 }
 
 output "asg_autoscale_arn" {
-  value = "${module.auto_scale.autoscale_arn}"
+  value = "${aws_autoscaling_group.environment.arn}"
 }
 
 output "asg_autoscale_name" {
-  value = "${module.auto_scale.autoscale_name}"
+  value = "${aws_autoscaling_group.environment.name}"
 }
 
 # LOG GROUPS

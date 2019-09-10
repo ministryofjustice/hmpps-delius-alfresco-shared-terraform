@@ -179,3 +179,19 @@ variable "messaging_broker_password" {}
 variable "logstash_host_fqdn" {
   default = "logstash"
 }
+
+variable "enable_monitoring" {
+  default = "true"
+}
+
+variable "ebs_optimized" {
+  default = "false"
+}
+
+variable "ebs_delete_on_termination" {
+  default = true
+}
+
+variable "volume_type" {
+  default = "standard"
+}

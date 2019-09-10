@@ -167,39 +167,102 @@ data "template_file" "user_data" {
 # # CREATE LAUNCH CONFIG FOR EC2 RUNNING SERVICES
 # ############################################
 
-module "launch_cfg" {
-  source                      = "git::https://github.com/ministryofjustice/hmpps-terraform-modules.git?ref=master//modules//launch_configuration//blockdevice"
-  launch_configuration_name   = "${local.common_prefix}"
+# module "launch_cfg" {
+#   source                      = "git::https://github.com/ministryofjustice/hmpps-terraform-modules.git?ref=master//modules//launch_configuration//blockdevice"
+#   launch_configuration_name   = "${local.common_prefix}"
+#   image_id                    = "${var.ami_id}"
+#   instance_type               = "${var.instance_type}"
+#   volume_size                 = "${var.volume_size}"
+#   instance_profile            = "${var.instance_profile}"
+#   key_name                    = "${var.ssh_deployer_key}"
+#   ebs_device_name             = "${var.ebs_device_name}"
+#   ebs_volume_type             = "${var.ebs_volume_type}"
+#   ebs_volume_size             = "${var.ebs_volume_size}"
+#   ebs_encrypted               = "${var.ebs_encrypted}"
+#   associate_public_ip_address = "${var.associate_public_ip_address}"
+
+#   security_groups = [
+#     "${local.instance_security_groups}",
+#   ]
+
+#   user_data = "${data.template_file.user_data.rendered}"
+# }
+
+resource "aws_launch_configuration" "environment" {
+  name_prefix                 = "${local.common_prefix}-cfg-"
   image_id                    = "${var.ami_id}"
   instance_type               = "${var.instance_type}"
-  volume_size                 = "${var.volume_size}"
-  instance_profile            = "${var.instance_profile}"
+  iam_instance_profile        = "${var.instance_profile}"
   key_name                    = "${var.ssh_deployer_key}"
-  ebs_device_name             = "${var.ebs_device_name}"
-  ebs_volume_type             = "${var.ebs_volume_type}"
-  ebs_volume_size             = "${var.ebs_volume_size}"
-  ebs_encrypted               = "${var.ebs_encrypted}"
+  security_groups             = ["${local.instance_security_groups}"]
   associate_public_ip_address = "${var.associate_public_ip_address}"
+  user_data                   = "${data.template_file.user_data.rendered}"
+  enable_monitoring           = true
+  ebs_optimized               = "${var.ebs_optimized}"
 
-  security_groups = [
-    "${local.instance_security_groups}",
-  ]
+  root_block_device {
+    volume_type = "${var.volume_type}"
+    volume_size = "${var.volume_size}"
+  }
 
-  user_data = "${data.template_file.user_data.rendered}"
+  lifecycle {
+    create_before_destroy = true
+  }
+
+  ebs_block_device {
+    device_name = "${var.ebs_device_name}"
+    volume_type = "${var.ebs_volume_type}"
+    volume_size = "${var.ebs_volume_size}"
+    encrypted   = "${var.ebs_encrypted}"
+    delete_on_termination = "${var.ebs_delete_on_termination}"
+  }
 }
 
 # ############################################
 # # CREATE AUTO SCALING GROUP
 # ############################################
 
-module "auto_scale" {
-  source               = "git::https://github.com/ministryofjustice/hmpps-terraform-modules.git?ref=master//modules//autoscaling//group//asg_classic_lb"
-  asg_name             = "${local.common_prefix}"
-  subnet_ids           = ["${local.subnet_ids}"]
-  asg_min              = "${var.az_asg_min}"
-  asg_max              = "${var.az_asg_max}"
-  asg_desired          = "${var.az_asg_desired}"
-  launch_configuration = "${module.launch_cfg.launch_name}"
-  load_balancers       = ["${module.create_app_elb.environment_elb_name}"]
-  tags                 = "${local.tags}"
+data "null_data_source" "tags" {
+  count = "${length(keys(local.tags))}"
+
+  inputs = {
+    key                 = "${element(keys(local.tags), count.index)}"
+    value               = "${element(values(local.tags), count.index)}"
+    propagate_at_launch = true
+  }
 }
+
+resource "aws_autoscaling_group" "environment" {
+  name                 = "${local.common_prefix}-asg"
+  vpc_zone_identifier  = ["${local.subnet_ids}"]
+  min_size             = "${var.az_asg_min}"
+  max_size             = "${var.az_asg_max}"
+  desired_capacity     = "${var.az_asg_desired}"
+  launch_configuration = "${aws_launch_configuration.environment.name}"
+  load_balancers       = ["${module.create_app_elb.environment_elb_name}"]
+
+  lifecycle {
+    create_before_destroy = true
+  }
+
+  tags = [
+    "${data.null_data_source.tags.*.outputs}",
+    {
+      key                 = "Name"
+      value               = "${local.common_prefix}-asg"
+      propagate_at_launch = true
+    },
+  ]
+}
+
+# module "auto_scale" {
+#   source               = "git::https://github.com/ministryofjustice/hmpps-terraform-modules.git?ref=master//modules//autoscaling//group//asg_classic_lb"
+#   asg_name             = "${local.common_prefix}"
+#   subnet_ids           = ["${local.subnet_ids}"]
+#   asg_min              = "${var.az_asg_min}"
+#   asg_max              = "${var.az_asg_max}"
+#   asg_desired          = "${var.az_asg_desired}"
+#   launch_configuration = "${module.launch_cfg.launch_name}"
+#   load_balancers       = ["${module.create_app_elb.environment_elb_name}"]
+#   tags                 = "${local.tags}"
+# }
