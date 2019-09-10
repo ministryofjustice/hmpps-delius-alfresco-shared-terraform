@@ -143,7 +143,7 @@ data "aws_acm_certificate" "cert" {
 ####################################################
 
 locals {
-  ami_id                         = "${data.aws_ami.amazon_ami.id}"
+  ami_id                         = "${var.alfresco_asg_props["asg_ami"] != "" ? var.alfresco_asg_props["asg_ami"] : data.aws_ami.amazon_ami.id}"
   account_id                     = "${data.terraform_remote_state.common.common_account_id}"
   vpc_id                         = "${data.terraform_remote_state.common.vpc_id}"
   cidr_block                     = "${data.terraform_remote_state.common.vpc_cidr_block}"
@@ -174,8 +174,6 @@ locals {
   app_hostnames                  = "${data.terraform_remote_state.common.app_hostnames}"
   bastion_inventory              = "${var.bastion_inventory}"
   jvm_memory                     = "${var.alfresco_jvm_memory}"
-  image_url                      = "mojdigitalstudio/hmpps-nginx-non-confd"
-  image_version                  = "latest"
   config-bucket                  = "${data.terraform_remote_state.common.common_s3-config-bucket}"
   tomcat_host                    = "alfresco"
   certificate_arn                = "${data.aws_acm_certificate.cert.arn}"
@@ -217,9 +215,9 @@ module "asg" {
   alfresco_s3bucket            = "${local.s3bucket}"
   lb_security_groups           = ["${local.lb_security_groups}"]
   internal                     = false
-  az_asg_desired               = "${var.az_asg_desired}"
-  az_asg_min                   = "${var.az_asg_min}"
-  az_asg_max                   = "${var.az_asg_max}"
+  az_asg_desired               = "${var.alfresco_asg_props["asg_desired"]}"
+  az_asg_min                   = "${var.alfresco_asg_props["asg_min"]}"
+  az_asg_max                   = "${var.alfresco_asg_props["asg_max"]}"
   cloudwatch_log_retention     = "${var.cloudwatch_log_retention}"
   zone_id                      = "${local.private_zone_id}"
   external_domain              = "${local.external_domain}"
@@ -232,15 +230,12 @@ module "asg" {
   region                       = "${local.region}"
   ami_id                       = "${local.ami_id}"
   account_id                   = "${local.account_id}"
-  alfresco_instance_ami        = "${var.alfresco_instance_ami}"
   monitoring_server_url        = "${local.monitoring_server_internal_url}"
   logstash_host_fqdn           = "${local.logstash_host_fqdn}"
   messaging_broker_url         = "${local.messaging_broker_url}"
   messaging_broker_password    = "${local.messaging_broker_password}"
   bastion_inventory            = "${local.bastion_inventory}"
   keys_dir                     = "/opt/keys"
-  image_url                    = "${local.image_url}"
-  image_version                = "${local.image_version}"
   self_signed_ssm              = "${local.self_signed_ssm}"
   config_bucket                = "${local.config-bucket}"
   tomcat_host                  = "${local.tomcat_host}"
@@ -273,12 +268,11 @@ module "asg" {
   volume_size                 = "20"
   ebs_device_name             = "/dev/xvdb"
   ebs_volume_type             = "standard"
-  ebs_volume_size             = "512"
+  ebs_volume_size             = "${var.alfresco_asg_props["ebs_volume_size"]}"
   ebs_encrypted               = "true"
-  instance_type               = "${var.asg_instance_type}"
+  instance_type               = "${var.alfresco_asg_props["asg_instance_type"]}"
   associate_public_ip_address = false
   cache_home                  = "/srv/cache"
   jvm_memory                  = "${local.jvm_memory}"
-
-  instance_security_groups = ["${local.instance_security_groups}"]
+  instance_security_groups    = ["${local.instance_security_groups}"]
 }
