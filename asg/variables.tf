@@ -29,3 +29,7 @@ variable "spg_messaging_broker_url" {
 variable "alf_ebs_volume_size" {
   default = "512"
 }
+
+variable "alfresco_volume_size" {
+  default = 20
+}
