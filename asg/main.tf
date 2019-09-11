@@ -265,7 +265,7 @@ module "asg" {
   # ASG
   service_desired_count       = "3"
   user_data                   = "../user_data/user_data.sh"
-  volume_size                 = "20"
+  volume_size                 = "${var.alfresco_volume_size}"
   ebs_device_name             = "/dev/xvdb"
   ebs_volume_type             = "standard"
   ebs_volume_size             = "${var.alfresco_asg_props["ebs_volume_size"]}"
