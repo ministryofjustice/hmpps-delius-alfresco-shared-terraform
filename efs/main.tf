@@ -80,16 +80,17 @@ locals {
 # EFS content
 ####################################################
 module "efs_backups" {
-  source                 = "git::https://github.com/ministryofjustice/hmpps-terraform-modules.git?ref=master//modules//efs"
-  environment_identifier = "${local.environment_identifier}"
-  tags                   = "${local.tags}"
-  encrypted              = true
-  kms_key_id             = "${local.s3bucket_kms_arn}"
-  performance_mode       = "generalPurpose"
-  throughput_mode        = "bursting"
-  share_name             = "${local.alfresco_app_name}-efs"
-  zone_id                = "${local.private_zone_id}"
-  domain                 = "${local.internal_domain}"
-  subnets                = "${local.private_subnet_ids}"
-  security_groups        = ["${local.security_groups}"]
+  source                          = "git::https://github.com/ministryofjustice/hmpps-terraform-modules.git?ref=master//modules//efs"
+  environment_identifier          = "${local.environment_identifier}"
+  tags                            = "${local.tags}"
+  encrypted                       = true
+  kms_key_id                      = "${local.s3bucket_kms_arn}"
+  performance_mode                = "generalPurpose"
+  provisioned_throughput_in_mibps = "${var.alf_backups_config["provisioned_throughput_in_mibps"]}"
+  throughput_mode                 = "${var.alf_backups_config["throughput_mode"]}"
+  share_name                      = "${local.alfresco_app_name}-efs"
+  zone_id                         = "${local.private_zone_id}"
+  domain                          = "${local.internal_domain}"
+  subnets                         = "${local.private_subnet_ids}"
+  security_groups                 = ["${local.security_groups}"]
 }
