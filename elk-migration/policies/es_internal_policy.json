@@ -1,0 +1,73 @@
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "ecsInstanceRole",
+            "Effect": "Allow",
+            "Action": [
+                "ecs:DeregisterContainerInstance",
+                "ecs:DiscoverPollEndpoint",
+                "ecs:Poll",
+                "ecs:RegisterContainerInstance",
+                "ecs:Submit*",
+                "ecs:StartTelemetrySession"
+            ],
+            "Resource": [
+                "*"
+            ]
+        },
+        {
+            "Sid": "allowLoggingToCloudWatch",
+            "Effect": "Allow",
+            "Action": [
+                "logs:CreateLogGroup",
+                "logs:CreateLogStream",
+                "logs:PutLogEvents",
+                "logs:DescribeLogStreams"
+            ],
+            "Resource": [
+                "arn:aws:logs:*:*:*"
+            ]
+        },
+        {
+            "Sid": "ListAllBuckets",
+            "Effect": "Allow",
+            "Action": [
+                "s3:ListAllMyBuckets"
+            ],
+            "Resource": [
+                "arn:aws:s3:::*"
+            ]
+        },
+        {
+            "Effect": "Allow",
+            "Sid": "allowSSMReadOnly",
+            "Action": [
+                "ssm:Describe*",
+                "ssm:Get*",
+                "ssm:List*"
+            ],
+            "Resource": "*"
+        },
+        {
+            "Sid": "allowRoute53Update",
+            "Effect": "Allow",
+            "Action": [
+                "route53:GetHostedZone",
+                "route53:ListHostedZones",
+                "route53:ChangeResourceRecordSets",
+                "route53:ListResourceRecordSets",
+                "route53:ListHostedZonesByName"
+            ],
+            "Resource": "*"
+        },
+        {
+            "Effect": "Allow",
+            "Sid": "EC2Perms",
+            "Action": [
+                "ec2:DescribeInstances"
+            ],
+            "Resource": "*"
+        }
+    ]
+}

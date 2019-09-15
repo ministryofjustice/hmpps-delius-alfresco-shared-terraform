@@ -63,6 +63,20 @@ data "terraform_remote_state" "mon" {
   }
 }
 
+#-------------------------------------------------------------
+### Getting the artefacts details
+#-------------------------------------------------------------
+data "terraform_remote_state" "artefacts" {
+  backend = "s3"
+
+  config {
+    bucket   = "${var.eng_remote_state_bucket_name}"
+    key      = "s3bucket-artefacts/terraform.tfstate"
+    region   = "${var.region}"
+    role_arn = "${var.eng_role_arn}"
+  }
+}
+
 ####################################################
 # Locals
 ####################################################
@@ -83,6 +97,7 @@ locals {
   vpc_cidr                   = "${data.terraform_remote_state.common.vpc_cidr_block}"
   monitoring_kms_arn         = "${data.terraform_remote_state.mon.monitoring_kms_arn}"
   alf_backups_bucket_arn     = "${data.terraform_remote_state.s3bucket.alf_backups_bucket_arn}"
+  artefacts-s3bucket-arn     = "${data.terraform_remote_state.artefacts.s3bucket_artefacts_iam_arn}"
 }
 
 ####################################################

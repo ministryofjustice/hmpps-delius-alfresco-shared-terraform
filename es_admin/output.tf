@@ -4,6 +4,10 @@ output "es_admin_host" {
   value = "${aws_route53_record.instance.fqdn}"
 }
 
+output "private_ip" {
+  value = "${aws_instance.instance.private_ip}"
+}
+
 # s3bucket
 output "elk_bucket_name" {
   value = "${local.elk_bucket_name}"
