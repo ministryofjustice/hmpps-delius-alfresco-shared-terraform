@@ -18,7 +18,8 @@
             "Sid": "ListAllBuckets",
             "Effect": "Allow",
             "Action": [
-                "s3:ListAllMyBuckets"
+                "s3:ListAllMyBuckets",
+                "s3:GetBucketLocation"
             ],
             "Resource": [
                 "arn:aws:s3:::*"
@@ -171,6 +172,18 @@
                 "dynamodb:GetRecords"
             ],
             "Resource": "${backups_dynamodb_table_arn}"
+        },
+        {
+            "Sid": "allowAccessToArtefactBucket",
+            "Effect": "Allow",
+            "Action": [
+                "s3:Get*",
+                "s3:List*"
+            ],
+            "Resource": [
+                "${artefacts-s3bucket-arn}",
+                "${artefacts-s3bucket-arn}/*"
+            ]
         }
     ]
 }

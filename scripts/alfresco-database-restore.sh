@@ -22,7 +22,7 @@ fi
 perform_db_restore ()
 {
   echo "Run mode is: ${ALF_RESTORE_STATUS}"
-  temp_database_files="/opt/local/db"
+  temp_database_files="/opt/local/"
   mkdir -p ${temp_database_files}
   exit_on_error $? !!
 
@@ -31,12 +31,14 @@ perform_db_restore ()
     echo "Run mode set to ${ALF_RESTORE_STATUS}, will perform database restore"
 
     # Download only sql file, assumes only one file found
-    aws s3 cp s3://${CONFIG_BUCKET}/restore/ ${temp_database_files}/ --recursive --exclude "*" --include "*.sql"
+    aws s3 sync s3://${CONFIG_BUCKET}/restore/db/ ${temp_database_files}/
     exit_on_error $? !!
+    echo "SQL file sync done"
 
     # db file to restore, assumes only one file found
     ALFRESCO_SQL_FILE=$(find ${temp_database_files} -type f -name alfresco_*.sql)
     exit_on_error $? !!
+    echo "SQL file cleanup done"
 
     #Comment out below lines causing error on data restore
     if [[ -f ${ALFRESCO_SQL_FILE} ]] ; then
@@ -63,13 +65,17 @@ perform_db_restore ()
         GRANT ${ALFRESCO_ROLE} TO ${DB_USER};
 EOF
     exit_on_error $? !!
-    rm -rf ${temp_database_files}
+    #Restore db from backup
+    echo "Restoring ${ALFRESCO_SQL_FILE} to ${RDS_DB_ENDPOINT}"
+    PGPASSWORD=${DB_PASSWORD} psql -h ${RDS_DB_ENDPOINT} -U ${DB_USER} -d ${ALFRESCO_DB} -f ${ALFRESCO_SQL_FILE}
+    exit_on_error $? !!
+    # rm -rf ${temp_database_files}
   else
     echo "Run mode set to ${ALF_RESTORE_STATUS}, dry-run flags set"
 
     ##Copy alfresco.sql from backups bucket to storage s3bucket
     
-    aws s3 cp s3://${CONFIG_BUCKET}/restore/ ${temp_database_files}/ --recursive --exclude "*" --include "*.sql" --dryrun
+    aws s3 sync --dryrun s3://${CONFIG_BUCKET}/restore/db/ ${temp_database_files}/
     echo "DRY RUN COPY DONE"
   fi
 }

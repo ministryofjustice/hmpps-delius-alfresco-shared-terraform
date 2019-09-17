@@ -14,6 +14,7 @@ data "template_file" "es" {
     monitoring_bucket_arn      = "${local.monitoring_bucket_arn}"
     monitoring_kms_arn         = "${local.monitoring_kms_arn}"
     alf_backups_bucket_arn     = "${local.alf_backups_bucket_arn}"
+    artefacts-s3bucket-arn     = "${local.artefacts-s3bucket-arn}"
   }
 }
 

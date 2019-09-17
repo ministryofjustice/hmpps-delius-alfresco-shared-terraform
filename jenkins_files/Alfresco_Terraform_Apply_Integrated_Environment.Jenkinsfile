@@ -135,6 +135,14 @@ pipeline {
         stage('Delius | Alfresco RDS') { steps { script { do_terraform(environment_name, project.alfresco, 'rds')}}}
         stage('Delius | Alfresco ElastiCache') { steps { script { do_terraform(environment_name, project.alfresco, 'elasticache-memcached')}}}
         stage('Delius | Alfresco ASG') { steps { script { do_terraform(environment_name, project.alfresco, 'asg')}}}
+        stage('Delius | Alfresco ES Migration') {
+            when {
+                expression { "${environment_name}" == "delius-prod"}
+            }
+            steps { 
+                script { do_terraform(environment_name, project.alfresco, 'elk-migration')}
+            }
+        }
         stage('Delius | Alfresco ES Admin') { steps { script { do_terraform(environment_name, project.alfresco, 'es_admin')}}}
 
         stage('Smoke test') {

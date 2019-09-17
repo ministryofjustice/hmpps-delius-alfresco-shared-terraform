@@ -31,30 +31,42 @@ data "template_file" "instance_userdata" {
     region               = "${var.region}"
     config-bucket        = "${local.config-bucket}"
     alf_efs_dns_name     = "${local.alf_efs_dns_name}"
+    es_block_device      = "${var.es_admin_volume_props["device_name"]}"
   }
 }
 
 #-------------------------------------------------------------
 ### Create instance 
 #-------------------------------------------------------------
-module "create-ec2-instance" {
-  source                      = "git::https://github.com/ministryofjustice/hmpps-terraform-modules.git?ref=master//modules//ec2"
-  app_name                    = "${local.common_name}-${local.application}"
-  ami_id                      = "${local.ami_id}"
+
+resource "aws_instance" "instance" {
+  ami                         = "${local.ami_id}"
   instance_type               = "${var.es_admin_instance_type}"
   subnet_id                   = "${local.private_subnet_ids[0]}"
   iam_instance_profile        = "${local.instance_profile}"
   associate_public_ip_address = false
+  vpc_security_group_ids      = ["${local.instance_security_groups}"]
+  key_name                    = "${local.ssh_deployer_key}"
   monitoring                  = true
   user_data                   = "${data.template_file.instance_userdata.rendered}"
-  CreateSnapshot              = false
-  tags                        = "${local.tags}"
-  key_name                    = "${local.ssh_deployer_key}"
-  root_device_size            = "60"
 
-  vpc_security_group_ids = [
-    "${local.instance_security_groups}",
-  ]
+  tags = "${merge(
+    local.tags,
+    map("Name", "${local.common_name}-${local.application}"),
+    map("CreateSnapshot", "${var.es_admin_volume_props["create_snapshot"]}")
+  )}"
+
+  root_block_device {
+    volume_size = "60"
+  }
+  ebs_block_device {
+    delete_on_termination = true
+    iops                  = "${var.es_admin_volume_props["iops"]}"
+    volume_type           = "${var.es_admin_volume_props["type"]}"
+    device_name           = "${var.es_admin_volume_props["device_name"]}"
+    volume_size           = "${var.es_admin_volume_props["size"]}"
+    encrypted             = "${var.es_admin_volume_props["encrypted"]}"
+  }
 }
 
 #-------------------------------------------------------------
@@ -66,5 +78,5 @@ resource "aws_route53_record" "instance" {
   name    = "${local.application}.${local.external_domain}"
   type    = "A"
   ttl     = "300"
-  records = ["${module.create-ec2-instance.private_ip}"]
+  records = ["${aws_instance.instance.private_ip}"]
 }
