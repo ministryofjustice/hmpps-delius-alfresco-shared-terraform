@@ -94,25 +94,3 @@ module "s3alb_logs_policy" {
   s3_bucket_id = "${module.s3_lb_logs_bucket.s3_bucket_name}"
   policyfile   = "${data.template_file.s3alb_logs_policy.rendered}"
 }
-
-###############################################
-# RDS DB PASSWORD
-###############################################
-resource "random_string" "rds_password" {
-  length  = 20
-  special = true
-}
-
-# Add to SSM
-resource "aws_ssm_parameter" "param" {
-  name        = "${local.common_name}-rds-db-password"
-  description = "${local.common_name}-rds-db-password"
-  type        = "SecureString"
-  value       = "${sha256(bcrypt(random_string.rds_password.result))}"
-
-  tags = "${merge(local.tags, map("Name", "${local.common_name}-rds-db-password"))}"
-
-  lifecycle {
-    ignore_changes = ["value"]
-  }
-}

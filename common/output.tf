@@ -107,7 +107,7 @@ output "project_name" {
 }
 
 output "credentials_ssm_path" {
-  value = "/${var.environment_name}/${var.project_name}"
+  value = "${local.ssm_path}"
 }
 
 output "remote_iam_role" {
@@ -194,13 +194,4 @@ output "app_hostnames" {
 # nat gateways
 output "nat_gateway_ips" {
   value = "${local.nat_gateways_ips}"
-}
-
-# Param store
-output "rds_ssm_password_param_name" {
-  value = "${module.common.rds_ssm_password_param_name}"
-}
-
-output "rds_ssm_password_param_arn" {
-  value = "${module.common.rds_ssm_password_param_arn}"
 }

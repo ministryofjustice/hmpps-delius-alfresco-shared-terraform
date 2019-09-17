@@ -1,0 +1,14 @@
+---
+client:
+  hosts:
+    - ${ES_HOST}
+  port: 9200
+  use_ssl: False
+  ssl_no_validate: False
+  timeout: 30
+  master_only: False
+
+logging:
+  loglevel: INFO
+  logformat: default
+  blacklist: ['elasticsearch', 'urllib3']
