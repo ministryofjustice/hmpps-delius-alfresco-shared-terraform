@@ -23,7 +23,7 @@ services:
       - TG_REGION=${TG_REGION}
     volumes:
       - /opt/scripts:/opt/scripts
-      - /opt/local:/opt/local
+      - /opt/eslocal/psql:/opt/local
     entrypoint: [ "sh", "/opt/scripts/alfresco_database_backup.sh", "db-backup" ]
   elasticsearch:
     image: mojdigitalstudio/hmpps-elasticsearch-manager:latest

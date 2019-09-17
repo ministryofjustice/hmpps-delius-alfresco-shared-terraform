@@ -33,3 +33,21 @@ variable "es_s3_repo_name" {
 variable "alf_restore_status" {
   default = "no-restore"
 }
+
+variable "availability_zone" {
+  description = "List of the three AZs we want to use"
+  type        = "map"
+}
+
+variable "es_admin_volume_props" {
+  type = "map"
+  default {
+    size            = 1000
+    type            = "gp2"
+    iops            = 100
+    encrypted       = true
+    device_name     = "/dev/xvdb"
+    create_snapshot = false
+  }
+}
+

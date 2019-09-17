@@ -82,6 +82,27 @@ ulimit -n 65536
 ulimit -u 2048
 ulimit -l unlimited
 
+# backups vol
+ALF_LOCAL_DIR=/opt/eslocal
+
+mkdir -p $ALF_LOCAL_DIR
+
+# create lvm and mount
+pvcreate ${es_block_device}
+vgcreate esdata ${es_block_device}
+lvcreate -n esdatavol -l100%VG esdata
+mkfs.xfs /dev/esdata/esdatavol
+
+cat /etc/fstab | grep -v '/dev/esdata/esdatavol' > /tmp/fstab-orig
+cat /tmp/fstab-orig > /etc/fstab
+
+echo "/dev/esdata/esdatavol    $ALF_LOCAL_DIR  xfs defaults 0 0" >> /etc/fstab
+
+mount -a
+
+mkdir -p $ALF_LOCAL_DIR/psql 
+mkdir -p $ALF_LOCAL_DIR/elasticsearch
+
 
 # NFS
 yum install -y nfs-utils
@@ -93,9 +114,11 @@ mount -t nfs4 -o nfsvers=4.1,rsize=1048576,wsize=1048576,hard,timeo=600,retrans=
 # backups vol
 ALF_BACKUPS_DIR=/opt/local
 
+mkdir -p $ALF_BACKUPS_DIR
+
 mount -t nfs4 -o nfsvers=4.1,rsize=1048576,wsize=1048576,hard,timeo=600,retrans=2 ${alf_efs_dns_name}:/ $ALF_BACKUPS_DIR
 
-chown -R elasticsearch:elasticsearch $ALF_BACKUPS_DIR
+chown -R elasticsearch:elasticsearch $ALF_BACKUPS_DIR $ALF_LOCAL_DIR
 
 # docker tls
 docker_tls_dir=/opt/docker

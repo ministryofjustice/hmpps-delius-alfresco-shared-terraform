@@ -124,6 +124,20 @@ echo "export TG_REGION=$(cat $tf_data | grep region | cut -d ' ' -f3)" >> $outfi
 exit_on_error $? !!
 
 ##################################################################################################
+# set elasticsearch host
+# ES HOST
+if [ ${TARGET_ENV} = delius-prod ]
+then
+  # get outputs es_admin node
+  comp=elk-migration
+  python docker-run.py --env ${TARGET_ENV} --component $comp --action output > $tf_data
+  echo "export ES_MIGRATION_HOST=$(cat $tf_data | grep migration_server_internal_url | cut -d ' ' -f3)" >> $outfile_docker
+  exit_on_error $? !!
+else
+  echo "export ES_MIGRATION_HOST=elasticsearch" >> $outfile_docker
+fi
+
+##################################################################################################
 # get cert details
 comp=certs
 python docker-run.py --env ${TARGET_ENV} --component $comp --action output > $tf_data
