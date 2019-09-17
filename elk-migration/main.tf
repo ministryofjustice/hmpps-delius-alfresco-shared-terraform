@@ -193,7 +193,7 @@ locals {
   public_zone_id               = "${data.terraform_remote_state.common.public_zone_id}"
   external_domain              = "${data.terraform_remote_state.common.external_domain}"
   environment_identifier       = "${data.terraform_remote_state.common.environment_identifier}"
-  common_name                  = "${data.terraform_remote_state.common.short_environment_identifier}"
+  common_name                  = "${data.terraform_remote_state.common.short_environment_identifier}-mig"
   short_environment_identifier = "${data.terraform_remote_state.common.short_environment_identifier}"
   region                       = "${var.region}"
   environment                  = "${data.terraform_remote_state.common.environment}"
@@ -202,7 +202,7 @@ locals {
   ssh_deployer_key             = "${data.terraform_remote_state.common.common_ssh_deployer_key}"
   s3bucket                     = "${data.terraform_remote_state.s3bucket.s3bucket}"
   bastion_inventory            = "${var.bastion_inventory}"
-  application                  = "es-admin"
+  application                  = "esmigration"
   config-bucket                = "${data.terraform_remote_state.common.common_s3-config-bucket}"
   certificate_arn              = "${data.aws_acm_certificate.cert.arn}"
   public_subnet_ids            = ["${data.terraform_remote_state.common.public_subnet_ids}"]
@@ -224,10 +224,22 @@ locals {
   mon_jenkins_sg               = "${data.terraform_remote_state.security-groups.security_groups_map["mon_jenkins"]}"
   sg_rds_id                    = "${data.terraform_remote_state.security-groups.security_groups_sg_rds_id}"
   alf_efs_dns_name             = "${data.terraform_remote_state.efs.efs_dns_name}"
+  efs_mount_path               = "/opt/es_backup"
+  efs_dns_name                 = "${data.terraform_remote_state.monitoring.monitoring_server_efs_share_dns}"
+  es_home_dir                  = "/usr/share/elasticsearch"
   alf_efs_sg                   = "${data.terraform_remote_state.security-groups.security_groups_sg_efs_sg_id}"
+  migration_mount_path         = "/opt/local"
+  access_logs_bucket           = "${data.terraform_remote_state.common.common_s3_lb_logs_bucket}"
+  port                         = 9200
+  protocol                     = "HTTP"
+  image_url                    = "${var.elk_migration_props["image_url"]}"
+  service_desired_count        = "${var.elk_migration_props["ecs_service_desired_count"]}"
 
   instance_security_groups = [
     "${data.terraform_remote_state.monitoring.instance_security_groups}",
+    "${data.terraform_remote_state.security-groups.security_groups_map["mon_jenkins"]}",
+  ]
+  lb_security_groups = [
     "${data.terraform_remote_state.security-groups.security_groups_map["mon_jenkins"]}",
   ]
 }

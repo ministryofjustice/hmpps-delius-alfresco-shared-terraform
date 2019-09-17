@@ -7,7 +7,7 @@ services:
     environment:
       - APP_ENVIRONMENT=dev
       - VERBOSE_MODE=True
-      - ES_HOST=elasticsearch
+      - ES_HOST=${ES_MIGRATION_HOST}
       - ES_SNAPSHOT_NAME=${ES_SNAPSHOT_NAME}
       - CONFIG_BUCKET=${CONFIG_BUCKET}
       - ALF_RESTORE_STATUS=${ALF_RESTORE_STATUS}

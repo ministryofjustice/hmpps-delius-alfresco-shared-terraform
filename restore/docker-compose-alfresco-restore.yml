@@ -34,5 +34,5 @@ services:
       - TG_REGION=${TG_REGION}
     volumes:
       - /opt/scripts:/opt/scripts
-      - /opt/local:/opt/local
+      - /opt/eslocal/psql:/opt/local
     entrypoint: [ "sh", "/opt/scripts/alfresco-database-restore.sh" ]
