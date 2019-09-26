@@ -86,7 +86,10 @@
                 "ssm:Get*",
                 "ssm:List*"
             ],
-            "Resource": "*"
+            "Resource": [
+                "${db_user_name_arn}",
+                "${db_password_arn}"
+            ]
         },
         {
             "Sid": "allowRoute53Update",

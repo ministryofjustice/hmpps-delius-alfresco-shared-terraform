@@ -2,12 +2,6 @@ variable "common_name" {}
 
 variable "ec2_policy_file" {}
 
-variable "ecs_policy_file" {}
-
-variable "ecs_role_policy_file" {}
-
-variable "ec2_role_policy_file" {}
-
 variable "ec2_internal_policy_file" {}
 
 variable "tags" {
@@ -30,3 +24,8 @@ variable depends_on {
 }
 
 variable "backups_dynamodb_table_arn" {}
+
+variable "asg_ssm_arns_map" {
+  type    = "map"
+  default = {}
+}

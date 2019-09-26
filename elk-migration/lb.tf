@@ -8,7 +8,7 @@ module "create_app_alb" {
   lb_name         = "${local.common_name}"
   subnet_ids      = ["${local.private_subnet_ids}"]
   security_groups = ["${local.lb_security_groups}"]
-  internal        = false
+  internal        = true
   s3_bucket_name  = "${local.access_logs_bucket}"
   tags            = "${local.tags}"
 }

@@ -1,0 +1,14 @@
+---
+
+actions:
+  1:
+    action: delete_indices
+    description: >-
+      Delete logstash indices.
+    options:
+      ignore_empty_list: True
+      disable_action: True
+    filters:
+    - filtertype: pattern
+      kind: regex
+      value: '^(logstash).*$'

@@ -35,7 +35,10 @@ data "template_file" "es" {
   template = "${file("./policies/es_internal_policy.json")}"
 
   vars {
-    app_role_arn = "${module.create-iam-app-role-es.iamrole_arn}"
+    app_role_arn      = "${module.create-iam-app-role-es.iamrole_arn}"
+    config_bucket_arn = "${local.config_bucket_arn}"
+    elk_bucket_arn    = "${local.elk_bucket_arn}"
+    elk_kms_arn       = "${local.elk_kms_arn}"
   }
 }
 

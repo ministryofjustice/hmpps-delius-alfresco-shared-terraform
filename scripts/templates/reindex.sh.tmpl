@@ -1,0 +1,6 @@
+#!/bin/bash
+{% for index in indices %}
+export SRC_INDEX="{{ index }}"
+export DEST_INDEX="migration-{{ index }}"
+curator --config ${CURATOR_FILES_DIR}/config.yml ${CURATOR_FILES_DIR}/reindex.yml && echo Success || exit $?
+{% endfor %}
