@@ -191,8 +191,11 @@ locals {
   tomcat_host                    = "alfresco"
   certificate_arn                = "${data.aws_acm_certificate.cert.arn}"
   public_subnet_ids              = ["${data.terraform_remote_state.common.public_subnet_ids}"]
-  #messaging_broker_url           = "${var.spg_messaging_broker_url}"
-  messaging_broker_url           = "${data.terraform_remote_state.amazonmq.amazon_mq_broker_connect_url}"
+
+  messaging_broker_url           = "${var.spg_messaging_broker_url_src == "data" ?
+                                    data.terraform_remote_state.amazonmq.amazon_mq_broker_connect_url :
+                                    var.spg_messaging_broker_url}"
+
   logstash_host_fqdn             = "${data.terraform_remote_state.common.logstash_host_fqdn}"
   messaging_broker_password      = "${data.terraform_remote_state.common.credentials_ssm_path}/weblogic/spg-domain/remote_broker_password"
 
