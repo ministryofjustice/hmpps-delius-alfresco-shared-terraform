@@ -77,6 +77,25 @@ data "terraform_remote_state" "artefacts" {
   }
 }
 
+#-------------------------------------------------------------
+## Getting the rds db password
+#-------------------------------------------------------------
+data "aws_ssm_parameter" "db_user" {
+  name = "${local.ssm_path}/alfresco/alfresco/rds_user"
+}
+
+data "aws_ssm_parameter" "db_password" {
+  name = "${local.ssm_path}/alfresco/alfresco/rds_password"
+}
+
+data "aws_ssm_parameter" "spg_mq_user" {
+  name = "${local.ssm_path}/weblogic/spg-domain/remote_broker_username"
+}
+
+data "aws_ssm_parameter" "spg_mq_password" {
+  name = "${local.ssm_path}/weblogic/spg-domain/remote_broker_password"
+}
+
 ####################################################
 # Locals
 ####################################################
@@ -98,6 +117,7 @@ locals {
   monitoring_kms_arn         = "${data.terraform_remote_state.mon.monitoring_kms_arn}"
   alf_backups_bucket_arn     = "${data.terraform_remote_state.s3bucket.alf_backups_bucket_arn}"
   artefacts-s3bucket-arn     = "${data.terraform_remote_state.artefacts.s3bucket_artefacts_iam_arn}"
+  ssm_path                   = "${data.terraform_remote_state.common.credentials_ssm_path}"
 }
 
 ####################################################
@@ -107,10 +127,7 @@ module "iam" {
   source                     = "../modules/iam"
   common_name                = "${local.common_name}"
   tags                       = "${local.tags}"
-  ec2_role_policy_file       = "${file("../policies/ec2_role_policy.json")}"
-  ecs_role_policy_file       = "${file("../policies/ecs_role_policy.json")}"
   ec2_policy_file            = "ec2_policy.json"
-  ecs_policy_file            = "ecs_policy.json"
   ec2_internal_policy_file   = "${file("../policies/ec2_internal_policy.json")}"
   remote_iam_role            = "${local.remote_iam_role}"
   remote_config_bucket       = "${local.remote_config_bucket}"
@@ -118,4 +135,10 @@ module "iam" {
   s3-config-bucket           = "${local.config-bucket}"
   s3bucket_kms_arn           = "${local.alfresco_kms_arn}"
   backups_dynamodb_table_arn = "${local.backups_dynamodb_table_arn}"
+  asg_ssm_arns_map = {
+    db_user                = "${data.aws_ssm_parameter.db_user.arn}"
+    db_password            = "${data.aws_ssm_parameter.db_password.arn}"
+    remote_broker_username = "${data.aws_ssm_parameter.spg_mq_user.arn}"
+    remote_broker_password = "${data.aws_ssm_parameter.spg_mq_password.arn}"
+  }
 }

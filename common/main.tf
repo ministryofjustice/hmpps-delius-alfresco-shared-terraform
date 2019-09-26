@@ -134,7 +134,7 @@ locals {
   environment                  = "${var.environment_type}"
 
   tags = "${merge(
-    data.terraform_remote_state.vpc.tags, 
+    data.terraform_remote_state.vpc.tags,
     map("sub-project", "${var.alfresco_app_name}"),
     map("source-code", "ignored"),
     map("source-hash", "ignored")
@@ -147,6 +147,7 @@ locals {
   monitoring_server_client_sg_id = "${data.terraform_remote_state.monitor.monitoring_server_client_sg_id}"
   logstash_host_fqdn             = "${data.terraform_remote_state.monitor.internal_logstash_host}"
   ssh_deployer_key               = "${data.terraform_remote_state.vpc.ssh_deployer_key}"
+  ssm_path                       = "/${var.environment_name}/${var.project_name}"
 
   app_hostnames = {
     internal = "${var.alfresco_app_name}-int"

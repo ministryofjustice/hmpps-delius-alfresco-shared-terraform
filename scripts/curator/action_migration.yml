@@ -1,0 +1,36 @@
+---
+actions:
+  1:
+    action: delete_indices
+    description: >-
+      Delete all indices.
+    options:
+      ignore_empty_list: True
+    filters:
+    - filtertype: pattern
+      kind: regex
+      value: ".*$"
+  2:
+    action: restore
+    description: >-
+      Restore all indices in the most recent snapshot with state SUCCESS.
+    options:
+      repository: local
+      # If name is blank, the most recent snapshot by age will be selected
+      name: ${ES_SNAPSHOT_NAME}
+      # If indices is blank, all indices in the snapshot will be restored
+      indices:
+      include_aliases: False
+      ignore_unavailable: False
+      include_global_state: False
+      partial: False
+      rename_pattern: 'logstash-alfresco(.+)'
+      rename_replacement: 'alfresco-logstash$1'
+      extra_settings:
+      wait_for_completion: False
+      skip_repo_fs_check: True
+      disable_action: True
+    filters:
+    - filtertype: state
+      state: SUCCESS
+      exclude:

@@ -1,0 +1,27 @@
+---
+actions:
+  1:
+    action: delete_indices
+    description: >-
+      Delete restored indices.
+    options:
+      ignore_empty_list: True
+      disable_action: True
+    filters:
+    - filtertype: pattern
+      kind: prefix
+      value: ${DEST_INDEX}
+  2:
+    description: "Reindex from ES2 to ES5"
+    action: reindex
+    options:
+      wait_interval: 30
+      max_wait: -1
+      disable_action: True
+      request_body:
+        source:
+          index: ${SRC_INDEX}
+        dest:
+          index: ${DEST_INDEX}
+    filters:
+    - filtertype: none
