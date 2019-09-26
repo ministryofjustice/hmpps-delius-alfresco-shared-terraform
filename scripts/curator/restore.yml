@@ -1,0 +1,35 @@
+actions:
+  1:
+    action: close
+    description: "Close indices before restoring snapshot"
+    options:
+      continue_if_exception: True
+      ignore_empty_list: True
+    filters:
+      - filtertype: pattern
+        kind: regex
+        value: ".*$"
+  2:
+    action: restore
+    description: >-
+      Restore all indices in the most recent snapshot with state SUCCESS.
+    options:
+      repository: local
+      # If name is blank, the most recent snapshot by age will be selected
+      name: snapshot_1
+      # If indices is blank, all indices in the snapshot will be restored
+      indices: ['logstash*']
+      include_aliases: False
+      ignore_unavailable: False
+      include_global_state: False
+      partial: False
+      rename_pattern:
+      rename_replacement:
+      extra_settings:
+      wait_for_completion: True
+      skip_repo_fs_check: True
+      disable_action: True
+    filters:
+    - filtertype: state
+      state: SUCCESS
+      exclude:

@@ -1,0 +1,34 @@
+---
+actions:
+  1:
+    action: delete_snapshots
+    description: >-
+      Delete snapshots from the selected repository
+    options:
+      repository: ${ELK_S3_REPO_NAME}
+      retry_interval: 300
+      retry_count: 10
+      ignore_empty_list: True
+      disable_action: True
+    filters:
+    - filtertype: pattern
+      kind: prefix
+      value: migration
+  2:
+    action: snapshot
+    description: >-
+      Snapshot alfresco- prefixed indices.
+    options:
+      repository: ${ELK_S3_REPO_NAME}
+      name: ${ES_MIGRATION_SNAPSHOT_NAME}
+      ignore_unavailable: False
+      include_global_state: True
+      partial: False
+      wait_for_completion: True
+      skip_repo_fs_check: False
+      max_wait: -1
+      disable_action: True
+    filters:
+    - filtertype: pattern
+      kind: prefix
+      value: migration

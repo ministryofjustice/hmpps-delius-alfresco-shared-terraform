@@ -135,7 +135,6 @@ data "template_file" "user_data" {
     db_host                   = "${local.db_host}"
     db_user                   = "${local.db_username}"
     db_password               = "${local.db_password}"
-    server_mode               = "TEST"
     keys_dir                  = "${var.keys_dir}"
     tomcat_host               = "${var.tomcat_host}"
     tomcat_port               = "${var.tomcat_port}"

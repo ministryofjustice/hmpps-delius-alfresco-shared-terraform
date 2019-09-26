@@ -81,6 +81,7 @@ exit_on_error $? !!
 
 export ES_SNAPSHOT_NAME=$(cat $tf_data | grep es_snapshot_name | cut -d ' ' -f3)
 echo "export ES_SNAPSHOT_NAME=${ES_SNAPSHOT_NAME}" >> $outfile_docker
+echo "export ES_MIGRATION_SNAPSHOT_NAME=migration_${ES_SNAPSHOT_NAME}" >> $outfile_docker
 exit_on_error $? !!
 
 export ALF_ASG_PREFIX=$(cat $tf_data | grep asg_prefix | cut -d ' ' -f3)
@@ -177,7 +178,7 @@ exit_on_error $? !!
 
 # sync scripts dir
 echo "syncing files"
-aws s3 sync ./scripts s3://${CONFIG_BUCKET}/scripts/
+aws s3 sync --delete ./scripts/ s3://${CONFIG_BUCKET}/scripts/
 exit_on_error $? !!
 
 ##################################################################################################

@@ -41,7 +41,7 @@ data "template_file" "instance_userdata" {
 
 resource "aws_instance" "instance" {
   ami                         = "${local.ami_id}"
-  instance_type               = "${var.es_admin_instance_type}"
+  instance_type               = "c5.xlarge" # "${var.es_admin_instance_type}"
   subnet_id                   = "${local.private_subnet_ids[0]}"
   iam_instance_profile        = "${local.instance_profile}"
   associate_public_ip_address = false
@@ -61,7 +61,7 @@ resource "aws_instance" "instance" {
   }
   ebs_block_device {
     delete_on_termination = true
-    iops                  = "${var.es_admin_volume_props["iops"]}"
+    iops                  = 32000 # "${var.es_admin_volume_props["iops"]}"
     volume_type           = "${var.es_admin_volume_props["type"]}"
     device_name           = "${var.es_admin_volume_props["device_name"]}"
     volume_size           = "${var.es_admin_volume_props["size"]}"

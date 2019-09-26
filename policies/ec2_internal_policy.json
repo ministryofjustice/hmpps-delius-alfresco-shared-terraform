@@ -65,7 +65,12 @@
                 "ssm:Get*",
                 "ssm:List*"
             ],
-            "Resource": "*"
+            "Resource": [
+                "${db_user}",
+                "${db_password}",
+                "${remote_broker_username}",
+                "${remote_broker_password}"
+            ]
         },
         {
             "Sid": "allowRoute53Update",

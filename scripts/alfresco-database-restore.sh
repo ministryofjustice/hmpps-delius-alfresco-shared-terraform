@@ -31,7 +31,7 @@ perform_db_restore ()
     echo "Run mode set to ${ALF_RESTORE_STATUS}, will perform database restore"
 
     # Download only sql file, assumes only one file found
-    aws s3 sync s3://${CONFIG_BUCKET}/restore/db/ ${temp_database_files}/
+    aws s3 sync s3://${CONFIG_BUCKET}/restore/db_temp/ ${temp_database_files}/
     exit_on_error $? !!
     echo "SQL file sync done"
 
@@ -41,10 +41,10 @@ perform_db_restore ()
     echo "SQL file cleanup done"
 
     #Comment out below lines causing error on data restore
-    if [[ -f ${ALFRESCO_SQL_FILE} ]] ; then
-        sed -i 's/COMMENT ON EXTENSION plpgsql/-- COMMENT ON EXTENSION plpgsql/' ${ALFRESCO_SQL_FILE}
-        exit_on_error $? !!
-    fi
+    # if [[ -f ${ALFRESCO_SQL_FILE} ]] ; then
+    #     sed -i 's/COMMENT ON EXTENSION plpgsql/-- COMMENT ON EXTENSION plpgsql/' ${ALFRESCO_SQL_FILE}
+    #     exit_on_error $? !!
+    # fi
     #Prepare db before dataset restore
     echo "Commencing Alfresco DB restore"
     POSTGRES_ROLE="postgres"

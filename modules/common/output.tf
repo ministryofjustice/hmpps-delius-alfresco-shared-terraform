@@ -24,12 +24,3 @@ output "common_s3_lb_logs_bucket" {
 output "common_tags" {
   value = "${local.tags}"
 }
-
-# Param store
-output "rds_ssm_password_param_name" {
-  value = "${aws_ssm_parameter.param.name}"
-}
-
-output "rds_ssm_password_param_arn" {
-  value = "${aws_ssm_parameter.param.arn}"
-}

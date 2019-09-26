@@ -56,7 +56,6 @@ cat << EOF > ~/bootstrap_vars.yml
 - db_password: "{{ lookup('aws_ssm', '${db_password}', decrypt=True, region='${region}') }}"
 - db_name: "${db_name}"
 - db_host: "${db_host}"
-- server_mode: "${server_mode}"
 - cluster_name: "${cluster_name}"
 - cluster_subnet: "${cluster_subnet}"
 - monitoring_server_url: "${monitoring_server_url}"

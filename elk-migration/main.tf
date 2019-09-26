@@ -180,6 +180,14 @@ data "aws_acm_certificate" "cert" {
   most_recent = true
 }
 
+#-------------------------------------------------------------
+### Getting config bucket details
+#-------------------------------------------------------------
+
+data "aws_s3_bucket" "config_bucket" {
+  bucket = "${data.terraform_remote_state.common.common_s3-config-bucket}"
+}
+
 ####################################################
 # Locals
 ####################################################
@@ -204,6 +212,7 @@ locals {
   bastion_inventory            = "${var.bastion_inventory}"
   application                  = "esmigration"
   config-bucket                = "${data.terraform_remote_state.common.common_s3-config-bucket}"
+  config_bucket_arn            = "${data.aws_s3_bucket.config_bucket.arn}"
   certificate_arn              = "${data.aws_acm_certificate.cert.arn}"
   public_subnet_ids            = ["${data.terraform_remote_state.common.public_subnet_ids}"]
   private_subnet_ids           = ["${data.terraform_remote_state.common.private_subnet_ids}"]
@@ -211,6 +220,7 @@ locals {
   ssm_tls_cert                 = "${data.terraform_remote_state.certs.self_signed_server_ssm_cert_pem_name}"
   ssm_tls_ca_cert              = "${data.terraform_remote_state.certs.self_signed_ca_ssm_cert_pem_name}"
   elk_bucket_name              = "${data.terraform_remote_state.monitoring.monitoring_server_bucket_name}"
+  elk_bucket_arn               = "${data.terraform_remote_state.monitoring.monitoring_server_bucket_arn}"
   elk_lb_dns                   = "${data.terraform_remote_state.monitoring.monitoring_server_internal_url}"
   asg_prefix                   = "${data.terraform_remote_state.asg.asg_autoscale_name}"
   dynamodb_table_name          = "${data.terraform_remote_state.dynamodb.dynamodb_table_name}"
@@ -226,6 +236,7 @@ locals {
   alf_efs_dns_name             = "${data.terraform_remote_state.efs.efs_dns_name}"
   efs_mount_path               = "/opt/es_backup"
   efs_dns_name                 = "${data.terraform_remote_state.monitoring.monitoring_server_efs_share_dns}"
+  elk_kms_arn                  = "${data.terraform_remote_state.monitoring.monitoring_kms_arn}"
   es_home_dir                  = "/usr/share/elasticsearch"
   alf_efs_sg                   = "${data.terraform_remote_state.security-groups.security_groups_sg_efs_sg_id}"
   migration_mount_path         = "/opt/local"
