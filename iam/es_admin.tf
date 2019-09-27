@@ -15,6 +15,8 @@ data "template_file" "es" {
     monitoring_kms_arn         = "${local.monitoring_kms_arn}"
     alf_backups_bucket_arn     = "${local.alf_backups_bucket_arn}"
     artefacts-s3bucket-arn     = "${local.artefacts-s3bucket-arn}"
+    db_user_name_arn           = "${data.aws_ssm_parameter.db_user.arn}"
+    db_password_arn            = "${data.aws_ssm_parameter.db_password.arn}"
   }
 }
 

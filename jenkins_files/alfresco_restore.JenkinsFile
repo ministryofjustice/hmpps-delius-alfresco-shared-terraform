@@ -125,45 +125,18 @@ pipeline {
                   git url: 'git@github.com:ministryofjustice/' + project.network, branch: 'master', credentialsId: 'f44bc5f1-30bd-4ab9-ad61-cc32caf1562a'
                 }
                 dir( project.alfresco ) {
-                  git url: 'git@github.com:ministryofjustice/' + project.alfresco, branch: 'master', credentialsId: 'f44bc5f1-30bd-4ab9-ad61-cc32caf1562a'
+                  git url: 'git@github.com:ministryofjustice/' + project.alfresco, branch: 'issue_150_rehearsal_fixes', credentialsId: 'f44bc5f1-30bd-4ab9-ad61-cc32caf1562a'
                 }
 
                 prepare_env()
             }
         }
 
-        stage('Delius | Alfresco Dynamodb') {
-          steps {
-            script {
-              do_terraform(environment_name, project.alfresco, 'dynamodb')
-            }
-          }
-        }
-
-        stage('Delius | Alfresco Certs') {
-          steps {
-            script {
-              do_terraform(environment_name, project.alfresco, 'certs')
-            }
-          }
-        }
-
-        stage('Delius | Alfresco Elk-Migration') {
-            when {
-                expression { "${environment_name}" == "delius-prod"}
-            }
-            steps { 
-                script { do_terraform(environment_name, project.alfresco, 'elk-migration')}
-            }
-        }
-
-        stage('Delius | Alfresco es-admin') {
-          steps {
-            script {
-              do_terraform(environment_name, project.alfresco, 'es_admin')
-            }
-          }
-        }
+        // stage('Stage Database') {
+        //   parallel {
+        //     stage('Delius | RDS')  { steps { script {do_terraform(environment_name, project.alfresco, 'rds')}}}
+        //   }
+        // }
 
         stage('Delius | Create Props') {
           steps {
@@ -173,33 +146,33 @@ pipeline {
           }
         }
 
-        // stage('Delius | Alfresco ASG Handler') {
-        //   steps {
-        //     script {
-        //       docker_compose_handler(project.alfresco, docker_tls_dir, 'asg-manager')
-        //     }
-        //   }
-        // }
+        stage('Delius | Alfresco ASG Handler') {
+          steps {
+            script {
+              docker_compose_handler(project.alfresco, docker_tls_dir, 'asg-manager')
+            }
+          }
+        }
 
-        // stage('Stage 1 Migration') {
-        //   parallel {
-        //     stage('Delius | Alfresco Content Restore')     { steps { script {docker_compose_handler(project.alfresco, docker_tls_dir, 'content-manager')}}}
-        //     stage('Delius | Alfresco Database Restore')     { steps { script {docker_compose_handler(project.alfresco, docker_tls_dir, 'psql')}}}
-        //   }
-        // }
+        stage('Stage 1 Migration') {
+          parallel {
+            stage('Delius | Alfresco Content Restore')     { steps { script {docker_compose_handler(project.alfresco, docker_tls_dir, 'content-manager')}}}
+            stage('Delius | Alfresco Database Restore')     { steps { script {docker_compose_handler(project.alfresco, docker_tls_dir, 'psql')}}}
+          }
+        }
 
-        // stage('Stage 2 Migration') {
-        //   parallel {
-        //     stage('Delius | Alfresco ASG')  { steps { script {do_terraform(environment_name, project.alfresco, 'asg')}}}
-        //     stage('Delius | ES 5 Restore')  { steps { script {es_5_restore(project.alfresco, docker_tls_dir)}}}
-        //   }
-        // }
+        stage('Stage 2 Migration') {
+          parallel {
+            stage('Delius | Alfresco ASG')  { steps { script {do_terraform(environment_name, project.alfresco, 'asg')}}}
+            stage('Delius | ES 5 Restore')  { steps { script {es_5_restore(project.alfresco, docker_tls_dir)}}}
+          }
+        }
 
-        // stage('Stage 3 Migration') {
-        //   parallel {
-        //     stage('Delius | ES 6 Restore')  { steps { script {es_6_restore(project.alfresco, docker_tls_dir)}}}
-        //   }
-        // }
+        stage('Stage 3 Migration') {
+          parallel {
+            stage('Delius | ES 6 Restore')  { steps { script {es_6_restore(project.alfresco, docker_tls_dir)}}}
+          }
+        }
         
         stage('Smoke test') {
             when {

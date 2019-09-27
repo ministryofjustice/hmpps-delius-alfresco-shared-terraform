@@ -7,9 +7,11 @@ services:
       - APP_ENVIRONMENT=dev
       - VERBOSE_MODE=True
       - ES_HOST=${ES_LB_DNS}
-      - ES_SNAPSHOT_NAME=${ES_SNAPSHOT_NAME}
+      - ES_MIGRATION_SNAPSHOT_NAME=${ES_MIGRATION_SNAPSHOT_NAME}
       - CONFIG_BUCKET=${CONFIG_BUCKET}
       - ALF_RESTORE_STATUS=${ALF_RESTORE_STATUS}
+      - ELK_BACKUP_BUCKET=${ELK_BACKUP_BUCKET}
+      - ELK_S3_REPO_NAME=${ELK_S3_REPO_NAME}
     volumes:
       - /opt/scripts:/opt/scripts
       - /opt/local:/opt/local

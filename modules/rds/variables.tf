@@ -190,3 +190,7 @@ variable "security_group_ids" {
 
 # SSM
 variable "credentials_ssm_path" {}
+
+variable "data_import" {
+  default = "disabled"
+}

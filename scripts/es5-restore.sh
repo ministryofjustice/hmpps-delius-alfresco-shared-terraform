@@ -11,40 +11,43 @@ snapshot=${ES_SNAPSHOT_NAME}
 repo_path="/opt/local"
 shared_repo_name="efs"
 shared_repo_path="/opt/es_backup"
-src_prefix="logstash-alfresco"
+src_prefix="logstash"
 dst_prefix="alfresco-logstash"
 
-SYNC_COMMAND="s3://${CONFIG_BUCKET}/restore/elasticsearch/ ${repo_path}/"
 
 echo "Waiting for elasticsearch..."
 while ! nc -z ${ES_HOST} 9200; do
   sleep 0.1
 done
 
+echo "elasticsearch started on host: ${ES_HOST}"
+
+export SCRIPT_DIR="/opt/scripts"
+export CURATOR_FILES_DIR="${SCRIPT_DIR}/curator"
+
 if [ ${ALF_RESTORE_STATUS} = restore ]
 then
-  echo "--> syncing bucket ${CONFIG_BUCKET}"
-  aws s3 sync --delete ${SYNC_COMMAND} && echo Success || exit $?
-
-  chown -R elasticsearch:elasticsearch ${repo_path} && echo Success || exit $?
-  echo "-> syncing complete"
-
-  echo "elasticsearch started on host: ${ES_HOST}"
-
   echo "Creating repos"
-  elasticsearch-manager addrepository ${repo_name} --repo-type fs --location ${repo_path} && echo Success || exit $?
+  python ${SCRIPT_DIR}/create_s3_local_repo.py && echo Success || exit $?
 
-  elasticsearch-manager addrepository ${shared_repo_name} --repo-type fs --location ${shared_repo_path} && echo Success || exit $?
-  sleep 30
-
-  echo "Running restore"
-  elasticsearch-manager restore  ${repo_name} --snapshot ${snapshot} --srcprefix ${src_prefix} --reindex --dstprefix ${dst_prefix} && echo Success || exit $?
-
-  sleep 10
+  echo "Running curator restore"
+  curator --config ${CURATOR_FILES_DIR}/config.yml ${CURATOR_FILES_DIR}/action_migration.yml && echo Success || exit $?
+  # checking cluster is green
+  python ${SCRIPT_DIR}/check_cluster_health.py && echo Success || exit $?
+  echo "done"
+  
+  # reindex indices
+  # echo "Running curator reindex"
+  # export REINDEX_SHELL_SCRIPT="reindex_indices.sh" 
+  # rm -rf ${SCRIPT_DIR}/${REINDEX_SHELL_SCRIPT}
+  # python ${SCRIPT_DIR}/reindex.py && echo Success || exit $?
+  # sh ${SCRIPT_DIR}/${REINDEX_SHELL_SCRIPT} && echo Success || exit $? 
+  # echo "done"
 
   echo "Running create snapshot"
-  elasticsearch-manager createsnapshot ${snapshot} --repository ${shared_repo_name} && echo Success || exit $?
+  curator --config ${CURATOR_FILES_DIR}/config.yml ${CURATOR_FILES_DIR}/action_migration_snapshot.yml && echo Success || exit $?
+  echo "done"
 else
-  aws s3 sync --delete ${SYNC_COMMAND} --dryrun
+  echo "Restore not complete"
 fi
 set -e
