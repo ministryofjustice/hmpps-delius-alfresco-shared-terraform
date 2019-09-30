@@ -64,7 +64,7 @@ sed -i 's/ECS_CLUSTER=default/ECS_CLUSTER=${ecs_cluster}/g' /etc/ecs/ecs.config
 # NFS
 yum install -y nfs-utils
 
-mkdir -p ${efs_mount_path} ${es_home_dir}
+mkdir -p ${efs_mount_path} ${es_home_dir} ${migration_mount_path}
 
 mount -t nfs4 -o nfsvers=4.1,rsize=1048576,wsize=1048576,hard,timeo=600,retrans=2 ${efs_dns_name}:/ ${efs_mount_path}
 
@@ -133,6 +133,8 @@ ulimit -l unlimited
 service docker restart
 
 #restart ecs-agent
+docker pull  amazon/amazon-ecs-agent:latest
+
 docker rm -f ecs-agent
 
 docker run --name ecs-agent \
