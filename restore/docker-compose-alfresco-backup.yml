@@ -33,7 +33,7 @@ services:
       - ELK_BACKUP_BUCKET=${ELK_BACKUP_BUCKET}
       - ELK_S3_REPO_NAME=${ELK_S3_REPO_NAME}
       - TG_REGION=${TG_REGION}
-      - ES_HOST=${ES_LB_DNS}
+      - ES_HOST=${ES_MIGRATION_HOST}
       - ES_SNAPSHOT_NAME=alfresco_snapshot
       - CONFIG_BUCKET=${CONFIG_BUCKET}
     volumes:
