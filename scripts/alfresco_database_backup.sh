@@ -27,7 +27,7 @@ case ${JOB_TYPE} in
     pg_dump --dbname=postgresql://${DB_USER}:${DB_PASSWORD}@${ALF_DB_HOST}:${DB_PORT}/${ALF_DB_NAME} -f ${SQL_FILE} && echo Success || exit $?
 
     # upload sql file
-    aws s3 cp --only-show-errors ${SQL_FILE} s3://${ALF_BACKUP_BUCKET}/${PREFIX_DATE}/ && echo Success || exit $?
+    aws s3 cp --only-show-errors ${SQL_FILE} s3://${ALF_BACKUP_BUCKET}/database/${PREFIX_DATE}/ && echo Success || exit $?
 
     # delete sql file from nfs share
     rm -rf ${SQL_FILE}
@@ -35,16 +35,14 @@ case ${JOB_TYPE} in
     ;;
   content-sync)
     echo "Running content sync"
+    MONTH_VAL=$(date +%m)
+    MONTH_NUMBER=$(expr ${MONTH_NUMBER} \* 1)
+    YEAR_NUMBER=$(date +%Y)
+    DAY_NUMBER=$(date +%d)
+    FOLDER_TO_SYNC="contentstore/${YEAR_NUMBER}/${MONTH_NUMBER}/${DAY_NUMBER}"
 
-    DAY_OF_WEEK=$(date +%u)
-
-    # Perform content sync only on Fridays
-    if [[ $DAY_OF_WEEK -eq 5 ]]
-    then
-      aws s3 sync s3://${ALF_STORAGE_BUCKET}/ s3://${ALF_BACKUP_BUCKET}/${PREFIX_DATE}/ && echo Success || exit $?
-    else
-      echo "Content sync step not completed - day of week is ${DAY_OF_WEEK}"
-    fi
+    # Perform content sync daily
+    aws s3 sync s3://${ALF_STORAGE_BUCKET}/${FOLDER_TO_SYNC}/ s3://${ALF_BACKUP_BUCKET}/files/${FOLDER_TO_SYNC}/ && echo Success || exit $?
     ;;
   elasticsearch-backup)
     echo "Running elasticsearch backup"
