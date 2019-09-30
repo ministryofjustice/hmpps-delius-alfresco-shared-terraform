@@ -195,3 +195,7 @@ variable "ebs_delete_on_termination" {
 variable "volume_type" {
   default = "standard"
 }
+
+variable "health_check_grace_period" {
+  default = 300
+}
