@@ -43,8 +43,16 @@ variable "elk_migration_props" {
     ecs_memory                = 12500
     jvm_heap_size             = "12g"
     image_url                 = "mojdigitalstudio/hmpps-elasticsearch-5:latest"
+    kibana_image_url          = "mojdigitalstudio/hmpps-kibana:latest"
+    logstash_image_url        = "mojdigitalstudio/hmpps-logstash:latest"
     block_device              = "/dev/nvme1n1"
     es_master_nodes           = 2
     ecs_service_desired_count = 3
+    instance_type             = "m5d.xlarge"
   }
+}
+
+# kibana
+variable "kibana_short_name" {
+  default = ""
 }
