@@ -166,27 +166,6 @@ data "template_file" "user_data" {
 # # CREATE LAUNCH CONFIG FOR EC2 RUNNING SERVICES
 # ############################################
 
-# module "launch_cfg" {
-#   source                      = "git::https://github.com/ministryofjustice/hmpps-terraform-modules.git?ref=master//modules//launch_configuration//blockdevice"
-#   launch_configuration_name   = "${local.common_prefix}"
-#   image_id                    = "${var.ami_id}"
-#   instance_type               = "${var.instance_type}"
-#   volume_size                 = "${var.volume_size}"
-#   instance_profile            = "${var.instance_profile}"
-#   key_name                    = "${var.ssh_deployer_key}"
-#   ebs_device_name             = "${var.ebs_device_name}"
-#   ebs_volume_type             = "${var.ebs_volume_type}"
-#   ebs_volume_size             = "${var.ebs_volume_size}"
-#   ebs_encrypted               = "${var.ebs_encrypted}"
-#   associate_public_ip_address = "${var.associate_public_ip_address}"
-
-#   security_groups = [
-#     "${local.instance_security_groups}",
-#   ]
-
-#   user_data = "${data.template_file.user_data.rendered}"
-# }
-
 resource "aws_launch_configuration" "environment" {
   name_prefix                 = "${local.common_prefix}-cfg-"
   image_id                    = "${var.ami_id}"
@@ -239,6 +218,7 @@ resource "aws_autoscaling_group" "environment" {
   desired_capacity     = "${var.az_asg_desired}"
   launch_configuration = "${aws_launch_configuration.environment.name}"
   load_balancers       = ["${module.create_app_elb.environment_elb_name}"]
+  health_check_grace_period  = "${var.health_check_grace_period}"
 
   lifecycle {
     create_before_destroy = true
@@ -253,15 +233,3 @@ resource "aws_autoscaling_group" "environment" {
     },
   ]
 }
-
-# module "auto_scale" {
-#   source               = "git::https://github.com/ministryofjustice/hmpps-terraform-modules.git?ref=master//modules//autoscaling//group//asg_classic_lb"
-#   asg_name             = "${local.common_prefix}"
-#   subnet_ids           = ["${local.subnet_ids}"]
-#   asg_min              = "${var.az_asg_min}"
-#   asg_max              = "${var.az_asg_max}"
-#   asg_desired          = "${var.az_asg_desired}"
-#   launch_configuration = "${module.launch_cfg.launch_name}"
-#   load_balancers       = ["${module.create_app_elb.environment_elb_name}"]
-#   tags                 = "${local.tags}"
-# }

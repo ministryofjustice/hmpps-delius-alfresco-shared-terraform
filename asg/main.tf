@@ -116,6 +116,20 @@ data "terraform_remote_state" "amazonmq" {
 }
 
 #-------------------------------------------------------------
+### Getting the elk-migration details
+#-------------------------------------------------------------
+data "terraform_remote_state" "elk_migration" {
+  backend = "s3"
+
+  config {
+    bucket = "${var.remote_state_bucket_name}"
+    key    = "alfresco/elk-migration/terraform.tfstate"
+    region = "${var.region}"
+  }
+}
+
+
+#-------------------------------------------------------------
 ### Getting the latest amazon ami
 #-------------------------------------------------------------
 data "aws_ami" "amazon_ami" {
@@ -183,20 +197,19 @@ locals {
   db_username_ssm                = "${data.terraform_remote_state.rds.rds_creds["db_username_ssm_param"]}"
   db_password_ssm                = "${data.terraform_remote_state.rds.rds_creds["db_password_ssm_param"]}"
   db_host                        = "${data.terraform_remote_state.rds.rds_db_instance_endpoint_cname}"
-  monitoring_server_internal_url = "${data.terraform_remote_state.common.monitoring_server_internal_url}"
+  monitoring_server_internal_url = "${data.terraform_remote_state.elk_migration.migration_server_internal_url}"
   app_hostnames                  = "${data.terraform_remote_state.common.app_hostnames}"
   bastion_inventory              = "${var.bastion_inventory}"
   jvm_memory                     = "${var.alfresco_jvm_memory}"
   config-bucket                  = "${data.terraform_remote_state.common.common_s3-config-bucket}"
   tomcat_host                    = "alfresco"
+  health_check_grace_period      = "${var.alfresco_asg_props["health_check_grace_period"]}"
   certificate_arn                = "${data.aws_acm_certificate.cert.arn}"
   public_subnet_ids              = ["${data.terraform_remote_state.common.public_subnet_ids}"]
-
   messaging_broker_url           = "${var.spg_messaging_broker_url_src == "data" ?
                                     data.terraform_remote_state.amazonmq.amazon_mq_broker_connect_url :
                                     var.spg_messaging_broker_url}"
-
-  logstash_host_fqdn             = "${data.terraform_remote_state.common.logstash_host_fqdn}"
+  logstash_host_fqdn             = "${data.terraform_remote_state.elk_migration.internal_logstash_host}"
   messaging_broker_password      = "${data.terraform_remote_state.common.credentials_ssm_path}/weblogic/spg-domain/remote_broker_password"
 
   self_signed_ssm = {
@@ -210,6 +223,7 @@ locals {
     "${data.terraform_remote_state.common.common_sg_outbound_id}",
     "${data.terraform_remote_state.security-groups.security_groups_sg_monitoring_client}",
     "${data.terraform_remote_state.security-groups.security_groups_bastion_in_sg_id}",
+    "${data.terraform_remote_state.security-groups.security_groups_map["mon_jenkins"]}"
   ]
 }
 

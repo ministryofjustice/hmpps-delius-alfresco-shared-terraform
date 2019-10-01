@@ -94,22 +94,6 @@ pipeline {
             }
         }
 
-        stage('Delius | Alfresco Certs') {
-          steps {
-            script {
-              do_terraform(environment_name, project.alfresco, 'certs')
-            }
-          }
-        }
-
-        stage('Delius | Alfresco es-admin') {
-          steps {
-            script {
-              do_terraform(environment_name, project.alfresco, 'es_admin')
-            }
-          }
-        }
-
         stage('Delius | Create Props') {
           steps {
             script {

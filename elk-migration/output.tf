@@ -29,3 +29,8 @@ output "ecs_service_name" {
 output "migration_server_internal_url" {
   value = "${aws_route53_record.internal_migration_dns.fqdn}"
 }
+
+# logstash
+output "internal_logstash_host" {
+  value = "${aws_route53_record.internal_logstash_dns.fqdn}"
+}
