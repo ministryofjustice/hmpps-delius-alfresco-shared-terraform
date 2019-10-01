@@ -207,10 +207,10 @@ locals {
   certificate_arn                = "${data.aws_acm_certificate.cert.arn}"
   public_subnet_ids              = ["${data.terraform_remote_state.common.public_subnet_ids}"]
   messaging_broker_url           = "${var.spg_messaging_broker_url_src == "data" ?
-                                    data.terraform_remote_state.amazonmq.amazon_mq_broker_connect_url :
-                                    var.spg_messaging_broker_url}"
-  logstash_host_fqdn             = "${data.terraform_remote_state.elk_migration.internal_logstash_host}"
+                                    ${data.terraform_remote_state.amazonmq.amazon_mq_broker_connect_url} :
+                                    ${var.spg_messaging_broker_url}}"
   messaging_broker_password      = "${data.terraform_remote_state.common.credentials_ssm_path}/weblogic/spg-domain/remote_broker_password"
+  logstash_host_fqdn             = "${data.terraform_remote_state.elk_migration.internal_logstash_host}"
 
   self_signed_ssm = {
     ca_cert = "${data.terraform_remote_state.self_certs.self_signed_ca_ssm_cert_pem_name}"
