@@ -40,3 +40,11 @@ output "alf_backups_bucket_name" {
 output "alf_backups_bucket_arn" {
   value = "${aws_s3_bucket.backups.arn}"
 }
+
+output "elk_backups_bucket_name" {
+  value = "${aws_s3_bucket.elk_backups.id}"
+}
+
+output "elk_backups_bucket_arn" {
+  value = "${aws_s3_bucket.elk_backups.arn}"
+}

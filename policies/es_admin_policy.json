@@ -35,7 +35,8 @@
                 "s3:ListBucketVersions"
             ],
             "Resource": [
-                "${monitoring_bucket_arn}"
+                "${monitoring_bucket_arn}",
+                "${elk_backups_bucket_arn}"
             ]
         },
         {
@@ -49,7 +50,8 @@
                 "s3:ListMultipartUploadParts"
             ],
             "Resource": [
-                "${monitoring_bucket_arn}/*"
+                "${monitoring_bucket_arn}/*",
+                "${elk_backups_bucket_arn}/*"
             ]
         },
         {

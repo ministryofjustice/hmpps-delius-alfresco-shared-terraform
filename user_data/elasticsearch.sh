@@ -118,6 +118,43 @@ cloud.node.auto_attributes: true
 cluster.routing.allocation.awareness.attributes: aws_availability_zone
 discovery.ec2.endpoint: ec2.eu-west-2.amazonaws.com" > ${es_home_dir}/conf.d/elasticsearch.yml.tmpl
 
+## logstash confd
+echo "input {
+    tcp {
+        port => 2514
+        type => syslog
+    }
+    udp {
+        port => 2514
+        type => syslog
+    }
+    redis {
+        host => 'redis'
+        data_type => 'list'
+        key => 'logstash'
+        type => 'application'
+        codec => 'json'
+    }
+}
+
+# 200_filter_all
+filter {
+
+}
+
+
+output {
+
+    elasticsearch {
+        hosts => [
+          '${es_host_url}'
+        ]
+        ssl => false
+        ssl_certificate_verification => false
+    }
+
+}"> ${es_home_dir}/conf.d/logstash.conf.tmpl
+
 chown -R elasticsearch:elasticsearch ${es_home_dir} ${efs_mount_path}
 
 chmod -R 770 ${es_home_dir} ${efs_mount_path}
