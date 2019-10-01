@@ -88,7 +88,10 @@
             ],
             "Resource": [
                 "${db_user_name_arn}",
-                "${db_password_arn}"
+                "${db_password_arn}",
+                "${tls_ca_cert_arn}",
+                "${tls_cert_arn}",
+                "${tls_key_arn}"
             ]
         },
         {

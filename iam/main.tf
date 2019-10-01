@@ -25,6 +25,19 @@ data "terraform_remote_state" "common" {
 }
 
 #-------------------------------------------------------------
+### Getting the certs details
+#-------------------------------------------------------------
+data "terraform_remote_state" "certs" {
+  backend = "s3"
+
+  config {
+    bucket = "${var.remote_state_bucket_name}"
+    key    = "alfresco/certs/terraform.tfstate"
+    region = "${var.region}"
+  }
+}
+
+#-------------------------------------------------------------
 ### Getting the S3bucket details
 #-------------------------------------------------------------
 data "terraform_remote_state" "s3bucket" {
@@ -94,6 +107,18 @@ data "aws_ssm_parameter" "spg_mq_user" {
 
 data "aws_ssm_parameter" "spg_mq_password" {
   name = "${local.ssm_path}/weblogic/spg-domain/remote_broker_password"
+}
+
+data "aws_ssm_parameter" "tls_ca_cert" {
+  name = "${data.terraform_remote_state.certs.self_signed_ca_ssm_cert_pem_name}"
+}
+
+data "aws_ssm_parameter" "tls_cert" {
+  name = "${data.terraform_remote_state.certs.self_signed_server_ssm_cert_pem_name}"
+}
+
+data "aws_ssm_parameter" "tls_key" {
+  name = "${data.terraform_remote_state.certs.self_signed_server_ssm_private_key_name}"
 }
 
 ####################################################
