@@ -81,7 +81,7 @@ module "rds" {
   create_db_instance          = true
   parameters                  = ["${var.alf_db_parameters}"] # ["${var.alf_rds_migration_parameters}"]
   family                      = "${var.alf_rds_props["family"]}"
-  engine                      = "9.6.11" #"${var.alf_rds_props["engine"]}"
+  engine                      = "${var.alf_rds_props["engine"]}"
   major_engine_version        = "${var.alf_rds_props["major_engine_version"]}"
   engine_version              = "${var.alf_rds_props["engine_version"]}"
   port                        = "5432"
