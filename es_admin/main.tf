@@ -210,7 +210,7 @@ locals {
   ssm_tls_private_key          = "${data.terraform_remote_state.certs.self_signed_server_ssm_private_key_name}"
   ssm_tls_cert                 = "${data.terraform_remote_state.certs.self_signed_server_ssm_cert_pem_name}"
   ssm_tls_ca_cert              = "${data.terraform_remote_state.certs.self_signed_ca_ssm_cert_pem_name}"
-  elk_bucket_name              = "${data.terraform_remote_state.monitoring.monitoring_server_bucket_name}"
+  elk_bucket_name              = "${data.terraform_remote_state.s3bucket.elk_backups_bucket_name}"
   elk_lb_dns                   = "${data.terraform_remote_state.monitoring.monitoring_server_internal_url}"
   asg_prefix                   = "${data.terraform_remote_state.asg.asg_autoscale_name}"
   dynamodb_table_name          = "${data.terraform_remote_state.dynamodb.dynamodb_table_name}"

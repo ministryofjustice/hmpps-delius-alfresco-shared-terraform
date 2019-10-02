@@ -56,3 +56,30 @@ variable "elk_migration_props" {
 variable "kibana_short_name" {
   default = ""
 }
+
+variable "metrics_granularity" {
+  default = "1Minute"
+}
+
+variable "health_check_type" {
+  default = "ELB"
+}
+
+variable "enabled_metrics" {
+  type = "list"
+  default = [
+    "GroupMinSize",
+    "GroupMaxSize",
+    "GroupDesiredCapacity",
+    "GroupInServiceInstances",
+    "GroupPendingInstances",
+    "GroupStandbyInstances",
+    "GroupTerminatingInstances",
+    "GroupTotalInstances"
+  ]
+}
+
+variable "termination_policies" {
+  type    = "list"
+  default = ["OldestInstance", "OldestLaunchTemplate", "OldestLaunchConfiguration"]
+}

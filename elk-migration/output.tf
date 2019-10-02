@@ -14,6 +14,9 @@ output "ecs_cluster_name" {
 output "loggroup_name" {
   value = {
     elasticsearch = "${module.create_loggroup.loggroup_name}"
+    kibana        = "${module.kibana_loggroup.loggroup_name}"
+    logstash      = "${module.logstash_loggroup.loggroup_name}"
+    redis         = "${module.redis_loggroup.loggroup_name}"
   }
 }
 
