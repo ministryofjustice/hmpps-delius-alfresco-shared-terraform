@@ -189,7 +189,6 @@ locals {
   jvm_memory                     = "${var.alfresco_jvm_memory}"
   config-bucket                  = "${data.terraform_remote_state.common.common_s3-config-bucket}"
   tomcat_host                    = "alfresco"
-  health_check_grace_period      = "${var.alfresco_asg_props["health_check_grace_period"]}"
   certificate_arn                = "${data.aws_acm_certificate.cert.arn}"
   public_subnet_ids              = ["${data.terraform_remote_state.common.public_subnet_ids}"]
   messaging_broker_url           = "${var.spg_messaging_broker_url}"
@@ -257,6 +256,7 @@ module "asg" {
   certificate_arn              = "${local.certificate_arn}"
   public_subnet_ids            = ["${local.public_subnet_ids}"]
   public_zone_id               = "${local.public_zone_id}"
+  health_check_grace_period    = "${var.alfresco_asg_props["health_check_grace_period"]}"
 
   listener = [
     {

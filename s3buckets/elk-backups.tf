@@ -1,15 +1,9 @@
 #-------------------------------------------
-### S3 bucket for backups
+### S3 bucket for elk backups
 #--------------------------------------------
 
-locals {
-  transition_days = "${var.alf_backups_config["transition_days"]}"
-  expiration_days = "${var.alf_backups_config["expiration_days"]}"
-}
-
-
-resource "aws_s3_bucket" "backups" {
-  bucket = "${local.common_name}-alf-backups"
+resource "aws_s3_bucket" "elk_backups" {
+  bucket = "${local.common_name}-elk-mig"
   acl    = "private"
 
   versioning {
@@ -28,18 +22,12 @@ resource "aws_s3_bucket" "backups" {
       }
     }
   }
-
   lifecycle_rule {
     enabled = true
-    transition {
-      days          = "${local.transition_days}"
-      storage_class = "GLACIER"
-    }
-
     expiration {
-      days = "${local.expiration_days}"
+      days = 2
     }
   }
 
-  tags = "${merge(local.tags, map("Name", "${local.common_name}-alf-backups"))}"
+  tags = "${merge(local.tags, map("Name", "${local.common_name}-s3-bucket"))}"
 }

@@ -51,11 +51,6 @@ module "kibana_loggroup" {
 # CREATE ECS TASK DEFINTIONS
 ############################################
 
-data "aws_ecs_task_definition" "kibana" {
-  task_definition = "${aws_ecs_task_definition.kibana.family}"
-  depends_on      = ["aws_ecs_task_definition.kibana"]
-}
-
 data "template_file" "kibana" {
   template = "${file("./task_definitions/kibana.conf")}"
 
@@ -74,16 +69,18 @@ resource "aws_ecs_task_definition" "kibana" {
   container_definitions = "${data.template_file.kibana.rendered}"
 }
 
-module "kibana_service" {
-  source                          = "git::https://github.com/ministryofjustice/hmpps-terraform-modules.git?ref=master//modules//ecs/ecs_service//withloadbalancer//alb"
-  servicename                     = "${local.common_name}-${local.kibana_container_name}"
-  clustername                     = "${module.ecs_cluster.ecs_cluster_id}"
-  ecs_service_role                = "${module.create-iam-ecs-role-int.iamrole_arn}"
-  task_definition_family          = "${aws_ecs_task_definition.kibana.family}"
-  task_definition_revision        = "${aws_ecs_task_definition.kibana.revision}"
-  current_task_definition_version = "${data.aws_ecs_task_definition.kibana.revision}"
-  service_desired_count           = "2"
-  target_group_arn                = "${module.kibana_target_grp.target_group_arn}"
-  containername                   = "${local.kibana_container_name}"
-  containerport                   = "${local.kibana_port}"
+
+resource "aws_ecs_service" "kibana_service" {
+  name                               = "${local.common_name}-${local.kibana_container_name}"
+  cluster                            = "${module.ecs_cluster.ecs_cluster_id}"
+  task_definition                    = "${aws_ecs_task_definition.kibana.arn}"
+  desired_count                      = 2
+  iam_role                           = "${module.create-iam-ecs-role-int.iamrole_arn}"
+  deployment_minimum_healthy_percent = 50
+
+  load_balancer {
+    target_group_arn = "${module.kibana_target_grp.target_group_arn}"
+    container_name   = "${local.kibana_container_name}"
+    container_port   = "${local.kibana_port}"
+  }
 }

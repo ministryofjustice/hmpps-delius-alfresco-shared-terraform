@@ -26,7 +26,7 @@ variable "es_snapshot_name" {
 }
 
 variable "es_s3_repo_name" {
-  default = "elk_s3_repo"
+  default = "alfresco_s3_repo"
 }
 
 # Restore mode

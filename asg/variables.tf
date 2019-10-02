@@ -15,9 +15,27 @@ variable "alfresco_asg_props" {
     asg_instance_type         = "m4.xlarge"
     asg_ami                   = "ami-0d891eb6bea9cfa8c"
     ebs_volume_size           = 512
-    health_check_grace_period = 600
+    health_check_grace_period = 900
   }
 }
+
+variable "alf_metrics_props" {
+  type = "map"
+  default = {
+    metrics_granularity = "1Minute"
+    enabled_metrics = [
+      "GroupMinSize",
+      "GroupMaxSize",
+      "GroupDesiredCapacity",
+      "GroupInServiceInstances",
+      "GroupPendingInstances",
+      "GroupStandbyInstances",
+      "GroupTerminatingInstances",
+      "GroupTotalInstances"
+    ]
+  }
+}
+
 
 variable "cloudwatch_log_retention" {}
 

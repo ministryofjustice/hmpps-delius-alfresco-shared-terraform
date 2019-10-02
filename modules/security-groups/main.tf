@@ -31,19 +31,6 @@ locals {
 ### external lb sg
 #-------------------------------------------------------------
 
-resource "aws_security_group_rule" "external_lb_ingress_http" {
-  security_group_id = "${local.external_lb_sg_id}"
-  from_port         = 80
-  to_port           = 80
-  protocol          = "tcp"
-  type              = "ingress"
-  description       = "${local.common_name}-lb-external-sg-http"
-
-  cidr_blocks = [
-    "${local.allowed_cidr_block}",
-  ]
-}
-
 resource "aws_security_group_rule" "external_lb_ingress_https" {
   security_group_id = "${local.external_lb_sg_id}"
   from_port         = 443
