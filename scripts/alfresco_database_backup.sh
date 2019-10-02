@@ -35,31 +35,33 @@ case ${JOB_TYPE} in
     ;;
   content-sync)
     echo "Running content sync"
-    MONTH_VAL=$(date +%m)
-    MONTH_NUMBER=$(expr ${MONTH_NUMBER} \* 1)
-    YEAR_NUMBER=$(date +%Y)
-    DAY_NUMBER=$(date +%d)
-    FOLDER_TO_SYNC="contentstore/${YEAR_NUMBER}/${MONTH_NUMBER}/${DAY_NUMBER}"
+    BASE_DIR="$(date '+%Y/%-m/%-d')"
+    FOLDER_TO_SYNC="contentstore/${BASE_DIR}"
 
     # Perform content sync daily
+    echo "Running command: aws s3 sync s3://${ALF_STORAGE_BUCKET}/${FOLDER_TO_SYNC}/ s3://${ALF_BACKUP_BUCKET}/files/${FOLDER_TO_SYNC}/"
     aws s3 sync s3://${ALF_STORAGE_BUCKET}/${FOLDER_TO_SYNC}/ s3://${ALF_BACKUP_BUCKET}/files/${FOLDER_TO_SYNC}/ && echo Success || exit $?
+    echo "Running command: aws s3 sync s3://${ALF_STORAGE_BUCKET}/${BASE_DIR}/ s3://${ALF_BACKUP_BUCKET}/files/${BASE_DIR}/"
+    aws s3 sync s3://${ALF_STORAGE_BUCKET}/${BASE_DIR}/ s3://${ALF_BACKUP_BUCKET}/files/${BASE_DIR}/ && echo Success || exit $?
     ;;
   elasticsearch-backup)
     echo "Running elasticsearch backup"
+    export DAILY_SNAPSHOT_NAME="${ES_SNAPSHOT_NAME}-$(date '+%Y-%-m-%-d')"
 
-    snapshot=${ES_SNAPSHOT_NAME}-${PREFIX_DATE}
-    s3_repo_name="${ELK_S3_REPO_NAME}"
-    s3_repo_bucket="${ELK_BACKUP_BUCKET}"
+    echo "Clearing backup bucket"
+    aws s3 rm --recursive --only-show-errors s3://${ELK_BACKUP_BUCKET}/
 
     echo "Creating repos"
-    elasticsearch-manager addrepository ${s3_repo_name} --repo-type s3 --bucket ${s3_repo_bucket} && echo Success || exit $?
+    elasticsearch-manager addrepository ${ELK_S3_REPO_NAME} --repo-type s3 --bucket ${ELK_BACKUP_BUCKET} && echo Success || exit $?
 
     sleep 30
 
     echo "Creating snapshot"
-    elasticsearch-manager createsnapshot ${snapshot} --repository ${s3_repo_name} && echo Success || exit $?
+    curator --config /opt/scripts/curator/config.yml /opt/scripts/curator/action_daily_snapshot.yml && echo Success || exit $?
+    # SYNC to backup bucket
+    aws s3 sync s3://${ELK_BACKUP_BUCKET}/ s3://${ALF_BACKUP_BUCKET}/elasticsearch/$(date '+%Y/%-m/%-d')/ && echo Success || exit $?
     ;;
   *)
-    echo "${JOB_TYPE} argument is not a valid argument. db-backup - content-sync"
+    echo "${JOB_TYPE} argument is not a valid argument. db-backup - content-sync - elasticsearch-backup"
   ;;
 esac
