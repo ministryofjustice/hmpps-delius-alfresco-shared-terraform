@@ -1,0 +1,13 @@
+---
+actions:
+  1:
+    action: open
+    description: >-
+      Open all indices 
+    options:
+      disable_action: False
+      ignore_empty_list: True
+    filters:
+    - filtertype: pattern
+      kind: regex
+      value: ".*$" 

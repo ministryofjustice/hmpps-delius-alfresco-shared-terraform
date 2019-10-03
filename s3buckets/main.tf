@@ -33,6 +33,8 @@ locals {
   alfresco_app_name = "${data.terraform_remote_state.common.alfresco_app_name}"
   common_name       = "${data.terraform_remote_state.common.common_name}"
   tags              = "${data.terraform_remote_state.common.common_tags}"
+  transition_days   = "${var.alf_backups_config["transition_days"]}"
+  expiration_days   = "${var.alf_backups_config["expiration_days"]}"
 }
 
 ####################################################

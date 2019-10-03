@@ -124,3 +124,8 @@ output "rds_creds" {
     db_password_ssm_param = "${data.aws_ssm_parameter.db_password.name}"
   }
 }
+
+# logs
+output "log_groups" {
+  value = "${aws_cloudwatch_log_group.log_exports.*.name}"
+}

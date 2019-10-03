@@ -111,3 +111,8 @@ output "rds_db_instance_port" {
 output "rds_creds" {
   value = "${module.rds.rds_creds}"
 }
+
+# logs
+output "log_groups" {
+  value = "${module.rds.log_groups}"
+}

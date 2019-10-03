@@ -3,7 +3,7 @@
 ############################################
 
 module "db_instance" {
-  source = "git::https://github.com/ministryofjustice/hmpps-terraform-modules.git?ref=pre-shared-vpc//modules//rds//db_instance"
+  source = "../db_instance"
 
   create            = "${var.create_db_instance}"
   identifier        = "${local.common_name}"
@@ -31,23 +31,23 @@ module "db_instance" {
   ]
 
   db_subnet_group_name = "${module.db_subnet_group.db_subnet_group_id}"
-  parameter_group_name = "${module.db_parameter_group.db_parameter_group_id}"
+  parameter_group_name = "${module.parameter_group.db_parameter_group_id}"
   option_group_name    = "${module.db_option_group.db_option_group_id}"
 
   multi_az            = "${var.multi_az}"
   iops                = "${var.iops}"
   publicly_accessible = "${var.publicly_accessible}"
 
-  allow_major_version_upgrade = "${var.allow_major_version_upgrade}"
-  auto_minor_version_upgrade  = "${var.auto_minor_version_upgrade}"
-  apply_immediately           = "${var.apply_immediately}"
-  maintenance_window          = "${var.maintenance_window}"
-  skip_final_snapshot         = "${var.skip_final_snapshot}"
-  copy_tags_to_snapshot       = "${var.copy_tags_to_snapshot}"
-  final_snapshot_identifier   = "${local.common_name}-final-snapshot"
-
-  backup_retention_period = "${var.rds_backup_retention_period}"
-  backup_window           = "${var.backup_window}"
+  allow_major_version_upgrade     = "${var.allow_major_version_upgrade}"
+  auto_minor_version_upgrade      = "${var.auto_minor_version_upgrade}"
+  apply_immediately               = "${var.apply_immediately}"
+  maintenance_window              = "${var.maintenance_window}"
+  skip_final_snapshot             = "${var.skip_final_snapshot}"
+  copy_tags_to_snapshot           = "${var.copy_tags_to_snapshot}"
+  final_snapshot_identifier       = "${local.common_name}-final-snapshot"
+  enabled_cloudwatch_logs_exports = ["${var.enabled_cloudwatch_logs_exports}"]
+  backup_retention_period         = "${var.rds_backup_retention_period}"
+  backup_window                   = "${var.backup_window}"
 
   monitoring_interval  = "${var.rds_monitoring_interval}"
   monitoring_role_arn  = "${module.rds_monitoring_role.iamrole_arn}"

@@ -1,0 +1,59 @@
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "Allow access for Key Administrators",
+            "Effect": "Allow",
+            "Principal": {
+                "AWS": [
+                    "arn:aws:iam::${account_id}:role/terraform",
+                    "arn:aws:iam::${account_id}:role/admin"
+                ]
+            },
+            "Action": [
+                "kms:Create*",
+                "kms:Describe*",
+                "kms:Enable*",
+                "kms:List*",
+                "kms:Put*",
+                "kms:Update*",
+                "kms:Revoke*",
+                "kms:Disable*",
+                "kms:Get*",
+                "kms:Delete*",
+                "kms:TagResource",
+                "kms:UntagResource",
+                "kms:ScheduleKeyDeletion",
+                "kms:CancelKeyDeletion"
+            ],
+            "Resource": "*"
+        },
+        {
+            "Sid": "AllowCloudWatchUseOfKey",
+            "Effect": "Allow",
+            "Principal": {
+                "Service": "logs.${region}.amazonaws.com"
+            },
+            "Action": [
+                "kms:Encrypt*",
+                "kms:Decrypt*",
+                "kms:ReEncrypt*",
+                "kms:GenerateDataKey*",
+                "kms:Describe*"
+            ],
+            "Resource": "*"
+        },
+        {
+            "Sid": "Allow Describe Key access",
+            "Effect": "Allow",
+            "Principal": {
+                "Service": [
+                    "cloudtrail.amazonaws.com",
+                    "lambda.amazonaws.com"
+                ]
+            },
+            "Action": "kms:DescribeKey",
+            "Resource": "*"
+        }
+    ]
+}

@@ -2,12 +2,6 @@
 ### S3 bucket for backups
 #--------------------------------------------
 
-locals {
-  transition_days = "${var.alf_backups_config["transition_days"]}"
-  expiration_days = "${var.alf_backups_config["expiration_days"]}"
-}
-
-
 resource "aws_s3_bucket" "backups" {
   bucket = "${local.common_name}-alf-backups"
   acl    = "private"
@@ -42,4 +36,9 @@ resource "aws_s3_bucket" "backups" {
   }
 
   tags = "${merge(local.tags, map("Name", "${local.common_name}-alf-backups"))}"
+}
+
+resource "aws_s3_bucket_metric" "backups" {
+  bucket = "${aws_s3_bucket.backups.bucket}"
+  name   = "EntireBucket"
 }
