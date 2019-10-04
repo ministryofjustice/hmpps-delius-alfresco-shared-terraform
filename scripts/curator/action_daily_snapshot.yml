@@ -1,0 +1,34 @@
+---
+actions:
+  1:
+    action: snapshot
+    description: >-
+      Snapshot alfresco- prefixed indices.
+    options:
+      repository: ${ELK_S3_REPO_NAME}
+      name: ${DAILY_SNAPSHOT_NAME}
+      ignore_unavailable: False
+      include_global_state: True
+      partial: False
+      wait_for_completion: True
+      skip_repo_fs_check: False
+      max_wait: -1
+      disable_action: False
+    filters:
+    - filtertype: pattern
+      kind: regex
+      value: ".*$"
+  # 2:
+  #   action: delete_indices
+  #   description: >-
+  #     Delete all indices older than 365 days.
+  #   options:
+  #     ignore_empty_list: True
+  #     disable_action: True
+  #   filters:
+  #   - filtertype: age
+  #     source: name
+  #     direction: older
+  #     timestring: '%Y.%m.%d'
+  #     unit: days
+  #     unit_count: 365

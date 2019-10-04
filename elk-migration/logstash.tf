@@ -86,12 +86,6 @@ module "redis_loggroup" {
 ############################################
 # CREATE ECS TASK DEFINTIONS
 ############################################
-
-data "aws_ecs_task_definition" "logstash" {
-  task_definition = "${aws_ecs_task_definition.logstash.family}"
-  depends_on      = ["aws_ecs_task_definition.logstash"]
-}
-
 data "template_file" "logstash" {
   template = "${file("./task_definitions/logstash.conf")}"
 
@@ -118,16 +112,17 @@ resource "aws_ecs_task_definition" "logstash" {
 # CREATE ECS SERVICES
 ############################################
 
-module "mon_service" {
-  source                          = "git::https://github.com/ministryofjustice/hmpps-terraform-modules.git?ref=master//modules//ecs/ecs_service//withloadbalancer//elb"
-  servicename                     = "${local.common_name}-${local.service_type}"
-  clustername                     = "${module.ecs_cluster.ecs_cluster_id}"
-  ecs_service_role                = "${module.create-iam-ecs-role-int.iamrole_arn}"
-  task_definition_family          = "${aws_ecs_task_definition.logstash.family}"
-  task_definition_revision        = "${aws_ecs_task_definition.logstash.revision}"
-  current_task_definition_version = "${data.aws_ecs_task_definition.logstash.revision}"
-  service_desired_count           = "2"
-  elb_name                        = "${aws_elb.mon_lb.name}"
-  containername                   = "${local.service_type}"
-  containerport                   = "${local.logstash_containerports["logs"]}"
+resource "aws_ecs_service" "environment" {
+  name                               = "${local.common_name}-${local.service_type}"
+  cluster                            = "${module.ecs_cluster.ecs_cluster_id}"
+  task_definition                    = "${aws_ecs_task_definition.logstash.arn}"
+  desired_count                      = 2
+  iam_role                           = "${module.create-iam-ecs-role-int.iamrole_arn}"
+  deployment_minimum_healthy_percent = 50
+
+  load_balancer {
+    elb_name       = "${aws_elb.mon_lb.name}"
+    container_name = "${local.service_type}"
+    container_port = "${local.logstash_containerports["logs"]}"
+  }
 }

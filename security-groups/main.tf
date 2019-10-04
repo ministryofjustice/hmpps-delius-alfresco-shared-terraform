@@ -68,7 +68,7 @@ locals {
   }
 
   allowed_cidr_block = [
-    "${var.allowed_cidr_block}",
+    "${var.user_access_cidr_blocks}",
     "${data.terraform_remote_state.common.nat_gateway_ips}",
   ]
 }

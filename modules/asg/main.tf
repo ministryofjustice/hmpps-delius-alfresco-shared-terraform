@@ -199,6 +199,10 @@ resource "aws_launch_configuration" "environment" {
 # ############################################
 # # CREATE AUTO SCALING GROUP
 # ############################################
+resource "aws_placement_group" "environment" {
+  name     = "${local.common_prefix}-pg"
+  strategy = "spread"
+}
 
 data "null_data_source" "tags" {
   count = "${length(keys(local.tags))}"
@@ -211,14 +215,19 @@ data "null_data_source" "tags" {
 }
 
 resource "aws_autoscaling_group" "environment" {
-  name                 = "${local.common_prefix}-asg"
-  vpc_zone_identifier  = ["${local.subnet_ids}"]
-  min_size             = "${var.az_asg_min}"
-  max_size             = "${var.az_asg_max}"
-  desired_capacity     = "${var.az_asg_desired}"
-  launch_configuration = "${aws_launch_configuration.environment.name}"
-  load_balancers       = ["${module.create_app_elb.environment_elb_name}"]
-  health_check_grace_period  = "${var.health_check_grace_period}"
+  name                      = "${local.common_prefix}-asg"
+  vpc_zone_identifier       = ["${local.subnet_ids}"]
+  min_size                  = "${var.az_asg_min}"
+  max_size                  = "${var.az_asg_max}"
+  desired_capacity          = "${var.az_asg_desired}"
+  launch_configuration      = "${aws_launch_configuration.environment.name}"
+  health_check_grace_period = "${var.health_check_grace_period}"
+  placement_group           = "${aws_placement_group.environment.id}"
+  load_balancers            = ["${module.create_app_elb.environment_elb_name}"]
+  termination_policies      = ["${var.termination_policies}"]
+  health_check_type         = "${var.health_check_type}"
+  metrics_granularity       = "${var.metrics_granularity}"
+  enabled_metrics           = ["${var.enabled_metrics}"]
 
   lifecycle {
     create_before_destroy = true

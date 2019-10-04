@@ -95,12 +95,17 @@ data "null_data_source" "tags" {
 }
 
 resource "aws_autoscaling_group" "environment" {
-  name                 = "${local.common_name}"
-  vpc_zone_identifier  = ["${local.private_subnet_ids}"]
-  min_size             = "${var.elk_migration_props["min_size"]}"
-  max_size             = "${var.elk_migration_props["max_size"]}"
-  desired_capacity     = "${var.elk_migration_props["desired"]}"
-  launch_configuration = "${aws_launch_configuration.environment.name}"
+  name                      = "${local.common_name}"
+  vpc_zone_identifier       = ["${local.private_subnet_ids}"]
+  min_size                  = "${var.elk_migration_props["min_size"]}"
+  max_size                  = "${var.elk_migration_props["max_size"]}"
+  desired_capacity          = "${var.elk_migration_props["desired"]}"
+  launch_configuration      = "${aws_launch_configuration.environment.name}"
+  health_check_grace_period = 300
+  termination_policies      = ["${var.termination_policies}"]
+  health_check_type         = "${var.health_check_type}"
+  metrics_granularity       = "${var.metrics_granularity}"
+  enabled_metrics           = ["${var.enabled_metrics}"]
 
   lifecycle {
     create_before_destroy = true
