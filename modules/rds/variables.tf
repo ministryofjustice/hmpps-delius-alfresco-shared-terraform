@@ -7,6 +7,9 @@ variable "subnet_ids" {
   type = "list"
 }
 
+variable "region" {}
+
+
 variable "common_name" {}
 
 variable "environment_identifier" {}
@@ -130,7 +133,7 @@ variable "allow_major_version_upgrade" {
 
 variable "auto_minor_version_upgrade" {
   description = "Indicates that minor engine upgrades will be applied automatically to the DB instance during the maintenance window"
-  default     = true
+  default     = false
 }
 
 variable "apply_immediately" {
@@ -193,4 +196,19 @@ variable "credentials_ssm_path" {}
 
 variable "data_import" {
   default = "disabled"
+}
+
+variable "enabled_cloudwatch_logs_exports" {
+  type    = "list"
+  default = []
+}
+
+variable "cloudwatch_log_retention" {
+  default = 14
+}
+
+variable "logs_kms_arn" {}
+
+variable "parameters_restore" {
+  type = "list"
 }

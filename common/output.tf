@@ -195,3 +195,12 @@ output "app_hostnames" {
 output "nat_gateway_ips" {
   value = "${local.nat_gateways_ips}"
 }
+
+# KMS Key
+output "kms_arn" {
+  value = "${aws_kms_key.kms.arn}"
+}
+
+output "kms_id" {
+  value = "${aws_kms_key.kms.id}"
+}

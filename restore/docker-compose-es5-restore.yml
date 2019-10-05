@@ -19,17 +19,3 @@ services:
       - /opt/scripts:/opt/scripts
       - /opt/local:/opt/local
     entrypoint: [ "sh", "/opt/scripts/es5-restore.sh" ]
-    depends_on:
-      - elasticsearch
-  elasticsearch:
-    image: mojdigitalstudio/hmpps-elasticsearch-5:latest
-    volumes:
-      - /opt/local:/opt/local
-      - /opt/es_backup:/opt/es_backup
-    environment:
-      - ES_JVM_MEM=2g
-    ports:
-      - 9300:9300
-      - 9200:9200
-    ulimits:
-      nofile: 65536

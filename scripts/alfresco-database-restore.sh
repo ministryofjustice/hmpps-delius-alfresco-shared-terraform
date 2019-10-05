@@ -36,9 +36,8 @@ perform_db_restore ()
     echo "SQL file sync done"
 
     # db file to restore, assumes only one file found
-    ALFRESCO_SQL_FILE=$(find ${temp_database_files} -type f -name alfresco_*.sql)
+    ALFRESCO_SQL_FILE="${temp_database_files}/alfresco.sql"
     exit_on_error $? !!
-    echo "SQL file cleanup done"
 
     #Comment out below lines causing error on data restore
     # if [[ -f ${ALFRESCO_SQL_FILE} ]] ; then
@@ -46,6 +45,8 @@ perform_db_restore ()
     #     exit_on_error $? !!
     # fi
     #Prepare db before dataset restore
+    echo "SQL file cleanup done"
+    
     echo "Commencing Alfresco DB restore"
     POSTGRES_ROLE="postgres"
     ALFRESCO_ROLE="alfresco"

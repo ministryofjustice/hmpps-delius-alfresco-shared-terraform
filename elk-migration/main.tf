@@ -245,6 +245,7 @@ locals {
   protocol                     = "HTTP"
   image_url                    = "${var.elk_migration_props["image_url"]}"
   service_desired_count        = "${var.elk_migration_props["ecs_service_desired_count"]}"
+  logs_kms_arn                 = "${data.terraform_remote_state.common.kms_arn}"
 
   instance_security_groups = [
     "${data.terraform_remote_state.monitoring.instance_security_groups}",

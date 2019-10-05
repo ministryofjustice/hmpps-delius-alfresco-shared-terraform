@@ -1,32 +1,23 @@
 # ELB
 output "asg_elb_id" {
   description = "The name of the ELB"
-  value       = "${module.create_app_elb.environment_elb_id}"
+  value       = "${aws_lb.environment.id}"
 }
 
 output "asg_elb_name" {
   description = "The name of the ELB"
-  value       = "${module.create_app_elb.environment_elb_name}"
+  value       = "${aws_lb.environment.dns_name}"
 }
 
 output "asg_elb_dns_name" {
   description = "The DNS name of the ELB"
-  value       = "${module.create_app_elb.environment_elb_dns_name}"
+  value       = "${aws_lb.environment.dns_name}"
 }
 
-output "asg_elb_instances" {
-  description = "The list of instances in the ELB (if may be outdated, because instances are attached using elb_attachment resource)"
-  value       = ["${module.create_app_elb.environment_elb_instances}"]
-}
-
-output "asg_elb_source_security_group_id" {
-  description = "The ID of the security group that you can use as part of your inbound rules for your load balancer's back-end application instances"
-  value       = "${module.create_app_elb.environment_elb_source_security_group_id}"
-}
 
 output "asg_elb_zone_id" {
   description = "The canonical hosted zone ID of the ELB (to be used in a Route 53 Alias record)"
-  value       = "${module.create_app_elb.environment_elb_zone_id}"
+  value       = "${aws_lb.environment.zone_id}"
 }
 
 output "asg_elb_dns_cname" {

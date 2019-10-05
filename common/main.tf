@@ -15,6 +15,7 @@ provider "aws" {
 ### Getting current
 #-------------------------------------------------------------
 data "aws_region" "current" {}
+data "aws_caller_identity" "current" {}
 
 #-------------------------------------------------------------
 ### Getting the vpc details
@@ -148,6 +149,7 @@ locals {
   logstash_host_fqdn             = "${data.terraform_remote_state.monitor.internal_logstash_host}"
   ssh_deployer_key               = "${data.terraform_remote_state.vpc.ssh_deployer_key}"
   ssm_path                       = "/${var.environment_name}/${var.project_name}"
+  account_id                     = "${data.aws_caller_identity.current.account_id}"
 
   app_hostnames = {
     internal = "${var.alfresco_app_name}-int"

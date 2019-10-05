@@ -94,7 +94,9 @@
                 "kms:GenerateDataKey*",
                 "kms:DescribeKey"
             ],
-            "Resource": "${s3bucket_kms_arn}"
+            "Resource": [
+                "${s3bucket_kms_arn}"
+            ]
         },
         {
             "Sid": "AllowAttachmentOfPersistentResources",

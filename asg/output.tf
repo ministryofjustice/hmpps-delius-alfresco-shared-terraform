@@ -17,16 +17,6 @@ output "asg_elb_dns_name" {
   value       = "${module.asg.asg_elb_dns_name}"
 }
 
-output "asg_elb_instances" {
-  description = "The list of instances in the ELB (if may be outdated, because instances are attached using elb_attachment resource)"
-  value       = ["${module.asg.asg_elb_instances}"]
-}
-
-output "asg_elb_source_security_group_id" {
-  description = "The ID of the security group that you can use as part of your inbound rules for your load balancer's back-end application instances"
-  value       = "${module.asg.asg_elb_source_security_group_id}"
-}
-
 output "asg_elb_dns_cname" {
   value = "${module.asg.asg_elb_dns_cname}"
 }

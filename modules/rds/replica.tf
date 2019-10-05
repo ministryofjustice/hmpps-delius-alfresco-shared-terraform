@@ -4,6 +4,7 @@
 
 resource "aws_db_instance" "inst" {
   identifier                          = "${local.replica_common_name}"
+  enabled_cloudwatch_logs_exports     = ["${var.enabled_cloudwatch_logs_exports}"]
   engine                              = "${var.engine}"
   engine_version                      = "${var.engine_version}"
   instance_class                      = "${var.rds_instance_class}"
@@ -19,7 +20,7 @@ resource "aws_db_instance" "inst" {
   count                               = "${var.data_import == "enabled" ? 0 : 1}"
   skip_final_snapshot                 = "${var.data_import == "enabled" ? true : false}"
   final_snapshot_identifier           = "${local.replica_common_name}-replica"
-  parameter_group_name                = "${module.db_parameter_group.db_parameter_group_id}"
+  parameter_group_name                = "${module.parameter_group.db_parameter_group_id}"
   option_group_name                   = "${module.db_option_group.db_option_group_id}"
   multi_az                            = "${var.multi_az}"
   iops                                = "${var.iops}"
