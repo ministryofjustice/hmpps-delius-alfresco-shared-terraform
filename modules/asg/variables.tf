@@ -4,6 +4,9 @@ variable "environment" {}
 
 variable "region" {}
 
+variable "vpc_id" {}
+
+
 variable "alfresco_app_name" {}
 
 variable "private_subnet_ids" {
@@ -109,6 +112,10 @@ variable "health_check" {
 }
 
 variable "certificate_arn" {}
+
+variable "enable_deletion_protection" {
+  default = "false"
+}
 
 ##################### ASG SECTION #####################
 variable "service_desired_count" {}
@@ -226,3 +233,5 @@ variable "termination_policies" {
   type    = "list"
   default = ["OldestInstance", "OldestLaunchTemplate", "OldestLaunchConfiguration"]
 }
+
+variable "logs_kms_arn" {}

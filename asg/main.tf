@@ -194,6 +194,7 @@ locals {
   messaging_broker_url           = "${var.spg_messaging_broker_url}"
   logstash_host_fqdn             = "${data.terraform_remote_state.elk_migration.internal_logstash_host}"
   messaging_broker_password      = "${data.terraform_remote_state.common.credentials_ssm_path}/weblogic/spg-domain/remote_broker_password"
+  logs_kms_arn                   = "${data.terraform_remote_state.common.kms_arn}"
 
   self_signed_ssm = {
     ca_cert = "${data.terraform_remote_state.self_certs.self_signed_ca_ssm_cert_pem_name}"
@@ -220,6 +221,7 @@ module "asg" {
   environment_identifier       = "${local.environment_identifier}"
   common_name                  = "${local.common_name}"
   tags                         = "${local.tags}"
+  vpc_id                       = "${local.vpc_id}"
   private_subnet_ids           = "${local.private_subnet_map}"
   short_environment_identifier = "${local.short_environment_identifier}"
   instance_profile             = "${local.instance_profile}"
@@ -257,6 +259,7 @@ module "asg" {
   public_subnet_ids            = ["${local.public_subnet_ids}"]
   public_zone_id               = "${local.public_zone_id}"
   health_check_grace_period    = "${var.alfresco_asg_props["health_check_grace_period"]}"
+  logs_kms_arn                 = "${local.logs_kms_arn}"
 
   listener = [
     {
