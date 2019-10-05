@@ -36,50 +36,6 @@ locals {
   public_zone_id           = "${var.public_zone_id}"
 }
 
-############################################
-# CREATE LB FOR NGINX
-############################################
-
-# elb
-module "create_app_elb" {
-  source          = "../elb/create_elb_with_https"
-  name            = "${local.common_prefix}-pub"
-  subnets         = ["${local.public_subnet_ids}"]
-  security_groups = ["${local.lb_security_groups}"]
-  internal        = "${var.internal}"
-
-  cross_zone_load_balancing   = "${var.cross_zone_load_balancing}"
-  idle_timeout                = "${var.idle_timeout}"
-  connection_draining         = "${var.connection_draining}"
-  connection_draining_timeout = "${var.connection_draining_timeout}"
-  bucket                      = "${local.access_logs_bucket}"
-  bucket_prefix               = "${local.common_prefix}"
-  interval                    = 60
-  ssl_certificate_id          = "${local.certificate_arn}"
-  instance_port               = 80
-  instance_protocol           = "http"
-  lb_port                     = 80
-  lb_port_https               = 443
-  lb_protocol                 = "http"
-  lb_protocol_https           = "https"
-  health_check                = ["${var.health_check}"]
-  tags                        = "${var.tags}"
-}
-
-resource "aws_app_cookie_stickiness_policy" "alfresco_app_cookie_policy" {
-  name          = "${local.common_prefix}-app-cookie-policy"
-  load_balancer = "${module.create_app_elb.environment_elb_name}"
-  lb_port       = 80
-  cookie_name   = "JSESSIONID"
-}
-
-resource "aws_app_cookie_stickiness_policy" "alfresco_app_cookie_policy_https" {
-  name          = "${local.common_prefix}-app-cookie-policy-https"
-  load_balancer = "${module.create_app_elb.environment_elb_name}"
-  lb_port       = 443
-  cookie_name   = "JSESSIONID"
-}
-
 ###############################################
 # CloudWatch
 ###############################################

@@ -9,13 +9,13 @@ variable "remote_state_bucket_name" {
 variable "alfresco_asg_props" {
   type = "map"
   default = {
-    asg_desired               = 1
-    asg_min                   = 1
-    asg_max                   = 2
-    asg_instance_type         = "m4.xlarge"
-    asg_ami                   = "ami-0d891eb6bea9cfa8c"
+    asg_desired       = 1
+    asg_min           = 1
+    asg_max           = 2
+    asg_instance_type = "m4.xlarge"
+    # asg_ami                   = "ami-0daf390b7cd42be97"
     ebs_volume_size           = 512
-    health_check_grace_period = 900
+    health_check_grace_period = 600
   }
 }
 

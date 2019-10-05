@@ -235,3 +235,7 @@ variable "termination_policies" {
 }
 
 variable "logs_kms_arn" {}
+
+variable "cookie_duration" {
+  default = "3600"
+}

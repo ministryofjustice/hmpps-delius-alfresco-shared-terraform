@@ -68,18 +68,18 @@ module "db_subnet_group" {
 ############################################
 # CREATE PARAMETER GROUP
 ############################################
-module "db_parameter_group" {
-  source = "git::https://github.com/ministryofjustice/hmpps-terraform-modules.git?ref=pre-shared-vpc//modules//rds//db_parameter_group"
+# module "db_parameter_group" {
+#   source = "git::https://github.com/ministryofjustice/hmpps-terraform-modules.git?ref=pre-shared-vpc//modules//rds//db_parameter_group"
 
-  create      = "${var.create_db_parameter_group}"
-  identifier  = "${local.common_name}"
-  name_prefix = "${local.common_name}-"
-  family      = "${var.family}"
+#   create      = "${var.create_db_parameter_group}"
+#   identifier  = "${local.common_name}"
+#   name_prefix = "${local.common_name}-"
+#   family      = "${var.family}"
 
-  parameters = ["${var.parameters_restore}"]
+#   parameters = ["${var.parameters_restore}"]
 
-  tags = "${local.tags}"
-}
+#   tags = "${local.tags}"
+# }
 
 module "parameter_group" {
   source = "git::https://github.com/ministryofjustice/hmpps-terraform-modules.git?ref=pre-shared-vpc//modules//rds//db_parameter_group"

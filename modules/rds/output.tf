@@ -27,11 +27,11 @@ output "rds_db_subnet_group_arn" {
 
 # PARAMETER GROUP
 output "rds_parameter_group_id" {
-  value = "${module.db_parameter_group.db_parameter_group_id}"
+  value = "${module.parameter_group.db_parameter_group_id}"
 }
 
 output "rds_parameter_group_arn" {
-  value = "${module.db_parameter_group.db_parameter_group_arn}"
+  value = "${module.parameter_group.db_parameter_group_arn}"
 }
 
 # DB OPTIONS GROUP

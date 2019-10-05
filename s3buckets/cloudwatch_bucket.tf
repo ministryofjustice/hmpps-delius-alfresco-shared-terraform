@@ -30,8 +30,7 @@ resource "aws_s3_bucket" "logs" {
     }
 
     expiration {
-      days                         = "${local.expiration_days}"
-      expired_object_delete_marker = true
+      days = "${local.expiration_days}"
     }
 
     noncurrent_version_transition {

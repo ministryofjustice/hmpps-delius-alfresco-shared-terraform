@@ -72,6 +72,7 @@ module "logstash_loggroup" {
   log_group_path           = "${local.common_name}"
   loggroupname             = "logstash"
   cloudwatch_log_retention = "${var.cloudwatch_log_retention}"
+  kms_key_id               = "${local.logs_kms_arn}"
   tags                     = "${local.tags}"
 }
 

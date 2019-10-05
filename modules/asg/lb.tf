@@ -54,16 +54,21 @@ resource "aws_lb_listener" "http_listener" {
   load_balancer_arn = "${aws_lb.environment.arn}"
   port              = "${local.http_port}"
   protocol          = "${local.http_protocol}"
-
   default_action {
-    type = "redirect"
-
-    redirect {
-      port        = "443"
-      protocol    = "HTTPS"
-      status_code = "HTTP_301"
-    }
+    target_group_arn = "${aws_lb_target_group.environment.arn}"
+    type             = "forward"
   }
+
+  #   default_action {
+  #     type = "redirect"
+
+  #     redirect {
+  #       port        = "443"
+  #       protocol    = "HTTPS"
+  #       status_code = "HTTP_301"
+  #     }
+  #   }
+
 }
 
 module "https_listener" {
@@ -107,7 +112,7 @@ resource "aws_lb_target_group" "environment" {
 
   stickiness {
     type            = "lb_cookie"
-    cookie_duration = 30
+    cookie_duration = "${var.cookie_duration}"
     enabled         = true
   }
 
