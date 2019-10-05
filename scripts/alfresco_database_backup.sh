@@ -9,6 +9,7 @@ then
 fi
 
 PREFIX_DATE=$(date +%F)
+aws configure set default.s3.max_concurrent_requests 500
 
 case ${JOB_TYPE} in
   db-backup)

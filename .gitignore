@@ -5,7 +5,6 @@
 
 .idea/
 .gradle/
-build/
 
 # CMake
 cmake-build-debug/
@@ -45,7 +44,6 @@ fabric.properties
 # Package Files #
 *.war
 *.ear
-*.zip
 *.tar.gz
 *.rar
 

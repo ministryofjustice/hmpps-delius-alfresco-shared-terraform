@@ -11,7 +11,7 @@ resource "aws_s3_bucket" "elk_backups" {
   }
 
   lifecycle {
-    prevent_destroy = false
+    prevent_destroy = true
   }
 
   server_side_encryption_configuration {
@@ -30,4 +30,9 @@ resource "aws_s3_bucket" "elk_backups" {
   }
 
   tags = "${merge(local.tags, map("Name", "${local.common_name}-s3-bucket"))}"
+}
+
+resource "aws_s3_bucket_metric" "elk_backups" {
+  bucket = "${aws_s3_bucket.elk_backups.bucket}"
+  name   = "EntireBucket"
 }

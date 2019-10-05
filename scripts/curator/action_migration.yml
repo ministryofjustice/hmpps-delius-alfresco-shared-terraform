@@ -1,16 +1,6 @@
 ---
 actions:
   1:
-    action: delete_indices
-    description: >-
-      Delete all indices.
-    options:
-      ignore_empty_list: True
-    filters:
-    - filtertype: pattern
-      kind: regex
-      value: ".*$"
-  2:
     action: restore
     description: >-
       Restore all indices in the most recent snapshot with state SUCCESS.
@@ -29,7 +19,7 @@ actions:
       extra_settings:
       wait_for_completion: False
       skip_repo_fs_check: True
-      disable_action: True
+      disable_action: False
     filters:
     - filtertype: state
       state: SUCCESS

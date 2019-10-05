@@ -30,10 +30,16 @@ then
   echo "Creating repos"
   python ${SCRIPT_DIR}/create_s3_local_repo.py && echo Success || exit $?
 
+  echo "Running curator close indices"
+  curator --config ${CURATOR_FILES_DIR}/config.yml ${CURATOR_FILES_DIR}/action_close.yml && echo Success || exit $?
+
   echo "Running curator restore"
   curator --config ${CURATOR_FILES_DIR}/config.yml ${CURATOR_FILES_DIR}/action_migration.yml && echo Success || exit $?
   # checking cluster is green
   python ${SCRIPT_DIR}/check_cluster_health.py && echo Success || exit $?
+
+  echo "Running curator open indices"
+  curator --config ${CURATOR_FILES_DIR}/config.yml ${CURATOR_FILES_DIR}/action_open.yml && echo Success || exit $?
   echo "done"
   
   # reindex indices

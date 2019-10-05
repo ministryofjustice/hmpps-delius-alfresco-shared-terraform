@@ -27,11 +27,11 @@ output "rds_db_subnet_group_arn" {
 
 # PARAMETER GROUP
 output "rds_parameter_group_id" {
-  value = "${module.db_parameter_group.db_parameter_group_id}"
+  value = "${module.parameter_group.db_parameter_group_id}"
 }
 
 output "rds_parameter_group_arn" {
-  value = "${module.db_parameter_group.db_parameter_group_arn}"
+  value = "${module.parameter_group.db_parameter_group_arn}"
 }
 
 # DB OPTIONS GROUP
@@ -123,4 +123,9 @@ output "rds_creds" {
     db_username_ssm_param = "${data.aws_ssm_parameter.db_user.name}"
     db_password_ssm_param = "${data.aws_ssm_parameter.db_password.name}"
   }
+}
+
+# logs
+output "log_groups" {
+  value = "${aws_cloudwatch_log_group.log_exports.*.name}"
 }

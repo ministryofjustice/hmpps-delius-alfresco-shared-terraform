@@ -125,7 +125,7 @@ case ${ACTION_TYPE} in
     rm -rf ${inspec_creds_file} ${inspec_profile_files_path}/output*.json
     ;;
   docker-output)
-    echo "Running docker apply action"
+    echo "Running docker output action"
     terragrunt output
     exit_on_error $? !!
     ;;

@@ -48,3 +48,11 @@ output "elk_backups_bucket_name" {
 output "elk_backups_bucket_arn" {
   value = "${aws_s3_bucket.elk_backups.arn}"
 }
+
+output "cloudwatch_archive_bucket_name" {
+  value = "${aws_s3_bucket.logs.id}"
+}
+
+output "cloudwatch_archive_bucket_arn" {
+  value = "${aws_s3_bucket.logs.arn}"
+}

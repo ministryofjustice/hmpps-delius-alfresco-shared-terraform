@@ -1,0 +1,59 @@
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "AccessToLogGroup",
+            "Effect": "Allow",
+            "Action": [
+                "logs:CreateExportTask",
+                "logs:DescribeExportTasks",
+                "logs:CreateLogStream",
+                "logs:DescribeLogGroups",
+                "logs:CreateLogGroup",
+                "logs:PutLogEvents"
+            ],
+            "Resource": [
+                "${alf_group_arn}",
+                "${elk_group_arn}"
+            ]
+        },
+        {
+            "Sid": "AccessToLogGroups",
+            "Effect": "Allow",
+            "Action": [
+                "logs:CreateExportTask",
+                "logs:DescribeExportTasks",
+                "logs:DescribeLogGroups"
+            ],
+            "Resource": "arn:aws:logs:*:*:*"
+        },
+        {
+            "Sid": "ListAllBuckets",
+            "Effect": "Allow",
+            "Action": [
+                "s3:ListAllMyBuckets",
+                "s3:GetBucketLocation"
+            ],
+            "Resource": [
+                "arn:aws:s3:::*"
+            ]
+        },
+        {
+            "Sid": "allowAccessToBackupBucket",
+            "Effect": "Allow",
+            "Action": [
+                "s3:GetObject",
+                "s3:ListBucket",
+                "S3:PutObject",
+                "s3:DeleteObject",
+                "s3:AbortMultipartUpload",
+                "s3:ListMultipartUploadParts",
+                "s3:PutBucketPolicy"
+            ],
+            "Resource": [
+                "${logs_bucket_arn}",
+                "${logs_bucket_arn}/archived_logs/*"
+            ]
+        }
+    ]
+}

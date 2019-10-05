@@ -42,3 +42,7 @@ variable "alf_rds_migration_parameters" {
   type    = "list"
   default = []
 }
+
+variable "cloudwatch_log_retention" {
+  default = 14
+}

@@ -7,7 +7,7 @@ resource "aws_s3_bucket" "environment" {
   }
 
   lifecycle {
-    prevent_destroy = false
+    prevent_destroy = true
   }
 
   logging {
@@ -42,4 +42,9 @@ resource "aws_s3_bucket" "environment" {
     }
   }
   tags = "${merge(var.tags, map("Name", "${var.s3_bucket_name}-s3-bucket"))}"
+}
+
+resource "aws_s3_bucket_metric" "environment" {
+  bucket = "${aws_s3_bucket.environment.bucket}"
+  name   = "EntireBucket"
 }
