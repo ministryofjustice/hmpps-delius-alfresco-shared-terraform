@@ -60,3 +60,7 @@ output "asg_latest_ami" {
 output "common_name" {
   value = "${local.common_name}"
 }
+
+output "message_broker_url" {
+  value = "${local.messaging_broker_url}"
+}
