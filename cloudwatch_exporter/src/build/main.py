@@ -5,6 +5,7 @@ from datetime import datetime, timedelta
 import logging
 import boto3
 import os
+import json
 import traceback
 import time
 import math
@@ -13,12 +14,10 @@ import math
 # ARCHIVE_NUMBER_OF_DAYS = number of days to archive
 # AWS_REGION = aws region
 # ARCHIVE_BUCKET = s3 bucket to archive/export logs to
-# LOG_SEARCH_FILTER = filter log groups based on log group name
 # WAIT_INTERVAL = interval to wait between task submission, default is 10 seconds
 
 region = os.environ.get('ARCHIVE_REGION', 'eu-west-2')
 dest_bucket = os.environ.get('ARCHIVE_BUCKET')
-log_search_filter = os.environ.get('LOG_SEARCH_FILTER', '-alf')
 wait_interval = int(os.environ.get('WAIT_INTERVAL', 10))
 
 # boto client
@@ -51,7 +50,7 @@ def log_timer(func):
 
 # get log groups
 @log_timer
-def group_names():
+def group_names(group_name):
     try:
         groupnames = []
         paginator = logs.get_paginator('describe_log_groups')
@@ -59,31 +58,56 @@ def group_names():
         for response in response_iterator:
             listOfResponse=response["logGroups"]
             for result in listOfResponse:
-                if log_search_filter in result["logGroupName"]:
+                if group_name in result["logGroupName"]:
                     groupnames.append(result["logGroupName"])
-        logger.info("Cloudwatch log-groups found: {}".format(groupnames))
+        logger.info("Log-groups found: {}".format(groupnames))
     except:
         logger.error("uncaught exception: %s", traceback.format_exc())
         exit(1)
     return groupnames
 
+@log_timer
+def group_handler():
+    log_groups = []
+
+    # load json file
+    with open('./data.json') as json_file:
+        data = json.load(json_file)
+
+    for grp in data['search_groups']:
+        logger.info("Searching for log groups matching pattern - {}".format(grp))
+        for log in group_names(grp):
+            if log not in log_groups:
+                log_groups.append(log)
+                logger.info("Adding log groups matching pattern - {}".format(log))
+    return log_groups
+         
 # Main function
 @log_timer
 def lambda_handler(event, context):
     nDays = int(os.environ.get('ARCHIVE_NUMBER_OF_DAYS', 1))
-    deletionDate = datetime.now() - timedelta(days=nDays)
+    now = datetime.now()
+    deletionDate = now - timedelta(days=nDays)
     logger.info('Deletion date is {}'.format(deletionDate))
     startOfDay = deletionDate.replace(hour=0, minute=0, second=0, microsecond=0)
     endOfDay = deletionDate.replace(hour=23, minute=59, second=59, microsecond=999999)
     fromTime=math.floor(startOfDay.timestamp() * 1000)
     toTime=math.floor(endOfDay.timestamp() * 1000)
-    group_name = group_names()
+    date_prefix = "{}/{}/{}".format(
+        now.year,
+        now.month,
+        now.day
+    )
+
+    # get groups
+    group_name = group_handler()
+
     if not isinstance(group_name, list):
         logger.error('group_name is not a valid list object')
         exit(1)
         
     if group_name == []:
-        logger.warning('No matching groups found, please update the environment variable LOG_SEARCH_FILTER'.format(log_search_filter))
+        logger.warning('No matching groups found, please update the context: {}'.format(context))
         exit(0)
     
     for group in group_name:
@@ -98,7 +122,10 @@ def lambda_handler(event, context):
                 fromTime=math.floor(startOfDay.timestamp() * 1000), 
                 to=math.floor(endOfDay.timestamp() * 1000), 
                 destination=dest_bucket,
-                destinationPrefix='archived_logs/{}'.format(destination_prefix)
+                destinationPrefix='archived_logs/{}/{}'.format(
+                    date_prefix,
+                    destination_prefix
+                )
             )
             logger.info(response)
             time.sleep(wait_interval)

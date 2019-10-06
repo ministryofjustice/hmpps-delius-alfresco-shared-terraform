@@ -129,3 +129,7 @@ output "rds_creds" {
 output "log_groups" {
   value = "${aws_cloudwatch_log_group.log_exports.*.name}"
 }
+
+output "aws_logs_prefix" {
+  value = "${local.aws_logs_prefix}"
+}
