@@ -42,3 +42,8 @@ output "migration_server_internal_url" {
 output "internal_logstash_host" {
   value = "${aws_route53_record.internal_logstash_dns.fqdn}"
 }
+
+# kibana
+output "kibana_host" {
+  value = "${aws_route53_record.kibana_migration_dns.fqdn}"
+}

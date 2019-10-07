@@ -90,19 +90,6 @@ data "terraform_remote_state" "security-groups" {
 }
 
 #-------------------------------------------------------------
-### Getting the asg details
-#-------------------------------------------------------------
-data "terraform_remote_state" "asg" {
-  backend = "s3"
-
-  config {
-    bucket = "${var.remote_state_bucket_name}"
-    key    = "alfresco/asg/terraform.tfstate"
-    region = "${var.region}"
-  }
-}
-
-#-------------------------------------------------------------
 ### Getting the dynamodb details
 #-------------------------------------------------------------
 data "terraform_remote_state" "dynamodb" {
@@ -222,7 +209,6 @@ locals {
   elk_bucket_name              = "${data.terraform_remote_state.s3bucket.elk_backups_bucket_name}"
   elk_bucket_arn               = "${data.terraform_remote_state.s3bucket.elk_backups_bucket_arn}"
   elk_lb_dns                   = "${data.terraform_remote_state.monitoring.monitoring_server_internal_url}"
-  asg_prefix                   = "${data.terraform_remote_state.asg.asg_autoscale_name}"
   dynamodb_table_name          = "${data.terraform_remote_state.dynamodb.dynamodb_table_name}"
   storage_s3bucket             = "${data.terraform_remote_state.s3bucket.s3bucket}"
   backups_bucket               = "${data.terraform_remote_state.s3bucket.alf_backups_bucket_name}"
@@ -254,4 +240,5 @@ locals {
   lb_security_groups = [
     "${data.terraform_remote_state.security-groups.security_groups_map["mon_jenkins"]}",
   ]
+  external_lb_sgs = ["${data.terraform_remote_state.security-groups.security_groups_sg_external_lb_id}"]
 }

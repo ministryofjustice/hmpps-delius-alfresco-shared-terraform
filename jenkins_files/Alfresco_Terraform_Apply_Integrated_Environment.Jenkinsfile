@@ -127,6 +127,14 @@ pipeline {
         }
 
         stage('Alfresco | Common') { steps { script { plan_apply_submodule(environment_name, project.alfresco, 'common')}}}
+        stage('Alfresco | AmazonMQ') {
+            when {
+                expression { "${environment_name}" ==~ /(alfresco-dev|alfresco-sbx)/ }
+            }
+            steps {
+                script { do_terraform(environment_name, project.alfresco, 'amazonmq')}
+            }
+        }
         stage('Alfresco | S3 Buckets') { steps { script { do_terraform(environment_name, project.alfresco, 's3buckets')}}}
         stage('Alfresco | Certs') { steps { script { do_terraform(environment_name, project.alfresco, 'certs')}}}
         stage('Alfresco | IAM') { steps { script { do_terraform(environment_name, project.alfresco, 'iam')}}}
