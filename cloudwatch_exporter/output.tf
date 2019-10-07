@@ -12,27 +12,15 @@ output "iam_role_arn" {
 }
 
 # logs
-output "alf_log_group" {
-  value = "${aws_cloudwatch_log_group.alf_lambda.name}"
+output "log_group" {
+  value = "${aws_cloudwatch_log_group.lambda.name}"
 }
 
-output "elk_log_group" {
-  value = "${aws_cloudwatch_log_group.elk_lambda.name}"
-}
 # lambda
-output "alf_lambda_arn" {
-  value = "${aws_lambda_function.alf_lambda.arn}"
+output "lambda_arn" {
+  value = "${aws_lambda_function.lambda.arn}"
 }
 
-output "alf_lambda_last_modified" {
-  value = "${aws_lambda_function.alf_lambda.last_modified}"
-}
-
-
-output "elk_lambda_arn" {
-  value = "${aws_lambda_function.elk_lambda.arn}"
-}
-
-output "elk_lambda_last_modified" {
-  value = "${aws_lambda_function.elk_lambda.last_modified}"
+output "lambda_last_modified" {
+  value = "${aws_lambda_function.lambda.last_modified}"
 }

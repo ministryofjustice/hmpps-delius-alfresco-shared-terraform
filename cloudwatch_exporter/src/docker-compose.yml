@@ -7,5 +7,5 @@ services:
       dockerfile: Dockerfile
     image: lambda_builder:local
     volumes:
-      - ${PWD}/src/build:/opt/data/build
+      - ${PWD}/cloudwatch_exporter/src/build:/opt/data/build
     entrypoint: [ "sh", "/opt/data/build/build.sh" ]

@@ -116,3 +116,7 @@ output "rds_creds" {
 output "log_groups" {
   value = "${module.rds.log_groups}"
 }
+
+output "aws_logs_prefix" {
+  value = "${module.rds.aws_logs_prefix}"
+}

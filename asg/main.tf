@@ -110,7 +110,7 @@ data "terraform_remote_state" "amazonmq" {
 
   config {
     bucket = "${var.remote_state_bucket_name}"
-    key    = "spg/amazonmq/terraform.tfstate"
+    key    = "${var.spg_messaging_broker_url_src == "data" ? "spg" : "alfresco"}/amazonmq/terraform.tfstate"
     region = "${var.region}"
   }
 }
