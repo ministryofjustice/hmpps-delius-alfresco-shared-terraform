@@ -7,4 +7,5 @@ cd package
 zip -r9 ${build_dir}/function.zip . && echo Success || exit $?
 cd ${build_dir}
 zip -g function.zip main.py && echo Success || exit $?
+zip -g function.zip data.json && echo Success || exit $?
 echo "build complete"

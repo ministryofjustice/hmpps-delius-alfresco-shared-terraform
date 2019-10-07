@@ -6,6 +6,33 @@ locals {
   kibana_image_url      = "${var.elk_migration_props["kibana_image_url"]}"
 }
 
+# lb
+# alb
+module "kibana_app_alb" {
+  source          = "git::https://github.com/ministryofjustice/hmpps-terraform-modules.git?ref=master//modules//loadbalancer//alb/create_lb"
+  lb_name         = "${local.common_name}-kib"
+  subnet_ids      = ["${local.private_subnet_ids}"]
+  security_groups = ["${local.external_lb_sgs}"]
+  internal        = true
+  s3_bucket_name  = "${local.access_logs_bucket}"
+  tags            = "${local.tags}"
+}
+
+# ############################################
+# ROUTE53
+# ############################################
+resource "aws_route53_record" "kibana_migration_dns" {
+  name    = "${local.application}_kibana.${local.external_domain}"
+  type    = "A"
+  zone_id = "${local.public_zone_id}"
+
+  alias {
+    name                   = "${module.create_app_alb.lb_dns_name}"
+    zone_id                = "${module.create_app_alb.lb_zone_id}"
+    evaluate_target_health = false
+  }
+}
+
 # target group
 module "kibana_target_grp" {
   source              = "git::https://github.com/ministryofjustice/hmpps-terraform-modules.git?ref=master//modules//loadbalancer//alb/targetgroup"
@@ -28,7 +55,7 @@ module "kibana_target_grp" {
 # listener
 module "kibana_alb_listener" {
   source           = "git::https://github.com/ministryofjustice/hmpps-terraform-modules.git?ref=master//modules//loadbalancer//alb/create_listener_with_https"
-  lb_arn           = "${module.create_app_alb.lb_arn}"
+  lb_arn           = "${module.kibana_app_alb.lb_arn}"
   lb_port          = 443
   lb_protocol      = "HTTPS"
   target_group_arn = "${module.kibana_target_grp.target_group_arn}"

@@ -13,8 +13,7 @@
                 "logs:PutLogEvents"
             ],
             "Resource": [
-                "${alf_group_arn}",
-                "${elk_group_arn}"
+                "${alf_group_arn}"
             ]
         },
         {

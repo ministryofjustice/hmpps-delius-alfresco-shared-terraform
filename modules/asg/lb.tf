@@ -54,20 +54,20 @@ resource "aws_lb_listener" "http_listener" {
   load_balancer_arn = "${aws_lb.environment.arn}"
   port              = "${local.http_port}"
   protocol          = "${local.http_protocol}"
+  # default_action {
+  #   target_group_arn = "${aws_lb_target_group.environment.arn}"
+  #   type             = "forward"
+  # }
+
   default_action {
-    target_group_arn = "${aws_lb_target_group.environment.arn}"
-    type             = "forward"
+    type = "redirect"
+
+    redirect {
+      port        = "443"
+      protocol    = "HTTPS"
+      status_code = "HTTP_301"
+    }
   }
-
-  #   default_action {
-  #     type = "redirect"
-
-  #     redirect {
-  #       port        = "443"
-  #       protocol    = "HTTPS"
-  #       status_code = "HTTP_301"
-  #     }
-  #   }
 
 }
 

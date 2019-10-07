@@ -49,6 +49,7 @@ cat << EOF > ~/bootstrap_vars.yml
 - device_name: "${ebs_device}"
 - logstash_host: "${logstash_host_fqdn}"
 - monitoring_host: "${monitoring_server_url}"
+- internal_domain: "${private_domain}"
 - bucket_name: "${bucket_name}" 
 - bucket_encrypt_type: "${bucket_encrypt_type}"
 - bucket_key_id: "${bucket_key_id}"

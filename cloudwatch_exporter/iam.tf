@@ -7,8 +7,7 @@ data "template_file" "lambda" {
 
   vars {
     logs_bucket_arn = "${local.logs_bucket_arn}"
-    alf_group_arn   = "${aws_cloudwatch_log_group.alf_lambda.arn}"
-    elk_group_arn   = "${aws_cloudwatch_log_group.elk_lambda.arn}"
+    alf_group_arn   = "${aws_cloudwatch_log_group.lambda.arn}"
   }
 }
 

@@ -115,6 +115,7 @@ resource "aws_autoscaling_group" "environment" {
   health_check_grace_period = "${var.health_check_grace_period}"
   placement_group           = "${aws_placement_group.environment.id}"
   target_group_arns         = ["${aws_lb_target_group.environment.arn}"]
+  load_balancers            = []
   termination_policies      = ["${var.termination_policies}"]
   health_check_type         = "${var.health_check_type}"
   metrics_granularity       = "${var.metrics_granularity}"
