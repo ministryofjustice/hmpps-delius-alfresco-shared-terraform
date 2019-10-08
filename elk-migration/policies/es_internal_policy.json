@@ -108,7 +108,10 @@
                 "kms:GenerateDataKey*",
                 "kms:DescribeKey"
             ],
-            "Resource": "${elk_kms_arn}"
+            "Resource": [
+                "${elk_kms_arn}",
+                "${storage_kms_arn}"
+            ]
         }
     ]
 }

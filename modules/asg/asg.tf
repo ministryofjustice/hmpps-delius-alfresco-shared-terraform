@@ -39,6 +39,8 @@ data "template_file" "user_data" {
     ssm_get_command           = "aws --region ${var.region} ssm get-parameters --names"
     messaging_broker_url      = "${var.messaging_broker_url}"
     logstash_host_fqdn        = "${var.logstash_host_fqdn}"
+    kibana_host_fqdn          = "${var.kibana_host}"
+    elasitcsearch_host_fqdn   = "${var.elasitcsearch_host}"
     messaging_broker_password = "${local.messaging_broker_password}"
 
     #s3 config data
