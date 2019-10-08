@@ -35,6 +35,8 @@ def apply_submodule(env_name, git_project_dir, submodule_name) {
         cd "${git_project_dir}"
         CURRENT_DIR=\$(pwd)
         python docker-run.py --env ${env_name} --component ${submodule_name} --action apply
+        source \${CURRENT_DIR}/${submodule_name}_plan_ret
+        if [ "\$exitcode" != '0' ]; then exit \$exitcode; else echo "apply passed"; fi
         set -e
         """
     }
@@ -49,10 +51,12 @@ def plan_apply_submodule(env_name, git_project_dir, submodule_name) {
         cd "${git_project_dir}"
         CURRENT_DIR=\$(pwd)
         python docker-run.py --env ${env_name} --component ${submodule_name} --action plan
-        python docker-run.py --env ${env_name} --component ${submodule_name} --action apply
         source \${CURRENT_DIR}/${submodule_name}_plan_ret
         echo "\$exitcode" > plan_ret
         if [ "\$exitcode" == '1' ]; then exit 1; else exit 0; fi
+        python docker-run.py --env ${env_name} --component ${submodule_name} --action apply
+        source \${CURRENT_DIR}/${submodule_name}_plan_ret
+        if [ "\$exitcode" != '0' ]; then exit \$exitcode; else echo "apply passed"; fi
         set -e
         """
     }
@@ -109,9 +113,10 @@ def debug_env() {
 }
 
 pipeline {
-
     agent { label "jenkins_slave" }
-
+    options {
+        ansiColor('xterm')
+    }
     stages {
 
         stage('setup') {
@@ -119,7 +124,7 @@ pipeline {
                 slackSend(message: "Build started on \"${environment_name}\" - ${env.JOB_NAME} ${env.BUILD_NUMBER} (<${env.BUILD_URL.replace(':8080','')}|Open>)")
 
                 dir( project.alfresco ) {
-                  git url: 'git@github.com:ministryofjustice/' + project.alfresco, branch: 'master', credentialsId: 'f44bc5f1-30bd-4ab9-ad61-cc32caf1562a'
+                  git url: 'git@github.com:ministryofjustice/' + project.alfresco, branch: 'multibranch', credentialsId: 'f44bc5f1-30bd-4ab9-ad61-cc32caf1562a'
                 }
 
                 prepare_env()
@@ -138,7 +143,7 @@ pipeline {
         stage('Alfresco | S3 Buckets') { steps { script { do_terraform(environment_name, project.alfresco, 's3buckets')}}}
         stage('Alfresco | Certs') { steps { script { do_terraform(environment_name, project.alfresco, 'certs')}}}
         stage('Alfresco | IAM') { steps { script { do_terraform(environment_name, project.alfresco, 'iam')}}}
-        stage('Alfresco | Security Groups') { steps { script { plan_apply_submodule(environment_name, project.alfresco, 'security-groups')}}}
+        stage('Alfresco | Security Groups') { steps { script { do_terraform(environment_name, project.alfresco, 'security-groups')}}}
         stage('Alfresco | EFS') { steps { script { do_terraform(environment_name, project.alfresco, 'efs')}}}
         stage('Alfresco | RDS') { steps { script { do_terraform(environment_name, project.alfresco, 'rds')}}}
         stage('Alfresco | ElastiCache') { steps { script { do_terraform(environment_name, project.alfresco, 'elasticache-memcached')}}}
