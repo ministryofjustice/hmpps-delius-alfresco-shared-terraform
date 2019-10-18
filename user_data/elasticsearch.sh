@@ -161,11 +161,13 @@ chmod -R 770 ${es_home_dir} ${efs_mount_path}
 
 echo "vm.max_map_count=262144" > /etc/sysctl.d/elasticsearch.conf
 
-sysctl -p
+sudo sysctl -p
 
-ulimit -n 65536
-ulimit -u 2048
-ulimit -l unlimited
+echo "# allow user 'elasticsearch' mlockall
+elasticsearch soft memlock unlimited
+elasticsearch hard memlock unlimited
+elasticsearch  -  nofile  65536" | sudo tee /etc/security/limits.d/elasticsearch.conf
+
 
 service docker restart
 

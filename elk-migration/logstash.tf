@@ -53,7 +53,7 @@ resource "aws_elb" "mon_lb" {
 # logstash
 resource "aws_route53_record" "internal_logstash_dns" {
   zone_id = "${local.private_zone_id}"
-  name    = "migration_logstash.${local.internal_domain}"
+  name    = "${local.logstash_host_fqdn}"
   type    = "A"
 
   alias {
@@ -95,7 +95,8 @@ data "template_file" "logstash" {
     redis_loggroup     = "${module.redis_loggroup.loggroup_name}"
     log_group_region   = "${local.region}"
     logstash_image_url = "${local.logstash_image_url}"
-    es_host_url        = "${aws_route53_record.internal_migration_dns.fqdn}"
+    es_host_url        = "${local.es_host_url}"
+    container_name     = "${local.service_type}"
   }
 }
 
@@ -117,7 +118,7 @@ resource "aws_ecs_service" "environment" {
   name                               = "${local.common_name}-${local.service_type}"
   cluster                            = "${module.ecs_cluster.ecs_cluster_id}"
   task_definition                    = "${aws_ecs_task_definition.logstash.arn}"
-  desired_count                      = 2
+  desired_count                      = "${var.elk_migration_props["logstash_desired_count"]}"
   iam_role                           = "${module.create-iam-ecs-role-int.iamrole_arn}"
   deployment_minimum_healthy_percent = 50
 

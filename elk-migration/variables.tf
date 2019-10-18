@@ -20,9 +20,6 @@ variable "availability_zone" {
 }
 
 # Elasticsearch
-variable "es_instance_type" {
-  default = "m5d.xlarge"
-}
 
 variable "ebs_optimized" {
   default = "false"
@@ -35,20 +32,25 @@ variable "volume_type" {
 variable "elk_migration_props" {
   type = "map"
   default = {
-    min_size                  = 3
-    max_size                  = 3
-    desired                   = 3
-    ecs_mem_limit             = 12300
-    ecs_cpu_units             = 500
-    ecs_memory                = 12500
-    jvm_heap_size             = "12g"
-    image_url                 = "mojdigitalstudio/hmpps-elasticsearch-5:latest"
-    kibana_image_url          = "mojdigitalstudio/hmpps-kibana:latest"
-    logstash_image_url        = "mojdigitalstudio/hmpps-logstash:latest"
-    block_device              = "/dev/nvme1n1"
-    es_master_nodes           = 2
-    ecs_service_desired_count = 3
-    instance_type             = "m5d.xlarge"
+    min_size                        = 2
+    max_size                        = 2
+    desired                         = 2
+    ecs_cpu_units                   = 500
+    ecs_memory                      = 6000
+    jvm_heap_size                   = "5g"
+    image_url                       = "mojdigitalstudio/hmpps-elasticsearch-5:latest"
+    kibana_image_url                = "mojdigitalstudio/hmpps-kibana-5:0.0.349-alpha"
+    logstash_image_url              = "mojdigitalstudio/hmpps-logstash:latest"
+    block_device                    = "/dev/nvme1n1"
+    es_master_nodes                 = 1
+    ecs_service_desired_count       = 2
+    instance_type                   = "m5d.xlarge"
+    kibana_instance_type            = "m4.large"
+    kibana_desired_count            = 1
+    kibana_asg_size                 = 1
+    logstash_desired_count          = 1
+    provisioned_throughput_in_mibps = 10
+    throughput_mode                 = "provisioned"
   }
 }
 

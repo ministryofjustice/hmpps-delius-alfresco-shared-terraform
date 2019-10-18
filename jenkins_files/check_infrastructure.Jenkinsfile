@@ -54,6 +54,7 @@ pipeline {
         }
 
         stage('Alfresco | Common') { steps { script { plan_submodule(environment_name, project.alfresco, 'common')}}}
+        stage('Alfresco | AmazonMQ') { steps { script { plan_submodule(environment_name, project.alfresco, 'amazonmq')}}}
         stage('Alfresco | S3 Buckets') { steps { script { plan_submodule(environment_name, project.alfresco, 's3buckets')}}}
         stage('Alfresco | Certs') { steps { script { plan_submodule(environment_name, project.alfresco, 'certs')}}}
         stage('Alfresco | IAM') { steps { script { plan_submodule(environment_name, project.alfresco, 'iam')}}}

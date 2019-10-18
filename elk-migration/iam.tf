@@ -39,6 +39,7 @@ data "template_file" "es" {
     config_bucket_arn = "${local.config_bucket_arn}"
     elk_bucket_arn    = "${local.elk_bucket_arn}"
     elk_kms_arn       = "${local.elk_kms_arn}"
+    storage_kms_arn   = "${local.storage_kms_arn}"
   }
 }
 
@@ -57,4 +58,39 @@ module "create-iam-app-policy-es" {
   source     = "git::https://github.com/ministryofjustice/hmpps-terraform-modules.git?ref=pre-shared-vpc//modules//iam//rolepolicy"
   policyfile = "${data.template_file.es.rendered}"
   rolename   = "${module.create-iam-app-role-es.iamrole_name}"
+}
+
+# ecs execution
+data "template_file" "execution_assume" {
+  template = "${file("./policies/ecs_assume.json")}"
+  vars {}
+}
+data "template_file" "execution" {
+  template = "${file("./policies/execution.json")}"
+  vars {}
+}
+
+resource "aws_iam_role" "execution" {
+  name               = "${local.common_name}-execute-role"
+  assume_role_policy = "${data.template_file.execution_assume.rendered}"
+  description        = "${local.common_name}-execute-role"
+}
+
+resource "aws_iam_role_policy" "execution" {
+  name   = "${local.common_name}-execute-pol"
+  role   = "${aws_iam_role.execution.name}"
+  policy = "${data.template_file.execution.rendered}"
+}
+
+# task
+resource "aws_iam_role" "task" {
+  name               = "${local.common_name}-task-role"
+  assume_role_policy = "${data.template_file.execution_assume.rendered}"
+  description        = "${local.common_name}-task-role"
+}
+
+resource "aws_iam_role_policy" "task" {
+  name   = "${local.common_name}-task-pol"
+  role   = "${aws_iam_role.task.name}"
+  policy = "${data.template_file.es.rendered}"
 }

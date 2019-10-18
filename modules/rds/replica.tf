@@ -3,10 +3,11 @@
 ############################################
 
 resource "aws_db_instance" "inst" {
-  identifier                          = "${local.replica_common_name}"
-  enabled_cloudwatch_logs_exports     = ["${var.enabled_cloudwatch_logs_exports}"]
-  engine                              = "${var.engine}"
-  engine_version                      = "${var.engine_version}"
+  identifier                      = "${local.replica_common_name}"
+  enabled_cloudwatch_logs_exports = ["${var.enabled_cloudwatch_logs_exports}"]
+  engine                          = "${var.engine}"
+  # disabled to prevent engine getting upgraded unintentionally
+  # engine_version    = "${var.engine_version}"
   instance_class                      = "${var.rds_instance_class}"
   allocated_storage                   = "${var.rds_allocated_storage}"
   storage_type                        = "${var.storage_type}"

@@ -158,6 +158,33 @@ data "aws_ami" "ami" {
   owners = ["${data.terraform_remote_state.common.common_account_id}", "895523100917"] # MOJ
 }
 
+data "aws_ami" "aws_ecs_ami" {
+  most_recent = true
+  owners      = ["amazon"]
+  # Amazon Linux 2 optimised ECS instance
+  filter {
+    name   = "name"
+    values = ["amzn2-ami-ecs-hvm-*"]
+  }
+
+  # correct arch
+  filter {
+    name   = "architecture"
+    values = ["x86_64"]
+  }
+
+  # Owned by Amazon
+  filter {
+    name   = "owner-alias"
+    values = ["amazon"]
+  }
+
+  filter {
+    name   = "virtualization-type"
+    values = ["hvm"]
+  }
+}
+
 #-------------------------------------------------------------
 ### Getting ACM Cert
 #-------------------------------------------------------------
@@ -209,6 +236,11 @@ locals {
   elk_bucket_name              = "${data.terraform_remote_state.s3bucket.elk_backups_bucket_name}"
   elk_bucket_arn               = "${data.terraform_remote_state.s3bucket.elk_backups_bucket_arn}"
   elk_lb_dns                   = "${data.terraform_remote_state.monitoring.monitoring_server_internal_url}"
+  es_host_fqdn                 = "alf_es_5.${local.external_domain}"
+  es_host_url                  = "https://${local.es_host_fqdn}"
+  kibana_host_fqdn             = "alf_kibana_5.${local.external_domain}"
+  kibana_host_url              = "https://${local.kibana_host_fqdn}"
+  logstash_host_fqdn           = "alf_logstash_5.${local.internal_domain}"
   dynamodb_table_name          = "${data.terraform_remote_state.dynamodb.dynamodb_table_name}"
   storage_s3bucket             = "${data.terraform_remote_state.s3bucket.s3bucket}"
   backups_bucket               = "${data.terraform_remote_state.s3bucket.alf_backups_bucket_name}"
@@ -240,5 +272,11 @@ locals {
   lb_security_groups = [
     "${data.terraform_remote_state.security-groups.security_groups_map["mon_jenkins"]}",
   ]
-  external_lb_sgs = ["${data.terraform_remote_state.security-groups.security_groups_sg_external_lb_id}"]
+  external_lb_sgs = [
+    "${data.terraform_remote_state.security-groups.security_groups_sg_external_lb_id}",
+    "${data.terraform_remote_state.security-groups.security_groups_map["mon_jenkins"]}"
+  ]
+  efs_security_groups = [
+    "${local.mon_jenkins_sg}",
+  ]
 }

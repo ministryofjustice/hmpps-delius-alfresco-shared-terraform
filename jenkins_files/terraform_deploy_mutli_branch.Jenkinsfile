@@ -42,14 +42,7 @@ pipeline {
             }
         }
         stage('Alfresco | Common') {steps {do_terraform(environment_name, 'common')}}
-        stage('Alfresco | AmazonMQ') {
-            when {
-                expression { "${environment_name}" ==~ /(alfresco-dev|alfresco-sbx)/ }
-            }
-            steps {
-                script { do_terraform(environment_name, 'amazonmq')}
-            }
-        }
+        stage('Alfresco | AmazonMQ') {steps {do_terraform(environment_name, 'amazonmq')}}
         stage('Alfresco | S3 Buckets') { steps { script { do_terraform(environment_name, 's3buckets')}}}
         stage('Alfresco | Certs') { steps { script { do_terraform(environment_name, 'certs')}}}
         stage('Alfresco | IAM') { steps { script { do_terraform(environment_name, 'iam')}}}
