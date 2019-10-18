@@ -197,7 +197,7 @@ locals {
   db_username_ssm                = "${data.terraform_remote_state.rds.rds_creds["db_username_ssm_param"]}"
   db_password_ssm                = "${data.terraform_remote_state.rds.rds_creds["db_password_ssm_param"]}"
   db_host                        = "${data.terraform_remote_state.rds.rds_db_instance_endpoint_cname}"
-  monitoring_server_internal_url = "${data.terraform_remote_state.elk_migration.migration_server_internal_url}"
+  monitoring_server_internal_url = "${data.terraform_remote_state.elk_migration.public_es_host_name}"
   app_hostnames                  = "${data.terraform_remote_state.common.app_hostnames}"
   bastion_inventory              = "${var.bastion_inventory}"
   jvm_memory                     = "${var.alfresco_jvm_memory}"
@@ -211,6 +211,7 @@ locals {
   messaging_broker_password = "${data.terraform_remote_state.common.credentials_ssm_path}/weblogic/spg-domain/remote_broker_password"
   logs_kms_arn              = "${data.terraform_remote_state.common.kms_arn}"
   logstash_host_fqdn        = "${data.terraform_remote_state.elk_migration.internal_logstash_host}"
+  kibana_host               = "${data.terraform_remote_state.elk_migration.kibana_host}"
 
   self_signed_ssm = {
     ca_cert = "${data.terraform_remote_state.self_certs.self_signed_ca_ssm_cert_pem_name}"
@@ -264,6 +265,7 @@ module "asg" {
   account_id                   = "${local.account_id}"
   monitoring_server_url        = "${local.monitoring_server_internal_url}"
   logstash_host_fqdn           = "${local.logstash_host_fqdn}"
+  kibana_host                  = "${local.kibana_host}"
   messaging_broker_url         = "${local.messaging_broker_url}"
   messaging_broker_password    = "${local.messaging_broker_password}"
   bastion_inventory            = "${local.bastion_inventory}"

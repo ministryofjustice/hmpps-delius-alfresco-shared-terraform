@@ -187,6 +187,15 @@ variable "logstash_host_fqdn" {
   default = "logstash"
 }
 
+variable "kibana_host" {
+  default = "http://kibana:5601"
+}
+
+variable "elasitcsearch_host" {
+  default = "http://elasitcsearch"
+}
+
+
 variable "enable_monitoring" {
   default = "true"
 }

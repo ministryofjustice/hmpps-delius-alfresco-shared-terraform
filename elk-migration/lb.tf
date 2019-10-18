@@ -34,11 +34,36 @@ module "create_alb_target_grp" {
 
 # listener
 module "create_alb_listener" {
-  source           = "git::https://github.com/ministryofjustice/hmpps-terraform-modules.git?ref=master//modules//loadbalancer//alb/create_listener"
+  source           = "git::https://github.com/ministryofjustice/hmpps-terraform-modules.git?ref=master//modules//loadbalancer//alb/create_listener_with_https"
+  lb_arn           = "${module.create_app_alb.lb_arn}"
+  lb_port          = 443
+  lb_protocol      = "HTTPS"
+  target_group_arn = "${module.create_alb_target_grp.target_group_arn}"
+  certificate_arn  = ["${local.certificate_arn}"]
+}
+
+module "alt_https_listener" {
+  source           = "git::https://github.com/ministryofjustice/hmpps-terraform-modules.git?ref=master//modules//loadbalancer//alb/create_listener_with_https"
   lb_arn           = "${module.create_app_alb.lb_arn}"
   lb_port          = "${local.port}"
-  lb_protocol      = "${local.protocol}"
+  lb_protocol      = "HTTPS"
   target_group_arn = "${module.create_alb_target_grp.target_group_arn}"
+  certificate_arn  = ["${local.certificate_arn}"]
+}
+
+resource "aws_lb_listener" "es" {
+  load_balancer_arn = "${module.create_app_alb.lb_arn}"
+  port              = 80
+  protocol          = "HTTP"
+  default_action {
+    type = "redirect"
+
+    redirect {
+      port        = "443"
+      protocol    = "HTTPS"
+      status_code = "HTTP_301"
+    }
+  }
 }
 
 # ############################################
@@ -48,6 +73,18 @@ resource "aws_route53_record" "internal_migration_dns" {
   name    = "${local.application}.${local.internal_domain}"
   type    = "A"
   zone_id = "${local.private_zone_id}"
+
+  alias {
+    name                   = "${module.create_app_alb.lb_dns_name}"
+    zone_id                = "${module.create_app_alb.lb_zone_id}"
+    evaluate_target_health = false
+  }
+}
+
+resource "aws_route53_record" "public_es_dns" {
+  name    = "${local.es_host_fqdn}"
+  type    = "A"
+  zone_id = "${local.public_zone_id}"
 
   alias {
     name                   = "${module.create_app_alb.lb_dns_name}"

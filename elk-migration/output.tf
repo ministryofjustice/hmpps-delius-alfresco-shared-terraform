@@ -38,12 +38,25 @@ output "migration_server_internal_url" {
   value = "${aws_route53_record.internal_migration_dns.fqdn}"
 }
 
+output "public_es_host_name" {
+  value = "${local.es_host_url}"
+}
+
 # logstash
 output "internal_logstash_host" {
-  value = "${aws_route53_record.internal_logstash_dns.fqdn}"
+  value = "${local.logstash_host_fqdn}"
 }
 
 # kibana
 output "kibana_host" {
-  value = "${aws_route53_record.kibana_migration_dns.fqdn}"
+  value = "${local.kibana_host_url}"
+}
+
+# efs
+output "efs_map" {
+  value = {
+    dns = "${aws_efs_file_system.efs.dns_name}"
+    id  = "${aws_efs_file_system.efs.id}"
+    arn = "${aws_efs_file_system.efs.arn}"
+  }
 }

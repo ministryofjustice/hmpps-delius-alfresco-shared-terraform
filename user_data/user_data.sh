@@ -37,8 +37,10 @@ cat << EOF > ~/requirements.yml
   src: https://github.com/ministryofjustice/hmpps-beats-monitoring
 - name: logstash
   src: https://github.com/ministryofjustice/hmpps-logstash
+  version: issue_6_add_logstash_host_variable
 - name: alfresco
   src: https://github.com/ministryofjustice/hmpps-alfresco-bootstrap
+  version: issue_57_update_alfresco_log_audit_config
 - name: users
   src: singleplatform-eng.users
 
@@ -48,6 +50,7 @@ cat << EOF > ~/bootstrap_vars.yml
 - mount_point: "${cache_home}"
 - device_name: "${ebs_device}"
 - logstash_host: "${logstash_host_fqdn}"
+- kibana_host: "${kibana_host_fqdn}"
 - monitoring_host: "${monitoring_server_url}"
 - internal_domain: "${private_domain}"
 - bucket_name: "${bucket_name}" 
@@ -70,6 +73,7 @@ cat << EOF > ~/bootstrap_vars.yml
 - messaging_broker_url: "${messaging_broker_url}"
 - messaging_broker_password: "{{ lookup('aws_ssm', '${messaging_broker_password}', decrypt=True, region='${region}') }}"
 - remote_user_filename: "${bastion_inventory}"
+- logstash_version: "5.6.15"
 EOF
 
 wget https://raw.githubusercontent.com/ministryofjustice/hmpps-delius-ansible/master/group_vars/${bastion_inventory}.yml -O ~/users.yml
@@ -92,6 +96,10 @@ EOF
 
 ansible-galaxy install -f -r ~/requirements.yml
 SELF_REGISTER=true ansible-playbook ~/bootstrap.yml
+
+# restart chronyd
+systemctl restart chronyd
+
 
 # Currently there is a bit of oddness with the service startup, it seems we have to restart it for Alfresco to be available
 export DATE=$(date +"%F-%H-%M")

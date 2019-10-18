@@ -129,7 +129,7 @@ exit_on_error $? !!
 # ES HOST
 comp=elk-migration
 python docker-run.py --env ${TARGET_ENV} --component $comp --action output > $tf_data
-echo "export ES_MIGRATION_HOST=$(cat $tf_data | grep migration_server_internal_url | cut -d ' ' -f3)" >> $outfile_docker
+echo "export ES_MIGRATION_HOST=$(cat $tf_data | grep public_es_host_name | cut -d ' ' -f3)" >> $outfile_docker
 
 ##################################################################################################
 # get cert details

@@ -38,7 +38,6 @@ data "template_file" "app_task_definition" {
     memory               = "${var.elk_migration_props["ecs_memory"]}"
     cpu_units            = "${var.elk_migration_props["ecs_cpu_units"]}"
     es_jvm_heap_size     = "${var.elk_migration_props["jvm_heap_size"]}"
-    mem_limit            = "${var.elk_migration_props["ecs_mem_limit"]}"
     efs_mount_path       = "${local.efs_mount_path}"
     migration_mount_path = "${local.migration_mount_path}"
   }
