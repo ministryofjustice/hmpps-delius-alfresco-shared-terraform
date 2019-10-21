@@ -3,16 +3,14 @@ resource "aws_db_instance" "inst" {
 
   identifier = "${var.identifier}"
 
-  engine = "${var.engine}"
-  # disabled to prevent engine getting upgraded unintentionally
-  # engine_version    = "${var.engine_version}"
-  instance_class    = "${var.instance_class}"
-  allocated_storage = "${var.allocated_storage}"
-  storage_type      = "${var.storage_type}"
-  storage_encrypted = "${var.storage_encrypted}"
-  kms_key_id        = "${var.kms_key_id}"
-  license_model     = "${var.license_model}"
-
+  engine                              = "${var.engine}"
+  engine_version                      = "${var.engine_version}"
+  instance_class                      = "${var.instance_class}"
+  allocated_storage                   = "${var.allocated_storage}"
+  storage_type                        = "${var.storage_type}"
+  storage_encrypted                   = "${var.storage_encrypted}"
+  kms_key_id                          = "${var.kms_key_id}"
+  license_model                       = "${var.license_model}"
   name                                = "${var.name}"
   username                            = "${var.username}"
   password                            = "${var.password}"

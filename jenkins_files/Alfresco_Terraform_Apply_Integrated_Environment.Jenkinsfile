@@ -51,9 +51,6 @@ def plan_apply_submodule(env_name, git_project_dir, submodule_name) {
         cd "${git_project_dir}"
         CURRENT_DIR=\$(pwd)
         python docker-run.py --env ${env_name} --component ${submodule_name} --action plan
-        source \${CURRENT_DIR}/${submodule_name}_plan_ret
-        echo "\$exitcode" > plan_ret
-        if [ "\$exitcode" == '1' ]; then exit 1; else exit 0; fi
         python docker-run.py --env ${env_name} --component ${submodule_name} --action apply
         source \${CURRENT_DIR}/${submodule_name}_plan_ret
         if [ "\$exitcode" != '0' ]; then exit \$exitcode; else echo "apply passed"; fi

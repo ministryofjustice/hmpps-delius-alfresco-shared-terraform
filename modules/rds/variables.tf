@@ -53,7 +53,11 @@ variable "engine" {
   description = "The database engine to use"
 }
 
-variable "engine_version" {
+variable "master_engine_version" {
+  description = "The engine version to use"
+}
+
+variable "replica_engine_version" {
   description = "The engine version to use"
 }
 
