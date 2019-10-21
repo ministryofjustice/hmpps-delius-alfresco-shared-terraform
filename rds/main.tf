@@ -85,7 +85,8 @@ module "rds" {
   family                          = "${var.alf_rds_props["family"]}"
   engine                          = "${var.alf_rds_props["engine"]}"
   major_engine_version            = "${var.alf_rds_props["major_engine_version"]}"
-  engine_version                  = "${var.alf_rds_props["engine_version"]}"
+  master_engine_version           = "${var.alf_rds_props["master_engine_version"]}"
+  replica_engine_version          = "${var.alf_rds_props["replica_engine_version"]}"
   port                            = "5432"
   storage_encrypted               = true
   maintenance_window              = "${var.alf_rds_props["maintenance_window"]}"

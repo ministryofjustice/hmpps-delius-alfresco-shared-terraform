@@ -37,10 +37,8 @@ cat << EOF > ~/requirements.yml
   src: https://github.com/ministryofjustice/hmpps-beats-monitoring
 - name: logstash
   src: https://github.com/ministryofjustice/hmpps-logstash
-  version: issue_6_add_logstash_host_variable
 - name: alfresco
   src: https://github.com/ministryofjustice/hmpps-alfresco-bootstrap
-  version: issue_57_update_alfresco_log_audit_config
 - name: users
   src: singleplatform-eng.users
 
@@ -52,6 +50,7 @@ cat << EOF > ~/bootstrap_vars.yml
 - logstash_host: "${logstash_host_fqdn}"
 - kibana_host: "${kibana_host_fqdn}"
 - monitoring_host: "${monitoring_server_url}"
+- elasticsearch_ssl: "true"
 - internal_domain: "${private_domain}"
 - bucket_name: "${bucket_name}" 
 - bucket_encrypt_type: "${bucket_encrypt_type}"
@@ -96,10 +95,6 @@ EOF
 
 ansible-galaxy install -f -r ~/requirements.yml
 SELF_REGISTER=true ansible-playbook ~/bootstrap.yml
-
-# restart chronyd
-systemctl restart chronyd
-
 
 # Currently there is a bit of oddness with the service startup, it seems we have to restart it for Alfresco to be available
 export DATE=$(date +"%F-%H-%M")
