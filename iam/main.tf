@@ -91,6 +91,20 @@ data "terraform_remote_state" "artefacts" {
 }
 
 #-------------------------------------------------------------
+### Getting the shared oracle-db-operation security groups
+#-------------------------------------------------------------
+data "terraform_remote_state" "prod_artefacts" {
+  backend = "s3"
+
+  config {
+    bucket   = "${var.oracle_db_operation["eng_remote_state_bucket_name"]}"
+    key      = "s3bucket-artefacts/terraform.tfstate"
+    region   = "${var.region}"
+    role_arn = "${var.oracle_db_operation["eng_role_arn"]}"
+  }
+}
+
+#-------------------------------------------------------------
 ## Getting the rds db password
 #-------------------------------------------------------------
 data "aws_ssm_parameter" "db_user" {
@@ -141,7 +155,7 @@ locals {
   vpc_cidr                   = "${data.terraform_remote_state.common.vpc_cidr_block}"
   monitoring_kms_arn         = "${data.terraform_remote_state.mon.monitoring_kms_arn}"
   alf_backups_bucket_arn     = "${data.terraform_remote_state.s3bucket.alf_backups_bucket_arn}"
-  artefacts-s3bucket-arn     = "${data.terraform_remote_state.artefacts.s3bucket_artefacts_iam_arn}"
+  artefacts-s3bucket-arn     = "${var.is_production == true ? data.terraform_remote_state.prod_artefacts.s3bucket_artefacts_iam_arn : data.terraform_remote_state.artefacts.s3bucket_artefacts_iam_arn}"
   ssm_path                   = "${data.terraform_remote_state.common.credentials_ssm_path}"
 }
 
