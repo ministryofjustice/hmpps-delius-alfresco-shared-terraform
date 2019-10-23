@@ -123,6 +123,12 @@ resource "aws_ecs_task_definition" "kibana" {
     name      = "data"
     host_path = "/efs/kibana/data"
   }
+
+  volume {
+    name      = "htpasswd"
+    host_path = "/opt/kibana/htpasswd"
+  }
+
 }
 
 resource "aws_ecs_service" "kibana_service" {
@@ -157,6 +163,8 @@ data "template_file" "kibana_ecs" {
     log_group_name       = "${module.kibana_loggroup.loggroup_name}"
     migration_mount_path = "${local.migration_mount_path}"
     region               = "${var.region}"
+    elk_user             = "${local.elk_user}"
+    elk_password         = "${local.elk_password}"
   }
 }
 

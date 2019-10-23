@@ -1,7 +1,7 @@
 #!/bin/bash
 set -x
 # packages
-sudo yum install -y amazon-efs-utils nfs-utils jq awslogs
+sudo yum install -y amazon-efs-utils nfs-utils jq awslogs httpd-tools
 
 # kibana
 sudo groupadd -g 3999 elasticsearch
@@ -15,6 +15,16 @@ sudo chown -R elasticsearch:elasticsearch /opt/kibana ${es_home_dir}
 sudo chmod 777 /efs /efs/kibana /efs/kibana/data ${es_home_dir}
 
 # elk
+
+# htpasswd
+ELK_USER_SSM_NAME=$(aws ssm get-parameters --with-decryption --region ${region} --names "${elk_user}" --query "Parameters[0]"."Value" --output text)
+
+ELK_PASSWORD_SSM_NAME=$(aws ssm get-parameters --with-decryption --region ${region} --names "${elk_password}" --query "Parameters[0]"."Value" --output text)
+
+echo "$ELK_PASSWORD_SSM_NAME" | htpasswd -i -c nginx_htpasswd $ELK_USER_SSM_NAME
+
+sudo mv nginx_htpasswd /opt/kibana/htpasswd
+sudo chown root:root /opt/kibana/htpasswd
 
 ## elasticsearch kibana confd
 echo "cluster.name: ${es_cluster_name}
