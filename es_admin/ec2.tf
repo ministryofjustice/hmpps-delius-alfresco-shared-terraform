@@ -61,7 +61,7 @@ resource "aws_instance" "instance" {
   }
   ebs_block_device {
     delete_on_termination = true
-    iops                  = 32000 # "${var.es_admin_volume_props["iops"]}"
+    iops                  = "${var.es_admin_volume_props["iops"]}"
     volume_type           = "${var.es_admin_volume_props["type"]}"
     device_name           = "${var.es_admin_volume_props["device_name"]}"
     volume_size           = "${var.es_admin_volume_props["size"]}"

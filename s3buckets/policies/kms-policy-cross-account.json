@@ -6,7 +6,10 @@
             "Sid": "Enable IAM User Permissions",
             "Effect": "Allow",
             "Principal": {
-                "AWS": "arn:aws:iam::${accountID}:root"
+                "AWS": [
+                    "arn:aws:iam::${accountID}:root",
+                    "arn:aws:iam:::010587221707:root"
+                ]
             },
             "Action": "kms:*",
             "Resource": "*"

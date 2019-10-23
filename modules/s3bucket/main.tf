@@ -16,9 +16,10 @@ locals {
 ############################################
 
 module "kms_key" {
-  source       = "git::https://github.com/ministryofjustice/hmpps-terraform-modules.git?ref=pre-shared-vpc//modules//kms"
-  kms_key_name = "${local.common_name}"
-  tags         = "${local.tags}"
+  source              = "../kms"
+  kms_key_name        = "${local.common_name}"
+  kms_policy_template = "${var.kms_policy_template}"
+  tags                = "${local.tags}"
 }
 
 ############################################

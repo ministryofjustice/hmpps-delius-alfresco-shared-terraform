@@ -6,8 +6,8 @@
             "Effect": "Allow",
             "Principal": {
                 "AWS": [
-                    "arn:aws:iam::${account_id}:role/terraform",
-                    "arn:aws:iam::${account_id}:role/admin"
+                    "arn:aws:iam::${accountID}:role/terraform",
+                    "arn:aws:iam::${accountID}:role/admin"
                 ]
             },
             "Action": [
@@ -32,7 +32,7 @@
             "Sid": "Allow use of the key",
             "Effect": "Allow",
             "Principal": {
-                "AWS": "arn:aws:iam::${account_id}:role/aws-service-role/rds.amazonaws.com/AWSServiceRoleForRDS"
+                "AWS": "arn:aws:iam::${accountID}:role/aws-service-role/rds.amazonaws.com/AWSServiceRoleForRDS"
             },
             "Action": [
                 "kms:Encrypt",
@@ -47,7 +47,7 @@
             "Sid": "Allow attachment of persistent resources",
             "Effect": "Allow",
             "Principal": {
-                "AWS": "arn:aws:iam::${account_id}:role/aws-service-role/rds.amazonaws.com/AWSServiceRoleForRDS"
+                "AWS": "arn:aws:iam::${accountID}:role/aws-service-role/rds.amazonaws.com/AWSServiceRoleForRDS"
             },
             "Action": [
                 "kms:CreateGrant",

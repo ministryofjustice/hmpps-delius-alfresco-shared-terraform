@@ -91,7 +91,7 @@ data "terraform_remote_state" "artefacts" {
 }
 
 #-------------------------------------------------------------
-### Getting the shared oracle-db-operation security groups
+### Getting the eng-prod bucket
 #-------------------------------------------------------------
 data "terraform_remote_state" "prod_artefacts" {
   backend = "s3"
