@@ -15,3 +15,5 @@ variable "s3_lifecycle_config" {
   }
 }
 
+variable "kms_policy_template" {}
+

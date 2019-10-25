@@ -40,16 +40,6 @@
             ]
         },
         {
-            "Effect": "Allow",
-            "Sid": "allowSSMReadOnly",
-            "Action": [
-                "ssm:Describe*",
-                "ssm:Get*",
-                "ssm:List*"
-            ],
-            "Resource": "*"
-        },
-        {
             "Sid": "allowRoute53Update",
             "Effect": "Allow",
             "Action": [
@@ -111,6 +101,19 @@
             "Resource": [
                 "${elk_kms_arn}",
                 "${storage_kms_arn}"
+            ]
+        },
+        {
+            "Effect": "Allow",
+            "Sid": "allowSSMReadOnly",
+            "Action": [
+                "ssm:Describe*",
+                "ssm:Get*",
+                "ssm:List*"
+            ],
+            "Resource": [
+                "${elk_user_arn}",
+                "${elk_password_arn}"
             ]
         }
     ]

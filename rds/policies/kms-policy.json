@@ -16,7 +16,8 @@
             "Effect": "Allow",
             "Principal": {
                 "AWS": [
-                    "arn:aws:iam::${accountID}:role/terraform"
+                    "arn:aws:iam::${accountID}:role/terraform",
+                    "arn:aws:iam::${accountID}:role/admin"
                 ]
             },
             "Action": [

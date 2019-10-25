@@ -40,3 +40,26 @@ module "create-iam-app-policy-es" {
   policyfile = "${data.template_file.es.rendered}"
   rolename   = "${module.create-iam-app-role-es.iamrole_name}"
 }
+
+# backups cross account
+# KMS and Bucket name hard coded
+data "template_file" "cross_account" {
+  template = "${file("../policies/cross_account_access_backups.json")}"
+  vars {
+    prod_backups_bucket = "${var.alf_backups_config["prod_backups_bucket"]}"
+    prod_kms_key_arn    = "${var.alf_backups_config["prod_kms_key_arn"]}"
+  }
+}
+
+resource "aws_iam_policy" "cross_account" {
+  name        = "${local.common_name}-es-admin-cross-account"
+  count       = "${var.environment_type == "pre-prod" ? 1 : 0}"
+  description = "access backups bucket"
+  policy      = "${data.template_file.cross_account.rendered}"
+}
+
+resource "aws_iam_role_policy_attachment" "cross_account" {
+  count      = "${var.environment_type == "pre-prod" ? 1 : 0}"
+  role       = "${module.create-iam-app-role-es.iamrole_name}"
+  policy_arn = "${aws_iam_policy.cross_account.arn}"
+}

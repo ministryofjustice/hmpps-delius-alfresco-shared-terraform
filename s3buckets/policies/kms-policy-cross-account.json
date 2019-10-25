@@ -1,13 +1,23 @@
 {
+    "Id": "key-consolepolicy-3",
     "Version": "2012-10-17",
     "Statement": [
+        {
+            "Sid": "Enable IAM User Permissions",
+            "Effect": "Allow",
+            "Principal": {
+                "AWS": "arn:aws:iam::${accountID}:root"
+            },
+            "Action": "kms:*",
+            "Resource": "*"
+        },
         {
             "Sid": "Allow access for Key Administrators",
             "Effect": "Allow",
             "Principal": {
                 "AWS": [
-                    "arn:aws:iam::${accountID}:role/terraform",
-                    "arn:aws:iam::${accountID}:role/admin"
+                    "arn:aws:iam::${accountID}:role/admin",
+                    "arn:aws:iam::${accountID}:role/terraform"
                 ]
             },
             "Action": [
@@ -32,7 +42,7 @@
             "Sid": "Allow use of the key",
             "Effect": "Allow",
             "Principal": {
-                "AWS": "arn:aws:iam::${accountID}:role/aws-service-role/rds.amazonaws.com/AWSServiceRoleForRDS"
+                "AWS": "arn:aws:iam::010587221707:root"
             },
             "Action": [
                 "kms:Encrypt",
@@ -47,7 +57,7 @@
             "Sid": "Allow attachment of persistent resources",
             "Effect": "Allow",
             "Principal": {
-                "AWS": "arn:aws:iam::${accountID}:role/aws-service-role/rds.amazonaws.com/AWSServiceRoleForRDS"
+                "AWS": "arn:aws:iam::010587221707:root"
             },
             "Action": [
                 "kms:CreateGrant",
