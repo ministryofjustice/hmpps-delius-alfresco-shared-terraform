@@ -28,10 +28,10 @@ locals {
 ############################################
 
 module "kms_key" {
-  source       = "../kms"
-  kms_key_name = "${local.common_name}"
-  tags         = "${local.tags}"
-  region       = "${var.region}"
+  source              = "../kms"
+  kms_key_name        = "${local.common_name}"
+  tags                = "${local.tags}"
+  kms_policy_template = "policies/rds.kms.json"
 }
 
 ############################################

@@ -46,4 +46,5 @@ module "s3bucket" {
   tags                     = "${local.tags}"
   s3cloudtrail_policy_file = "${file("../policies/s3bucket/s3_cloudtrail_policy.json")}"
   s3_lifecycle_config      = "${var.alf_backups_config}"
+  kms_policy_template      = "${var.environment_type == "prod" ? "policies/kms-policy-cross-account.json" : "policies/kms-policy.json"}"
 }

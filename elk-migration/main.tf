@@ -202,6 +202,17 @@ data "aws_s3_bucket" "config_bucket" {
   bucket = "${data.terraform_remote_state.common.common_s3-config-bucket}"
 }
 
+#-------------------------------------------------------------
+## Getting creds
+#-------------------------------------------------------------
+data "aws_ssm_parameter" "elk_user" {
+  name = "${local.elk_user}"
+}
+
+data "aws_ssm_parameter" "elk_password" {
+  name = "${local.elk_password}"
+}
+
 ####################################################
 # Locals
 ####################################################
@@ -218,6 +229,9 @@ locals {
   common_name                  = "${data.terraform_remote_state.common.short_environment_identifier}-mig"
   short_environment_identifier = "${data.terraform_remote_state.common.short_environment_identifier}"
   region                       = "${var.region}"
+  ssm_path                     = "${data.terraform_remote_state.common.credentials_ssm_path}"
+  elk_user                     = "${local.ssm_path}/alfresco/alfresco/elk_user"
+  elk_password                 = "${local.ssm_path}/alfresco/alfresco/elk_password"
   environment                  = "${data.terraform_remote_state.common.environment}"
   tags                         = "${data.terraform_remote_state.common.common_tags}"
   instance_profile             = "${data.terraform_remote_state.iam.iam_instance_es_admin_profile_name}"
@@ -225,6 +239,7 @@ locals {
   s3bucket                     = "${data.terraform_remote_state.s3bucket.s3bucket}"
   bastion_inventory            = "${var.bastion_inventory}"
   application                  = "esmigration"
+  service_discovery_domain     = "${local.application}-${local.internal_domain}"
   config-bucket                = "${data.terraform_remote_state.common.common_s3-config-bucket}"
   config_bucket_arn            = "${data.aws_s3_bucket.config_bucket.arn}"
   certificate_arn              = "${data.aws_acm_certificate.cert.arn}"

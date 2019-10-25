@@ -124,7 +124,7 @@ pipeline {
                   git url: 'git@github.com:ministryofjustice/' + project.network, branch: 'master', credentialsId: 'f44bc5f1-30bd-4ab9-ad61-cc32caf1562a'
                 }
                 dir( project.alfresco ) {
-                  git url: 'git@github.com:ministryofjustice/' + project.alfresco, branch: 'multibranch', credentialsId: 'f44bc5f1-30bd-4ab9-ad61-cc32caf1562a'
+                  git url: 'git@github.com:ministryofjustice/' + project.alfresco, branch: 'issue_167_add_conditional_check_for_artefacts_bucket_iam_policy', credentialsId: 'f44bc5f1-30bd-4ab9-ad61-cc32caf1562a'
                 }
 
                 prepare_env()
@@ -139,20 +139,20 @@ pipeline {
           }
         }
 
-        // stage('Delius | Alfresco ASG Handler') {
-        //   steps {
-        //     script {
-        //       docker_compose_handler(project.alfresco, docker_tls_dir, 'asg-manager')
-        //     }
-        //   }
-        // }
+        stage('Delius | Alfresco ASG Handler') {
+          steps {
+            script {
+              docker_compose_handler(project.alfresco, docker_tls_dir, 'asg-manager')
+            }
+          }
+        }
 
-        // stage('Stage 1 Migration') {
-        //   parallel {
-        //     stage('Delius | Alfresco Content Restore')     { steps { script {docker_compose_handler(project.alfresco, docker_tls_dir, 'content-manager')}}}
-        //     stage('Delius | Alfresco Database Restore')     { steps { script {docker_compose_handler(project.alfresco, docker_tls_dir, 'psql')}}}
-        //   }
-        // }
+        stage('Stage 1 Migration') {
+          parallel {
+            // stage('Delius | Alfresco Content Restore')     { steps { script {docker_compose_handler(project.alfresco, docker_tls_dir, 'content-manager')}}}
+            stage('Delius | Alfresco Database Restore')     { steps { script {docker_compose_handler(project.alfresco, docker_tls_dir, 'psql')}}}
+          }
+        }
 
         // stage('Stage 2 Migration') {
         //   parallel {
