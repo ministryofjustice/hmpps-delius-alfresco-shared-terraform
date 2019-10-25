@@ -69,7 +69,7 @@ stdout_logfile_maxbytes = 0
 stdout_logfile = /dev/stdout" | sudo tee /opt/kibana/supervisord.conf
 
 echo "upstream kibana_server {
-        server ${service_discovery_host}:5601 max_fails=3 fail_timeout=10s;
+        server kibana:5601 max_fails=3 fail_timeout=10s;
         keepalive 15;
 }
 
@@ -84,12 +84,10 @@ server {
     location / {
         proxy_pass http://kibana_server;
         proxy_http_version 1.1;
-        proxy_set_header Upgrade $http_upgrade;
-        proxy_set_header Connection 'upgrade';
-        proxy_set_header Host $host;
-        proxy_cache_bypass $http_upgrade;
+        proxy_set_header Connection "Keep-Alive";
+        proxy_set_header Proxy-Connection "Keep-Alive";
         proxy_redirect off;
-        proxy_buffering off;        
+        proxy_buffering off;
     }
 }" | sudo tee /opt/kibana/kibana.conf
 

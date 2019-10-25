@@ -142,6 +142,7 @@ resource "aws_ecs_service" "kibana_service" {
   task_definition                    = "${aws_ecs_task_definition.kibana.arn}"
   desired_count                      = "${var.elk_migration_props["kibana_desired_count"]}"
   deployment_minimum_healthy_percent = 50
+  # Issue geting AWS Cognito working using htpasswd approach for now
   # network_configuration {
   #   security_groups = ["${local.instance_security_groups}"]
   #   subnets         = ["${local.private_subnet_ids}"]
