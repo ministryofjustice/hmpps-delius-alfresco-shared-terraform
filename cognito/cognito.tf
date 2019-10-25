@@ -4,7 +4,6 @@ resource "aws_cognito_user_pool" "pool" {
   auto_verified_attributes   = ["email"]
   alias_attributes           = ["email"]
   email_verification_subject = "HMPSS Monitoring Verification Code"
-  # mfa_configuration          = "ON"
   password_policy {
     minimum_length    = "${var.alf_cognito_map["minimum_length"]}"
     require_lowercase = true
@@ -21,10 +20,6 @@ resource "aws_cognito_user_pool" "pool" {
     challenge_required_on_new_device      = true
     device_only_remembered_on_user_prompt = false
   }
-  # sms_configuration {
-  #   external_id    = "${local.common_name}_sns_external_id"
-  #   sns_caller_arn = "${aws_iam_role.pool.arn}"
-  # }
 }
 
 # iam
