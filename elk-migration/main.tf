@@ -239,6 +239,7 @@ locals {
   s3bucket                     = "${data.terraform_remote_state.s3bucket.s3bucket}"
   bastion_inventory            = "${var.bastion_inventory}"
   application                  = "esmigration"
+  service_discovery_domain     = "${local.application}-${local.internal_domain}"
   config-bucket                = "${data.terraform_remote_state.common.common_s3-config-bucket}"
   config_bucket_arn            = "${data.aws_s3_bucket.config_bucket.arn}"
   certificate_arn              = "${data.aws_acm_certificate.cert.arn}"

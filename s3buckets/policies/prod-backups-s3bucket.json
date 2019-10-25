@@ -1,0 +1,24 @@
+{
+    "Version": "2012-10-17",
+    "Id": "Policy1547480483687",
+    "Statement": [
+        {
+            "Sid": "Stmt1547480478567",
+            "Effect": "Allow",
+            "Principal": {
+                "AWS": [
+                    "arn:aws:iam::010587221707:role/tf-eu-west-2-hmpps-delius-pre-prod-alfresco-es-admin-role",
+                    "arn:aws:iam::050243167760:role/tf-eu-west-2-hmpps-delius-prod-alfresco-es-admin-role"
+                ]
+            },
+            "Action": [
+                "s3:GetObject*",
+                "s3:List*"
+            ],
+            "Resource": [
+                "arn:aws:s3:::tf-eu-west-2-hmpps-delius-prod-alfresco-alf-backups",
+                "arn:aws:s3:::tf-eu-west-2-hmpps-delius-prod-alfresco-alf-backups/*"
+            ]
+        }
+    ]
+}

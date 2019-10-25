@@ -1,12 +1,12 @@
 resource "aws_service_discovery_private_dns_namespace" "elk" {
-  name        = "${local.application}-${local.internal_domain}"
+  name        = "${local.service_discovery_domain}"
   description = "Service Discovery Service - ${local.common_name}"
   vpc         = "${local.vpc_id}"
 }
 
 
-resource "aws_service_discovery_service" "elk" {
-  name = "${local.common_name}"
+resource "aws_service_discovery_service" "kibana" {
+  name = "kibana"
 
   dns_config {
     namespace_id = "${aws_service_discovery_private_dns_namespace.elk.id}"
