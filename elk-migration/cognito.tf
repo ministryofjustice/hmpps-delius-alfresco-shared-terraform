@@ -48,21 +48,21 @@ resource "aws_iam_role_policy" "pool" {
 
 # domain 
 resource "aws_cognito_user_pool_domain" "pool" {
-  domain       = "${local.app_name}"
+  domain       = "${local.application}"
   user_pool_id = "${aws_cognito_user_pool.pool.id}"
 }
 
 
 # client
 resource "aws_cognito_user_pool_client" "client" {
-  name                                 = "${local.common_name}-client"
+  name                                 = "${local.common_name}-kibana"
   user_pool_id                         = "${aws_cognito_user_pool.pool.id}"
   generate_secret                      = true
   allowed_oauth_flows_user_pool_client = true
   supported_identity_providers         = ["COGNITO"]
   callback_urls = [
-    "https://alf5kibana.dev.alfresco.probation.hmpps.dsd.io/oauth2/idpresponse",
-    "https://tf-alf-dev-mig-kib-lb-1050160259.eu-west-2.elb.amazonaws.com/oauth2/idpresponse"
+    "${local.kibana_host_url}/oauth2/idpresponse",
+    "https://${module.kibana_app_alb.lb_dns_name}/oauth2/idpresponse"
   ]
   allowed_oauth_flows = ["code"]
   allowed_oauth_scopes = [

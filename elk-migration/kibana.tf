@@ -40,7 +40,7 @@ module "kibana_target_grp" {
   target_port         = "${local.kibana_port}"
   target_protocol     = "${local.kibana_protocol}"
   vpc_id              = "${local.vpc_id}"
-  target_type         = "instance"
+  target_type         = "ip"
   tags                = "${local.tags}"
   check_interval      = "30"
   check_path          = "/api/status"
@@ -108,11 +108,11 @@ data "template_file" "kibana" {
 }
 
 resource "aws_ecs_task_definition" "kibana" {
-  family                = "${local.common_name}-${local.kibana_container_name}"
-  container_definitions = "${data.template_file.kibana.rendered}"
-  task_role_arn         = "${aws_iam_role.task.arn}"
-  execution_role_arn    = "${aws_iam_role.execution.arn}"
-  # network_mode             = "awsvpc"
+  family                   = "${local.common_name}-${local.kibana_container_name}"
+  container_definitions    = "${data.template_file.kibana.rendered}"
+  task_role_arn            = "${aws_iam_role.task.arn}"
+  execution_role_arn       = "${aws_iam_role.execution.arn}"
+  network_mode             = "awsvpc"
   requires_compatibilities = ["EC2"]
   tags                     = "${merge(local.tags, map("Name", "${local.common_name}-kibana"))}"
   volume {
@@ -123,17 +123,6 @@ resource "aws_ecs_task_definition" "kibana" {
     name      = "data"
     host_path = "/efs/kibana/data"
   }
-
-  volume {
-    name      = "htpasswd"
-    host_path = "/opt/kibana/htpasswd.users"
-  }
-
-  volume {
-    name      = "nginx_vhost"
-    host_path = "/opt/kibana/kibana.conf"
-  }
-
 }
 
 resource "aws_ecs_service" "kibana_service" {
@@ -142,20 +131,19 @@ resource "aws_ecs_service" "kibana_service" {
   task_definition                    = "${aws_ecs_task_definition.kibana.arn}"
   desired_count                      = "${var.elk_migration_props["kibana_desired_count"]}"
   deployment_minimum_healthy_percent = 50
-  # Issue geting AWS Cognito working using htpasswd approach for now
-  # network_configuration {
-  #   security_groups = ["${local.instance_security_groups}"]
-  #   subnets         = ["${local.private_subnet_ids}"]
-  # }
+  network_configuration {
+    security_groups = ["${local.instance_security_groups}"]
+    subnets         = ["${local.private_subnet_ids}"]
+  }
 
-  # service_registries {
-  #   registry_arn = "${aws_service_discovery_service.kibana.arn}"
-  # }
+  service_registries {
+    registry_arn = "${aws_service_discovery_service.kibana.arn}"
+  }
 
   load_balancer {
     target_group_arn = "${module.kibana_target_grp.target_group_arn}"
-    container_name   = "nginx" #"${local.kibana_container_name}"
-    container_port   = 80      #"${local.kibana_port}"
+    container_name   = "${local.kibana_container_name}"
+    container_port   = "${local.kibana_port}"
   }
 }
 
