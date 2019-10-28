@@ -20,8 +20,8 @@ resource "aws_security_group_rule" "es_self_out" {
 resource "aws_security_group_rule" "idp_auth_out" {
   protocol          = "tcp"
   security_group_id = "${data.terraform_remote_state.security-groups.security_groups_sg_external_lb_id}"
-  from_port         = 0
-  to_port           = 65535
+  from_port         = 443
+  to_port           = 443
   type              = "egress"
   cidr_blocks = [
     "0.0.0.0/0",
