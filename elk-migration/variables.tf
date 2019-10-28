@@ -85,3 +85,12 @@ variable "termination_policies" {
   type    = "list"
   default = ["OldestInstance", "OldestLaunchTemplate", "OldestLaunchConfiguration"]
 }
+
+variable "alf_cognito_map" {
+  type = "map"
+  default = {
+    minimum_length               = 12
+    require_symbols              = false
+    unused_account_validity_days = 2
+  }
+}

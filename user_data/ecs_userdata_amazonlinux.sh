@@ -3,8 +3,6 @@ set -x
 # packages
 sudo yum install -y amazon-efs-utils nfs-utils jq awslogs httpd-tools
 
-export INSTANCE_ID="$(curl http://169.254.169.254/latest/meta-data/instance-id)"
-
 # kibana
 sudo groupadd -g 3999 elasticsearch
 sudo useradd -m -c elasticsearch -u 3999 -g elasticsearch elasticsearch
@@ -23,10 +21,10 @@ ELK_USER_SSM_NAME=$(aws ssm get-parameters --with-decryption --region ${region} 
 
 ELK_PASSWORD_SSM_NAME=$(aws ssm get-parameters --with-decryption --region ${region} --names "${elk_password}" --query "Parameters[0]"."Value" --output text)
 
-echo "$ELK_PASSWORD_SSM_NAME" | htpasswd -i -c htpasswd.users $ELK_USER_SSM_NAME
+echo "$ELK_PASSWORD_SSM_NAME" | htpasswd -i -c nginx_htpasswd $ELK_USER_SSM_NAME
 
-sudo mv htpasswd.users /opt/kibana/htpasswd.users
-sudo chown root:root /opt/kibana/htpasswd.users
+sudo mv nginx_htpasswd /opt/kibana/htpasswd
+sudo chown root:root /opt/kibana/htpasswd
 
 ## elasticsearch kibana confd
 echo "cluster.name: ${es_cluster_name}
@@ -68,29 +66,6 @@ redirect_stderr=true
 stdout_logfile_maxbytes = 0
 stdout_logfile = /dev/stdout" | sudo tee /opt/kibana/supervisord.conf
 
-echo "upstream kibana_server {
-        server kibana:5601 max_fails=3 fail_timeout=10s;
-        keepalive 15;
-}
-
-server {
-    listen 80;
-
-    server_name $INSTANCE_ID;
-
-    auth_basic "Restricted Access";
-    auth_basic_user_file /etc/nginx/htpasswd.users;
-
-    location / {
-        proxy_pass http://kibana_server;
-        proxy_http_version 1.1;
-        proxy_set_header Connection "Keep-Alive";
-        proxy_set_header Proxy-Connection "Keep-Alive";
-        proxy_redirect off;
-        proxy_buffering off;
-    }
-}" | sudo tee /opt/kibana/kibana.conf
-
 sudo chown -R elasticsearch:elasticsearch /opt/kibana ${es_home_dir}
 
 
@@ -113,6 +88,7 @@ ECS_AWSVPC_BLOCK_IMDS=true
 ECS_ENABLE_TASK_ENI=true" >> /etc/ecs/ecs.config
 
 # Logs configuration
+export INSTANCE_ID="$(curl http://169.254.169.254/latest/meta-data/instance-id)"
 cat > /etc/awslogs/awslogs.conf <<- EOF
 [general]
 state_file = /var/lib/awslogs/agent-state
