@@ -48,7 +48,7 @@ resource "aws_iam_role_policy" "pool" {
 
 # domain 
 resource "aws_cognito_user_pool_domain" "pool" {
-  domain       = "${local.application}"
+  domain       = "${local.common_name}"
   user_pool_id = "${aws_cognito_user_pool.pool.id}"
 }
 
