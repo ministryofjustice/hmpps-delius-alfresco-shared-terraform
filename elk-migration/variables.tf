@@ -6,7 +6,7 @@ variable "remote_state_bucket_name" {
   description = "Terraform remote state bucket name"
 }
 
-variable "cloudwatch_log_retention" {}
+variable "alf_cloudwatch_log_retention" {}
 
 variable "bastion_inventory" {
   default = "dev"

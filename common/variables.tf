@@ -62,8 +62,6 @@ variable "rds_instance_class" {}
 
 variable "rds_allocated_storage" {}
 
-variable "cloudwatch_log_retention" {}
-
 variable "alfresco_instance_ami" {
   type    = "map"
   default = {}

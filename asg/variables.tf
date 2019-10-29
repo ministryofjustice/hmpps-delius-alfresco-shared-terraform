@@ -37,7 +37,7 @@ variable "alf_metrics_props" {
 }
 
 
-variable "cloudwatch_log_retention" {}
+variable "alf_cloudwatch_log_retention" {}
 
 variable "bastion_inventory" {
   default = "dev"

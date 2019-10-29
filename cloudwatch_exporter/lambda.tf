@@ -24,13 +24,14 @@ resource "aws_lambda_function" "lambda" {
     variables = {
       ARCHIVE_BUCKET = "${local.logs_bucket_name}"
       ARCHIVE_REGION = "${local.region}"
+      WAIT_INTERVAL  = 20
     }
   }
 }
 
 resource "aws_cloudwatch_log_group" "lambda" {
   name              = "${local.group_alf}"
-  retention_in_days = "${var.cloudwatch_log_retention}"
+  retention_in_days = "${var.alf_cloudwatch_log_retention}"
   kms_key_id        = "${local.kms_arn}"
   tags              = "${merge(local.tags, map("Name", format("%s", local.group_alf)))}"
 }
