@@ -29,3 +29,7 @@ output "iam_instance_es_admin_role_arn" {
 output "iam_instance_es_admin_profile_name" {
   value = "${module.create-iam-instance-profile-es.iam_instance_name}"
 }
+
+output "es_admin_policy_name" {
+  value = "${module.create-iam-app-policy-es.iampolicy_name}"
+}

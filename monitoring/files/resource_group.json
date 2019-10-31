@@ -1,0 +1,13 @@
+{
+    "ResourceTypeFilters": [
+        "AWS::AllSupported"
+    ],
+    "TagFilters": [
+        {
+            "Key": "sub-project",
+            "Values": [
+                "alfresco"
+            ]
+        }
+    ]
+}

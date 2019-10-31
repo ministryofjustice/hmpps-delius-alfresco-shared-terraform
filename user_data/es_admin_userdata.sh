@@ -150,3 +150,32 @@ ExecStart=/usr/bin/dockerd -H fd:// --containerd=/run/containerd/containerd.sock
 systemctl daemon-reload
 
 systemctl restart docker
+
+# storage sync
+echo 'version: "3"
+
+services:
+  content:
+    image: mojdigitalstudio/hmpps-elasticsearch-manager:latest
+    environment:
+      - APP_ENVIRONMENT=dev
+      - ALF_BACKUP_BUCKET=${alf_backup_bucket}
+      - ALF_STORAGE_BUCKET=${alf_storage_bucket}
+      - TG_REGION=${region}
+    volumes:
+      - /opt/scripts:/opt/scripts
+    entrypoint: [ "sh", "/opt/scripts/alfresco_database_backup.sh", "content-sync" ]
+' > /opt/docker-compose.yml
+
+echo "#!/bin/bash
+set +e
+aws s3 sync --delete s3://${config-bucket}/scripts/ /opt/scripts/ && echo Success || exit $?
+chown -R elasticsearch:elasticsearch /opt/scripts
+docker-compose -f /opt/docker-compose.yml up -d content
+set +e
+" > /opt/storage-sync.sh
+
+crontab -l > /opt/crontask.txt
+echo "15 */4 * * * /bin/sh /opt/storage-sync.sh > /dev/null 2>&1" >> /opt/crontask.txt
+echo "59 23 * * * /bin/sh /opt/storage-sync.sh > /dev/null 2>&1" >> /opt/crontask.txt
+crontab /opt/crontask.txt

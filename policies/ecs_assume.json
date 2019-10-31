@@ -5,7 +5,7 @@
             "Sid": "",
             "Effect": "Allow",
             "Principal": {
-                "Service": "cognito-idp.amazonaws.com"
+                "Service": "ecs-tasks.amazonaws.com"
             },
             "Action": "sts:AssumeRole"
         }

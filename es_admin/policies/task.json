@@ -1,0 +1,60 @@
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "allowAccessToS3Buckets",
+            "Effect": "Allow",
+            "Action": [
+                "s3:GetObject",
+                "s3:ListBucket",
+                "S3:PutObject"
+            ],
+            "Resource": [
+                "arn:aws:s3:::${config-bucket}",
+                "arn:aws:s3:::${config-bucket}/*"
+            ]
+        },
+        {
+            "Sid": "allowAccessToAlfrescoStorageBucket",
+            "Effect": "Allow",
+            "Action": [
+                "s3:*"
+            ],
+            "Resource": [
+                "arn:aws:s3:::${alfresco-storage_s3bucket}",
+                "arn:aws:s3:::${alfresco-storage_s3bucket}/*",
+                "arn:aws:s3:::${alf_backups_bucket}",
+                "arn:aws:s3:::${alf_backups_bucket}/*"
+            ]
+        },
+        {
+            "Sid": "AllowUseOfKmsKey",
+            "Effect": "Allow",
+            "Action": [
+                "kms:Encrypt",
+                "kms:Decrypt",
+                "kms:ReEncrypt*",
+                "kms:GenerateDataKey*",
+                "kms:DescribeKey"
+            ],
+            "Resource": [
+                "${alfresco_kms_arn}"
+            ]
+        },
+        {
+            "Sid": "AllowAttachmentOfPersistentResources",
+            "Effect": "Allow",
+            "Action": [
+                "kms:CreateGrant",
+                "kms:ListGrants",
+                "kms:RevokeGrant"
+            ],
+            "Resource": "*",
+            "Condition": {
+                "Bool": {
+                    "kms:GrantIsForAWSResource": "true"
+                }
+            }
+        }
+    ]
+}

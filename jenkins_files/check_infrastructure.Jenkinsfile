@@ -66,6 +66,7 @@ pipeline {
         stage('Alfresco | ASG') { steps { script { plan_submodule(environment_name, project.alfresco, 'asg')}}}
         stage('Alfresco | ES Admin') { steps { script { plan_submodule(environment_name, project.alfresco, 'es_admin')}}}
         stage('Alfresco | Cloudwatch Exporter') { steps { script { plan_submodule(environment_name, project.alfresco, 'cloudwatch_exporter')}}}
+        stage('Alfresco | Monitoring') { steps { script { plan_submodule(environment_name, project.alfresco, 'monitoring')}}}
     }
 
     post {

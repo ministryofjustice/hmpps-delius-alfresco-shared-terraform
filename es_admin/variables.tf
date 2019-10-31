@@ -51,3 +51,4 @@ variable "es_admin_volume_props" {
   }
 }
 
+variable "alf_cloudwatch_log_retention" {}
