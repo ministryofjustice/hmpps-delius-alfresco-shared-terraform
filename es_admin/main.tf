@@ -203,6 +203,7 @@ locals {
   s3bucket                     = "${data.terraform_remote_state.s3bucket.s3bucket}"
   bastion_inventory            = "${var.bastion_inventory}"
   application                  = "es-admin"
+  logs_kms_arn                 = "${data.terraform_remote_state.common.kms_arn}"
   config-bucket                = "${data.terraform_remote_state.common.common_s3-config-bucket}"
   certificate_arn              = "${data.aws_acm_certificate.cert.arn}"
   public_subnet_ids            = ["${data.terraform_remote_state.common.public_subnet_ids}"]

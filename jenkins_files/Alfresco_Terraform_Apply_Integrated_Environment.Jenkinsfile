@@ -141,6 +141,7 @@ pipeline {
         stage('Alfresco | ASG') { steps { script { do_terraform(environment_name, project.alfresco, 'asg')}}}
         stage('Alfresco | ES Admin') { steps { script { do_terraform(environment_name, project.alfresco, 'es_admin')}}}
         stage('Alfresco | Cloudwatch Exporter') { steps { script { do_terraform(environment_name, project.alfresco, 'cloudwatch_exporter')}}}
+        stage('Alfresco | Monitoring') { steps { script { do_terraform(environment_name, project.alfresco, 'monitoring')}}}
 
         stage('Smoke test') {
             when {

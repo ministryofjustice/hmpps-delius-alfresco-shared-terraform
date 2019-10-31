@@ -107,7 +107,7 @@ module "rds" {
   copy_tags_to_snapshot           = true
   region                          = "${local.region}"
   enabled_cloudwatch_logs_exports = ["postgresql", "upgrade"]
-  cloudwatch_log_retention        = "${var.cloudwatch_log_retention}"
+  cloudwatch_log_retention        = "${var.alf_cloudwatch_log_retention}"
   logs_kms_arn                    = "${local.logs_kms_arn}"
 }
 

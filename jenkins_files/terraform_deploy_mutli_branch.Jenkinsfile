@@ -54,6 +54,7 @@ pipeline {
         stage('Alfresco | ASG') { steps { script { do_terraform(environment_name, 'asg')}}}
         stage('Alfresco | ES Admin') { steps { script { do_terraform(environment_name, 'es_admin')}}}
         stage('Alfresco | Cloudwatch Exporter') { steps { script { do_terraform(environment_name, 'cloudwatch_exporter')}}}
+        stage('Alfresco | Monitoring') { steps { script { do_terraform(environment_name, 'monitoring')}}}
         stage('Smoke test') {
             when {
                 expression { "${environment_name}" == "alfresco-dev"}

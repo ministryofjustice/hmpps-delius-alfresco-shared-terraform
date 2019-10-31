@@ -8,7 +8,7 @@ variable "alf_lambda_timeout" {
   default = 300
 }
 
-variable "cloudwatch_log_retention" {}
+variable "alf_cloudwatch_log_retention" {}
 
 variable "alf_cron_expression" {
   default = "30 1 * * ? *"

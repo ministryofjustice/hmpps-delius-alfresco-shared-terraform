@@ -53,13 +53,41 @@ module "kibana_target_grp" {
 }
 
 # listener
-module "kibana_alb_listener" {
-  source           = "git::https://github.com/ministryofjustice/hmpps-terraform-modules.git?ref=master//modules//loadbalancer//alb/create_listener_with_https"
-  lb_arn           = "${module.kibana_app_alb.lb_arn}"
-  lb_port          = 443
-  lb_protocol      = "HTTPS"
-  target_group_arn = "${module.kibana_target_grp.target_group_arn}"
-  certificate_arn  = ["${local.certificate_arn}"]
+resource "aws_lb_listener" "kibana_https" {
+  load_balancer_arn = "${module.kibana_app_alb.lb_arn}"
+  port              = 443
+  protocol          = "HTTPS"
+  ssl_policy        = "${var.elk_migration_props["ssl_policy"]}"
+  certificate_arn   = "${local.certificate_arn}"
+
+  default_action {
+    target_group_arn = "${module.kibana_target_grp.target_group_arn}"
+    type             = "forward"
+  }
+}
+
+resource "aws_lb_listener_rule" "kibana_cognito" {
+  listener_arn = "${aws_lb_listener.kibana_https.arn}"
+
+  action {
+    type = "authenticate-cognito"
+
+    authenticate_cognito {
+      user_pool_arn       = "${aws_cognito_user_pool.pool.arn}"
+      user_pool_client_id = "${aws_cognito_user_pool_client.client.id}"
+      user_pool_domain    = "${aws_cognito_user_pool_domain.pool.domain}"
+    }
+  }
+
+  action {
+    type             = "forward"
+    target_group_arn = "${module.kibana_target_grp.target_group_arn}"
+  }
+
+  condition {
+    field  = "path-pattern"
+    values = ["/app/kibana*"]
+  }
 }
 
 resource "aws_lb_listener" "kibana" {
@@ -84,7 +112,7 @@ module "kibana_loggroup" {
   source                   = "git::https://github.com/ministryofjustice/hmpps-terraform-modules.git?ref=master//modules//cloudwatch//loggroup"
   log_group_path           = "${local.common_name}"
   loggroupname             = "${local.kibana_container_name}"
-  cloudwatch_log_retention = "${var.cloudwatch_log_retention}"
+  cloudwatch_log_retention = "${var.alf_cloudwatch_log_retention}"
   kms_key_id               = "${local.logs_kms_arn}"
   tags                     = "${local.tags}"
 }

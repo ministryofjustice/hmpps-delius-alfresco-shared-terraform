@@ -1,0 +1,292 @@
+{
+    "widgets": [
+        {
+            "type": "metric",
+            "x": 6,
+            "y": 6,
+            "width": 6,
+            "height": 6,
+            "properties": {
+                "view": "timeSeries",
+                "stacked": true,
+                "metrics": [
+                    [
+                        "AWS/EC2",
+                        "CPUUtilization",
+                        "AutoScalingGroupName",
+                        "${asg_autoscale_name}"
+                    ],
+                    [
+                        "AWS/AutoScaling",
+                        "GroupTotalInstances",
+                        ".",
+                        "."
+                    ]
+                ],
+                "region": "${region}",
+                "title": "Alfresco"
+            }
+        },
+        {
+            "type": "metric",
+            "x": 18,
+            "y": 6,
+            "width": 6,
+            "height": 6,
+            "properties": {
+                "view": "timeSeries",
+                "stacked": true,
+                "metrics": [
+                    [
+                        "AWS/EC2",
+                        "CPUUtilization",
+                        "AutoScalingGroupName",
+                        "${elk_prefix}"
+                    ],
+                    [
+                        "AWS/AutoScaling",
+                        "GroupTotalInstances",
+                        ".",
+                        "."
+                    ]
+                ],
+                "region": "${region}",
+                "title": "ElasticSearch"
+            }
+        },
+        {
+            "type": "metric",
+            "x": 12,
+            "y": 6,
+            "width": 6,
+            "height": 6,
+            "properties": {
+                "view": "timeSeries",
+                "stacked": true,
+                "metrics": [
+                    [
+                        "AWS/EC2",
+                        "CPUUtilization",
+                        "AutoScalingGroupName",
+                        "${elk_prefix}-kibana"
+                    ],
+                    [
+                        "AWS/AutoScaling",
+                        "GroupTotalInstances",
+                        ".",
+                        "."
+                    ]
+                ],
+                "region": "${region}",
+                "title": "Kibana"
+            }
+        },
+        {
+            "type": "metric",
+            "x": 0,
+            "y": 6,
+            "width": 6,
+            "height": 6,
+            "properties": {
+                "metrics": [
+                    [
+                        "AWS/S3",
+                        "BucketSizeBytes",
+                        "StorageType",
+                        "StandardStorage",
+                        "BucketName",
+                        "${common_prefix}-storage-s3bucket",
+                        {
+                            "period": 86400
+                        }
+                    ],
+                    [
+                        ".",
+                        "NumberOfObjects",
+                        ".",
+                        "AllStorageTypes",
+                        ".",
+                        ".",
+                        {
+                            "period": 86400
+                        }
+                    ]
+                ],
+                "view": "timeSeries",
+                "stacked": false,
+                "title": "StorageBucket",
+                "region": "${region}",
+                "period": 300
+            }
+        },
+        {
+            "type": "metric",
+            "x": 0,
+            "y": 12,
+            "width": 6,
+            "height": 6,
+            "properties": {
+                "view": "timeSeries",
+                "stacked": false,
+                "title": "BackupBucket",
+                "metrics": [
+                    [
+                        "AWS/S3",
+                        "BucketSizeBytes",
+                        "StorageType",
+                        "StandardStorage",
+                        "BucketName",
+                        "${common_prefix}-alf-backups",
+                        {
+                            "period": 86400
+                        }
+                    ]
+                ],
+                "region": "${region}",
+                "period": 300
+            }
+        },
+        {
+            "type": "metric",
+            "x": 6,
+            "y": 12,
+            "width": 6,
+            "height": 6,
+            "properties": {
+                "view": "timeSeries",
+                "stacked": false,
+                "metrics": [
+                    [
+                        "AWS/RDS",
+                        "FreeStorageSpace",
+                        "DBInstanceIdentifier",
+                        "${common_prefix}-rds"
+                    ],
+                    [
+                        ".",
+                        "FreeableMemory",
+                        ".",
+                        "."
+                    ],
+                    [
+                        ".",
+                        "CPUUtilization",
+                        ".",
+                        "."
+                    ],
+                    [
+                        ".",
+                        "WriteIOPS",
+                        ".",
+                        "."
+                    ],
+                    [
+                        ".",
+                        "ReadIOPS",
+                        ".",
+                        "."
+                    ]
+                ],
+                "region": "${region}",
+                "title": "Database"
+            }
+        },
+        {
+            "type": "log",
+            "x": 12,
+            "y": 12,
+            "width": 12,
+            "height": 6,
+            "properties": {
+                "query": "SOURCE '${common_prefix}/alfresco-int' | SOURCE '/aws/rds/instance/${common_prefix}-rds/postgresql' | SOURCE '/aws/rds/instance/${common_prefix}-rds/upgrade' | SOURCE '/aws/rds/instance/${common_prefix}-rpl/postgresql' | filter @message like /Error/\n| stats count(*) as errorCount by bin(5m)\n| sort errorCount desc",
+                "region": "${region}",
+                "stacked": false,
+                "title": "AlfrescoErrorsCount",
+                "view": "timeSeries"
+            }
+        },
+        {
+            "type": "log",
+            "x": 0,
+            "y": 18,
+            "width": 24,
+            "height": 6,
+            "properties": {
+                "query": "SOURCE '${elk_prefix}/esmigration' | SOURCE '${elk_prefix}/kibana' | SOURCE '${elk_prefix}/logstash' | SOURCE '${elk_prefix}/redis' | filter @message like /Error/\n| stats count(*) as errCount by bin(5m)\n| sort errCount desc",
+                "region": "${region}",
+                "stacked": false,
+                "title": "ElasticSearch",
+                "view": "timeSeries"
+            }
+        },
+        {
+            "type": "metric",
+            "x": 0,
+            "y": 0,
+            "width": 24,
+            "height": 6,
+            "properties": {
+                "metrics": [
+                    [
+                        "AWS/ApplicationELB",
+                        "RequestCountPerTarget",
+                        "TargetGroup",
+                        "${target_group_arn_suffix}"
+                    ],
+                    [
+                        ".",
+                        "UnHealthyHostCount",
+                        ".",
+                        ".",
+                        "LoadBalancer",
+                        "${lb_arn_suffix}"
+                    ],
+                    [
+                        ".",
+                        "RequestCount",
+                        ".",
+                        ".",
+                        ".",
+                        "."
+                    ],
+                    [
+                        ".",
+                        "HTTPCode_Target_4XX_Count",
+                        ".",
+                        ".",
+                        ".",
+                        "."
+                    ],
+                    [
+                        ".",
+                        "TargetResponseTime",
+                        ".",
+                        ".",
+                        ".",
+                        "."
+                    ],
+                    [
+                        ".",
+                        "RequestCountPerTarget",
+                        ".",
+                        ".",
+                        ".",
+                        "."
+                    ],
+                    [
+                        ".",
+                        "HealthyHostCount",
+                        ".",
+                        ".",
+                        ".",
+                        "."
+                    ]
+                ],
+                "view": "singleValue",
+                "region": "${region}",
+                "title": "AlfrescoALB",
+                "period": 300
+            }
+        }
+    ]
+}

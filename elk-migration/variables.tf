@@ -6,7 +6,7 @@ variable "remote_state_bucket_name" {
   description = "Terraform remote state bucket name"
 }
 
-variable "cloudwatch_log_retention" {}
+variable "alf_cloudwatch_log_retention" {}
 
 variable "bastion_inventory" {
   default = "dev"
@@ -51,6 +51,7 @@ variable "elk_migration_props" {
     logstash_desired_count          = 1
     provisioned_throughput_in_mibps = 10
     throughput_mode                 = "provisioned"
+    ssl_policy                      = "ELBSecurityPolicy-TLS-1-2-2017-01"
   }
 }
 

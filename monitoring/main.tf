@@ -25,12 +25,29 @@ data "terraform_remote_state" "common" {
 }
 
 #-------------------------------------------------------------
-### Getting ACM Cert
+### Getting the asg details
 #-------------------------------------------------------------
-data "aws_acm_certificate" "cert" {
-  domain      = "*.${local.external_domain}"
-  types       = ["AMAZON_ISSUED"]
-  most_recent = true
+data "terraform_remote_state" "asg" {
+  backend = "s3"
+
+  config {
+    bucket = "${var.remote_state_bucket_name}"
+    key    = "alfresco/asg/terraform.tfstate"
+    region = "${var.region}"
+  }
+}
+
+#-------------------------------------------------------------
+### Getting the asg details
+#-------------------------------------------------------------
+data "terraform_remote_state" "elk" {
+  backend = "s3"
+
+  config {
+    bucket = "${var.remote_state_bucket_name}"
+    key    = "alfresco/elk-migration/terraform.tfstate"
+    region = "${var.region}"
+  }
 }
 
 ####################################################
@@ -38,12 +55,9 @@ data "aws_acm_certificate" "cert" {
 ####################################################
 
 locals {
-  region          = "${var.region}"
-  app_name        = "elk5auth"
-  common_name     = "${data.terraform_remote_state.common.short_environment_identifier}-${local.app_name}"
-  tags            = "${data.terraform_remote_state.common.common_tags}"
-  certificate_arn = "${data.aws_acm_certificate.cert.arn}"
-  external_domain = "${data.terraform_remote_state.common.external_domain}"
-  pool_domain     = "${local.app_name}.${local.external_domain}"
-  account_id      = "${data.terraform_remote_state.common.common_account_id}"
+  region      = "${var.region}"
+  application = "${data.terraform_remote_state.common.alfresco_app_name}"
+  common_name = "${data.terraform_remote_state.common.short_environment_identifier}-${local.application}"
+  tags        = "${data.terraform_remote_state.common.common_tags}"
+  account_id  = "${data.terraform_remote_state.common.common_account_id}"
 }

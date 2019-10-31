@@ -64,11 +64,11 @@ module "create-iam-app-policy-es" {
 
 # ecs execution
 data "template_file" "execution_assume" {
-  template = "${file("./policies/ecs_assume.json")}"
+  template = "${file("../policies/ecs_assume.json")}"
   vars {}
 }
 data "template_file" "execution" {
-  template = "${file("./policies/execution.json")}"
+  template = "${file("../policies/execution.json")}"
   vars {}
 }
 
