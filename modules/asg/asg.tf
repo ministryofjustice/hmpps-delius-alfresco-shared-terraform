@@ -60,7 +60,7 @@ data "template_file" "user_data" {
 # ############################################
 
 resource "aws_launch_configuration" "environment" {
-  name_prefix                 = "${local.common_prefix}-cfg-"
+  name_prefix                 = "cfg-alf-"
   image_id                    = "${var.ami_id}"
   instance_type               = "${var.instance_type}"
   iam_instance_profile        = "${var.instance_profile}"
@@ -108,7 +108,7 @@ data "null_data_source" "tags" {
 }
 
 resource "aws_autoscaling_group" "environment" {
-  name                      = "${local.common_prefix}-asg"
+  name                      = "${local.common_prefix}-${aws_launch_configuration.environment.name}"
   vpc_zone_identifier       = ["${local.subnet_ids}"]
   min_size                  = "${var.az_asg_min}"
   max_size                  = "${var.az_asg_max}"
@@ -117,11 +117,11 @@ resource "aws_autoscaling_group" "environment" {
   health_check_grace_period = "${var.health_check_grace_period}"
   placement_group           = "${aws_placement_group.environment.id}"
   target_group_arns         = ["${aws_lb_target_group.environment.arn}"]
-  load_balancers            = []
   termination_policies      = ["${var.termination_policies}"]
   health_check_type         = "${var.health_check_type}"
   metrics_granularity       = "${var.metrics_granularity}"
   enabled_metrics           = ["${var.enabled_metrics}"]
+  min_elb_capacity          = "${var.min_elb_capacity}"
 
   lifecycle {
     create_before_destroy = true

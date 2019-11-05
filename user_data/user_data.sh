@@ -86,7 +86,6 @@ cat << EOF > ~/bootstrap.yml
     - "{{ playbook_dir }}/users.yml"
   roles:
     - bootstrap
-    - rsyslog
     - elasticbeats
     - logstash
     - users
