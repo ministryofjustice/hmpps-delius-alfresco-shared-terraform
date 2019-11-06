@@ -16,6 +16,7 @@ variable "alfresco_asg_props" {
     # asg_ami                   = "ami-0daf390b7cd42be97"
     ebs_volume_size           = 512
     health_check_grace_period = 600
+    min_elb_capacity          = 1
   }
 }
 
