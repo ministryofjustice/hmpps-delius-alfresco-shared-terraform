@@ -278,7 +278,6 @@ module "asg" {
   public_zone_id               = "${local.public_zone_id}"
   health_check_grace_period    = "${var.alfresco_asg_props["health_check_grace_period"]}"
   logs_kms_arn                 = "${local.logs_kms_arn}"
-  min_elb_capacity             = "${var.alfresco_asg_props["min_elb_capacity"]}"
 
   listener = [
     {

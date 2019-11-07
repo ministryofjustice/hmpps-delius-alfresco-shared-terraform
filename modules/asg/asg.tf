@@ -60,7 +60,7 @@ data "template_file" "user_data" {
 # ############################################
 
 resource "aws_launch_configuration" "environment" {
-  name_prefix                 = "cfg-alf-"
+  name_prefix                 = "${local.common_prefix}-cfg-"
   image_id                    = "${var.ami_id}"
   instance_type               = "${var.instance_type}"
   iam_instance_profile        = "${var.instance_profile}"
@@ -108,7 +108,7 @@ data "null_data_source" "tags" {
 }
 
 resource "aws_autoscaling_group" "environment" {
-  name                      = "${local.common_prefix}-${aws_launch_configuration.environment.name}"
+  name                      = "${local.common_prefix}-asg"
   vpc_zone_identifier       = ["${local.subnet_ids}"]
   min_size                  = "${var.az_asg_min}"
   max_size                  = "${var.az_asg_max}"
@@ -121,7 +121,6 @@ resource "aws_autoscaling_group" "environment" {
   health_check_type         = "${var.health_check_type}"
   metrics_granularity       = "${var.metrics_granularity}"
   enabled_metrics           = ["${var.enabled_metrics}"]
-  min_elb_capacity          = "${var.min_elb_capacity}"
 
   lifecycle {
     create_before_destroy = true

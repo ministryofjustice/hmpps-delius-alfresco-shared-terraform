@@ -248,7 +248,3 @@ variable "logs_kms_arn" {}
 variable "cookie_duration" {
   default = "3600"
 }
-
-variable "min_elb_capacity" {
-  default = 1
-}
