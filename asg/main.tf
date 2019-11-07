@@ -251,6 +251,7 @@ module "asg" {
   az_asg_desired               = "${var.alfresco_asg_props["asg_desired"]}"
   az_asg_min                   = "${var.alfresco_asg_props["asg_min"]}"
   az_asg_max                   = "${var.alfresco_asg_props["asg_max"]}"
+  default_cooldown             = "${var.alfresco_asg_props["default_cooldown"]}"
   cloudwatch_log_retention     = "${var.alf_cloudwatch_log_retention}"
   zone_id                      = "${local.private_zone_id}"
   external_domain              = "${local.external_domain}"
@@ -279,6 +280,7 @@ module "asg" {
   health_check_grace_period    = "${var.alfresco_asg_props["health_check_grace_period"]}"
   logs_kms_arn                 = "${local.logs_kms_arn}"
   min_elb_capacity             = "${var.alfresco_asg_props["min_elb_capacity"]}"
+  wait_for_capacity_timeout    = "${var.alfresco_asg_props["wait_for_capacity_timeout"]}"
 
   listener = [
     {

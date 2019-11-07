@@ -252,3 +252,11 @@ variable "cookie_duration" {
 variable "min_elb_capacity" {
   default = 1
 }
+
+variable "wait_for_capacity_timeout" {
+  default = "10m"
+}
+
+variable "default_cooldown" {
+  default = 300
+}
