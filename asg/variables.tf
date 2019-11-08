@@ -17,6 +17,8 @@ variable "alfresco_asg_props" {
     ebs_volume_size           = 512
     health_check_grace_period = 600
     min_elb_capacity          = 1
+    wait_for_capacity_timeout = "20m"
+    default_cooldown          = 120
   }
 }
 

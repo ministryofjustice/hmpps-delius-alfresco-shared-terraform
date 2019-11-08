@@ -4,6 +4,8 @@ yum install -y git wget python-pip
 pip install -U pip
 pip install ansible
 
+logger "yum install stage complete"
+
 cat << EOF >> /etc/environment
 HMPPS_ROLE=${app_name}
 HMPPS_FQDN="`curl http://169.254.169.254/latest/meta-data/instance-id`.${private_domain}"
@@ -31,8 +33,6 @@ cat << EOF > ~/requirements.yml
 - name: bootstrap
   src: https://github.com/ministryofjustice/hmpps-bootstrap
   version: centos
-- name: rsyslog
-  src: https://github.com/ministryofjustice/hmpps-rsyslog-role
 - name: elasticbeats
   src: https://github.com/ministryofjustice/hmpps-beats-monitoring
 - name: logstash
@@ -92,8 +92,12 @@ cat << EOF > ~/bootstrap.yml
     - alfresco
 EOF
 
-ansible-galaxy install -f -r ~/requirements.yml
-SELF_REGISTER=true ansible-playbook ~/bootstrap.yml
+logger "ansible prep stage complete"
+
+ansible-galaxy install -f -r ~/requirements.yml | logger
+SELF_REGISTER=true ansible-playbook ~/bootstrap.yml | logger
+
+logger "ansible playbook stage complete"
 
 # Currently there is a bit of oddness with the service startup, it seems we have to restart it for Alfresco to be available
 export DATE=$(date +"%F-%H-%M")
@@ -109,6 +113,10 @@ sed -i 's/MEMORY_REPLACE/${jvm_memory}/g' /etc/sysconfig/tomcat
 
 chown -R tomcat:tomcat /srv/cache
 
+logger "alfresco sysconfig stage complete"
+
 # start tomcat service
 sudo systemctl stop tomcat
 sudo systemctl start tomcat
+
+logger "alfresco bootstrap complete"
