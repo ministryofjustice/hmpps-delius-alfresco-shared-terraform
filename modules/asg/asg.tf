@@ -60,7 +60,7 @@ data "template_file" "user_data" {
 # ############################################
 
 resource "aws_launch_configuration" "environment" {
-  name_prefix                 = "cfg-alf-"
+  name_prefix                 = "asg-alf-"
   image_id                    = "${var.ami_id}"
   instance_type               = "${var.instance_type}"
   iam_instance_profile        = "${var.instance_profile}"
@@ -122,6 +122,8 @@ resource "aws_autoscaling_group" "environment" {
   metrics_granularity       = "${var.metrics_granularity}"
   enabled_metrics           = ["${var.enabled_metrics}"]
   min_elb_capacity          = "${var.min_elb_capacity}"
+  wait_for_capacity_timeout = "${var.wait_for_capacity_timeout}"
+  default_cooldown          = "${var.default_cooldown}"
 
   lifecycle {
     create_before_destroy = true
@@ -131,7 +133,7 @@ resource "aws_autoscaling_group" "environment" {
     "${data.null_data_source.tags.*.outputs}",
     {
       key                 = "Name"
-      value               = "${local.common_prefix}-asg"
+      value               = "${local.common_prefix}-${aws_launch_configuration.environment.name}"
       propagate_at_launch = true
     },
   ]
