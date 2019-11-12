@@ -137,7 +137,7 @@ data "aws_ami" "amazon_ami" {
 
   filter {
     name   = "name"
-    values = ["HMPPS Alfresco master*"]
+    values = ["${var.alfresco_asg_props["ami_name"]}"]
   }
 
   filter {
