@@ -19,6 +19,7 @@ variable "alfresco_asg_props" {
     min_elb_capacity          = 1
     wait_for_capacity_timeout = "20m"
     default_cooldown          = 120
+    ami_name                  = "HMPPS Alfresco master*"
   }
 }
 
