@@ -15,10 +15,10 @@ src_prefix="logstash"
 dst_prefix="alfresco-logstash"
 
 
-echo "Waiting for elasticsearch..."
-while ! nc -z ${ES_HOST} 9200; do
-  sleep 0.1
-done
+# echo "Waiting for elasticsearch..."
+# while ! nc -z ${ES_HOST} 9200; do
+#   sleep 0.1
+# done
 
 echo "elasticsearch started on host: ${ES_HOST}"
 

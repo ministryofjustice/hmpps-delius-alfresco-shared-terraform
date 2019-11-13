@@ -31,8 +31,8 @@ perform_db_restore ()
     echo "Run mode set to ${ALF_RESTORE_STATUS}, will perform database restore"
 
     # Download only sql file, assumes only one file found
-    # aws s3 sync  s3://${CONFIG_BUCKET}/restore/db_temp/ ${temp_database_files}/
-    # exit_on_error $? !!
+    aws s3 sync  s3://${CONFIG_BUCKET}/restore/db_temp/ ${temp_database_files}/
+    exit_on_error $? !!
     echo "SQL file sync done"
 
     # db file to restore, assumes only one file found
@@ -70,7 +70,8 @@ EOF
     echo "Restoring ${ALFRESCO_SQL_FILE} to ${RDS_DB_ENDPOINT}"
     PGPASSWORD=${DB_PASSWORD} psql -h ${RDS_DB_ENDPOINT} -U ${DB_USER} -d ${ALFRESCO_DB} -f ${ALFRESCO_SQL_FILE}
     exit_on_error $? !!
-    # rm -rf ${temp_database_files}
+    echo "db restore completed"
+    rm -rf ${temp_database_files}/*.sql
   else
     echo "Run mode set to ${ALF_RESTORE_STATUS}, dry-run flags set"
 
