@@ -1,5 +1,4 @@
 def project = [:]
-project.network   = 'hmpps-delius-network-terraform'
 project.dcore     = 'hmpps-delius-core-terraform'
 project.alfresco  = 'hmpps-delius-alfresco-shared-terraform'
 
@@ -79,8 +78,8 @@ def apply_submodule(env_name, git_project_dir, submodule_name) {
         echo "TF APPLY for ${env_name} | ${submodule_name} - component from git project ${git_project_dir}"
         set +e
         cd "${git_project_dir}"
-        python docker-run.py --env ${env_name} --component ${submodule_name} --branch --action plan
-        python docker-run.py --env ${env_name} --component ${submodule_name} --branch --action apply
+        python docker-run.py --env ${env_name} --component ${submodule_name} --action plan
+        python docker-run.py --env ${env_name} --component ${submodule_name} --action apply
         set -e
         """
     }
@@ -120,11 +119,8 @@ pipeline {
             steps {
                 slackSend(message: "Build started on \"${environment_name}\" - ${env.JOB_NAME} ${env.BUILD_NUMBER} (<${env.BUILD_URL.replace(':8080','')}|Open>)")
 
-                dir( project.network ) {
-                  git url: 'git@github.com:ministryofjustice/' + project.network, branch: 'master', credentialsId: 'f44bc5f1-30bd-4ab9-ad61-cc32caf1562a'
-                }
                 dir( project.alfresco ) {
-                  git url: 'git@github.com:ministryofjustice/' + project.alfresco, branch: 'issue_167_add_conditional_check_for_artefacts_bucket_iam_policy', credentialsId: 'f44bc5f1-30bd-4ab9-ad61-cc32caf1562a'
+                  git url: 'git@github.com:ministryofjustice/' + project.alfresco, branch: 'master', credentialsId: 'f44bc5f1-30bd-4ab9-ad61-cc32caf1562a'
                 }
 
                 prepare_env()
@@ -139,27 +135,27 @@ pipeline {
           }
         }
 
-        stage('Delius | Alfresco ASG Handler') {
-          steps {
-            script {
-              docker_compose_handler(project.alfresco, docker_tls_dir, 'asg-manager')
-            }
-          }
-        }
-
-        stage('Stage 1 Migration') {
-          parallel {
-            // stage('Delius | Alfresco Content Restore')     { steps { script {docker_compose_handler(project.alfresco, docker_tls_dir, 'content-manager')}}}
-            stage('Delius | Alfresco Database Restore')     { steps { script {docker_compose_handler(project.alfresco, docker_tls_dir, 'psql')}}}
-          }
-        }
-
-        // stage('Stage 2 Migration') {
-        //   parallel {
-        //     stage('Delius | Alfresco ASG')  { steps { script {do_terraform(environment_name, project.alfresco, 'asg')}}}
-        //     stage('Delius | ES 5 Restore')  { steps { script {es_5_restore(project.alfresco, docker_tls_dir)}}}
+        // stage('Delius | Alfresco ASG Handler') {
+        //   steps {
+        //     script {
+        //       docker_compose_handler(project.alfresco, docker_tls_dir, 'asg-manager')
+        //     }
         //   }
         // }
+
+        // stage('Stage 1 Migration') {
+        //   parallel {
+        //     stage('Delius | Alfresco Content Restore')     { steps { script {docker_compose_handler(project.alfresco, docker_tls_dir, 'content-manager')}}}
+        //     stage('Delius | Alfresco Database Restore')     { steps { script {docker_compose_handler(project.alfresco, docker_tls_dir, 'psql')}}}
+        //   }
+        // }
+
+        stage('Stage 2 Migration') {
+          parallel {
+            // stage('Delius | Alfresco ASG')  { steps { script {do_terraform(environment_name, project.alfresco, 'asg')}}}
+            stage('Delius | ES 5 Restore')  { steps { script {es_5_restore(project.alfresco, docker_tls_dir)}}}
+          }
+        }
 
         // stage('Stage 3 Migration') {
         //   parallel {
