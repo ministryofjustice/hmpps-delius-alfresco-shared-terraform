@@ -28,7 +28,7 @@ case ${JOB_TYPE} in
     pg_dump --dbname=postgresql://${DB_USER}:${DB_PASSWORD}@${ALF_DB_HOST}:${DB_PORT}/${ALF_DB_NAME} -f ${SQL_FILE} && echo Success || exit $?
 
     # upload sql file
-    aws s3 cp --only-show-errors ${SQL_FILE} s3://${ALF_BACKUP_BUCKET}/database/${PREFIX_DATE}/ && echo Success || exit $?
+    aws s3 sync ${BACKUP_DIR}/ s3://${ALF_BACKUP_BUCKET}/database/${PREFIX_DATE}/ && echo Success || exit $?
 
     # delete sql file from nfs share
     rm -rf ${SQL_FILE}
