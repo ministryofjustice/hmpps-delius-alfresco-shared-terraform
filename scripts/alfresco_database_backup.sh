@@ -15,23 +15,23 @@ case ${JOB_TYPE} in
   db-backup)
     echo "Running db backup"
     BACKUP_DIR="/opt/local"
-    SQL_FILE="${BACKUP_DIR}/alfresco.sql"
+    DUMP_DIR="${BACKUP_DIR}/alfresco_dump"
 
     # delete sql file from nfs share
-    rm -rf ${BACKUP_DIR}/*.sql
+    rm -rf ${DUMP_DIR}
 
     # Get passsword from ssm
     DB_USER=$(aws ssm get-parameters --region ${TG_REGION} --names "${ALF_DB_USERNAME_SSM}" --query "Parameters[0]"."Value" --output text) && echo Success || exit $?
     DB_PASSWORD=$(aws ssm get-parameters --with-decryption --region ${TG_REGION} --names "${ALF_DB_PASSWORD_SSM}" --query "Parameters[0]"."Value" --output text) && echo Success || exit $?
     
     # Perform db backup
-    pg_dump --dbname=postgresql://${DB_USER}:${DB_PASSWORD}@${ALF_DB_HOST}:${DB_PORT}/${ALF_DB_NAME} -f ${SQL_FILE} && echo Success || exit $?
+    pg_dump --jobs=8 --format=d -f ${DUMP_DIR} --dbname=postgresql://${DB_USER}:${DB_PASSWORD}@${ALF_DB_HOST}:${DB_PORT}/${ALF_DB_NAME} && echo Success || exit $?
 
     # upload sql file
-    aws s3 sync ${BACKUP_DIR}/ s3://${ALF_BACKUP_BUCKET}/database/${PREFIX_DATE}/ && echo Success || exit $?
+    aws s3 sync ${DUMP_DIR}/ s3://${ALF_BACKUP_BUCKET}/database/${PREFIX_DATE}/ && echo Success || exit $?
 
     # delete sql file from nfs share
-    rm -rf ${SQL_FILE}
+    rm -rf ${DUMP_DIR}
 
     ;;
   content-sync)

@@ -130,7 +130,7 @@ resource "aws_autoscaling_group" "environment" {
   }
 
   tags = [
-    "${data.null_data_source.tags.*.outputs}",
+    # "${data.null_data_source.tags.*.outputs}",
     {
       key                 = "Name"
       value               = "${local.common_prefix}-${aws_launch_configuration.environment.name}"

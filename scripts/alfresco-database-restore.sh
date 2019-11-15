@@ -17,7 +17,7 @@ then
     ALF_RESTORE_STATUS="no-restore"
 fi
 
-
+aws configure set default.s3.max_concurrent_requests 500
 
 perform_db_restore ()
 {
@@ -31,9 +31,9 @@ perform_db_restore ()
     echo "Run mode set to ${ALF_RESTORE_STATUS}, will perform database restore"
 
     # Download only sql file, assumes only one file found
-    # aws s3 sync  s3://${CONFIG_BUCKET}/restore/db_temp/ ${temp_database_files}/
-    # exit_on_error $? !!
-    # echo "SQL file sync done"
+    aws s3 sync  s3://${CONFIG_BUCKET}/restore/db_temp/ ${temp_database_files}/
+    exit_on_error $? !!
+    echo "SQL file sync done"
 
     # db file to restore, assumes only one file found
     ALFRESCO_SQL_FILE="${temp_database_files}/alfresco.sql"
@@ -71,7 +71,7 @@ EOF
     PGPASSWORD=${DB_PASSWORD} psql -h ${RDS_DB_ENDPOINT} -U ${DB_USER} -d ${ALFRESCO_DB} -f ${ALFRESCO_SQL_FILE}
     exit_on_error $? !!
     echo "db restore completed"
-    # rm -rf ${temp_database_files}/*.sql
+    rm -rf ${temp_database_files}/*.sql
   else
     echo "Run mode set to ${ALF_RESTORE_STATUS}, dry-run flags set"
 

@@ -71,7 +71,7 @@ data "terraform_remote_state" "rds" {
 
   config {
     bucket = "${var.remote_state_bucket_name}"
-    key    = "alfresco/rds/terraform.tfstate"
+    key    = "alfresco/database/terraform.tfstate"
     region = "${var.region}"
   }
 }
@@ -137,7 +137,7 @@ data "aws_ami" "amazon_ami" {
 
   filter {
     name   = "name"
-    values = ["${var.alfresco_asg_props["ami_name"]}"]
+    values = ["HMPPS Alfresco master *"] # ["${var.alfresco_asg_props["ami_name"]}"]
   }
 
   filter {
