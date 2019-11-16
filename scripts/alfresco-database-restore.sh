@@ -57,7 +57,7 @@ EOF
     echo "Restoring ${ALFRESCO_SQL_FILE} to ${ALF_DB_HOST}"
     
     echo "restoring schema $(date)"
-    pg_restore -s --jobs=4 --format=d --dbname=postgresql://${DB_USER}:${DB_PASSWORD}@${ALF_DB_HOST}:${DB_PORT}/${ALF_DB_NAME} ${DUMP_DIR}
+    pg_restore -s --jobs=8 --format=d --dbname=postgresql://${DB_USER}:${DB_PASSWORD}@${ALF_DB_HOST}:${DB_PORT}/${ALF_DB_NAME} ${DUMP_DIR}
 
     echo "restoring data $(date)"
     pg_restore --clean --jobs=8 --format=d --dbname=postgresql://${DB_USER}:${DB_PASSWORD}@${ALF_DB_HOST}:${DB_PORT}/${ALF_DB_NAME} ${DUMP_DIR}
