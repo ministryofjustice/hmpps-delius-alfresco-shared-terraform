@@ -123,7 +123,7 @@ data "terraform_remote_state" "rds" {
 
   config {
     bucket = "${var.remote_state_bucket_name}"
-    key    = "alfresco/rds/terraform.tfstate"
+    key    = "alfresco/database/terraform.tfstate"
     region = "${var.region}"
   }
 }
