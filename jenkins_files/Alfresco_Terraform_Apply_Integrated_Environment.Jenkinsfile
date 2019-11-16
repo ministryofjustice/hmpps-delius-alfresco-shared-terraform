@@ -135,7 +135,7 @@ pipeline {
         stage('Alfresco | IAM') { steps { script { do_terraform(environment_name, project.alfresco, 'iam')}}}
         stage('Alfresco | Security Groups') { steps { script { do_terraform(environment_name, project.alfresco, 'security-groups')}}}
         stage('Alfresco | EFS') { steps { script { do_terraform(environment_name, project.alfresco, 'efs')}}}
-        stage('Alfresco | RDS') { steps { script { do_terraform(environment_name, project.alfresco, 'rds')}}}
+        stage('Alfresco | RDS') { steps { script { do_terraform(environment_name, project.alfresco, 'database')}}}
         stage('Alfresco | ElastiCache') { steps { script { do_terraform(environment_name, project.alfresco, 'elasticache-memcached')}}}
         stage('Alfresco | ES Migration') { steps { script { do_terraform(environment_name, project.alfresco, 'elk-migration')}}}
         stage('Alfresco | ASG') { steps { script { do_terraform(environment_name, project.alfresco, 'asg')}}}

@@ -7,6 +7,8 @@ then
     ALF_RESTORE_STATUS="no-restore"
 fi
 
+aws configure set default.s3.max_concurrent_requests 500
+
 CONTENT_STORE_CMD="s3://${CONFIG_BUCKET}/restore/contentstore/ s3://${ALF_STORAGE_BUCKET}/contentstore/"
 CONTENT_STORE_DELETED_CMD="s3://${CONFIG_BUCKET}/restore/contentstore.deleted/ s3://${ALF_STORAGE_BUCKET}/contentstore.deleted/"
 
