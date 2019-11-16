@@ -25,7 +25,7 @@ case ${JOB_TYPE} in
     DB_PASSWORD=$(aws ssm get-parameters --with-decryption --region ${TG_REGION} --names "${ALF_DB_PASSWORD_SSM}" --query "Parameters[0]"."Value" --output text) && echo Success || exit $?
     
     # Perform db backup
-    pg_dump --jobs=8 --format=d -f ${DUMP_DIR} --dbname=postgresql://${DB_USER}:${DB_PASSWORD}@${ALF_DB_HOST}:${DB_PORT}/${ALF_DB_NAME} && echo Success || exit $?
+    pg_dump --jobs=4 --format=d -f ${DUMP_DIR} --dbname=postgresql://${DB_USER}:${DB_PASSWORD}@${ALF_DB_HOST}:${DB_PORT}/${ALF_DB_NAME} && echo Success || exit $?
 
     # upload sql file
     aws s3 sync ${DUMP_DIR}/ s3://${ALF_BACKUP_BUCKET}/database/${PREFIX_DATE}/ && echo Success || exit $?
