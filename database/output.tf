@@ -1,15 +1,3 @@
-# REPLICA INSTANCE
-output "replica_instance_address" {
-  description = "The address of the RDS instance"
-  value       = "${aws_db_instance.inst.*.address}"
-}
-
-output "replica_instance_endpoint_cname" {
-  description = "The connection endpoint"
-  value       = "${aws_route53_record.rds_dns_replica.*.fqdn}"
-}
-
-
 # DB INSTANCE
 output "rds_db_instance_address" {
   description = "The address of the RDS instance"

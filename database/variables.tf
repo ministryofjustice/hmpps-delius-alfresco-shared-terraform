@@ -34,6 +34,36 @@ variable "alf_db_parameters" {
       name         = "max_connections"
       value        = "800"
       apply_method = "pending-reboot"
+    },
+    {
+      name         = "shared_preload_libraries"
+      value        = "pg_stat_statements"
+      apply_method = "pending-reboot"
+    },
+    {
+      name         = "track_activity_query_size"
+      value        = "2048"
+      apply_method = "pending-reboot"
+    },
+    {
+      name         = "pg_stat_statements.track"
+      value        = "ALL"
+      apply_method = "pending-reboot"
+    },
+    {
+      name         = "pg_stat_statements.max"
+      value        = "10000"
+      apply_method = "pending-reboot"
+    },
+    {
+      name         = "log_statement"
+      value        = "mod"
+      apply_method = "pending-reboot"
+    },
+    {
+      name         = "log_min_duration_statement"
+      value        = "5000"
+      apply_method = "pending-reboot"
     }
   ]
 }

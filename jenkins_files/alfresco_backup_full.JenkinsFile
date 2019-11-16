@@ -87,7 +87,7 @@ pipeline {
                   git url: 'git@github.com:ministryofjustice/' + project.network, branch: 'master', credentialsId: 'f44bc5f1-30bd-4ab9-ad61-cc32caf1562a'
                 }
                 dir( project.alfresco ) {
-                  git url: 'git@github.com:ministryofjustice/' + project.alfresco, branch: 'preprod_restore', credentialsId: 'f44bc5f1-30bd-4ab9-ad61-cc32caf1562a'
+                  git url: 'git@github.com:ministryofjustice/' + project.alfresco, branch: 'master', credentialsId: 'f44bc5f1-30bd-4ab9-ad61-cc32caf1562a'
                 }
 
                 prepare_env()
@@ -110,12 +110,12 @@ pipeline {
           }
         }
 
-        // stage('Filebased backups') {
-        //   parallel {
-        //     stage('Delius | Alfresco Content Backup') { steps { script {docker_compose_handler(project.alfresco, docker_tls_dir, 'content')}}}
-        //     stage('Delius | Alfresco Elasticsearch Backup')  { steps { script {docker_compose_handler(project.alfresco, docker_tls_dir, 'elasticsearch')}}}
-        //   }
-        // }            
+        stage('Filebased backups') {
+          parallel {
+            stage('Delius | Alfresco Content Backup') { steps { script {docker_compose_handler(project.alfresco, docker_tls_dir, 'content')}}}
+            stage('Delius | Alfresco Elasticsearch Backup')  { steps { script {docker_compose_handler(project.alfresco, docker_tls_dir, 'elasticsearch')}}}
+          }
+        }            
     }
 
     post {

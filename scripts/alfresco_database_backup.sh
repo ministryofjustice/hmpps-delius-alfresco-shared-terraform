@@ -9,11 +9,11 @@ then
 fi
 
 PREFIX_DATE=$(date +%F)
-aws configure set default.s3.max_concurrent_requests 500
+aws configure set default.s3.max_concurrent_requests 250
 
 case ${JOB_TYPE} in
   db-backup)
-    echo "Running db backup"
+    echo "Running db backup $(date)"
     BACKUP_DIR="/opt/local"
     DUMP_DIR="${BACKUP_DIR}/alfresco_dump"
 
@@ -25,10 +25,14 @@ case ${JOB_TYPE} in
     DB_PASSWORD=$(aws ssm get-parameters --with-decryption --region ${TG_REGION} --names "${ALF_DB_PASSWORD_SSM}" --query "Parameters[0]"."Value" --output text) && echo Success || exit $?
     
     # Perform db backup
+    echo "DB host: ${ALF_DB_HOST}"
     pg_dump --jobs=4 --format=d -f ${DUMP_DIR} --dbname=postgresql://${DB_USER}:${DB_PASSWORD}@${ALF_DB_HOST}:${DB_PORT}/${ALF_DB_NAME} && echo Success || exit $?
+    echo "Completed db backup $(date)"
 
     # upload sql file
+    echo "uploading postgres pg_dump $(date)"
     aws s3 sync ${DUMP_DIR}/ s3://${ALF_BACKUP_BUCKET}/database/${PREFIX_DATE}/ && echo Success || exit $?
+    echo "uploading postgres pg_dump complete $(date)"
 
     # delete sql file from nfs share
     rm -rf ${DUMP_DIR}

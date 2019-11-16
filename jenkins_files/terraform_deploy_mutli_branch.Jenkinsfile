@@ -48,7 +48,7 @@ pipeline {
         stage('Alfresco | IAM') { steps { script { do_terraform(environment_name, 'iam')}}}
         stage('Alfresco | Security Groups') { steps { script { do_terraform(environment_name, 'security-groups')}}}
         stage('Alfresco | EFS') { steps { script { do_terraform(environment_name, 'efs')}}}
-        stage('Alfresco | RDS') { steps { script { do_terraform(environment_name, 'rds')}}}
+        stage('Alfresco | RDS') { steps { script { do_terraform(environment_name, 'database')}}}
         stage('Alfresco | ElastiCache') { steps { script { do_terraform(environment_name, 'elasticache-memcached')}}}
         stage('Alfresco | ES Migration') { steps { script { do_terraform(environment_name, 'elk-migration')}}}
         stage('Alfresco | ASG') { steps { script { do_terraform(environment_name, 'asg')}}}

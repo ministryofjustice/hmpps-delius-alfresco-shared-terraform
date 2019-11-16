@@ -17,7 +17,7 @@ then
     ALF_RESTORE_STATUS="no-restore"
 fi
 
-aws configure set default.s3.max_concurrent_requests 500
+aws configure set default.s3.max_concurrent_requests 250
 
 perform_db_restore ()
 {
@@ -43,6 +43,7 @@ perform_db_restore ()
     DB_USER=$(aws ssm get-parameters --region ${TG_REGION} --names "${ALF_DB_USERNAME_SSM}" --query "Parameters[0]"."Value" --output text)
     DB_PASSWORD=$(aws ssm get-parameters --with-decryption --region ${TG_REGION} --names "${ALF_DB_PASSWORD_SSM}" --query "Parameters[0]"."Value" --output text)
     exit_on_error $? !!
+    echo "DB host: ${ALF_DB_HOST}"
     psql postgresql://${DB_USER}:${DB_PASSWORD}@${ALF_DB_HOST}/postgres << EOF
         drop database ${ALF_DB_NAME};
         CREATE DATABASE ${ALF_DB_NAME};
@@ -54,11 +55,15 @@ EOF
     exit_on_error $? !!
     #Restore db from backup
     echo "Restoring ${ALFRESCO_SQL_FILE} to ${ALF_DB_HOST}"
-    # PGPASSWORD=${DB_PASSWORD} psql -h ${ALF_DB_HOST} -U ${DB_USER} -d ${ALF_DB_NAME} -f ${ALFRESCO_SQL_FILE}
-    pg_restore --clean --jobs=4 --format=d --dbname=postgresql://${DB_USER}:${DB_PASSWORD}@${ALF_DB_HOST}:${DB_PORT}/${ALF_DB_NAME} ${DUMP_DIR}
+    
+    echo "restoring schema $(date)"
+    pg_restore -s --jobs=4 --format=d --dbname=postgresql://${DB_USER}:${DB_PASSWORD}@${ALF_DB_HOST}:${DB_PORT}/${ALF_DB_NAME} ${DUMP_DIR}
+
+    echo "restoring data $(date)"
+    pg_restore --clean --jobs=8 --format=d --dbname=postgresql://${DB_USER}:${DB_PASSWORD}@${ALF_DB_HOST}:${DB_PORT}/${ALF_DB_NAME} ${DUMP_DIR}
     exit_on_error $? !!
-    echo "db restore completed"
-    rm -rf ${DUMP_DIR}
+    echo "db restore completed $(date)"
+    rm -rf ${DUMP_DIR}/*
   else
     echo "Run mode set to ${ALF_RESTORE_STATUS}, dry-run flags set"
 
