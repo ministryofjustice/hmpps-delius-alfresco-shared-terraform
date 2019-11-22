@@ -127,6 +127,12 @@ pipeline {
                 prepare_env()
             }
         }
+        stage('Alfresco | AMI Update') {
+            when {
+                expression { "${update_ami_image}" == true }
+            }
+            steps { script { do_terraform((environment_name, project.alfresco, 'ami_permissions')}}
+        }
 
         stage('Alfresco | Common') { steps { script { plan_apply_submodule(environment_name, project.alfresco, 'common')}}}
         stage('Alfresco | AmazonMQ') { steps { script { plan_apply_submodule(environment_name, project.alfresco, 'amazonmq')}}}
