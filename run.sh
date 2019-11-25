@@ -77,7 +77,7 @@ fi
 
 if [[ ${COMPONENT} == "ami_permissions" ]]
 then 
-  export TERRAGRUNT_IAM_ROLE="arn:aws:iam::895523100917:role/admin"
+  export TERRAGRUNT_IAM_ROLE="arn:aws:iam::895523100917:role/terraform"
   export TG_REMOTE_STATE_BUCKET="tf-eu-west-2-hmpps-eng-dev-remote-state"
   export TG_ENVIRONMENT_IDENTIFIER="tf-eu-west-2-hmpps-eng-dev"
   echo "Using engineering role: ${TERRAGRUNT_IAM_ROLE}"

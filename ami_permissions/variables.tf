@@ -13,4 +13,7 @@ variable "environment_name" {
 
 variable "alf_account_ids" {
   type = "map"
+  default = {
+    hmpps-alfresco-dev = "563502482979"
+  }
 }
