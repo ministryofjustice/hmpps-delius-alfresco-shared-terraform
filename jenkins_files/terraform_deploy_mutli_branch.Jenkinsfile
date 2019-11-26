@@ -41,6 +41,7 @@ pipeline {
                 prepare_env()
             }
         }
+        stage('Alfresco | AMI Update') {steps {do_terraform(environment_name, 'ami_permissions')}}
         stage('Alfresco | Common') {steps {do_terraform(environment_name, 'common')}}
         stage('Alfresco | AmazonMQ') {steps {do_terraform(environment_name, 'amazonmq')}}
         stage('Alfresco | S3 Buckets') { steps { script { do_terraform(environment_name, 's3buckets')}}}
