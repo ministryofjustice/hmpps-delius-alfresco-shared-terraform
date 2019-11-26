@@ -128,11 +128,7 @@ pipeline {
                 prepare_env()
             }
         }
-<<<<<<< HEAD
-        stage('Alfresco | AMI Update') { steps { script { plan_apply_submodule(environment_name, project.alfresco, 'ami_permissions')}}}
-=======
-
->>>>>>> master
+        // stage('Alfresco | AMI Update') { steps { script { plan_apply_submodule(environment_name, project.alfresco, 'ami_permissions')}}}
         stage('Alfresco | Common') { steps { script { plan_apply_submodule(environment_name, project.alfresco, 'common')}}}
         stage('Alfresco | AmazonMQ') { steps { script { plan_apply_submodule(environment_name, project.alfresco, 'amazonmq')}}}
         stage('Alfresco | S3 Buckets') { steps { script { do_terraform(environment_name, project.alfresco, 's3buckets')}}}

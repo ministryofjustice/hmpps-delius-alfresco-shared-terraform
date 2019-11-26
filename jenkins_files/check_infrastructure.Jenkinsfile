@@ -52,7 +52,7 @@ pipeline {
                 prepare_env()
             }
         }
-        stage('Alfresco | AMI Update') { steps { script { plan_submodule(environment_name, project.alfresco, 'ami_permissions')}}}
+        // stage('Alfresco | AMI Update') { steps { script { plan_submodule(environment_name, project.alfresco, 'ami_permissions')}}}
         stage('Alfresco | Common') { steps { script { plan_submodule(environment_name, project.alfresco, 'common')}}}
         stage('Alfresco | AmazonMQ') { steps { script { plan_submodule(environment_name, project.alfresco, 'amazonmq')}}}
         stage('Alfresco | S3 Buckets') { steps { script { plan_submodule(environment_name, project.alfresco, 's3buckets')}}}
