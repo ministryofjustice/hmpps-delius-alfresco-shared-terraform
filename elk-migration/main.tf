@@ -90,19 +90,6 @@ data "terraform_remote_state" "security-groups" {
 }
 
 #-------------------------------------------------------------
-### Getting the dynamodb details
-#-------------------------------------------------------------
-data "terraform_remote_state" "dynamodb" {
-  backend = "s3"
-
-  config {
-    bucket = "${var.remote_state_bucket_name}"
-    key    = "alfresco/dynamodb/terraform.tfstate"
-    region = "${var.region}"
-  }
-}
-
-#-------------------------------------------------------------
 ### Getting the rds details
 #-------------------------------------------------------------
 data "terraform_remote_state" "rds" {
@@ -256,14 +243,9 @@ locals {
   kibana_host_fqdn             = "alf5kibana.${local.external_domain}"
   kibana_host_url              = "https://${local.kibana_host_fqdn}"
   logstash_host_fqdn           = "alf5logstash.${local.internal_domain}"
-  dynamodb_table_name          = "${data.terraform_remote_state.dynamodb.dynamodb_table_name}"
   storage_s3bucket             = "${data.terraform_remote_state.s3bucket.s3bucket}"
   backups_bucket               = "${data.terraform_remote_state.s3bucket.alf_backups_bucket_name}"
   storage_kms_arn              = "${data.terraform_remote_state.s3bucket.s3bucket_kms_arn}"
-  db_username_ssm              = "${data.terraform_remote_state.rds.rds_creds["db_username_ssm_param"]}"
-  db_name                      = "${data.terraform_remote_state.rds.rds_creds["db_name"]}"
-  db_password_ssm              = "${data.terraform_remote_state.rds.rds_creds["db_password_ssm_param"]}"
-  db_host                      = "${data.terraform_remote_state.rds.rds_db_instance_endpoint_cname}"
   mon_jenkins_sg               = "${data.terraform_remote_state.security-groups.security_groups_map["mon_jenkins"]}"
   sg_rds_id                    = "${data.terraform_remote_state.security-groups.security_groups_sg_rds_id}"
   alf_efs_dns_name             = "${data.terraform_remote_state.efs.efs_dns_name}"

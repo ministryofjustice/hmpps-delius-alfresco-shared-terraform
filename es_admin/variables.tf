@@ -52,3 +52,21 @@ variable "es_admin_volume_props" {
 }
 
 variable "alf_cloudwatch_log_retention" {}
+
+variable "metrics_granularity" {
+  default = "1Minute"
+}
+
+variable "enabled_metrics" {
+  type = "list"
+  default = [
+    "GroupMinSize",
+    "GroupMaxSize",
+    "GroupDesiredCapacity",
+    "GroupInServiceInstances",
+    "GroupPendingInstances",
+    "GroupStandbyInstances",
+    "GroupTerminatingInstances",
+    "GroupTotalInstances"
+  ]
+}

@@ -49,12 +49,6 @@ output "asg_prefix" {
   value = "${local.asg_prefix}"
 }
 
-# DynamoDB
-
-output "dynamodb_table_name" {
-  value = "${local.dynamodb_table_name}"
-}
-
 # restore status
 output "alf_restore_status" {
   value = "${var.alf_restore_status}"

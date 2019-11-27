@@ -1,6 +1,8 @@
 variable "region" {}
 
-variable "environment_type" {}
+variable "alf_iam_cross_account_perms" {
+  default = false
+}
 
 
 variable "remote_state_bucket_name" {

@@ -23,8 +23,6 @@ variable depends_on {
   type    = "list"
 }
 
-variable "backups_dynamodb_table_arn" {}
-
 variable "asg_ssm_arns_map" {
   type    = "map"
   default = {}
