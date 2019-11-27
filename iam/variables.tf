@@ -1,6 +1,6 @@
 variable "region" {}
 
-variable "environment_type" {}
+variable "bastion_inventory" {}
 
 
 variable "remote_state_bucket_name" {

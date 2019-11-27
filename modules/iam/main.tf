@@ -6,14 +6,13 @@
 # Locals
 ####################################################
 locals {
-  common_name                = "${var.common_name}"
-  tags                       = "${var.tags}"
-  s3-config-bucket           = "${var.s3-config-bucket}"
-  remote_iam_role            = "${var.remote_iam_role}"
-  remote_config_bucket       = "${var.remote_config_bucket}"
-  storage_s3bucket           = "${var.storage_s3bucket}"
-  s3bucket_kms_arn           = "${var.s3bucket_kms_arn}"
-  backups_dynamodb_table_arn = "${var.backups_dynamodb_table_arn}"
+  common_name          = "${var.common_name}"
+  tags                 = "${var.tags}"
+  s3-config-bucket     = "${var.s3-config-bucket}"
+  remote_iam_role      = "${var.remote_iam_role}"
+  remote_config_bucket = "${var.remote_config_bucket}"
+  storage_s3bucket     = "${var.storage_s3bucket}"
+  s3bucket_kms_arn     = "${var.s3bucket_kms_arn}"
 }
 
 ############################################
@@ -28,17 +27,16 @@ data "template_file" "iam_policy_app_int" {
   template = "${var.ec2_internal_policy_file}"
 
   vars {
-    s3-config-bucket           = "${local.s3-config-bucket}"
-    app_role_arn               = "${module.create-iam-app-role-int.iamrole_arn}"
-    remote_iam_role            = "${local.remote_iam_role}"
-    remote_config_bucket       = "${local.remote_config_bucket}"
-    storage_s3bucket           = "${local.storage_s3bucket}"
-    s3bucket_kms_arn           = "${local.s3bucket_kms_arn}"
-    backups_dynamodb_table_arn = "${local.backups_dynamodb_table_arn}"
-    db_user                    = "${var.asg_ssm_arns_map["db_user"]}"
-    db_password                = "${var.asg_ssm_arns_map["db_password"]}"
-    remote_broker_username     = "${var.asg_ssm_arns_map["remote_broker_username"]}"
-    remote_broker_password     = "${var.asg_ssm_arns_map["remote_broker_password"]}"
+    s3-config-bucket       = "${local.s3-config-bucket}"
+    app_role_arn           = "${module.create-iam-app-role-int.iamrole_arn}"
+    remote_iam_role        = "${local.remote_iam_role}"
+    remote_config_bucket   = "${local.remote_config_bucket}"
+    storage_s3bucket       = "${local.storage_s3bucket}"
+    s3bucket_kms_arn       = "${local.s3bucket_kms_arn}"
+    db_user                = "${var.asg_ssm_arns_map["db_user"]}"
+    db_password            = "${var.asg_ssm_arns_map["db_password"]}"
+    remote_broker_username = "${var.asg_ssm_arns_map["remote_broker_username"]}"
+    remote_broker_password = "${var.asg_ssm_arns_map["remote_broker_password"]}"
   }
 }
 
