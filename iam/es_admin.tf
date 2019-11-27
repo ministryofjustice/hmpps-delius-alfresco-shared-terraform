@@ -52,13 +52,13 @@ data "template_file" "cross_account" {
 
 resource "aws_iam_policy" "cross_account" {
   name        = "${local.common_name}-es-admin-cross-account"
-  count       = "${var.bastion_inventory == "prod" ? 1 : 0}"
+  count       = "${var.alf_iam_cross_account_perms}"
   description = "access backups bucket"
   policy      = "${data.template_file.cross_account.rendered}"
 }
 
 resource "aws_iam_role_policy_attachment" "cross_account" {
-  count      = "${var.bastion_inventory == "prod" ? 1 : 0}"
+  count      = "${var.alf_iam_cross_account_perms}"
   role       = "${module.create-iam-app-role-es.iamrole_name}"
   policy_arn = "${aws_iam_policy.cross_account.arn}"
 }
