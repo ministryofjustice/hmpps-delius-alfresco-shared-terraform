@@ -50,6 +50,11 @@ data "terraform_remote_state" "elk" {
   }
 }
 
+# ssm parameter
+data "aws_ssm_parameter" "ssm_token" {
+  name = "${var.alf_ops_alerts["ssm_token"]}"
+}
+
 ####################################################
 # Locals
 ####################################################

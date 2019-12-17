@@ -1,0 +1,30 @@
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "AccessToLogGroup",
+            "Effect": "Allow",
+            "Action": [
+                "logs:CreateExportTask",
+                "logs:DescribeExportTasks",
+                "logs:CreateLogStream",
+                "logs:DescribeLogGroups",
+                "logs:CreateLogGroup",
+                "logs:PutLogEvents"
+            ],
+            "Resource": "arn:aws:logs:*:*:*"
+        },
+        {
+            "Effect": "Allow",
+            "Sid": "allowSSMReadOnly",
+            "Action": [
+                "ssm:Describe*",
+                "ssm:Get*",
+                "ssm:List*"
+            ],
+            "Resource": [
+                "${ssm_token_arn}"
+            ]
+        }
+    ]
+}

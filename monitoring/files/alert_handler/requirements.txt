@@ -1,0 +1,3 @@
+slackclient
+python-json-logger
+boto3
