@@ -1,13 +1,60 @@
-resource "aws_cloudwatch_metric_alarm" "cpu_utilization_too_high" {
-  alarm_name          = "alf_db_cpu_utilization_too_high"
+locals {
+  alert_suffix           = "alert"
+  cpu_alert_threshold    = 70
+  warning_suffix         = "warning"
+  cpu_warning_threshold  = 60
+  critical_suffix        = "critical"
+  cpu_critical_threshold = 80
+  support_team           = "AWS Delius Support or Zaizzi Teams"
+}
+
+
+resource "aws_cloudwatch_metric_alarm" "db_cpu_critical" {
+  alarm_name          = "${local.application}_database_cpu_${local.critical_suffix}"
   comparison_operator = "GreaterThanOrEqualToThreshold"
   evaluation_periods  = "1"
   metric_name         = "CPUUtilization"
   namespace           = "AWS/RDS"
   period              = "${local.alarm_period}"
   statistic           = "Average"
-  threshold           = 60
-  alarm_description   = "Average database CPU utilization over last ${local.alarm_period / 60} minutes too high"
+  threshold           = "${local.cpu_critical_threshold}"
+  alarm_description   = "Database cpu averaging over ${local.cpu_critical_threshold}, critical possible outage. Please contact ${local.support_team}"
+  alarm_actions       = ["${aws_sns_topic.alarm_notification.arn}"]
+  ok_actions          = ["${aws_sns_topic.alarm_notification.arn}"]
+
+  dimensions {
+    DBInstanceIdentifier = "${local.db_instance_id}"
+  }
+}
+
+resource "aws_cloudwatch_metric_alarm" "db_cpu_alert" {
+  alarm_name          = "${local.application}_database_cpu_${local.alert_suffix}"
+  comparison_operator = "GreaterThanOrEqualToThreshold"
+  evaluation_periods  = "1"
+  metric_name         = "CPUUtilization"
+  namespace           = "AWS/RDS"
+  period              = "${local.alarm_period}"
+  statistic           = "Average"
+  threshold           = "${local.cpu_alert_threshold}"
+  alarm_description   = "Database cpu averaging over ${local.cpu_alert_threshold}, if database connection alerts are getting raised. Please contact ${local.support_team}"
+  alarm_actions       = ["${aws_sns_topic.alarm_notification.arn}"]
+  ok_actions          = ["${aws_sns_topic.alarm_notification.arn}"]
+
+  dimensions {
+    DBInstanceIdentifier = "${local.db_instance_id}"
+  }
+}
+
+resource "aws_cloudwatch_metric_alarm" "db_cpu_warning" {
+  alarm_name          = "${local.application}_database_cpu_${local.warning_suffix}"
+  comparison_operator = "GreaterThanOrEqualToThreshold"
+  evaluation_periods  = "1"
+  metric_name         = "CPUUtilization"
+  namespace           = "AWS/RDS"
+  period              = "${local.alarm_period}"
+  statistic           = "Average"
+  threshold           = "${local.cpu_warning_threshold}"
+  alarm_description   = "Database cpu averaging over ${local.cpu_warning_threshold}, check for database connection alerts. Please contact ${local.support_team}"
   alarm_actions       = ["${aws_sns_topic.alarm_notification.arn}"]
   ok_actions          = ["${aws_sns_topic.alarm_notification.arn}"]
 

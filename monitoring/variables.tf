@@ -16,6 +16,10 @@ variable "alf_cloudwatch_log_retention" {
   default = 7
 }
 
+variable "environment_name" {
+  type = "string"
+}
+
 variable "alf_ops_alerts" {
   type = "map"
   default = {

@@ -9,6 +9,8 @@ class Config():
     log_level = os.environ.get("LOG_LEVEL", "INFO")
     slack_api_token = os.environ.get("SLACK_API_TOKEN_SSM")
     slack_channel_name = os.environ.get("SLACK_CHANNEL_NAME")
-    slack_emoji_alarm = os.environ.get("SLACK_EMOJI_ALARM", "rotating_light")
+    slack_emoji_critical = os.environ.get("SLACK_EMOJI_CRITICAL", "alert")
+    slack_emoji_alert = os.environ.get("SLACK_EMOJI_ALARM", "rotating_light")
+    slack_emoji_warning = os.environ.get("SLACK_EMOJI_ALARM", "warning")
     slack_emoji_ok = os.environ.get(
         "SLACK_EMOJI_OK", "white_check_mark")

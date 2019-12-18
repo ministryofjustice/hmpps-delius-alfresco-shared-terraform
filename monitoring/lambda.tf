@@ -39,6 +39,7 @@ resource "aws_lambda_function" "notify-ops-slack" {
       SLACK_EMOJI_ALARM      = "rotating_light"
       SLACK_EMOJI_OK         = "white_check_mark"
       SLACK_API_TOKEN_SSM    = "${var.alf_ops_alerts["ssm_token"]}"
+      ENVIRONMENT_NAME       = "${var.environment_name}"
     }
   }
 }
