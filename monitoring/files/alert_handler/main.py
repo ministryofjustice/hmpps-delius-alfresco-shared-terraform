@@ -84,7 +84,7 @@ def lambda_handler(event, context):
         'metric': alarm_data['Trigger']['MetricName'],
         'service': alarm_data['Trigger']['Namespace'],
         'id': alarm_data['Trigger']['Dimensions'][0]['value'],
-        'info': alarm_data['AlarmDescription']
+        'description': alarm_data['AlarmDescription']
     }
 
     # slack message fields

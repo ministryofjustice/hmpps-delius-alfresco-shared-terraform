@@ -15,6 +15,36 @@ token = None
 if get_token['status'] == "success":
     token = get_token['Value']
 
+message_block = {
+    "blocks": [
+                {
+                    "type": "section",
+                    "text": {
+                            "text": "A message *with some bold text* and _some italicized text_.",
+                        "type": "mrkdwn"
+                    },
+                    "fields": [
+                        {
+                            "type": "mrkdwn",
+                            "text": "*Priority*"
+                        },
+                        {
+                            "type": "mrkdwn",
+                            "text": "*Type*"
+                        },
+                        {
+                            "type": "plain_text",
+                            "text": "High"
+                        },
+                        {
+                            "type": "plain_text",
+                            "text": "String"
+                        }
+                    ]
+                }
+    ]
+}
+
 
 class Slack_Handler():
     def __init__(self):
@@ -32,21 +62,77 @@ class Slack_Handler():
         emoji = self.emoji_types[content_obj['emoji_type']]
         icon_emoji = ":{}:".format(emoji)
         title = content_obj['title']
-        message_text = json.dumps(
-            content_obj['text'], sort_keys=True, indent=4)
-        text_body = '{} *{}* {}'.format(
-            icon_emoji,
-            title,
-            message_text
-        )
+        alarm_text = content_obj['text']
         response = self.client.chat_postMessage(
-            channel=self.slack_channel_name,
-            text=text_body
+            channel="delius-alerts-alfresco-nonprod",
+            username="AWS Lambda",
+            blocks=[
+                {
+                    "type": "section",
+                    "text": {
+                        "type": "mrkdwn",
+                        "text": "*{}*".format(title)
+                    }
+                },
+                {
+                    "type": "section",
+                    "fields": [
+                        {
+                            "type": "mrkdwn",
+                            "text": "*Alert State*"
+                        },
+                        {
+                            "type": "mrkdwn",
+                            "text": "*Metric*"
+                        },
+                        {
+                            "type": "plain_text",
+                            "text": "{}".format(icon_emoji)
+                        },
+                        {
+                            "type": "plain_text",
+                            "text": alarm_text['metric']
+                        },
+                    ]
+                },
+                {
+                    "type": "section",
+                    "text": {
+                        "type": "mrkdwn",
+                        "text": alarm_text['description']
+                    }
+                },
+                {
+                    "type": "section",
+                    "fields": [
+                        {
+                            "type": "mrkdwn",
+                            "text": "*Service*"
+                        },
+                        {
+                            "type": "mrkdwn",
+                            "text": "*ID*"
+                        },
+                        {
+                            "type": "plain_text",
+                            "text": alarm_text['service']
+                        },
+                        {
+                            "type": "plain_text",
+                            "text": alarm_text['id']
+                        }
+                    ]
+                }
+            ]
         )
         logger.debug({
             'message': {
-                'text': text_body,
                 'function': 'send_message',
+                'variables': {
+                    'text': alarm_text,
+                    'emoji': emoji,
+                    'title': title
+                }
             }
         })
         return response
