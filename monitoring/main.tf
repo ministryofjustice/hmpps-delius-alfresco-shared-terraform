@@ -68,6 +68,16 @@ data "aws_ssm_parameter" "ssm_token" {
   name = "${var.alf_ops_alerts["ssm_token"]}"
 }
 
+# getting lb details
+data "aws_lb" "asg_lb" {
+  arn = "${data.terraform_remote_state.asg.asg_elb_id}"
+}
+
+# target group
+data "aws_lb_target_group" "asg_target_group" {
+  name = "${data.terraform_remote_state.common.short_environment_identifier}-alf-app"
+}
+
 ####################################################
 # Locals
 ####################################################
@@ -80,7 +90,8 @@ locals {
   config-bucket              = "${data.terraform_remote_state.common.common_s3-config-bucket}"
   account_id                 = "${data.terraform_remote_state.common.common_account_id}"
   db_instance_id             = "${data.terraform_remote_state.rds.rds_db_instance_id}"
-  load_balancer_name         = "${data.terraform_remote_state.asg.asg_elb_name}"
+  load_balancer_arn_suffix   = "${data.aws_lb.asg_lb.arn_suffix}"
+  target_group_suffix        = "${data.aws_lb_target_group.asg_target_group.arn_suffix}"
   alarm_period               = 300
   evaluation_periods         = "1"
   alert_suffix               = "alert"
@@ -96,4 +107,5 @@ locals {
   inst_critical_threshold    = "${var.alfresco_asg_props["asg_min"]}"
   inst_alert_threshold       = "${var.alfresco_asg_props["min_elb_capacity"]}"
   messaging_status           = "${var.alf_ops_alerts["messaging_status"]}"
+  datapoints_to_alarm        = "${var.alf_ops_alerts["datapoints_to_alarm"]}"
 }

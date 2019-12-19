@@ -23,11 +23,12 @@ variable "environment_name" {
 variable "alf_ops_alerts" {
   type = "map"
   default = {
-    slack_channel_name = "delius-alerts-alfresco-nonprod"
-    log_level          = "info"
-    messaging_status   = "disabled"
-    runtime            = "python3.7"
-    ssm_token          = "manual-ops-alerts-slack-token"
+    slack_channel_name  = "delius-alerts-alfresco-nonprod"
+    log_level           = "info"
+    messaging_status    = "disabled"
+    runtime             = "python3.7"
+    ssm_token           = "manual-ops-alerts-slack-token"
+    datapoints_to_alarm = "1"
   }
 }
 
