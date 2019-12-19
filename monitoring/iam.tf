@@ -7,6 +7,7 @@ data "template_file" "lambda" {
 
   vars {
     ssm_token_arn = "${data.aws_ssm_parameter.ssm_token.arn}"
+    config-bucket = "${local.config-bucket}"
   }
 }
 

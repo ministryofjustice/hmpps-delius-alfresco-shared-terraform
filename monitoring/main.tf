@@ -73,12 +73,23 @@ data "aws_ssm_parameter" "ssm_token" {
 ####################################################
 
 locals {
-  region           = "${var.region}"
-  application      = "${data.terraform_remote_state.common.alfresco_app_name}"
-  common_name      = "${data.terraform_remote_state.common.short_environment_identifier}-${local.application}"
-  tags             = "${data.terraform_remote_state.common.common_tags}"
-  account_id       = "${data.terraform_remote_state.common.common_account_id}"
-  db_instance_id   = "${data.terraform_remote_state.rds.rds_db_instance_id}"
-  load_balancer_id = "${data.terraform_remote_state.asg.asg_elb_name}"
-  alarm_period     = 300
+  region                     = "${var.region}"
+  application                = "${data.terraform_remote_state.common.alfresco_app_name}"
+  common_name                = "${data.terraform_remote_state.common.short_environment_identifier}-${local.application}"
+  tags                       = "${data.terraform_remote_state.common.common_tags}"
+  config-bucket              = "${data.terraform_remote_state.common.common_s3-config-bucket}"
+  account_id                 = "${data.terraform_remote_state.common.common_account_id}"
+  db_instance_id             = "${data.terraform_remote_state.rds.rds_db_instance_id}"
+  load_balancer_id           = "${data.terraform_remote_state.asg.asg_elb_name}"
+  alarm_period               = 300
+  alert_suffix               = "alert"
+  cpu_alert_threshold        = 70
+  warning_suffix             = "warning"
+  cpu_warning_threshold      = 60
+  critical_suffix            = "critical"
+  cpu_critical_threshold     = 80
+  db_conn_warning_threshold  = 200
+  db_conn_alert_threshold    = 400
+  db_conn_critical_threshold = 600
+  support_team               = "AWS Delius Support or Zaizzi Teams"
 }

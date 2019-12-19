@@ -1,9 +1,9 @@
 ### SNS
 
 locals {
-  function_name                = "${local.common_name}-notify"
-  group_alf                    = "/aws/lambda/${local.function_name}"
-  lambda_function_payload_file = "./files/alert_handler/function.zip"
+  function_name = "${local.common_name}-notify"
+  group_alf     = "/aws/lambda/${local.function_name}"
+  payload_file  = "files/alert_handler/function.zip"
 }
 
 
@@ -18,18 +18,25 @@ resource "aws_sns_topic_subscription" "alarm_subscription" {
   endpoint  = "${aws_lambda_function.notify-ops-slack.arn}"
 }
 
+resource "aws_s3_bucket_object" "build_code" {
+  bucket = "${local.config-bucket}"
+  key    = "lambda/${local.function_name}/${md5(file(local.payload_file))}/function.zip"
+  source = "${local.payload_file}"
+  etag   = "${md5(file(local.payload_file))}"
+}
+
 resource "aws_lambda_function" "notify-ops-slack" {
-  filename         = "${local.lambda_function_payload_file}"
-  function_name    = "${local.function_name}"
-  description      = "${local.function_name}"
-  role             = "${aws_iam_role.lambda.arn}"
-  handler          = "main.lambda_handler"
-  depends_on       = ["aws_cloudwatch_log_group.lambda"]
-  runtime          = "${var.alf_ops_alerts["runtime"]}"
-  tags             = "${merge(local.tags, map("Name", format("%s", local.function_name)))}"
-  source_code_hash = "${base64sha256(file("${local.lambda_function_payload_file}"))}"
-  publish          = true
-  memory_size      = 256
+  function_name = "${local.function_name}"
+  description   = "${local.function_name}"
+  role          = "${aws_iam_role.lambda.arn}"
+  handler       = "main.lambda_handler"
+  depends_on    = ["aws_cloudwatch_log_group.lambda", "aws_s3_bucket_object.build_code"]
+  runtime       = "${var.alf_ops_alerts["runtime"]}"
+  tags          = "${merge(local.tags, map("Name", format("%s", local.function_name)))}"
+  s3_bucket     = "${local.config-bucket}"
+  s3_key        = "lambda/${local.function_name}/${md5(file(local.payload_file))}/function.zip"
+  publish       = true
+  memory_size   = 256
 
   environment {
     variables = {
