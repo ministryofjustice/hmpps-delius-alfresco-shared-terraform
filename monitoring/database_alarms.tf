@@ -1,7 +1,8 @@
 resource "aws_cloudwatch_metric_alarm" "db_cpu_critical" {
   alarm_name          = "${local.application}_database_cpu_${local.critical_suffix}"
+  count               = "${local.messaging_status == "enabled" ? 1 : 0}"
   comparison_operator = "GreaterThanOrEqualToThreshold"
-  evaluation_periods  = "1"
+  evaluation_periods  = "${local.evaluation_periods}"
   metric_name         = "CPUUtilization"
   namespace           = "AWS/RDS"
   period              = "${local.alarm_period}"
@@ -18,8 +19,9 @@ resource "aws_cloudwatch_metric_alarm" "db_cpu_critical" {
 
 resource "aws_cloudwatch_metric_alarm" "db_cpu_alert" {
   alarm_name          = "${local.application}_database_cpu_${local.alert_suffix}"
+  count               = "${local.messaging_status == "enabled" ? 1 : 0}"
   comparison_operator = "GreaterThanOrEqualToThreshold"
-  evaluation_periods  = "1"
+  evaluation_periods  = "${local.evaluation_periods}"
   metric_name         = "CPUUtilization"
   namespace           = "AWS/RDS"
   period              = "${local.alarm_period}"
@@ -36,8 +38,9 @@ resource "aws_cloudwatch_metric_alarm" "db_cpu_alert" {
 
 resource "aws_cloudwatch_metric_alarm" "db_cpu_warning" {
   alarm_name          = "${local.application}_database_cpu_${local.warning_suffix}"
+  count               = "${local.messaging_status == "enabled" ? 1 : 0}"
   comparison_operator = "GreaterThanOrEqualToThreshold"
-  evaluation_periods  = "1"
+  evaluation_periods  = "${local.evaluation_periods}"
   metric_name         = "CPUUtilization"
   namespace           = "AWS/RDS"
   period              = "${local.alarm_period}"
@@ -56,8 +59,9 @@ resource "aws_cloudwatch_metric_alarm" "db_cpu_warning" {
 
 resource "aws_cloudwatch_metric_alarm" "db_connections_warning" {
   alarm_name          = "${local.application}_database_connections_${local.warning_suffix}"
+  count               = "${local.messaging_status == "enabled" ? 1 : 0}"
   comparison_operator = "GreaterThanThreshold"
-  evaluation_periods  = "1"
+  evaluation_periods  = "${local.evaluation_periods}"
   metric_name         = "DatabaseConnections"
   namespace           = "AWS/RDS"
   period              = "${local.alarm_period}"
@@ -74,8 +78,9 @@ resource "aws_cloudwatch_metric_alarm" "db_connections_warning" {
 
 resource "aws_cloudwatch_metric_alarm" "db_connections_alert" {
   alarm_name          = "${local.application}_database_connections_${local.alert_suffix}"
+  count               = "${local.messaging_status == "enabled" ? 1 : 0}"
   comparison_operator = "GreaterThanThreshold"
-  evaluation_periods  = "1"
+  evaluation_periods  = "${local.evaluation_periods}"
   metric_name         = "DatabaseConnections"
   namespace           = "AWS/RDS"
   period              = "${local.alarm_period}"
@@ -92,8 +97,9 @@ resource "aws_cloudwatch_metric_alarm" "db_connections_alert" {
 
 resource "aws_cloudwatch_metric_alarm" "db_connections_critical" {
   alarm_name          = "${local.application}_database_connections_${local.critical_suffix}"
+  count               = "${local.messaging_status == "enabled" ? 1 : 0}"
   comparison_operator = "GreaterThanThreshold"
-  evaluation_periods  = "1"
+  evaluation_periods  = "${local.evaluation_periods}"
   metric_name         = "DatabaseConnections"
   namespace           = "AWS/RDS"
   period              = "${local.alarm_period}"
@@ -110,8 +116,9 @@ resource "aws_cloudwatch_metric_alarm" "db_connections_critical" {
 
 resource "aws_cloudwatch_metric_alarm" "swap_usage_critical" {
   alarm_name          = "${local.application}_database_swap-usage_${local.critical_suffix}"
+  count               = "${local.messaging_status == "enabled" ? 1 : 0}"
   comparison_operator = "GreaterThanThreshold"
-  evaluation_periods  = "1"
+  evaluation_periods  = "${local.evaluation_periods}"
   metric_name         = "SwapUsage"
   namespace           = "AWS/RDS"
   period              = "${local.alarm_period}"

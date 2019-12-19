@@ -80,8 +80,9 @@ locals {
   config-bucket              = "${data.terraform_remote_state.common.common_s3-config-bucket}"
   account_id                 = "${data.terraform_remote_state.common.common_account_id}"
   db_instance_id             = "${data.terraform_remote_state.rds.rds_db_instance_id}"
-  load_balancer_id           = "${data.terraform_remote_state.asg.asg_elb_name}"
+  load_balancer_name         = "${data.terraform_remote_state.asg.asg_elb_name}"
   alarm_period               = 300
+  evaluation_periods         = "1"
   alert_suffix               = "alert"
   cpu_alert_threshold        = 70
   warning_suffix             = "warning"
@@ -92,4 +93,7 @@ locals {
   db_conn_alert_threshold    = 400
   db_conn_critical_threshold = 600
   support_team               = "AWS Delius Support or Zaizzi Teams"
+  inst_critical_threshold    = "${var.alfresco_asg_props["asg_min"]}"
+  inst_alert_threshold       = "${var.alfresco_asg_props["min_elb_capacity"]}"
+  messaging_status           = "${var.alf_ops_alerts["messaging_status"]}"
 }

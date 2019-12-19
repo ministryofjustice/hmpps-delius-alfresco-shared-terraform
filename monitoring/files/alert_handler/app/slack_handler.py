@@ -15,36 +15,6 @@ token = None
 if get_token['status'] == "success":
     token = get_token['Value']
 
-message_block = {
-    "blocks": [
-                {
-                    "type": "section",
-                    "text": {
-                            "text": "A message *with some bold text* and _some italicized text_.",
-                        "type": "mrkdwn"
-                    },
-                    "fields": [
-                        {
-                            "type": "mrkdwn",
-                            "text": "*Priority*"
-                        },
-                        {
-                            "type": "mrkdwn",
-                            "text": "*Type*"
-                        },
-                        {
-                            "type": "plain_text",
-                            "text": "High"
-                        },
-                        {
-                            "type": "plain_text",
-                            "text": "String"
-                        }
-                    ]
-                }
-    ]
-}
-
 
 class Slack_Handler():
     def __init__(self):

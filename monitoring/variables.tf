@@ -30,3 +30,12 @@ variable "alf_ops_alerts" {
     ssm_token          = "manual-ops-alerts-slack-token"
   }
 }
+
+#ASG
+variable "alfresco_asg_props" {
+  type = "map"
+  default = {
+    asg_min          = 1
+    min_elb_capacity = 1
+  }
+}
