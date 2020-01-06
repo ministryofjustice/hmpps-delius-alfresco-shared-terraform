@@ -1,0 +1,125 @@
+def project = [:]
+project.dcore     = 'hmpps-delius-core-terraform'
+project.alfresco  = 'hmpps-delius-alfresco-shared-terraform'
+
+def docker_tls_dir = '${HOME}/.docker_jenkins/${environment_name}'
+
+def prepare_env() {
+    sh '''
+    #!/usr/env/bin bash
+    sudo yum install -y nc
+    docker pull mojdigitalstudio/hmpps-terraform-builder:latest
+    '''
+}
+
+
+def create_props(env_name, git_project_dir, docker_tls_dir) {
+    wrap([$class: 'AnsiColorBuildWrapper', 'colorMapName': 'XTerm']) {
+        sh """
+        #!/usr/env/bin bash
+        cd "${git_project_dir}"
+        sh restore/set-properties.sh ${env_name} ${docker_tls_dir}
+        set -e
+        """
+    }
+}
+
+def docker_compose_handler(git_project_dir, docker_tls_dir, container_name) {
+    wrap([$class: 'AnsiColorBuildWrapper', 'colorMapName': 'XTerm']) {
+        sh """
+        #!/usr/env/bin bash
+        cd "${git_project_dir}"
+        source ${docker_tls_dir}/docker.properties
+        docker-compose -f restore/docker-compose-alfresco-maintenance.yml up --exit-code-from ${container_name} ${container_name}
+        """
+    }
+}
+
+def es_destroy(git_project_dir, docker_tls_dir) {
+    wrap([$class: 'AnsiColorBuildWrapper', 'colorMapName': 'XTerm']) {
+        sh """
+        #!/usr/env/bin bash
+        cd "${git_project_dir}"
+        source ${docker_tls_dir}/docker.properties
+        docker-compose -f restore/docker-compose-alfresco-backup.yml down -v
+        docker system prune -a -f
+        """
+    }
+}
+
+def apply_submodule(env_name, git_project_dir, submodule_name) {
+    wrap([$class: 'AnsiColorBuildWrapper', 'colorMapName': 'XTerm']) {
+        sh """
+        #!/usr/env/bin bash
+        echo "TF APPLY for ${env_name} | ${submodule_name} - component from git project ${git_project_dir}"
+        set +e
+        cd "${git_project_dir}"
+        python docker-run.py --env ${env_name} --component ${submodule_name} --action plan
+        python docker-run.py --env ${env_name} --component ${submodule_name} --action apply
+        set -e
+        """
+    }
+}
+
+def do_terraform(env_name, git_project, component) {
+    apply_submodule(env_name, git_project, component)
+}
+
+def debug_env() {
+    sh '''
+    #!/usr/env/bin bash
+    pwd
+    '''
+}
+
+pipeline {
+
+    agent { label "jenkins_slave" }
+
+    stages {
+
+        stage('setup') {
+            steps {
+                slackSend(message: "Build started on \"${environment_name}\" - ${env.JOB_NAME} ${env.BUILD_NUMBER} (<${env.BUILD_URL.replace(':8080','')}|Open>)")
+
+                dir( project.alfresco ) {
+                  git url: 'git@github.com:ministryofjustice/' + project.alfresco, branch: 'netwidz-patch-1', credentialsId: 'f44bc5f1-30bd-4ab9-ad61-cc32caf1562a'
+                }
+
+                prepare_env()
+            }
+        }
+
+        stage('Delius | Create Props') {
+          steps {
+            script {
+              create_props(environment_name, project.alfresco, docker_tls_dir)
+            }
+          }
+        }
+
+        stage('Delius | Alfresco Database Vacuum') {
+          steps {
+            script {
+              docker_compose_handler(project.alfresco, docker_tls_dir, 'vacuum')
+            }
+          }
+        }           
+    }
+
+    post {
+        always {
+            script {
+              es_destroy(project.alfresco, docker_tls_dir)
+            }
+            deleteDir()
+        }
+        success {
+            slackSend(message: "Build completed on \"${environment_name}\" - ${env.JOB_NAME} ${env.BUILD_NUMBER} ", color: 'good')
+        }
+        failure {
+            slackSend(message: "Build failed on \"${environment_name}\" - ${env.JOB_NAME} ${env.BUILD_NUMBER} ", color: 'danger')
+        }
+    }
+
+}

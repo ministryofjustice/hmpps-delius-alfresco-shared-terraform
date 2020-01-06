@@ -69,12 +69,4 @@ case ${JOB_TYPE} in
   *)
     echo "${JOB_TYPE} argument is not a valid argument. db-backup - content-sync - elasticsearch-backup"
   ;;
-  vacuum-tables)
-    echo "Running Postgres DB table analyze Vacuum for alf_node alf_node_properties and alf_node_aspect"
-    psql postgresql://${DB_USER}:${DB_PASSWORD}@${ALF_DB_HOST}/alfresco << EOF
-    VACUUM(ANALYZE, VERBOSE) alf_node_aspects;
-    VACUUM(ANALYZE, VERBOSE) alf_node_properties;
-    VACUUM(ANALYZE, VERBOSE) alf_node;
-    EOF
-  ;;
 esac
