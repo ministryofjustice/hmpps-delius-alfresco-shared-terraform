@@ -101,7 +101,8 @@ class Slack_Handler():
                 'variables': {
                     'text': alarm_text,
                     'emoji': emoji,
-                    'title': title
+                    'title': title,
+                    'channel': self.slack_channel_name
                 }
             }
         })
