@@ -140,6 +140,7 @@ pipeline {
         stage('Alfresco | ElastiCache') { steps { script { do_terraform(environment_name, project.alfresco, 'elasticache-memcached')}}}
         stage('Alfresco | ES Migration') { steps { script { do_terraform(environment_name, project.alfresco, 'elk-migration')}}}
         stage('Alfresco | ASG') { steps { script { do_terraform(environment_name, project.alfresco, 'asg')}}}
+        stage('Alfresco | WAF') { steps { script { do_terraform(environment_name, project.alfresco, 'waf')}}}
         stage('Alfresco | ES Admin') { steps { script { do_terraform(environment_name, project.alfresco, 'es_admin')}}}
         stage('Alfresco | Cloudwatch Exporter') { steps { script { do_terraform(environment_name, project.alfresco, 'cloudwatch_exporter')}}}
         stage('Alfresco | Monitoring') { steps { script { do_terraform(environment_name, project.alfresco, 'monitoring')}}}
