@@ -1,0 +1,54 @@
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "AccessToLogGroup",
+            "Effect": "Allow",
+            "Action": [
+                "logs:CreateExportTask",
+                "logs:DescribeExportTasks",
+                "logs:CreateLogStream",
+                "logs:DescribeLogGroups",
+                "logs:CreateLogGroup",
+                "logs:PutLogEvents"
+            ],
+            "Resource": "arn:aws:logs:*:*:*"
+        },
+        {
+            "Sid": "ListAllBuckets",
+            "Effect": "Allow",
+            "Action": [
+                "s3:ListAllMyBuckets",
+                "s3:GetBucketLocation"
+            ],
+            "Resource": [
+                "arn:aws:s3:::*"
+            ]
+        },
+        {
+            "Sid": "allowAccessToS3Buckets",
+            "Effect": "Allow",
+            "Action": [
+                "s3:GetObject",
+                "s3:ListBucket",
+                "S3:PutObject"
+            ],
+            "Resource": [
+                "arn:aws:s3:::${config-bucket}",
+                "arn:aws:s3:::${config-bucket}/lambda/*"
+            ]
+        },
+        {
+            "Effect": "Allow",
+            "Sid": "allowSSMReadOnly",
+            "Action": [
+                "ssm:Describe*",
+                "ssm:Get*",
+                "ssm:List*"
+            ],
+            "Resource": [
+                "${ssm_token_arn}"
+            ]
+        }
+    ]
+}

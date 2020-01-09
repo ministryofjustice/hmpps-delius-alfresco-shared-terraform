@@ -25,6 +25,19 @@ services:
       - /opt/scripts:/opt/scripts
       - /opt/eslocal/psql:/opt/local
     entrypoint: [ "sh", "/opt/scripts/alfresco_database_backup.sh", "db-backup" ]
+  vacuum:
+    image: mojdigitalstudio/hmpps-elasticsearch-manager:latest
+    environment:
+      - APP_ENVIRONMENT=dev
+      - ALF_BACKUP_BUCKET=${ALF_BACKUP_BUCKET}
+      - ALF_DB_HOST=${ALF_DB_HOST}
+      - ALF_DB_NAME=${ALF_DB_NAME}
+      - ALF_DB_PASSWORD_SSM=${ALF_DB_PASSWORD_SSM}
+      - ALF_DB_USERNAME_SSM=${ALF_DB_USERNAME_SSM}
+      - TG_REGION=${TG_REGION}
+    volumes:
+      - /opt/scripts:/opt/scripts
+    entrypoint: [ "sh", "/opt/scripts/alfresco_database_maintenance.sh", "vacuum-tables" ]
   elasticsearch:
     image: mojdigitalstudio/hmpps-elasticsearch-manager:latest
     environment:
