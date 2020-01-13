@@ -39,7 +39,6 @@ cat << EOF > ~/requirements.yml
   src: https://github.com/ministryofjustice/hmpps-logstash
 - name: alfresco
   src: https://github.com/ministryofjustice/hmpps-alfresco-bootstrap
-  version: netwidz-patch-1
 - name: users
   src: singleplatform-eng.users
 
