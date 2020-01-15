@@ -73,6 +73,7 @@ cat << EOF > ~/bootstrap_vars.yml
 - messaging_broker_password: "{{ lookup('aws_ssm', '${messaging_broker_password}', decrypt=True, region='${region}') }}"
 - remote_user_filename: "${bastion_inventory}"
 - logstash_version: "5.6.15"
+- tomcat_maxthreads: "150"
 EOF
 
 wget https://raw.githubusercontent.com/ministryofjustice/hmpps-delius-ansible/master/group_vars/${bastion_inventory}.yml -O ~/users.yml

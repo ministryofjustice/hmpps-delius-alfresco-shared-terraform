@@ -110,6 +110,14 @@ pipeline {
           }
         }
 
+        stage('Delius | Alfresco Database Vacuum') {
+          steps {
+            script {
+              docker_compose_handler(project.alfresco, docker_tls_dir, 'vacuum')
+            }
+          }
+        }
+
         stage('Filebased backups') {
           parallel {
             stage('Delius | Alfresco Content Backup') { steps { script {docker_compose_handler(project.alfresco, docker_tls_dir, 'content')}}}
