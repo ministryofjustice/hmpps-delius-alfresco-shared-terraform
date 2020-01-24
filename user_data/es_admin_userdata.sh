@@ -179,3 +179,5 @@ crontab -l > /opt/crontask.txt
 echo "15 */4 * * * /bin/sh /opt/storage-sync.sh > /dev/null 2>&1" >> /opt/crontask.txt
 echo "59 23 * * * /bin/sh /opt/storage-sync.sh > /dev/null 2>&1" >> /opt/crontask.txt
 crontab /opt/crontask.txt
+
+aws s3 sync --delete s3://${config-bucket}/scripts/ /opt/scripts/

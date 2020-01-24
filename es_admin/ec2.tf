@@ -69,11 +69,11 @@ resource "aws_instance" "instance" {
     volume_size           = "${var.es_admin_volume_props["size"]}"
     encrypted             = "${var.es_admin_volume_props["encrypted"]}"
   }
-  lifecycle {
-    ignore_changes = [
-      "ami"
-    ]
-  }
+  # lifecycle {
+  #   ignore_changes = [
+  #     "ami"
+  #   ]
+  # }
 }
 
 #-------------------------------------------------------------

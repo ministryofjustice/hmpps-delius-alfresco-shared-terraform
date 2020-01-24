@@ -31,7 +31,7 @@ perform_db_restore ()
     echo "Run mode set to ${ALF_RESTORE_STATUS}, will perform database restore"
 
     # Download only sql file, assumes only one file found
-    aws s3 sync  s3://${CONFIG_BUCKET}/restore/db_temp/ ${DUMP_DIR}/
+    aws s3 sync --only-show-errors s3://${CONFIG_BUCKET}/restore/db_temp/ ${DUMP_DIR}/
     exit_on_error $? !!
     echo "SQL file sync done"
     

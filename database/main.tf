@@ -152,49 +152,49 @@ module "parameter_group" {
 }
 
 # ENBALE FOR RESTORE AND ATTACH TO PRIMARY NODE
-# module "restore_parameter_group" {
-#   source = "git::https://github.com/ministryofjustice/hmpps-terraform-modules.git?ref=pre-shared-vpc//modules//rds//db_parameter_group"
+module "restore_parameter_group" {
+  source = "git::https://github.com/ministryofjustice/hmpps-terraform-modules.git?ref=pre-shared-vpc//modules//rds//db_parameter_group"
 
-#   create      = true
-#   identifier  = "${local.common_name}-restore"
-#   name_prefix = "${local.common_name}-restore-"
-#   family      = "${local.family}"
+  create      = true
+  identifier  = "${local.common_name}-restore"
+  name_prefix = "${local.common_name}-restore-"
+  family      = "${local.family}"
 
-#   parameters = [
-#     {
-#       name         = "maintenance_work_mem"
-#       value        = 1048576
-#       apply_method = "pending-reboot"
-#     },
-#     {
-#       name         = "max_wal_size"
-#       value        = 256
-#       apply_method = "pending-reboot"
-#     },
-#     {
-#       name         = "checkpoint_timeout"
-#       value        = 1800
-#       apply_method = "pending-reboot"
-#     },
-#     {
-#       name         = "synchronous_commit"
-#       value        = "Off"
-#       apply_method = "pending-reboot"
-#     },
-#     {
-#       name         = "wal_buffers"
-#       value        = 8192
-#       apply_method = "pending-reboot"
-#     },
-#     {
-#       name         = "autovacuum"
-#       value        = "Off"
-#       apply_method = "pending-reboot"
-#     }
-#   ]
+  parameters = [
+    {
+      name         = "maintenance_work_mem"
+      value        = 1048576
+      apply_method = "pending-reboot"
+    },
+    {
+      name         = "max_wal_size"
+      value        = 256
+      apply_method = "pending-reboot"
+    },
+    {
+      name         = "checkpoint_timeout"
+      value        = 1800
+      apply_method = "pending-reboot"
+    },
+    {
+      name         = "synchronous_commit"
+      value        = "Off"
+      apply_method = "pending-reboot"
+    },
+    {
+      name         = "wal_buffers"
+      value        = 8192
+      apply_method = "pending-reboot"
+    },
+    {
+      name         = "autovacuum"
+      value        = "Off"
+      apply_method = "pending-reboot"
+    }
+  ]
 
-#   tags = "${local.tags}"
-# }
+  tags = "${local.tags}"
+}
 
 ############################################
 # CREATE DB OPTIONS
