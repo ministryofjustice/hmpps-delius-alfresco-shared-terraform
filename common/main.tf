@@ -135,7 +135,7 @@ locals {
   environment                  = "${var.environment_type}"
 
   tags = "${merge(
-    data.terraform_remote_state.vpc.tags,
+    var.tags,
     map("sub-project", "${var.alfresco_app_name}"),
     map("source-code", "ignored"),
     map("source-hash", "ignored")

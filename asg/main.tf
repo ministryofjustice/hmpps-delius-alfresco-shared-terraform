@@ -128,6 +128,19 @@ data "terraform_remote_state" "elk_migration" {
   }
 }
 
+#-------------------------------------------------------------
+### Getting the elk-migration details
+#-------------------------------------------------------------
+data "terraform_remote_state" "solr" {
+  backend = "s3"
+
+  config {
+    bucket = "${var.remote_state_bucket_name}"
+    key    = "alfresco/solr/terraform.tfstate"
+    region = "${var.region}"
+  }
+}
+
 
 #-------------------------------------------------------------
 ### Getting the latest amazon ami
@@ -226,6 +239,11 @@ locals {
     "${data.terraform_remote_state.security-groups.security_groups_bastion_in_sg_id}",
     "${data.terraform_remote_state.security-groups.security_groups_map["mon_jenkins"]}"
   ]
+
+  solr_config = {
+    solr_host = "${data.terraform_remote_state.solr.alb_dns_cname}"
+    solr_port = 443
+  }
 }
 
 ####################################################
@@ -314,4 +332,5 @@ module "asg" {
   cache_home                  = "/srv/cache"
   jvm_memory                  = "${local.jvm_memory}"
   instance_security_groups    = ["${local.instance_security_groups}"]
+  solr_config                 = "${local.solr_config}"
 }

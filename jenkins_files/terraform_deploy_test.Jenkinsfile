@@ -52,19 +52,12 @@ pipeline {
         stage('Alfresco | RDS') { steps { script { do_terraform(environment_name, 'database')}}}
         stage('Alfresco | ElastiCache') { steps { script { do_terraform(environment_name, 'elasticache-memcached')}}}
         stage('Alfresco | ES Migration') { steps { script { do_terraform(environment_name, 'elk-migration')}}}
+        stage('Alfresco | SOLR') { steps { script { do_terraform(environment_name, 'solr')}}}
         stage('Alfresco | ASG') { steps { script { do_terraform(environment_name, 'asg')}}}
         stage('Alfresco | WAF') { steps { script { do_terraform(environment_name, 'waf')}}}
         stage('Alfresco | ES Admin') { steps { script { do_terraform(environment_name, 'es_admin')}}}
         stage('Alfresco | Cloudwatch Exporter') { steps { script { do_terraform(environment_name, 'cloudwatch_exporter')}}}
         stage('Alfresco | Monitoring') { steps { script { do_terraform(environment_name, 'monitoring')}}}
-        stage('Smoke test') {
-            when {
-                expression { "${environment_name}" == "alfresco-dev"}
-            }
-            steps {
-                build job: "DAMS/Environments/${environment_name}/Alfresco/Smoke test"
-            }
-        }
     }
     post {
         always {

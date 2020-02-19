@@ -39,10 +39,12 @@ cat << EOF > ~/requirements.yml
   src: https://github.com/ministryofjustice/hmpps-logstash
 - name: alfresco
   src: https://github.com/ministryofjustice/hmpps-alfresco-bootstrap
-  version: feature/add-solr-config
+  version: master
 - name: users
   src: singleplatform-eng.users
-
+- name: solr
+  src: https://github.com/ministryofjustice/hmpps-ansible-role-solr.git
+  version: master
 EOF
 
 cat << EOF > ~/bootstrap_vars.yml
@@ -67,16 +69,24 @@ cat << EOF > ~/bootstrap_vars.yml
 - cldwatch_log_group: "${cldwatch_log_group}"
 - region: "${region}"
 - external_fqdn: "${external_fqdn}"
-- alfresco_protocol: "https"
-- alfresco_port: "443"
+- alfresco_protocol: "http"
+- alfresco_port: "8080"
 - cluster_enabled: "true"
 - messaging_broker_url: "${messaging_broker_url}"
 - messaging_broker_password: "{{ lookup('aws_ssm', '${messaging_broker_password}', decrypt=True, region='${region}') }}"
 - remote_user_filename: "${bastion_inventory}"
 - logstash_version: "5.6.15"
 - tomcat_maxthreads: "150"
-- solr_host: "${solr_host}"
 - solr_port: "${solr_port}"
+- solr_device_name: "${solr_device_name}"
+- solr_volume_name: "${solr_volume_name }"
+- solr_java_xms: "${solr_java_xms}"
+- solr_java_xmx: "${solr_java_xmx}"
+- alfresco_server_allow_write: "false"
+- solr_stream_logs: "enabled"
+- solr_backups_enabled: true
+- solr_backups_bucket: "${backups_bucket}"
+- solr_index: true
 EOF
 
 wget https://raw.githubusercontent.com/ministryofjustice/hmpps-delius-ansible/master/group_vars/${bastion_inventory}.yml -O ~/users.yml
@@ -94,6 +104,7 @@ cat << EOF > ~/bootstrap.yml
     - logstash
     - users
     - alfresco
+    - solr
 EOF
 
 logger "ansible prep stage complete"
@@ -124,3 +135,6 @@ sudo systemctl stop tomcat
 sudo systemctl start tomcat
 
 logger "alfresco bootstrap complete"
+
+# restart awslogs
+systemctl restart awslogs

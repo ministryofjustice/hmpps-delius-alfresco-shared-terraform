@@ -66,3 +66,8 @@ variable "alfresco_instance_ami" {
   type    = "map"
   default = {}
 }
+
+variable "tags" {
+  type    = "map"
+  default = {}
+}

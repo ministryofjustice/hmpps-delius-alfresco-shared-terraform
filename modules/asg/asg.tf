@@ -52,8 +52,12 @@ data "template_file" "user_data" {
 
     # For bootstrapping
     bastion_inventory = "${var.bastion_inventory}"
+    # SOLR
+    solr_host = "${var.solr_config["solr_host"]}"
+    solr_port = "${var.solr_config["solr_port"]}"
   }
 }
+
 
 # ############################################
 # # CREATE LAUNCH CONFIG FOR EC2 RUNNING SERVICES
@@ -130,7 +134,7 @@ resource "aws_autoscaling_group" "environment" {
   }
 
   tags = [
-    # "${data.null_data_source.tags.*.outputs}",
+    "${data.null_data_source.tags.*.outputs}",
     {
       key                 = "Name"
       value               = "${local.common_prefix}-${aws_launch_configuration.environment.name}"
