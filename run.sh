@@ -75,7 +75,7 @@ if [ -f "${env_config_dir}/${ENVIRONMENT_NAME_ARG}/sub-projects/alfresco.propert
     source ${env_config_dir}/${ENVIRONMENT_NAME_ARG}/sub-projects/alfresco.properties;
 fi
 
-if [[ ${COMPONENT} == "ami_permissions" ]]
+if [ ${COMPONENT} == "ami_permissions" ] || [ ${COMPONENT} == "codebuild" ]
 then 
   export TERRAGRUNT_IAM_ROLE="arn:aws:iam::895523100917:role/terraform"
   export TG_REMOTE_STATE_BUCKET="tf-eu-west-2-hmpps-eng-dev-remote-state"

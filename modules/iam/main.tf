@@ -37,6 +37,7 @@ data "template_file" "iam_policy_app_int" {
     db_password            = "${var.asg_ssm_arns_map["db_password"]}"
     remote_broker_username = "${var.asg_ssm_arns_map["remote_broker_username"]}"
     remote_broker_password = "${var.asg_ssm_arns_map["remote_broker_password"]}"
+    alf_backups_bucket_arn = "${var.alf_backups_bucket_arn}"
   }
 }
 

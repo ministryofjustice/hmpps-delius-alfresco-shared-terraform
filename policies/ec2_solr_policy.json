@@ -1,0 +1,143 @@
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "CrossAccountEng",
+            "Effect": "Allow",
+            "Action": [
+                "sts:AssumeRole"
+            ],
+            "Resource": "${remote_iam_role}"
+        },
+        {
+            "Sid": "allowLoggingToCloudWatch",
+            "Effect": "Allow",
+            "Action": [
+                "logs:CreateLogGroup",
+                "logs:CreateLogStream",
+                "logs:PutLogEvents",
+                "logs:DescribeLogStreams"
+            ],
+            "Resource": [
+                "arn:aws:logs:*:*:*"
+            ]
+        },
+        {
+            "Sid": "ListAllBuckets",
+            "Effect": "Allow",
+            "Action": [
+                "s3:ListAllMyBuckets"
+            ],
+            "Resource": [
+                "arn:aws:s3:::*"
+            ]
+        },
+        {
+            "Sid": "allowAccessToS3Buckets",
+            "Effect": "Allow",
+            "Action": [
+                "s3:GetObject",
+                "s3:ListBucket"
+            ],
+            "Resource": [
+                "arn:aws:s3:::${s3-config-bucket}",
+                "arn:aws:s3:::${s3-config-bucket}/*",
+                "arn:aws:s3:::${remote_config_bucket}",
+                "arn:aws:s3:::${remote_config_bucket}/*"
+            ]
+        },
+        {
+            "Sid": "allowAccessToStorageBucket",
+            "Effect": "Allow",
+            "Action": [
+                "s3:*"
+            ],
+            "Resource": [
+                "arn:aws:s3:::${storage_s3bucket}",
+                "arn:aws:s3:::${storage_s3bucket}/*",
+                "${alf_backups_bucket_arn}",
+                "${alf_backups_bucket_arn}/*"
+            ]
+        },
+        {
+            "Effect": "Allow",
+            "Sid": "allowSSMReadOnly",
+            "Action": [
+                "ssm:Describe*",
+                "ssm:Get*",
+                "ssm:List*"
+            ],
+            "Resource": [
+                "${db_user}",
+                "${db_password}",
+                "${remote_broker_username}",
+                "${remote_broker_password}"
+            ]
+        },
+        {
+            "Sid": "allowRoute53Update",
+            "Effect": "Allow",
+            "Action": [
+                "route53:GetHostedZone",
+                "route53:ListHostedZones",
+                "route53:ChangeResourceRecordSets",
+                "route53:ListResourceRecordSets",
+                "route53:ListHostedZonesByName"
+            ],
+            "Resource": "*"
+        },
+        {
+            "Sid": "AllowUseOfKmsKey",
+            "Effect": "Allow",
+            "Action": [
+                "kms:Encrypt",
+                "kms:Decrypt",
+                "kms:ReEncrypt*",
+                "kms:GenerateDataKey*",
+                "kms:DescribeKey"
+            ],
+            "Resource": [
+                "${s3bucket_kms_arn}"
+            ]
+        },
+        {
+            "Sid": "AllowAttachmentOfPersistentResources",
+            "Effect": "Allow",
+            "Action": [
+                "kms:CreateGrant",
+                "kms:ListGrants",
+                "kms:RevokeGrant"
+            ],
+            "Resource": "*",
+            "Condition": {
+                "Bool": {
+                    "kms:GrantIsForAWSResource": "true"
+                }
+            }
+        },
+        {
+            "Effect": "Allow",
+            "Sid": "EC2Perms",
+            "Action": [
+                "ec2:DescribeInstances"
+            ],
+            "Resource": "*"
+        },
+        {
+            "Effect": "Allow",
+            "Sid": "EC2VolumePerms",
+            "Action": [
+                "ec2:DetachVolume",
+                "ec2:CreateVolume",
+                "ec2:AttachVolume",
+                "ec2:DescribeVolumeAttribute",
+                "ec2:DescribeVolumeStatus",
+                "sts:DecodeAuthorizationMessage",
+                "ec2:DescribeVolumes"
+            ],
+            "Resource": [
+                "*"
+            ]
+        }
+    ]
+}

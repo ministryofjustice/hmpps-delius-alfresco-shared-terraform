@@ -27,3 +27,7 @@ variable "asg_ssm_arns_map" {
   type    = "map"
   default = {}
 }
+
+variable "alf_backups_bucket_arn" {
+  default = ""
+}

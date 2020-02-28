@@ -260,3 +260,8 @@ variable "wait_for_capacity_timeout" {
 variable "default_cooldown" {
   default = 300
 }
+
+variable "solr_config" {
+  type    = "map"
+  default = {}
+}

@@ -139,6 +139,7 @@ pipeline {
         stage('Alfresco | RDS') { steps { script { do_terraform(environment_name, project.alfresco, 'database')}}}
         stage('Alfresco | ElastiCache') { steps { script { do_terraform(environment_name, project.alfresco, 'elasticache-memcached')}}}
         stage('Alfresco | ES Migration') { steps { script { do_terraform(environment_name, project.alfresco, 'elk-migration')}}}
+        stage('Alfresco | SOLR') { steps { script { do_terraform(environment_name, project.alfresco, 'solr')}}}
         stage('Alfresco | ASG') { steps { script { do_terraform(environment_name, project.alfresco, 'asg')}}}
         stage('Alfresco | WAF') { steps { script { do_terraform(environment_name, project.alfresco, 'waf')}}}
         stage('Alfresco | ES Admin') { steps { script { do_terraform(environment_name, project.alfresco, 'es_admin')}}}
