@@ -1,3 +1,9 @@
+locals {
+  ebs_iops = "${var.alf_solr_config["ebs_iops"]}"
+  ebs_type = "${var.alf_solr_config["ebs_type"]}"
+}
+
+
 # EBS
 data "aws_subnet" "selected" {
   id = "${local.private_subnet_ids[0]}"
@@ -8,7 +14,7 @@ resource "aws_ebs_volume" "solr" {
   encrypted = true
   type = "${var.alf_solr_config["ebs_type"]}"
   size  = "${var.alf_solr_config["ebs_size"]}"
-  iops = "${var.alf_solr_config["ebs_iops"]}"
+  iops = "${local.ebs_type == "gp2" ? 0 : local.ebs_iops}"
   tags = "${merge(local.tags,map("Name", "${local.common_name}", "${var.alf_solr_config["snap_tag"]}", 1))}"
 }
 
@@ -126,7 +132,7 @@ resource "aws_autoscaling_group" "environment" {
   max_size                  = 1
   desired_capacity          = 1
   launch_configuration      = "${aws_launch_configuration.environment.name}"
-  health_check_grace_period = 600
+  health_check_grace_period = 900
   placement_group           = "${aws_placement_group.environment.id}"
   target_group_arns         = ["${aws_lb_target_group.environment.arn}"]
   health_check_type         = "ELB"
