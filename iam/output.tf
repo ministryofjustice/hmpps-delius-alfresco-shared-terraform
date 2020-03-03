@@ -17,6 +17,19 @@ output "iam_policy_int_app_instance_profile_name" {
   value = "${module.iam.iam_policy_int_app_instance_profile_name}"
 }
 
+# solr
+output "solr_role_name" {
+  value = "${module.solr.iam_policy_int_app_role_name}"
+}
+
+output "solr_role_arn" {
+  value = "${module.solr.iam_policy_int_app_role_arn}"
+}
+
+output "solr_profile_name" {
+  value = "${module.solr.iam_policy_int_app_instance_profile_name}"
+}
+
 #ES-Admin
 output "iam_instance_es_admin_role_name" {
   value = "${module.create-iam-app-role-es.iamrole_name}"

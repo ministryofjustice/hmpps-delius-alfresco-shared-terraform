@@ -129,6 +129,7 @@ pipeline {
             }
         }
         stage('Alfresco | AMI Update') { steps { script { plan_apply_submodule(environment_name, project.alfresco, 'ami_permissions')}}}
+        stage('Alfresco | SOLR') { steps { script { do_terraform(environment_name, project.alfresco, 'solr')}}}
         stage('Alfresco | ASG') { steps { script { do_terraform(environment_name, project.alfresco, 'asg')}}}
 
         stage('Smoke test') {

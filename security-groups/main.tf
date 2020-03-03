@@ -12,6 +12,18 @@ provider "aws" {
 # DATA SOURCE MODULES FROM OTHER TERRAFORM BACKENDS
 ####################################################
 #-------------------------------------------------------------
+### Getting the current vpc
+#-------------------------------------------------------------
+data "terraform_remote_state" "vpc" {
+  backend = "s3"
+
+  config {
+    bucket = "${var.remote_state_bucket_name}"
+    key    = "vpc/terraform.tfstate"
+    region = "${var.region}"
+  }
+}
+#-------------------------------------------------------------
 ### Getting the common details
 #-------------------------------------------------------------
 data "terraform_remote_state" "common" {
@@ -134,4 +146,15 @@ resource "aws_security_group_rule" "internal_inst_sg_egress_mq" {
   ]
 
   description = "${local.common_name}-mq-sg"
+}
+
+# tunnelling
+resource "aws_security_group_rule" "bastion_tunnel_alf" {
+  security_group_id = "${local.sg_map_ids["internal_inst_sg_id"]}"
+  type              = "ingress"
+  from_port         = "8080"
+  to_port           = "8080"
+  protocol          = "tcp"
+  cidr_blocks       = ["${values(data.terraform_remote_state.vpc.bastion_vpc_public_cidr)}"]
+  description       = "bastion tunnelling"
 }
