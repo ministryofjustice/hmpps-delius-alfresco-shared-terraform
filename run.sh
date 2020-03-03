@@ -18,12 +18,18 @@ exit_on_error() {
   fi
 }
 
-env_config_dir="${HOME}/data/env_configs"
+if [ -z "${HMPPS_BUILD_WORK_DIR}" ]
+then
+    echo "--> Using default workdir"
+    env_config_dir="${HOME}/data/env_configs"
+else
+    echo "USING CUSTOM WORKDIR for configs: $HMPPS_BUILD_WORK_DIR"
+    env_config_dir="${HMPPS_BUILD_WORK_DIR}/env_configs"
+fi
 
 ENVIRONMENT_NAME_ARG=$1
 ACTION_TYPE=$2
 COMPONENT=${3}
-REPO=${4}
 
 
 if [ -z "${ENVIRONMENT_NAME_ARG}" ]
@@ -51,13 +57,9 @@ then
 fi
 
 #check env vars for RUNNING_IN_CONTAINER switch
-if [[ ${RUNNING_IN_CONTAINER} == True ]]
+if [[ ${RUNNING_IN_CONTAINER:-False} == True ]]
 then
     workDirContainer=${3}
-    echo "Output -> clone configs stage"
-    rm -rf ${env_config_dir}
-    echo "Output ---> Cloning branch: ${GIT_BRANCH}"
-    git clone -b ${GIT_BRANCH} ${REPO} ${env_config_dir}
     echo "Output -> environment stage"
     source ${env_config_dir}/${ENVIRONMENT_NAME_ARG}/${ENVIRONMENT_NAME_ARG}.properties
     exit_on_error $? !!
@@ -72,6 +74,7 @@ fi
 
 #Apply overrides if names are too long
 if [ -f "${env_config_dir}/${ENVIRONMENT_NAME_ARG}/sub-projects/alfresco.properties" ]; then
+    echo "Applying ENV overrides"
     source ${env_config_dir}/${ENVIRONMENT_NAME_ARG}/sub-projects/alfresco.properties;
 fi
 
@@ -81,9 +84,29 @@ then
   export TG_REMOTE_STATE_BUCKET="tf-eu-west-2-hmpps-eng-dev-remote-state"
   export TG_ENVIRONMENT_IDENTIFIER="tf-eu-west-2-hmpps-eng-dev"
   echo "Using engineering role: ${TERRAGRUNT_IAM_ROLE}"
-fi 
+fi
+
+# if [ ${COMPONENT} == "codebuild" ]
+# then
+#     export AWS_DEFAULT_REGION=${TF_VAR_region}
+#     temp_creds_file="${HMPPS_BUILD_WORK_DIR}/temp_creds"
+#     temp_role=$(aws sts assume-role --role-arn ${TERRAGRUNT_IAM_ROLE} --role-session-name testing --duration-seconds 900)
+#     exit_on_error $? !!
+#     echo "unset AWS_PROFILE
+#     export AWS_ACCESS_KEY_ID=$(echo ${temp_role} | jq .Credentials.AccessKeyId | xargs)
+#     export AWS_SECRET_ACCESS_KEY=$(echo ${temp_role} | jq .Credentials.SecretAccessKey | xargs)
+#     export AWS_SESSION_TOKEN=$(echo ${temp_role} | jq .Credentials.SessionToken | xargs)" > ${temp_creds_file}
+#     source ${temp_creds_file}
+#     exit_on_error $? !!
+#     rm -rf ${temp_creds_file}
+# fi
 
 case ${ACTION_TYPE} in
+  docker-ansible)
+    echo "Running ansible playbook action"
+    ansible-playbook playbook.yml
+    exit_on_error $? !!
+    ;;
   docker-plan)
     echo "Running docker plan action"
     rm -rf .terraform *.plan
