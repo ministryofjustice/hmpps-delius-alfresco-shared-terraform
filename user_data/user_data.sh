@@ -39,7 +39,7 @@ cat << EOF > ~/requirements.yml
   src: https://github.com/ministryofjustice/hmpps-logstash
 - name: alfresco
   src: https://github.com/ministryofjustice/hmpps-alfresco-bootstrap
-  version: feature/add-solr-config
+  version: master
 - name: users
   src: singleplatform-eng.users
 
