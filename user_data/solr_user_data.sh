@@ -87,6 +87,9 @@ cat << EOF > ~/bootstrap_vars.yml
 - solr_backups_enabled: true
 - solr_backups_bucket: "${backups_bucket}"
 - solr_index: true
+- dns_zone_id: "${private_zone_id}"
+- solr_dns_record: "solr"
+- dns_zone_name: "${internal_domain}"
 EOF
 
 wget https://raw.githubusercontent.com/ministryofjustice/hmpps-delius-ansible/master/group_vars/${bastion_inventory}.yml -O ~/users.yml

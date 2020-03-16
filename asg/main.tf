@@ -241,8 +241,8 @@ locals {
   ]
 
   solr_config = {
-    solr_host = "${data.terraform_remote_state.solr.alb_dns_cname}"
-    solr_port = 443
+    solr_host = "solr.${data.terraform_remote_state.common.internal_domain}"
+    solr_port = 8983
   }
 }
 

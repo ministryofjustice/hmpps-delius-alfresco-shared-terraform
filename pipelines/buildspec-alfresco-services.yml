@@ -3,7 +3,7 @@ version: 0.2
 
 env:
   variables:
-    GIT_BRANCH: "feature/add-custom-work-dir-to-alf-dev"
+    GIT_BRANCH: "master"
 
 phases:
   pre_build:

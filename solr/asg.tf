@@ -37,6 +37,7 @@ data "template_file" "user_data" {
     app_name                  = "${local.alfresco_app_name}"
     route53_sub_domain        = "${local.alfresco_app_name}.${local.environment}"
     private_domain            = "${local.internal_domain}"
+    private_zone_id           = "${local.private_zone_id}"
     account_id                = "${local.account_id}"
     internal_domain           = "${local.internal_domain}"
     monitoring_server_url     = "${local.monitoring_server_internal_url}"
