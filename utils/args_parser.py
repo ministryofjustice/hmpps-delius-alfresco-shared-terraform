@@ -17,6 +17,6 @@ def argsParser():
     parser.add_argument('--branch', type=str,
                         help='git repo branch for env configs, defaults to master branch', default='master')
     parser.add_argument('--image', type=str,
-                        help='docker terraform image', default='mojdigitalstudio/hmpps-terraform-builder ')
+                        help='docker terraform image', default='mojdigitalstudio/hmpps-terraform-builder-lite')
 
     return parser.parse_args()

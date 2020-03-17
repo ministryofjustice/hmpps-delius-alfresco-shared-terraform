@@ -1,0 +1,20 @@
+---
+version: 0.2
+
+env:
+  variables:
+    GIT_BRANCH: "master"
+
+phases:
+  pre_build:
+    commands:
+      - make get_configs
+  build:
+    commands:
+      - export HMPPS_BUILD_WORK_DIR=${CODEBUILD_SRC_DIR}
+      - make build component=common
+      - make build component=s3buckets
+      - make build component=certs
+      - make build component=iam
+      - make build component=security-groups
+

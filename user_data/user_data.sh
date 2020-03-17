@@ -77,6 +77,7 @@ cat << EOF > ~/bootstrap_vars.yml
 - tomcat_maxthreads: "150"
 - solr_host: "${solr_host}"
 - solr_port: "${solr_port}"
+- solr_index: true
 EOF
 
 wget https://raw.githubusercontent.com/ministryofjustice/hmpps-delius-ansible/master/group_vars/${bastion_inventory}.yml -O ~/users.yml
