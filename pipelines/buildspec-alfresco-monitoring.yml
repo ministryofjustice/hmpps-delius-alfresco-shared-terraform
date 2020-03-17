@@ -1,10 +1,6 @@
 ---
 version: 0.2
 
-env:
-  variables:
-    GIT_BRANCH: "master"
-
 phases:
   pre_build:
     commands:
