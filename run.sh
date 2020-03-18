@@ -86,21 +86,6 @@ then
   echo "Using engineering role: ${TERRAGRUNT_IAM_ROLE}"
 fi
 
-# if [ ${COMPONENT} == "codebuild" ]
-# then
-#     export AWS_DEFAULT_REGION=${TF_VAR_region}
-#     temp_creds_file="${HMPPS_BUILD_WORK_DIR}/temp_creds"
-#     temp_role=$(aws sts assume-role --role-arn ${TERRAGRUNT_IAM_ROLE} --role-session-name testing --duration-seconds 900)
-#     exit_on_error $? !!
-#     echo "unset AWS_PROFILE
-#     export AWS_ACCESS_KEY_ID=$(echo ${temp_role} | jq .Credentials.AccessKeyId | xargs)
-#     export AWS_SECRET_ACCESS_KEY=$(echo ${temp_role} | jq .Credentials.SecretAccessKey | xargs)
-#     export AWS_SESSION_TOKEN=$(echo ${temp_role} | jq .Credentials.SessionToken | xargs)" > ${temp_creds_file}
-#     source ${temp_creds_file}
-#     exit_on_error $? !!
-#     rm -rf ${temp_creds_file}
-# fi
-
 case ${ACTION_TYPE} in
   docker-ansible)
     echo "Running ansible playbook action"
@@ -161,6 +146,8 @@ case ${ACTION_TYPE} in
     ;;
   docker-output)
     echo "Running docker output action"
+    rm -rf .terraform *.plan
+    terragrunt init
     terragrunt output
     exit_on_error $? !!
     ;;

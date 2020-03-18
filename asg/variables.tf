@@ -1,6 +1,8 @@
 # RDS
 variable "region" {}
 
+variable "environment_name" {}
+
 variable "remote_state_bucket_name" {
   description = "Terraform remote state bucket name"
 }
@@ -70,4 +72,15 @@ variable "alf_ebs_volume_size" {
 
 variable "alfresco_volume_size" {
   default = 20
+}
+
+# source code versions
+variable "source_code_versions" {
+  type = "map"
+  default = {
+    boostrap     = "centos"
+    alfresco     = "master"
+    logstash     = "master"
+    elasticbeats = "master"
+  }
 }

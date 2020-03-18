@@ -151,6 +151,11 @@ variable "bastion_inventory" {
 
 variable "jvm_memory" {}
 
+variable "source_code_versions" {
+  type = "map"
+}
+
+
 ############### END OF ASG SECTION #####################
 
 ##################### CLOUDWATCH SECTION #####################

@@ -183,7 +183,7 @@ data "aws_acm_certificate" "cert" {
 ####################################################
 
 locals {
-  ami_id                         = "${var.alfresco_asg_props["asg_ami"] != "" ? var.alfresco_asg_props["asg_ami"] : data.aws_ami.amazon_ami.id}"
+  ami_id                         = "${var.environment_name != "alfresco-dev" ? var.alfresco_asg_props["asg_ami"] : data.aws_ami.amazon_ami.id}"
   account_id                     = "${data.terraform_remote_state.common.common_account_id}"
   vpc_id                         = "${data.terraform_remote_state.common.vpc_id}"
   cidr_block                     = "${data.terraform_remote_state.common.vpc_cidr_block}"
@@ -333,4 +333,5 @@ module "asg" {
   jvm_memory                  = "${local.jvm_memory}"
   instance_security_groups    = ["${local.instance_security_groups}"]
   solr_config                 = "${local.solr_config}"
+  source_code_versions        = "${var.source_code_versions}"
 }

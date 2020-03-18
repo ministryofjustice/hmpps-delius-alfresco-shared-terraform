@@ -29,22 +29,37 @@ export JAVA_HOME=/usr/java/jdk1.8.0_181-amd64/jre
 
 cat << EOF > ~/requirements.yml
 ---
+- name: bootstrap
+  src: https://github.com/ministryofjustice/hmpps-bootstrap
+  version: ${bootstrap_version}
+- name: elasticbeats
+  src: https://github.com/ministryofjustice/hmpps-beats-monitoring
+  version: ${elasticbeats_version}
+- name: logstash
+  src: https://github.com/ministryofjustice/hmpps-logstash
+  version: ${logstash_version}
+- name: alfresco
+  src: https://github.com/ministryofjustice/hmpps-alfresco-bootstrap
+  version: ${alfresco_version}
+
 
 - name: bootstrap
   src: https://github.com/ministryofjustice/hmpps-bootstrap
-  version: centos
+  version: ${bootstrap_version}
 - name: elasticbeats
   src: https://github.com/ministryofjustice/hmpps-beats-monitoring
+  version: ${elasticbeats_version}
 - name: logstash
   src: https://github.com/ministryofjustice/hmpps-logstash
+  version: ${logstash_version}
 - name: alfresco
   src: https://github.com/ministryofjustice/hmpps-alfresco-bootstrap
-  version: master
+  version: ${alfresco_version}
 - name: users
   src: singleplatform-eng.users
 - name: solr
   src: https://github.com/ministryofjustice/hmpps-ansible-role-solr.git
-  version: master
+  version: ${solr_version}
 EOF
 
 cat << EOF > ~/bootstrap_vars.yml

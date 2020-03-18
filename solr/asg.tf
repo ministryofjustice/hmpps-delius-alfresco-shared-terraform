@@ -63,6 +63,11 @@ data "template_file" "user_data" {
 
     # For bootstrapping
     bastion_inventory = "${var.bastion_inventory}"
+    bootstrap_version = "${var.source_code_versions["boostrap"]}"
+    alfresco_version = "${var.source_code_versions["alfresco"]}"
+    logstash_version = "${var.source_code_versions["logstash"]}"
+    elasticbeats_version = "${var.source_code_versions["elasticbeats"]}"
+    solr_version = "${var.source_code_versions["solr"]}"
     # SOLR
     solr_port = "${local.solr_port}"
     solr_device_name = "${var.alf_solr_config["ebs_device_name"]}"

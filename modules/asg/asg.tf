@@ -52,12 +52,15 @@ data "template_file" "user_data" {
 
     # For bootstrapping
     bastion_inventory = "${var.bastion_inventory}"
+    bootstrap_version = "${var.source_code_versions["boostrap"]}"
+    alfresco_version = "${var.source_code_versions["alfresco"]}"
+    logstash_version = "${var.source_code_versions["logstash"]}"
+    elasticbeats_version = "${var.source_code_versions["elasticbeats"]}"
     # SOLR
     solr_host = "${var.solr_config["solr_host"]}"
     solr_port = "${var.solr_config["solr_port"]}"
   }
 }
-
 
 # ############################################
 # # CREATE LAUNCH CONFIG FOR EC2 RUNNING SERVICES

@@ -5,21 +5,21 @@ variable "remote_state_bucket_name" {
   description = "Terraform remote state bucket name"
 }
 
+variable "environment_name" {}
+
 #ASG
 variable "alfresco_asg_props" {
   type = "map"
   default = {
-    asg_desired       = 1
-    asg_min           = 1
-    asg_max           = 2
-    asg_instance_type = "m4.xlarge"
-    # asg_ami                   = "ami-0daf390b7cd42be97"
+    asg_desired               = 1
+    asg_min                   = 1
+    asg_max                   = 2
+    asg_instance_type         = "m4.xlarge"
     ebs_volume_size           = 512
     health_check_grace_period = 600
     min_elb_capacity          = 1
     wait_for_capacity_timeout = "30m"
     default_cooldown          = 120
-    ami_name                  = "HMPPS Alfresco master*"
   }
 }
 
@@ -40,6 +40,16 @@ variable "alf_metrics_props" {
   }
 }
 
+variable "source_code_versions" {
+  type = "map"
+  default = {
+    boostrap     = "centos"
+    alfresco     = "master"
+    logstash     = "master"
+    elasticbeats = "master"
+    solr         = "master"
+  }
+}
 
 variable "alf_cloudwatch_log_retention" {}
 

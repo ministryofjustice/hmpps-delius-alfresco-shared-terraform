@@ -188,7 +188,7 @@ locals {
   account_id                     = "${data.terraform_remote_state.common.common_account_id}"
   alfresco_app_name              = "${data.terraform_remote_state.common.alfresco_app_name}"
   allowed_cidr_block             = ["${values(data.terraform_remote_state.vpc.bastion_vpc_public_cidr)}"]
-  ami_id                         = "${var.alfresco_asg_props["asg_ami"] != "" ? var.alfresco_asg_props["asg_ami"] : data.aws_ami.amazon_ami.id}"
+  ami_id                         = "${var.environment_name != "alfresco-dev" ? var.alfresco_asg_props["asg_ami"] : data.aws_ami.amazon_ami.id}"
   app_hostnames                  = "${data.terraform_remote_state.common.app_hostnames}"
   bastion_inventory              = "${var.bastion_inventory}"
   certificate_arn                = "${data.aws_acm_certificate.cert.arn}"
