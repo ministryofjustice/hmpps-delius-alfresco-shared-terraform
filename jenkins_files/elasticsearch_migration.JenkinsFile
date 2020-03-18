@@ -17,6 +17,17 @@ def prepare_env() {
     '''
 }
 
+def get_configs(git_project_dir) {
+    wrap([$class: 'AnsiColorBuildWrapper', 'colorMapName': 'XTerm']) {
+        sh """
+        #!/usr/env/bin bash
+        cd "${git_project_dir}"
+        git clone https://github.com/ministryofjustice/hmpps-env-configs.git env_configs
+        set -e
+        """
+    }
+}
+
 
 def create_props(env_name, git_project_dir, docker_tls_dir) {
     wrap([$class: 'AnsiColorBuildWrapper', 'colorMapName': 'XTerm']) {
@@ -115,7 +126,7 @@ pipeline {
     }
 
     stages {
-
+        stage('Alfresco | Get Configs') { steps { script { get_configs(project.alfresco)}}}
         stage('setup') {
             steps {
                 slackSend(message: "Build started on \"${environment_name}\" - ${env.JOB_NAME} ${env.BUILD_NUMBER} (<${env.BUILD_URL.replace(':8080','')}|Open>)")
