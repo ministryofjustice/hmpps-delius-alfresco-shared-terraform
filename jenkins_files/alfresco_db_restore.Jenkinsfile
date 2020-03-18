@@ -9,6 +9,17 @@ def prepare_env() {
     '''
 }
 
+def get_configs(git_project_dir) {
+    wrap([$class: 'AnsiColorBuildWrapper', 'colorMapName': 'XTerm']) {
+        sh """
+        #!/usr/env/bin bash
+        cd "${git_project_dir}"
+        git clone https://github.com/ministryofjustice/hmpps-env-configs.git env_configs
+        set -e
+        """
+    }
+}
+
 def do_alfresco_db_restore_dry_run(env_name, git_project_dir) {
     wrap([$class: 'AnsiColorBuildWrapper', 'colorMapName': 'XTerm']) {
         sh """
@@ -104,6 +115,14 @@ pipeline {
 
 				                prepare_env()
 				            }
+				        }
+
+                        stage('Alfresco | Get Configs') {
+				          steps {
+				            script {
+				              get_configs(project.alfresco)
+				            }
+				          }
 				        }
 
 				        stage('Alfresco | DB Restore') {

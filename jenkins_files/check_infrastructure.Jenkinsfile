@@ -9,6 +9,17 @@ def prepare_env() {
     '''
 }
 
+def get_configs(git_project_dir) {
+    wrap([$class: 'AnsiColorBuildWrapper', 'colorMapName': 'XTerm']) {
+        sh """
+        #!/usr/env/bin bash
+        cd "${git_project_dir}"
+        git clone https://github.com/ministryofjustice/hmpps-env-configs.git env_configs
+        set -e
+        """
+    }
+}
+
 def plan_submodule(env_name, git_project_dir, submodule_name) {
     wrap([$class: 'AnsiColorBuildWrapper', 'colorMapName': 'XTerm']) {
         sh """
@@ -52,6 +63,7 @@ pipeline {
                 prepare_env()
             }
         }
+        stage('Alfresco | Get Configs') { steps { script { get_configs(project.alfresco)}}}
         stage('Alfresco | AMI Update') { steps { script { plan_submodule(environment_name, project.alfresco, 'ami_permissions')}}}
         stage('Alfresco | Common') { steps { script { plan_submodule(environment_name, project.alfresco, 'common')}}}
         stage('Alfresco | AmazonMQ') { steps { script { plan_submodule(environment_name, project.alfresco, 'amazonmq')}}}
