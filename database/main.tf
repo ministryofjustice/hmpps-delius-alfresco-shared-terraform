@@ -100,7 +100,7 @@ module "kms_key" {
   source              = "../modules/kms"
   kms_key_name        = "${local.common_name}"
   tags                = "${local.tags}"
-  kms_policy_template = "policies/rds.kms.json"
+  kms_policy_template = "${var.environment_type == "prod" ? "policies/rds-kms-cross-account.json" : "policies/rds.kms.json"}"
 }
 
 ############################################
