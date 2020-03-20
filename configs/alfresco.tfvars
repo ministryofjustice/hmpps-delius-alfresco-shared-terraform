@@ -1,15 +1,15 @@
 # ASG Configuration
 alfresco_asg_props = {
-  asg_ami  = "ami-0f7eff23903506a77"
+  asg_ami  = "ami-055600fa67504d8d5"
   ami_name = "HMPPS Alfresco *"
-  image_id = "ami-0f7eff23903506a77"
+  image_id = "ami-055600fa67504d8d5"
 }
 
 source_code_versions = {
-  env_configs  = "master"
+  env_configs  = "1.0.0"
   boostrap     = "centos"
-  alfresco     = "master"
-  logstash     = "master"
-  elasticbeats = "master"
-  solr         = "master"
+  alfresco     = "0.0.0"
+  logstash     = "1.0.0"
+  elasticbeats = "1.0.0"
+  solr         = "0.0.0"
 }
