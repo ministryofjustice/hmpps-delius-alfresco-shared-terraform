@@ -46,6 +46,7 @@ data "template_file" "cross_account" {
   template = "${file("../policies/cross_account_access_backups.json")}"
   vars {
     prod_backups_bucket = "${var.alf_backups_config["prod_backups_bucket"]}"
+    prod_storage_bucket = "${var.alf_backups_config["prod_storage_bucket"]}"
     prod_kms_key_arn    = "${var.alf_backups_config["prod_kms_key_arn"]}"
   }
 }
