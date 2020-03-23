@@ -33,7 +33,7 @@ module "db_instance" {
   port                            = "${local.port}"
   publicly_accessible             = false
   skip_final_snapshot             = false
-  snapshot_identifier             = "${var.snapshot_identifier}"
+  snapshot_identifier             = "${var.alf_rds_props["snapshot_identifier"]}"
   storage_encrypted               = true
   storage_type                    = "${var.alf_rds_props["storage_type"]}"
   tags                            = "${local.tags}"
