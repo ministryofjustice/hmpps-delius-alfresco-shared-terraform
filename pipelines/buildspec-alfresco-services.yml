@@ -1,6 +1,16 @@
 ---
 version: 0.2
 
+env:
+  variables:
+    GITHUB_ORG: ministryofjustice
+    TARGET_BRANCH: develop
+  parameter-store:
+    GITHUB_USER: "/dev/jenkins/hmpps/integration/user/name"
+    GITHUB_TOKEN: "/manually/created/engineering/dev/codepipeline/github/accesstoken"
+    GITHUB_EMAIL: "/jenkins/github/email"
+  git-credential-helper: yes
+
 phases:
   pre_build:
     commands:
@@ -12,3 +22,4 @@ phases:
       - make build component=solr
       - make build component=asg
       - make build component=waf
+
