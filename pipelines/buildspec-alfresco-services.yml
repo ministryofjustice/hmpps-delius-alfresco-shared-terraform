@@ -22,4 +22,5 @@ phases:
       - make build component=solr
       - make build component=asg
       - make build component=waf
+      - ansible-playbook utils/github/playbook.yml
 

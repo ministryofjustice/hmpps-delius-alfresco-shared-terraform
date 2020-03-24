@@ -1,5 +1,5 @@
 ---
-- name: Create new release
+- name: Github release
   hosts: localhost
   gather_facts: no
   connection: local
@@ -11,6 +11,7 @@
     target_branch: "{{ lookup('env', 'TARGET_BRANCH') }}"
     github_repo: "{{ lookup('env', 'GITHUB_REPO') }}"
     environment_name: "{{ lookup('env', 'ENVIRONMENT_NAME') }}"
+    release_pipeline: "{{ lookup('env', 'RELEASE_PIPELINE') }}"
   tasks:
     - name: "Create release for {{ environment_name }}"
       github_release:
@@ -23,3 +24,5 @@
         name: "auto-generated-{{ environment_name }}" 
         body: "Target environment {{ environment_name }}"
       no_log: true
+      when: release_pipeline
+
