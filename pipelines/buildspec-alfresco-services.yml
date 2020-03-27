@@ -8,8 +8,8 @@ phases:
   build:
     commands:
       - export HMPPS_BUILD_WORK_DIR=${CODEBUILD_SRC_DIR}
-      - make build component=ami_permissions
-      - make build component=solr
-      - make build component=asg
-      - make build component=waf
+      - make ${ACTION_TYPE} component=ami_permissions
+      - make ${ACTION_TYPE} component=solr
+      - make ${ACTION_TYPE} component=asg
+      - make ${ACTION_TYPE} component=waf
 

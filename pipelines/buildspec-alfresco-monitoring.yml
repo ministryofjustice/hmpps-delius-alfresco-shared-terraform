@@ -8,6 +8,6 @@ phases:
   build:
     commands:
       - export HMPPS_BUILD_WORK_DIR=${CODEBUILD_SRC_DIR}
-      - make build component=es_admin
-      - make build component=cloudwatch_exporter
-      - make build component=monitoring
+      - make ${ACTION_TYPE} component=es_admin
+      - make ${ACTION_TYPE} component=cloudwatch_exporter
+      - make ${ACTION_TYPE} component=monitoring

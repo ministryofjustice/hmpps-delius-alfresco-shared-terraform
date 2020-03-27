@@ -8,4 +8,4 @@ phases:
   build:
     commands:
       - export HMPPS_BUILD_WORK_DIR=${CODEBUILD_SRC_DIR}
-      - make build component=database
+      - make ${ACTION_TYPE} component=database

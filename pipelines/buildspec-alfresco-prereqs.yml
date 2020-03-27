@@ -8,9 +8,9 @@ phases:
   build:
     commands:
       - export HMPPS_BUILD_WORK_DIR=${CODEBUILD_SRC_DIR}
-      - make build component=common
-      - make build component=s3buckets
-      - make build component=certs
-      - make build component=iam
-      - make build component=security-groups
+      - make ${ACTION_TYPE} component=common
+      - make ${ACTION_TYPE} component=s3buckets
+      - make ${ACTION_TYPE} component=certs
+      - make ${ACTION_TYPE} component=iam
+      - make ${ACTION_TYPE} component=security-groups
 

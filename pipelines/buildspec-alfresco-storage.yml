@@ -8,6 +8,6 @@ phases:
   build:
     commands:
       - export HMPPS_BUILD_WORK_DIR=${CODEBUILD_SRC_DIR}
-      - make build component=efs
-      - make build component=elasticache-memcached
-      - make build component=elk-migration
+      - make ${ACTION_TYPE} component=efs
+      - make ${ACTION_TYPE} component=elasticache-memcached
+      - make ${ACTION_TYPE} component=elk-migration
