@@ -3,12 +3,16 @@ version: 0.2
 
 env:
   parameter-store:
-    GITHUB_USER: "/dev/jenkins/hmpps/integration/user/name"
-    GITHUB_TOKEN: "/manually/created/engineering/dev/codepipeline/github/accesstoken"
-    GITHUB_EMAIL: "/jenkins/github/email"
+    HMPPS_GITHUB_USER: "/dev/jenkins/hmpps/integration/user/name"
+    HMPPS_GITHUB_TOKEN: "/manually/created/engineering/dev/codepipeline/github/accesstoken"
+    HMPPS_GITHUB_EMAIL: "/jenkins/github/email"
 
 phases:
   build:
     commands:
-      - python utils/manage.py update-repo-branch -b ${ENVIRONMENT_NAME} -sha ${CODEBUILD_RESOLVED_SOURCE_VERSION}
+      - |
+        if [ ${ENVIRONMENT_NAME} == "alfresco-dev" ]; then
+          python utils/manage.py create-release -b develop -sha ${CODEBUILD_RESOLVED_SOURCE_VERSION}
+        fi
+      - python utils/manage.py update-repo-branch -b ${ENVIRONMENT_NAME}
 

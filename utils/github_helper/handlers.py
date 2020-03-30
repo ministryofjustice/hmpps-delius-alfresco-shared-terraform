@@ -1,5 +1,6 @@
 import requests
 import json
+import semver
 
 from typing import Dict
 from requests.exceptions import HTTPError
@@ -55,3 +56,22 @@ def request_handler(request_data: Dict):
         return None
     else:
         return None
+
+
+def generate_version(version: str):
+    """
+    Generates a new version using semver  
+
+    Parameters:
+        version (str): version to parse
+
+    Returns:
+        string: new version number
+    """
+    try:
+        parsed_version = semver.parse_version_info(version)
+        new_version = parsed_version.bump_patch()
+        updated_version = semver.replace(version, patch=new_version.patch)
+        return updated_version
+    except Exception as err:
+        return err

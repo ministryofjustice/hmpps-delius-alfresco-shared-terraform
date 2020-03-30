@@ -1,12 +1,8 @@
 # utils/github_helper/branch_handler.py
 
-import requests
-import os
-import json
-
-from requests.exceptions import HTTPError
 from github_helper.config import GitHub_Config
 from github_helper.handlers import request_handler
+from github_helper.releases import Release_Handler
 
 
 class Branch_Handler(GitHub_Config):
@@ -16,9 +12,6 @@ class Branch_Handler(GitHub_Config):
 
     def __init__(self):
         GitHub_Config.__init__(self)
-        # self.git_commit_hash = os.environ.get(
-        #     "CODEBUILD_RESOLVED_SOURCE_VERSION")
-        # self.environment_name = os.environ.get("ENVIRONMENT_NAME")
         self.branch_details = None
 
     def get_branch(self, branch_name: str):
@@ -149,12 +142,18 @@ class Branch_Handler(GitHub_Config):
         else:
             return None
 
-    def task_handler(self, branch_name: str, commit_id: str):
+    def task_handler(self, branch_name: str):
         resp_obj = {
             "message": "no task completed",
             "exit_code": 1
         }
+        release_mgr = Release_Handler()
+        commit_id = release_mgr.get_release_commit_id()
+
         result = self.create_branch(branch_name, commit_id)
         if self.branch_details is not None:
             resp_obj = result
+            return resp_obj
+
+        resp_obj['error'] = result
         return resp_obj
