@@ -18,6 +18,15 @@ resource "aws_ebs_volume" "solr" {
   tags = "${merge(local.tags,map("Name", "${local.common_name}", "${var.alf_solr_config["snap_tag"]}", 1))}"
 }
 
+resource "aws_ebs_volume" "solr_temp" {
+  availability_zone = "${data.aws_subnet.selected.availability_zone}"
+  encrypted = true
+  type = "${var.alf_solr_config["ebs_temp_type"]}"
+  size  = "${var.alf_solr_config["ebs_temp_size"]}"
+  iops = 0
+  tags = "${merge(local.tags,map("Name", "${local.common_name}-temp", "${var.alf_solr_config["snap_tag"]}", 1))}"
+}
+
 
 # ############################################
 # # CREATE USER DATA FOR EC2 RUNNING SERVICES
@@ -76,6 +85,9 @@ data "template_file" "user_data" {
     solr_java_xmx        = "${var.alf_solr_config["java_xmx"]}"
     jvm_memory          = "${var.alf_solr_config["alf_jvm_memory"]}"
     backups_bucket = "${local.backups_bucket}"
+    solr_temp_device_name = "${var.alf_solr_config["ebs_temp_device_name"]}"
+    solr_temp_volume_name = "${local.common_name}-temp"
+    solr_temp_dir = "/tmp/solr"
   }
 }
 

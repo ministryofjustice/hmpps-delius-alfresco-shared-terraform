@@ -89,19 +89,22 @@ variable "cookie_duration" {
 variable "alf_solr_config" {
   type = "map"
   default = {
-    solr_host          = "alf-solr"
-    solr_port          = 443
-    ebs_size           = 20
-    ebs_iops           = 100
-    ebs_type           = "gp2"
-    ebs_device_name    = "/dev/xvdc"
-    java_xms           = "4000m"
-    java_xmx           = "4000m"
-    alf_jvm_memory     = "4000m"
-    schedule           = "cron(0 01 * * ? *)"
-    cold_storage_after = 14
-    delete_after       = 120
-    snap_tag           = "CreateSnapshotSolr"
+    solr_host            = "alf-solr"
+    solr_port            = 443
+    ebs_size             = 20
+    ebs_iops             = 100
+    ebs_type             = "gp2"
+    ebs_device_name      = "/dev/xvdc"
+    ebs_temp_device_name = "/dev/xvdd"
+    ebs_temp_size        = 20
+    ebs_temp_type        = "gp2"
+    java_xms             = "4000m"
+    java_xmx             = "4000m"
+    alf_jvm_memory       = "4000m"
+    schedule             = "cron(0 01 * * ? *)"
+    cold_storage_after   = 14
+    delete_after         = 120
+    snap_tag             = "CreateSnapshotSolr"
   }
 }
 
