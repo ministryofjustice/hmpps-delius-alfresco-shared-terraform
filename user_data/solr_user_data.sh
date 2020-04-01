@@ -41,20 +41,6 @@ cat << EOF > ~/requirements.yml
 - name: alfresco
   src: https://github.com/ministryofjustice/hmpps-alfresco-bootstrap
   version: ${alfresco_version}
-
-
-- name: bootstrap
-  src: https://github.com/ministryofjustice/hmpps-bootstrap
-  version: ${bootstrap_version}
-- name: elasticbeats
-  src: https://github.com/ministryofjustice/hmpps-beats-monitoring
-  version: ${elasticbeats_version}
-- name: logstash
-  src: https://github.com/ministryofjustice/hmpps-logstash
-  version: ${logstash_version}
-- name: alfresco
-  src: https://github.com/ministryofjustice/hmpps-alfresco-bootstrap
-  version: ${alfresco_version}
 - name: users
   src: singleplatform-eng.users
 - name: solr
@@ -102,6 +88,10 @@ cat << EOF > ~/bootstrap_vars.yml
 - solr_backups_enabled: true
 - solr_backups_bucket: "${backups_bucket}"
 - solr_index: true
+- solr_temp_volume_name: "${solr_temp_volume_name}"
+- solr_temp_device_name: "${solr_temp_device_name}"
+- solr_temp_dir: "${solr_temp_dir}"
+- solr_additional_opts: "-Xss256k -Djava.io.tmpdir=${solr_temp_dir}"
 - dns_zone_id: "${private_zone_id}"
 - solr_dns_record: "solr"
 - dns_zone_name: "${internal_domain}"
@@ -156,3 +146,7 @@ logger "alfresco bootstrap complete"
 
 # restart awslogs
 systemctl restart awslogs
+
+# solr tmp folder perms
+chown -R solr:solr ${solr_temp_dir}
+systemctl restart solr
