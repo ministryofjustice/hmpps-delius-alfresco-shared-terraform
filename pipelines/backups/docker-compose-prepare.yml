@@ -1,0 +1,14 @@
+version: "3"
+
+services:
+  content:
+    image: mojdigitalstudio/hmpps-elasticsearch-manager:latest
+    environment:
+      - APP_ENVIRONMENT=dev
+      - ALF_BACKUP_BUCKET=${ALF_BACKUP_BUCKET}
+      - ALF_STORAGE_BUCKET=${ALF_STORAGE_BUCKET}
+      - TG_REGION=${TG_REGION}
+      - HMPPS_BUILD_WORK_DIR=${CODEBUILD_SRC_DIR}
+    volumes:
+      - ${CODEBUILD_SRC_DIR}:${CODEBUILD_SRC_DIR}
+    cmd: ["ls"]

@@ -1,0 +1,13 @@
+---
+version: 0.2
+
+env:
+  parameter-store:
+    HMPPS_GITHUB_USER: "/dev/jenkins/hmpps/integration/user/name"
+    HMPPS_GITHUB_TOKEN: "/manually/created/engineering/dev/codepipeline/github/accesstoken"
+    HMPPS_GITHUB_EMAIL: "/jenkins/github/email"
+
+phases:
+  build:
+    commands:
+      - make get_configs

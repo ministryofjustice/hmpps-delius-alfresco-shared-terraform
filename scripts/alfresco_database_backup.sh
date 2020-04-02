@@ -66,7 +66,13 @@ case ${JOB_TYPE} in
     # SYNC to backup bucket
     aws s3 sync s3://${ELK_BACKUP_BUCKET}/ s3://${ALF_BACKUP_BUCKET}/elasticsearch/$(date '+%Y/%-m/%-d')/ && echo Success || exit $?
     ;;
+  elasticsearch-purge)
+    echo "Running elasticsearch purge"
+
+    echo "Purging old indices"
+    curator --config /opt/scripts/curator/config.yml /opt/scripts/curator/action_purge.yml && echo Success || exit $?
+    ;;
   *)
-    echo "${JOB_TYPE} argument is not a valid argument. db-backup - content-sync - elasticsearch-backup"
+    echo "${JOB_TYPE} argument is not a valid argument. db-backup - content-sync - elasticsearch-backup - elasticsearch-purge"
   ;;
 esac

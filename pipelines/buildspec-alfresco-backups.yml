@@ -1,0 +1,15 @@
+---
+version: 0.2
+
+env:
+  variables:
+    DOCKER_CERTS_DIR: "${HOME}/docker"
+
+phases:
+  pre_build:
+    commands:
+      - make get_configs
+  build:
+    commands:
+      - export HMPPS_BUILD_WORK_DIR=${CODEBUILD_SRC_DIR}
+      - sh pipelines/backups/set-properties.sh
