@@ -137,7 +137,6 @@ locals {
   tags = "${merge(
     var.tags,
     map("sub-project", "${var.alfresco_app_name}"),
-    map("source-code", "ignored"),
     map("source-hash", "ignored")
   )}"
 
