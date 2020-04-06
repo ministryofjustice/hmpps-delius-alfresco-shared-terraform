@@ -10,7 +10,6 @@ tf_data=${DOCKER_CERTS_DIR}/tf_output
 
 #
 mkdir -p ${DOCKER_CERTS_DIR}
-ls ${DOCKER_CERTS_DIR}
 
 touch $outfile $docker_key_file $docker_ca_cert_file $docker_cert_file $tf_data $outfile_docker
 
@@ -25,10 +24,23 @@ echo '#/bin/bash' > $outfile_docker
 export ES_DOCKER_HOST=$(cat $tf_data | grep es_admin_host | cut -d ' ' -f3)
 echo "export ES_DOCKER_HOST=${ES_DOCKER_HOST}" >> $outfile_docker
 
+aws ssm put-parameter \
+    --name "${SSM_TASKS_PREFIX}/${ENVIRONMENT_NAME}/docker_host" \
+    --description "build properties" \
+    --value "${ES_DOCKER_HOST}" \
+    --type "String" \
+    --overwrite
+
 
 export CONFIG_BUCKET=$(cat $tf_data | grep config_bucket | cut -d ' ' -f3)
 echo "export CONFIG_BUCKET=${CONFIG_BUCKET}" >> $outfile_docker
 
+aws ssm put-parameter \
+    --name "${SSM_TASKS_PREFIX}/${ENVIRONMENT_NAME}/config_bucket" \
+    --description "build properties" \
+    --value "${CONFIG_BUCKET}" \
+    --type "String" \
+    --overwrite
 
 export ALF_BACKUP_BUCKET=$(cat $tf_data | grep backups_bucket | cut -d ' ' -f3)
 echo "export ALF_BACKUP_BUCKET=${ALF_BACKUP_BUCKET}" >> $outfile_docker
@@ -98,37 +110,39 @@ echo "export ES_MIGRATION_HOST=$(cat $tf_data | grep public_es_host_name | cut -
 comp=certs
 sh run.sh ${ENVIRONMENT_NAME} output ${comp} > $tf_data
 
-echo "export SSM_CA_CERT=$(cat $tf_data | grep self_signed_ca_ssm_cert_pem_name | cut -d ' ' -f3)" >> $outfile_docker
-echo "export SSM_CERT=$(cat $tf_data | grep self_signed_server_ssm_cert_pem_name | cut -d ' ' -f3)" >> $outfile_docker
-echo "export SSM_PRIVATE_KEY=$(cat $tf_data | grep self_signed_server_ssm_private_key_name | cut -d ' ' -f3)" >> $outfile_docker
+export SSM_CA_CERT=$(cat $tf_data | grep self_signed_ca_ssm_cert_pem_name | cut -d ' ' -f3)
+export SSM_CERT=$(cat $tf_data | grep self_signed_server_ssm_cert_pem_name | cut -d ' ' -f3)
+export SSM_PRIVATE_KEY=$(cat $tf_data | grep self_signed_server_ssm_private_key_name | cut -d ' ' -f3)
 
-cat $outfile_docker
-
-# sync scripts dir
-
+# set target account settings
 eval $(cat env_configs/${ENVIRONMENT_NAME}/${ENVIRONMENT_NAME}.properties | grep TERRAGRUNT_IAM_ROLE)
 eval $(cat env_configs/${ENVIRONMENT_NAME}/${ENVIRONMENT_NAME}.properties | grep TG_REGION)
 
+aws ssm put-parameter \
+    --name "${SSM_TASKS_PREFIX}/${ENVIRONMENT_NAME}/ssm_ca_cert" \
+    --description "build properties" \
+    --value "${SSM_CA_CERT}" \
+    --type "String" \
+    --overwrite
 
-# get temp creds
-export temp_role=$(aws sts assume-role --role-arn ${TERRAGRUNT_IAM_ROLE} --role-session-name ci --duration-seconds 900)
+aws ssm put-parameter \
+    --name "${SSM_TASKS_PREFIX}/${ENVIRONMENT_NAME}/ssm_cert" \
+    --description "build properties" \
+    --value "${SSM_CERT}" \
+    --type "String" \
+    --overwrite
 
-echo "unset AWS_PROFILE
-AWS_DEFAULT_REGION=${TG_REGION}
-export AWS_ACCESS_KEY_ID=$(echo ${temp_role} | jq .Credentials.AccessKeyId | xargs)
-export AWS_SECRET_ACCESS_KEY=$(echo ${temp_role} | jq .Credentials.SecretAccessKey | xargs)
-export AWS_SESSION_TOKEN=$(echo ${temp_role} | jq .Credentials.SessionToken | xargs)" > ${outfile}
+aws ssm put-parameter \
+    --name "${SSM_TASKS_PREFIX}/${ENVIRONMENT_NAME}/ssm_private_key" \
+    --description "build properties" \
+    --value "${SSM_PRIVATE_KEY}" \
+    --type "String" \
+    --overwrite
 
 echo "syncing files"
-source $outfile
 cp $outfile_docker ./scripts/docker.properties
-aws s3 sync --delete --only-show-errors ./scripts/ s3://${CONFIG_BUCKET}/scripts/
+ansible-playbook pipelines/tasks/ansible/upload_scripts_playbook.yml 
 
-# # Get SSM certs
-# aws ssm get-parameters --with-decryption --names $SSM_PRIVATE_KEY --region ${TG_REGION} --query "Parameters[0]"."Value" --output text > $docker_key_file
-
-# aws ssm get-parameters --names $SSM_CA_CERT --region ${TG_REGION} --query "Parameters[0]"."Value" --output text > $docker_ca_cert_file
-
-# aws ssm get-parameters --names $SSM_CERT --region ${TG_REGION} --query "Parameters[0]"."Value" --output text > $docker_cert_file
-
-
+# complete
+echo "Environment settings"
+cat $outfile_docker

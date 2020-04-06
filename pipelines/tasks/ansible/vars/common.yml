@@ -1,0 +1,7 @@
+---
+
+terragrunt_iam_role: "{{ lookup('env', 'TERRAGRUNT_IAM_ROLE') }}"
+iam_user_profile: "{{ lookup('env', 'IAM_USER_PROFILE')}}"
+environment_name: "{{ lookup('env', 'ENVIRONMENT_NAME')}}"
+config_bucket: "{{ lookup('env', 'CONFIG_BUCKET') }}"
+docker_certs_dir: "{{ lookup('env', 'DOCKER_CERTS_DIR') }}"

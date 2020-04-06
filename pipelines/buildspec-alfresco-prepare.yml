@@ -12,4 +12,4 @@ phases:
   build:
     commands:
       - export HMPPS_BUILD_WORK_DIR=${CODEBUILD_SRC_DIR}
-      - sh pipelines/backups/set-properties.sh
+      - sh pipelines/tasks/set-properties.sh

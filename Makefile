@@ -10,3 +10,6 @@ plan:
 
 build: plan
 	sh run.sh $(ENVIRONMENT_NAME) apply $(component)
+
+elasticsearch_backup:
+	docker-compose -f restore/$(COMPOSE_FILE_NAME) up --exit-code-from elasticsearch elasticsearch

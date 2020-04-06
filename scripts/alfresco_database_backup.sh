@@ -65,12 +65,15 @@ case ${JOB_TYPE} in
     curator --config /opt/scripts/curator/config.yml /opt/scripts/curator/action_daily_snapshot.yml && echo Success || exit $?
     # SYNC to backup bucket
     aws s3 sync s3://${ELK_BACKUP_BUCKET}/ s3://${ALF_BACKUP_BUCKET}/elasticsearch/$(date '+%Y/%-m/%-d')/ && echo Success || exit $?
-    ;;
-  elasticsearch-purge)
+
     echo "Running elasticsearch purge"
+    PURGE_ACTION_FILE="/opt/scripts/curator/action_purge.yml"
+    echo "DAYS_TO_DELETE set to ${DAYS_TO_DELETE}"
+    sed -i "s/DELETE_DAYS/${DAYS_TO_DELETE}/g" ${PURGE_ACTION_FILE}
+    cat ${PURGE_ACTION_FILE}
 
     echo "Purging old indices"
-    curator --config /opt/scripts/curator/config.yml /opt/scripts/curator/action_purge.yml && echo Success || exit $?
+    curator --config /opt/scripts/curator/config.yml ${PURGE_ACTION_FILE} && echo Success || exit $?
     ;;
   *)
     echo "${JOB_TYPE} argument is not a valid argument. db-backup - content-sync - elasticsearch-backup - elasticsearch-purge"

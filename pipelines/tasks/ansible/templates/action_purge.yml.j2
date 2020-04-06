@@ -3,7 +3,7 @@ actions:
   1:
     action: delete_indices
     description: >-
-      Delete all indices older than DELETE_DAYS days.
+      Delete all indices older than {{ days_to_delete }} days.
     options:
       ignore_empty_list: True
       disable_action: False
@@ -13,4 +13,4 @@ actions:
       direction: older
       timestring: '%Y.%m.%d'
       unit: days
-      unit_count: DELETE_DAYS
+      unit_count: {{ days_to_delete }}

@@ -1,0 +1,70 @@
+---
+
+- name: docker setup playbook
+  hosts: localhost
+  connection: local
+  vars:
+    ssm_ca_cert: "{{ lookup('env','SSM_CA_CERT') }}"
+    ssm_cert: "{{ lookup('env','SSM_CERT') }}"
+    ssm_private_key: "{{ lookup('env','SSM_PRIVATE_KEY') }}"
+    ssm_config_bucket: "{{ lookup('env', 'SSM_CONFIG_BUCKET' )}}"
+    es_docker_host: "{{ lookup('env','ES_DOCKER_HOST') }}"
+  vars_files:
+    - vars/common.yml
+  tasks:
+    - name: get creds from iam role
+      include: aws-creds.yml
+
+    - name: retrieve ssm values
+      set_fact:
+        ca_cert_param: "{{ lookup('aws_ssm', ssm_ca_cert )}}"
+        cert_param: "{{ lookup('aws_ssm', ssm_cert )}}"
+        key_param: "{{ lookup('aws_ssm', ssm_private_key )}}"
+
+
+    - name: set docker tls facts
+      set_fact:
+        ca_cert: "{{ lookup('aws_ssm', ca_cert_param, aws_access_key=aws_access_key_id, aws_secret_key=aws_secret_access_key, aws_security_token=aws_security_token ) }}"
+        cert: "{{ lookup('aws_ssm', cert_param, aws_access_key=aws_access_key_id, aws_secret_key=aws_secret_access_key, aws_security_token=aws_security_token ) }}"
+        private_key: "{{ lookup('aws_ssm', key_param , aws_access_key=aws_access_key_id, aws_secret_key=aws_secret_access_key, aws_security_token=aws_security_token ) }}"
+        docker_host: "{{ lookup('aws_ssm', es_docker_host ) }}"
+        config_bucket: "{{ lookup('aws_ssm', ssm_config_bucket ) }}"
+
+    - name: create docker tls cert file 
+      template:
+        src: templates/ssl_template.j2
+        dest: "{{ docker_certs_dir }}/cert.pem"
+      vars:
+        ssl_data: "{{ cert }}"
+
+    - name: create docker tls ca cert file 
+      template:
+        src: templates/ssl_template.j2
+        dest: "{{ docker_certs_dir }}/ca.pem"
+      vars:
+        ssl_data: "{{ ca_cert }}"
+
+    - name: create docker tls key file 
+      template:
+        src: templates/ssl_template.j2
+        dest: "{{ docker_certs_dir }}/key.pem"
+        mode: 0770
+      vars:
+        ssl_data: "{{ private_key }}"
+
+    - name: create docker host file 
+      template:
+        src: templates/ssl_template.j2
+        dest: "{{ docker_certs_dir }}/output"
+      vars:
+        ssl_data: "{{ docker_host }}"
+
+    - name: get environment vars for target environment
+      aws_s3:
+        bucket: "{{ config_bucket }}"
+        object: /scripts/docker.properties
+        dest: "{{ lookup('env', 'CODEBUILD_SRC_DIR' )}}/docker.properties"
+        mode: get
+        aws_access_key: "{{ aws_access_key_id }}"
+        aws_secret_key: "{{ aws_secret_access_key }}"
+        security_token: "{{ aws_security_token }}"
