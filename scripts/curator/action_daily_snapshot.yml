@@ -15,20 +15,8 @@ actions:
       max_wait: -1
       disable_action: False
     filters:
-    - filtertype: pattern
-      kind: regex
-      value: ".*$"
-  # 2:
-  #   action: delete_indices
-  #   description: >-
-  #     Delete all indices older than 365 days.
-  #   options:
-  #     ignore_empty_list: True
-  #     disable_action: True
-  #   filters:
-  #   - filtertype: age
-  #     source: name
-  #     direction: older
-  #     timestring: '%Y.%m.%d'
-  #     unit: days
-  #     unit_count: 365
+    - filtertype: age
+      source: creation_date
+      direction: younger
+      unit: days
+      unit_count: 7
