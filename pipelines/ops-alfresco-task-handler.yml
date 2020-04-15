@@ -24,7 +24,7 @@ phases:
       - docker-compose -f restore/docker-compose-sync-scripts.yml up
   build:
     commands:
-      - make ${TASK_NAME}
+      - make task_handler
   post_build:
     finally:
       - docker-compose -f restore/${COMPOSE_FILE_NAME} down -v
