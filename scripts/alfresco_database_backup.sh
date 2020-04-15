@@ -40,14 +40,23 @@ case ${JOB_TYPE} in
     ;;
   content-sync)
     echo "Running content sync"
-    BASE_DIR="$(date '+%Y/%-m/%-d')"
-    FOLDER_TO_SYNC="contentstore/${BASE_DIR}"
 
-    # Perform content sync daily
+    # Perform content sync previous day
+    BASE_DIR="$(date '+%Y/%-m/%-1d')"
+    FOLDER_TO_SYNC="contentstore/${BASE_DIR}"
     echo "Running command: aws s3 sync --only-show-errors s3://${ALF_STORAGE_BUCKET}/${FOLDER_TO_SYNC}/ s3://${ALF_BACKUP_BUCKET}/files/${FOLDER_TO_SYNC}/"
     aws s3 sync --only-show-errors s3://${ALF_STORAGE_BUCKET}/${FOLDER_TO_SYNC}/ s3://${ALF_BACKUP_BUCKET}/files/${FOLDER_TO_SYNC}/ && echo Success || exit $?
     echo "Running command: aws s3 sync --only-show-errors s3://${ALF_STORAGE_BUCKET}/${BASE_DIR}/ s3://${ALF_BACKUP_BUCKET}/files/${BASE_DIR}/"
     aws s3 sync --only-show-errors s3://${ALF_STORAGE_BUCKET}/${BASE_DIR}/ s3://${ALF_BACKUP_BUCKET}/files/${BASE_DIR}/ && echo Success || exit $?
+
+    # Perform content sync daily
+    BASE_DIR="$(date '+%Y/%-m/%-d')"
+    FOLDER_TO_SYNC="contentstore/${BASE_DIR}"
+    echo "Running command: aws s3 sync --only-show-errors s3://${ALF_STORAGE_BUCKET}/${FOLDER_TO_SYNC}/ s3://${ALF_BACKUP_BUCKET}/files/${FOLDER_TO_SYNC}/"
+    aws s3 sync --only-show-errors s3://${ALF_STORAGE_BUCKET}/${FOLDER_TO_SYNC}/ s3://${ALF_BACKUP_BUCKET}/files/${FOLDER_TO_SYNC}/ && echo Success || exit $?
+    echo "Running command: aws s3 sync --only-show-errors s3://${ALF_STORAGE_BUCKET}/${BASE_DIR}/ s3://${ALF_BACKUP_BUCKET}/files/${BASE_DIR}/"
+    aws s3 sync --only-show-errors s3://${ALF_STORAGE_BUCKET}/${BASE_DIR}/ s3://${ALF_BACKUP_BUCKET}/files/${BASE_DIR}/ && echo Success || exit $?
+
     ;;
   elasticsearch-backup)
     echo "Running elasticsearch backup"
