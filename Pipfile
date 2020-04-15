@@ -9,6 +9,7 @@ autopep8 = "*"
 [packages]
 ansible = "*"
 pygithub = "*"
+docker = "*"
 
 [requires]
 python_version = "3.8"

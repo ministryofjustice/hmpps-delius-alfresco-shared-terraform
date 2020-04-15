@@ -1,0 +1,32 @@
+---
+version: 0.2
+
+env:
+  variables:
+    DOCKER_PORT: "2376"
+
+phases:
+  pre_build:
+    commands:
+      - make get_configs
+      - export SSM_CA_CERT="${SSM_TASKS_PREFIX}/${ENVIRONMENT_NAME}/ssm_ca_cert"
+      - export SSM_CERT="${SSM_TASKS_PREFIX}/${ENVIRONMENT_NAME}/ssm_cert"
+      - export SSM_PRIVATE_KEY="${SSM_TASKS_PREFIX}/${ENVIRONMENT_NAME}/ssm_private_key"
+      - export ES_DOCKER_HOST="${SSM_TASKS_PREFIX}/${ENVIRONMENT_NAME}/docker_host"
+      - export SSM_CONFIG_BUCKET="${SSM_TASKS_PREFIX}/${ENVIRONMENT_NAME}/config_bucket"
+      - eval $(cat env_configs/${ENVIRONMENT_NAME}/${ENVIRONMENT_NAME}.properties | grep TERRAGRUNT_IAM_ROLE)
+      - ansible-playbook pipelines/tasks/ansible/docker_setup_playbook.yml
+      - export ES_DOCKER_HOST="$(cat ${DOCKER_CERTS_DIR}/output)"
+      - export DOCKER_TLS_VERIFY=1
+      - export DOCKER_HOST="tcp://${ES_DOCKER_HOST}:${DOCKER_PORT}"
+      - export DOCKER_CERT_PATH=${DOCKER_CERTS_DIR}
+      - source ${CODEBUILD_SRC_DIR}/docker.properties
+      - docker-compose -f restore/docker-compose-sync-scripts.yml up
+  build:
+    commands:
+      - make task_handler
+  post_build:
+    finally:
+      - docker-compose -f restore/${COMPOSE_FILE_NAME} down -v
+      - docker system prune -a -f
+

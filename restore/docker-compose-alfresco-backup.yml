@@ -49,6 +49,7 @@ services:
       - ES_HOST=${ES_MIGRATION_HOST}
       - ES_SNAPSHOT_NAME=alfresco_snapshot
       - CONFIG_BUCKET=${CONFIG_BUCKET}
+      - DAYS_TO_DELETE=${DAYS_TO_DELETE}
     volumes:
       - /opt/scripts:/opt/scripts
     entrypoint: [ "sh", "/opt/scripts/alfresco_database_backup.sh", "elasticsearch-backup" ]

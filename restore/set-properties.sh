@@ -113,6 +113,10 @@ export ALF_DB_USERNAME_SSM=$(cat $tf_data | grep alf_db_username_ssm | cut -d ' 
 echo "export ALF_DB_USERNAME_SSM=${ALF_DB_USERNAME_SSM}" >> $outfile_docker
 exit_on_error $? !!
 
+export DAYS_TO_DELETE=365
+echo "export DAYS_TO_DELETE=${DAYS_TO_DELETE}" >> $outfile_docker
+exit_on_error $? !!
+
 # AWS
 echo "export TERRAGRUNT_IAM_ROLE=$(cat $tf_data | grep terragrunt_iam_role | cut -d ' ' -f3)" >> $outfile_docker
 exit_on_error $? !!

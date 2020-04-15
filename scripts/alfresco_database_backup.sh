@@ -31,7 +31,7 @@ case ${JOB_TYPE} in
 
     # upload sql file
     echo "uploading postgres pg_dump $(date)"
-    aws s3 sync ${DUMP_DIR}/ s3://${ALF_BACKUP_BUCKET}/database/${PREFIX_DATE}/ && echo Success || exit $?
+    aws s3 sync --only-show-errors ${DUMP_DIR}/ s3://${ALF_BACKUP_BUCKET}/database/${PREFIX_DATE}/ && echo Success || exit $?
     echo "uploading postgres pg_dump complete $(date)"
 
     # delete sql file from nfs share
@@ -40,14 +40,23 @@ case ${JOB_TYPE} in
     ;;
   content-sync)
     echo "Running content sync"
-    BASE_DIR="$(date '+%Y/%-m/%-d')"
+
+    # Perform content sync previous day
+    BASE_DIR="$(date '+%Y/%-m/%-1d')"
     FOLDER_TO_SYNC="contentstore/${BASE_DIR}"
+    echo "Running command: aws s3 sync --only-show-errors s3://${ALF_STORAGE_BUCKET}/${FOLDER_TO_SYNC}/ s3://${ALF_BACKUP_BUCKET}/files/${FOLDER_TO_SYNC}/"
+    aws s3 sync --only-show-errors s3://${ALF_STORAGE_BUCKET}/${FOLDER_TO_SYNC}/ s3://${ALF_BACKUP_BUCKET}/files/${FOLDER_TO_SYNC}/ && echo Success || exit $?
+    echo "Running command: aws s3 sync --only-show-errors s3://${ALF_STORAGE_BUCKET}/${BASE_DIR}/ s3://${ALF_BACKUP_BUCKET}/files/${BASE_DIR}/"
+    aws s3 sync --only-show-errors s3://${ALF_STORAGE_BUCKET}/${BASE_DIR}/ s3://${ALF_BACKUP_BUCKET}/files/${BASE_DIR}/ && echo Success || exit $?
 
     # Perform content sync daily
-    echo "Running command: aws s3 sync s3://${ALF_STORAGE_BUCKET}/${FOLDER_TO_SYNC}/ s3://${ALF_BACKUP_BUCKET}/files/${FOLDER_TO_SYNC}/"
-    aws s3 sync s3://${ALF_STORAGE_BUCKET}/${FOLDER_TO_SYNC}/ s3://${ALF_BACKUP_BUCKET}/files/${FOLDER_TO_SYNC}/ && echo Success || exit $?
-    echo "Running command: aws s3 sync s3://${ALF_STORAGE_BUCKET}/${BASE_DIR}/ s3://${ALF_BACKUP_BUCKET}/files/${BASE_DIR}/"
-    aws s3 sync s3://${ALF_STORAGE_BUCKET}/${BASE_DIR}/ s3://${ALF_BACKUP_BUCKET}/files/${BASE_DIR}/ && echo Success || exit $?
+    BASE_DIR="$(date '+%Y/%-m/%-d')"
+    FOLDER_TO_SYNC="contentstore/${BASE_DIR}"
+    echo "Running command: aws s3 sync --only-show-errors s3://${ALF_STORAGE_BUCKET}/${FOLDER_TO_SYNC}/ s3://${ALF_BACKUP_BUCKET}/files/${FOLDER_TO_SYNC}/"
+    aws s3 sync --only-show-errors s3://${ALF_STORAGE_BUCKET}/${FOLDER_TO_SYNC}/ s3://${ALF_BACKUP_BUCKET}/files/${FOLDER_TO_SYNC}/ && echo Success || exit $?
+    echo "Running command: aws s3 sync --only-show-errors s3://${ALF_STORAGE_BUCKET}/${BASE_DIR}/ s3://${ALF_BACKUP_BUCKET}/files/${BASE_DIR}/"
+    aws s3 sync --only-show-errors s3://${ALF_STORAGE_BUCKET}/${BASE_DIR}/ s3://${ALF_BACKUP_BUCKET}/files/${BASE_DIR}/ && echo Success || exit $?
+
     ;;
   elasticsearch-backup)
     echo "Running elasticsearch backup"
@@ -64,7 +73,17 @@ case ${JOB_TYPE} in
     echo "Creating snapshot"
     curator --config /opt/scripts/curator/config.yml /opt/scripts/curator/action_daily_snapshot.yml && echo Success || exit $?
     # SYNC to backup bucket
-    aws s3 sync s3://${ELK_BACKUP_BUCKET}/ s3://${ALF_BACKUP_BUCKET}/elasticsearch/$(date '+%Y/%-m/%-d')/ && echo Success || exit $?
+    aws s3 sync --only-show-errors s3://${ELK_BACKUP_BUCKET}/ s3://${ALF_BACKUP_BUCKET}/elasticsearch/$(date '+%Y/%-m/%-d')/ && echo Success || exit $?
+
+    echo "Running elasticsearch purge"
+    PURGE_ACTION_FILE="/opt/scripts/curator/action_purge.yml"
+    INDICES_DAYS=${DAYS_TO_DELETE}
+    echo "DAYS_TO_DELETE set to ${INDICES_DAYS}"
+    sed -i "s/DELETE_DAYS/${INDICES_DAYS}/g" ${PURGE_ACTION_FILE}
+    cat ${PURGE_ACTION_FILE}
+
+    echo "Purging old indices"
+    curator --config /opt/scripts/curator/config.yml ${PURGE_ACTION_FILE} && echo Success || exit $?
     ;;
   *)
     echo "${JOB_TYPE} argument is not a valid argument. db-backup - content-sync - elasticsearch-backup"

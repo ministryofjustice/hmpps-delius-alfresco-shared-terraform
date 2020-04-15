@@ -1,0 +1,16 @@
+---
+actions:
+  1:
+    action: delete_indices
+    description: >-
+      Delete all indices older than DELETE_DAYS days.
+    options:
+      ignore_empty_list: True
+      disable_action: False
+    filters:
+    - filtertype: age
+      source: name
+      direction: older
+      timestring: '%Y.%m.%d'
+      unit: days
+      unit_count: DELETE_DAYS

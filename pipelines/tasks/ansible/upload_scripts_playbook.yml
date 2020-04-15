@@ -1,0 +1,19 @@
+---
+
+- name: setup playbook
+  hosts: localhost
+  connection: local
+  vars_files:
+    - vars/common.yml
+  tasks:
+    - name: get creds from iam role
+      include: aws-creds.yml
+
+    - name: upload scripts
+      s3_sync:
+        bucket: "{{ config_bucket }}"
+        key_prefix: scripts/
+        file_root: "{{ lookup('env','HMPPS_BUILD_WORK_DIR') }}/scripts/"
+        aws_access_key: "{{ aws_access_key_id }}"
+        aws_secret_key: "{{ aws_secret_access_key }}"
+        security_token: "{{ aws_security_token }}"
