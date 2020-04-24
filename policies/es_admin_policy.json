@@ -167,6 +167,38 @@
                 "${artefacts-s3bucket-arn}",
                 "${artefacts-s3bucket-arn}/*"
             ]
+        },
+        {
+            "Effect": "Allow",
+            "Sid": "SsmParamStoreDescribe",
+            "Action": "ssm:DescribeParameters",
+            "Resource": [
+                "*"
+            ]
+        },
+        {
+            "Effect": "Allow",
+            "Sid": "SsmParamStorePerms",
+            "Action": "*",
+            "Resource": [
+                "arn:aws:ssm:*:*:parameter/alfresco/esadmin/*"
+            ]
+        },
+        {
+            "Effect": "Allow",
+            "Sid": "EC2VolumePerms",
+            "Action": [
+                "ec2:DetachVolume",
+                "ec2:CreateVolume",
+                "ec2:AttachVolume",
+                "ec2:DescribeVolumeAttribute",
+                "ec2:DescribeVolumeStatus",
+                "sts:DecodeAuthorizationMessage",
+                "ec2:DescribeVolumes"
+            ],
+            "Resource": [
+                "*"
+            ]
         }
     ]
 }

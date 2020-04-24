@@ -70,3 +70,10 @@ variable "enabled_metrics" {
     "GroupTotalInstances"
   ]
 }
+
+variable "source_code_versions" {
+  type = "map"
+  default = {
+    esadmin = "master"
+  }
+}

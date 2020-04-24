@@ -29,6 +29,7 @@ variable "alf_backups_config" {
   default = {
     prod_backups_bucket = ""
     prod_kms_key_arn    = ""
+    prod_storage_bucket = ""
 
   }
 }

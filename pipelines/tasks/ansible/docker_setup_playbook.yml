@@ -4,23 +4,19 @@
   hosts: localhost
   connection: local
   vars:
-    ssm_ca_cert: "{{ lookup('env','SSM_CA_CERT') }}"
-    ssm_cert: "{{ lookup('env','SSM_CERT') }}"
-    ssm_private_key: "{{ lookup('env','SSM_PRIVATE_KEY') }}"
     ssm_config_bucket: "{{ lookup('env', 'SSM_CONFIG_BUCKET' )}}"
-    es_docker_host: "{{ lookup('env','ES_DOCKER_HOST') }}"
+    es_docker_host: "{{ lookup('env','ES_DOCKER_HOST') }}"    
   vars_files:
     - vars/common.yml
   tasks:
     - name: get creds from iam role
       include: aws-creds.yml
 
-    - name: retrieve ssm values
+    - name: set ssm param names
       set_fact:
-        ca_cert_param: "{{ lookup('aws_ssm', ssm_ca_cert )}}"
-        cert_param: "{{ lookup('aws_ssm', ssm_cert )}}"
-        key_param: "{{ lookup('aws_ssm', ssm_private_key )}}"
-
+        ca_cert_param: /alfresco/esadmin/docker/ca_cert
+        cert_param: /alfresco/esadmin/docker/server_cert
+        key_param: /alfresco/esadmin/docker/server_key
 
     - name: set docker tls facts
       set_fact:
