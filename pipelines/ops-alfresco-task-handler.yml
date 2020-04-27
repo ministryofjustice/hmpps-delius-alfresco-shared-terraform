@@ -24,4 +24,5 @@ phases:
   post_build:
     finally:
       - docker-compose -f restore/${COMPOSE_FILE_NAME} down -v
+      - docker system prune -a -f
 
