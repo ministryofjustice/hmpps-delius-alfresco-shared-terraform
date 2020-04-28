@@ -106,38 +106,35 @@ sh run.sh ${ENVIRONMENT_NAME} output ${comp} > $tf_data && echo Success || exit 
 echo "export ES_MIGRATION_HOST=$(cat $tf_data | grep public_es_host_name | cut -d ' ' -f3)" >> $outfile_docker && echo Success || exit $?
 
 ##################################################################################################
-# get cert details
-comp=certs
-sh run.sh ${ENVIRONMENT_NAME} output ${comp} > $tf_data && echo Success || exit $?
-
-export SSM_CA_CERT=$(cat $tf_data | grep self_signed_ca_ssm_cert_pem_name | cut -d ' ' -f3) && echo Success || exit $?
-export SSM_CERT=$(cat $tf_data | grep self_signed_server_ssm_cert_pem_name | cut -d ' ' -f3) && echo Success || exit $?
-export SSM_PRIVATE_KEY=$(cat $tf_data | grep self_signed_server_ssm_private_key_name | cut -d ' ' -f3) && echo Success || exit $?
+# # get cert details
+# export SSM_CA_CERT="/alfresco/esadmin/docker/ca_cert"
+# export SSM_CERT="/alfresco/esadmin/docker/server_cert"
+# export SSM_PRIVATE_KEY="/alfresco/esadmin/docker/server_key"
 
 # set target account settings
 eval $(cat env_configs/${ENVIRONMENT_NAME}/${ENVIRONMENT_NAME}.properties | grep TERRAGRUNT_IAM_ROLE) && echo Success || exit $?
 eval $(cat env_configs/${ENVIRONMENT_NAME}/${ENVIRONMENT_NAME}.properties | grep TG_REGION) && echo Success || exit $?
 
-aws ssm put-parameter \
-    --name "${SSM_TASKS_PREFIX}/${ENVIRONMENT_NAME}/ssm_ca_cert" \
-    --description "build properties" \
-    --value "${SSM_CA_CERT}" \
-    --type "String" \
-    --overwrite && echo Success || exit $?
+# aws ssm put-parameter \
+#     --name "${SSM_TASKS_PREFIX}/${ENVIRONMENT_NAME}/ssm_ca_cert" \
+#     --description "build properties" \
+#     --value "${SSM_CA_CERT}" \
+#     --type "String" \
+#     --overwrite && echo Success || exit $?
 
-aws ssm put-parameter \
-    --name "${SSM_TASKS_PREFIX}/${ENVIRONMENT_NAME}/ssm_cert" \
-    --description "build properties" \
-    --value "${SSM_CERT}" \
-    --type "String" \
-    --overwrite && echo Success || exit $?
+# aws ssm put-parameter \
+#     --name "${SSM_TASKS_PREFIX}/${ENVIRONMENT_NAME}/ssm_cert" \
+#     --description "build properties" \
+#     --value "${SSM_CERT}" \
+#     --type "String" \
+#     --overwrite && echo Success || exit $?
 
-aws ssm put-parameter \
-    --name "${SSM_TASKS_PREFIX}/${ENVIRONMENT_NAME}/ssm_private_key" \
-    --description "build properties" \
-    --value "${SSM_PRIVATE_KEY}" \
-    --type "String" \
-    --overwrite && echo Success || exit $?
+# aws ssm put-parameter \
+#     --name "${SSM_TASKS_PREFIX}/${ENVIRONMENT_NAME}/ssm_private_key" \
+#     --description "build properties" \
+#     --value "${SSM_PRIVATE_KEY}" \
+#     --type "String" \
+#     --overwrite && echo Success || exit $?
 
 echo "syncing files"
 cp $outfile_docker ./scripts/docker.properties && echo Success || exit $?

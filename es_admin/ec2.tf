@@ -34,6 +34,9 @@ data "template_file" "instance_userdata" {
     ssm_tls_ca_cert      = "${local.ssm_tls_ca_cert}"
     ssm_tls_cert         = "${local.ssm_tls_cert}"
     ssm_tls_private_key  = "${local.ssm_tls_private_key}"
+    docker_host          = "${local.application}.${local.external_domain}"
+    mount_point          = "/opt/eslocal"
+    esadmin_version      = "${var.source_code_versions["esadmin"]}"
   }
 }
 
