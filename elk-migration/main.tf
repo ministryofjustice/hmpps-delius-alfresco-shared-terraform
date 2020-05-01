@@ -89,6 +89,16 @@ data "terraform_remote_state" "security-groups" {
   }
 }
 
+data "terraform_remote_state" "network-sg-groups" {
+  backend = "s3"
+
+  config {
+    bucket = "${var.remote_state_bucket_name}"
+    key    = "security-groups/terraform.tfstate"
+    region = "${var.region}"
+  }
+}
+
 #-------------------------------------------------------------
 ### Getting the rds details
 #-------------------------------------------------------------
@@ -263,7 +273,10 @@ locals {
   logs_kms_arn                 = "${data.terraform_remote_state.common.kms_arn}"
 
   instance_security_groups = [
-    "${data.terraform_remote_state.monitoring.instance_security_groups}",
+    "${data.terraform_remote_state.network-sg-groups.sg_ssh_bastion_in_id}",
+    "${data.terraform_remote_state.network-sg-groups.sg_mon_efs}",
+    "${data.terraform_remote_state.network-sg-groups.sg_monitoring}",
+    "${data.terraform_remote_state.network-sg-groups.sg_elasticsearch}",
     "${data.terraform_remote_state.security-groups.security_groups_map["mon_jenkins"]}",
   ]
   lb_security_groups = [
