@@ -95,3 +95,12 @@ variable "alf_cognito_map" {
     unused_account_validity_days = 2
   }
 }
+
+variable "user_access_cidr_blocks" {
+  type    = "list"
+  default = []
+}
+
+variable "sg_create_outbound_web_rules" {
+  default = 1
+}

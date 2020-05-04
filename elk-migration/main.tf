@@ -12,6 +12,19 @@ provider "aws" {
 # DATA SOURCE MODULES FROM OTHER TERRAFORM BACKENDS
 ####################################################
 #-------------------------------------------------------------
+### Getting the vpc details
+#-------------------------------------------------------------
+data "terraform_remote_state" "vpc" {
+  backend = "s3"
+
+  config {
+    bucket = "${var.remote_state_bucket_name}"
+    key    = "vpc/terraform.tfstate"
+    region = "${var.region}"
+  }
+}
+
+#-------------------------------------------------------------
 ### Getting the common details
 #-------------------------------------------------------------
 data "terraform_remote_state" "common" {
@@ -256,7 +269,6 @@ locals {
   storage_s3bucket             = "${data.terraform_remote_state.s3bucket.s3bucket}"
   backups_bucket               = "${data.terraform_remote_state.s3bucket.alf_backups_bucket_name}"
   storage_kms_arn              = "${data.terraform_remote_state.s3bucket.s3bucket_kms_arn}"
-  mon_jenkins_sg               = "${data.terraform_remote_state.security-groups.security_groups_map["mon_jenkins"]}"
   sg_rds_id                    = "${data.terraform_remote_state.security-groups.security_groups_sg_rds_id}"
   alf_efs_dns_name             = "${data.terraform_remote_state.efs.efs_dns_name}"
   efs_mount_path               = "/opt/es_backup"
@@ -271,20 +283,27 @@ locals {
   image_url                    = "${var.elk_migration_props["image_url"]}"
   service_desired_count        = "${var.elk_migration_props["ecs_service_desired_count"]}"
   logs_kms_arn                 = "${data.terraform_remote_state.common.kms_arn}"
+  sg_monitoring_elb            = "${data.terraform_remote_state.security-groups.sg_monitoring_elb}"
+  sg_monitoring_inst           = "${data.terraform_remote_state.security-groups.sg_monitoring}"
+  sg_elasticsearch             = "${data.terraform_remote_state.security-groups.sg_elasticsearch}"
+  sg_monitoring_client         = "${data.terraform_remote_state.security-groups.sg_monitoring_client}"
+  sg_mon_efs                   = "${data.terraform_remote_state.security-groups.sg_mon_efs}"
+  mon_jenkins_sg               = "${data.terraform_remote_state.security-groups.sg_mon_jenkins}"
+  eng_vpc_cidr                 = "${data.terraform_remote_state.vpc.eng_vpc_cidr}"
 
   instance_security_groups = [
     "${data.terraform_remote_state.network-sg-groups.sg_ssh_bastion_in_id}",
-    "${data.terraform_remote_state.network-sg-groups.sg_mon_efs}",
-    "${data.terraform_remote_state.network-sg-groups.sg_monitoring}",
-    "${data.terraform_remote_state.network-sg-groups.sg_elasticsearch}",
-    "${data.terraform_remote_state.security-groups.security_groups_map["mon_jenkins"]}",
+    "${local.sg_mon_efs}",
+    "${local.sg_monitoring_inst}",
+    "${local.sg_elasticsearch}",
+    "${local.mon_jenkins_sg}",
   ]
   lb_security_groups = [
-    "${data.terraform_remote_state.security-groups.security_groups_map["mon_jenkins"]}",
+    "${local.mon_jenkins_sg}",
   ]
   external_lb_sgs = [
     "${data.terraform_remote_state.security-groups.security_groups_sg_external_lb_id}",
-    "${data.terraform_remote_state.security-groups.security_groups_map["mon_jenkins"]}"
+    "${local.mon_jenkins_sg}"
   ]
   efs_security_groups = [
     "${local.mon_jenkins_sg}",
