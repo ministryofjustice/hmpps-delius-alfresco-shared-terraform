@@ -10,9 +10,13 @@ Terraform Repo for the Alfresco in the shared VPC
 Alfresco external - [alfresco.dev.alfresco.probation.hmpps.dsd.io](alfresco.dev.alfresco.probation.hmpps.dsd.io)
 
 
-### Alfresco Int
+### Alfresco Delius Core Dev
 
 Alfresco external - [https://alfresco.dev.delius-core.probation.hmpps.dsd.io](https://alfresco.dev.delius-core.probation.hmpps.dsd.io)
+
+### Alfresco Delius Int
+
+Alfresco external - [https://alfresco.int.delius.probation.hmpps.dsd.io](https://alfresco.int.delius.probation.hmpps.dsd.io)
 
 ### Alfresco Training Test
 

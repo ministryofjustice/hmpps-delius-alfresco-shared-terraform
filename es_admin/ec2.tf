@@ -1,6 +1,5 @@
 locals {
   efs_mount_path = "/opt/es_backup"
-  efs_dns_name   = "${data.terraform_remote_state.monitoring.monitoring_server_efs_share_dns}"
   es_home_dir    = "/usr/share/elasticsearch"
 }
 
@@ -14,13 +13,11 @@ data "template_file" "instance_userdata" {
   vars {
     account_id           = "${local.account_id}"
     alf_backup_bucket    = "${local.backups_bucket}"
-    alf_efs_dns_name     = "${local.alf_efs_dns_name}"
     alf_storage_bucket   = "${local.storage_s3bucket}"
     app_name             = "${local.application}"
     bastion_inventory    = "${local.bastion_inventory}"
     common_name          = "${local.common_name}"
     config-bucket        = "${local.config-bucket}"
-    efs_dns_name         = "${local.efs_dns_name}"
     efs_mount_path       = "${local.efs_mount_path}"
     env_identifier       = "${local.environment_identifier}"
     environment          = "${local.environment}"
