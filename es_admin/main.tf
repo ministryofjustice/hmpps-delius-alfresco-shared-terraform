@@ -90,6 +90,19 @@ data "terraform_remote_state" "security-groups" {
 }
 
 #-------------------------------------------------------------
+### Getting the network security groups details
+#-------------------------------------------------------------
+data "terraform_remote_state" "network-security-groups" {
+  backend = "s3"
+
+  config {
+    bucket = "${var.remote_state_bucket_name}"
+    key    = "security-groups/terraform.tfstate"
+    region = "${var.region}"
+  }
+}
+
+#-------------------------------------------------------------
 ### Getting the asg details
 #-------------------------------------------------------------
 data "terraform_remote_state" "asg" {
@@ -213,8 +226,15 @@ locals {
   alf_efs_dns_name             = "${data.terraform_remote_state.efs.efs_dns_name}"
   alf_efs_sg                   = "${data.terraform_remote_state.security-groups.security_groups_sg_efs_sg_id}"
 
+  monitoring_groups = [
+    "${data.terraform_remote_state.network-security-groups.sg_ssh_bastion_in_id}",
+    "${data.terraform_remote_state.network-security-groups.sg_mon_efs}",
+    "${data.terraform_remote_state.network-security-groups.sg_monitoring}",
+    "${data.terraform_remote_state.network-security-groups.sg_elasticsearch}",
+  ]
+
   instance_security_groups = [
-    "${data.terraform_remote_state.monitoring.instance_security_groups}",
+    "${local.monitoring_groups}",
     "${data.terraform_remote_state.security-groups.security_groups_map["mon_jenkins"]}",
   ]
 }
