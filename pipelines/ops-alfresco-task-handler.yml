@@ -8,6 +8,7 @@ env:
 phases:
   pre_build:
     commands:
+      - source configs/common.properties
       - make get_configs
       - export ES_DOCKER_HOST="${SSM_TASKS_PREFIX}/${ENVIRONMENT_NAME}/docker_host"
       - export SSM_CONFIG_BUCKET="${SSM_TASKS_PREFIX}/${ENVIRONMENT_NAME}/config_bucket"
@@ -25,4 +26,3 @@ phases:
     finally:
       - docker-compose -f restore/${COMPOSE_FILE_NAME} down -v
       - docker system prune -a -f
-

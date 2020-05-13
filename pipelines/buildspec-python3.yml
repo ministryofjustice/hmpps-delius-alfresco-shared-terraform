@@ -15,4 +15,3 @@ phases:
           python utils/manage.py create-release -b develop -sha ${CODEBUILD_RESOLVED_SOURCE_VERSION}
         fi
       - python utils/manage.py update-repo-branch -b ${ENVIRONMENT_NAME}
-
