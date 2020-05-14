@@ -118,17 +118,6 @@ output "remote_config_bucket" {
   value = "${data.terraform_remote_state.remote_vpc.s3-config-bucket}"
 }
 
-output "monitoring_server_external_url" {
-  value = "${data.terraform_remote_state.monitor.monitoring_server_external_url}"
-}
-
-output "monitoring_server_internal_url" {
-  value = "${data.terraform_remote_state.monitor.monitoring_server_internal_url}"
-}
-
-output "logstash_host_fqdn" {
-  value = "${local.logstash_host_fqdn}"
-}
 
 output "private_subnet_map" {
   value = {

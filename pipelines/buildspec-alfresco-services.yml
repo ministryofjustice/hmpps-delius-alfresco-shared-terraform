@@ -4,6 +4,7 @@ version: 0.2
 phases:
   pre_build:
     commands:
+      - source configs/common.properties
       - make get_configs
   build:
     commands:
@@ -12,4 +13,3 @@ phases:
       - make ${ACTION_TYPE} component=solr
       - make ${ACTION_TYPE} component=asg
       - make ${ACTION_TYPE} component=waf
-

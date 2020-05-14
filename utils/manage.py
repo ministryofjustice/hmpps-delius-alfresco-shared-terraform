@@ -48,5 +48,21 @@ def create_release(branch: str, commit: str):
     return sys.exit(0)
 
 
+@cli.command()
+def get_version():
+    """
+        Manages Github repo releases
+    """
+    manager = Release_Handler()
+    try:
+        message = manager.get_latest_version()
+    except Exception as err:
+        message = err
+        click.echo(message=message)
+        return sys.exit(12)
+    click.echo(message=message)
+    return sys.exit(0)
+
+
 if __name__ == '__main__':
     cli()

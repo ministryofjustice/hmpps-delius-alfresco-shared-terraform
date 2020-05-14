@@ -8,6 +8,7 @@ env:
 phases:
   pre_build:
     commands:
+      - source configs/common.properties
       - make get_configs
   build:
     commands:

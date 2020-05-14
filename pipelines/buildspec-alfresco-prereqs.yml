@@ -4,6 +4,7 @@ version: 0.2
 phases:
   pre_build:
     commands:
+      - source configs/common.properties
       - make get_configs
   build:
     commands:
@@ -13,4 +14,3 @@ phases:
       - make ${ACTION_TYPE} component=certs
       - make ${ACTION_TYPE} component=iam
       - make ${ACTION_TYPE} component=security-groups
-
