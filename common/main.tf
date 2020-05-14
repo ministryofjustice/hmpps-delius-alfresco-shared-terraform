@@ -140,15 +140,11 @@ locals {
     map("source-hash", "ignored")
   )}"
 
-  remote_iam_role                = "${data.terraform_remote_state.remote_iam.alfresco_iam_arn}"
-  remote_config_bucket           = "${data.terraform_remote_state.remote_vpc.s3-config-bucket}"
-  monitoring_server_external_url = "${data.terraform_remote_state.monitor.monitoring_server_external_url}"
-  monitoring_server_internal_url = "${data.terraform_remote_state.monitor.monitoring_server_internal_url}"
-  monitoring_server_client_sg_id = "${data.terraform_remote_state.monitor.monitoring_server_client_sg_id}"
-  logstash_host_fqdn             = "${data.terraform_remote_state.monitor.internal_logstash_host}"
-  ssh_deployer_key               = "${data.terraform_remote_state.vpc.ssh_deployer_key}"
-  ssm_path                       = "/${var.environment_name}/${var.project_name}"
-  account_id                     = "${data.aws_caller_identity.current.account_id}"
+  remote_iam_role      = "${data.terraform_remote_state.remote_iam.alfresco_iam_arn}"
+  remote_config_bucket = "${data.terraform_remote_state.remote_vpc.s3-config-bucket}"
+  ssh_deployer_key     = "${data.terraform_remote_state.vpc.ssh_deployer_key}"
+  ssm_path             = "/${var.environment_name}/${var.project_name}"
+  account_id           = "${data.aws_caller_identity.current.account_id}"
 
   app_hostnames = {
     internal = "${var.alfresco_app_name}-int"
