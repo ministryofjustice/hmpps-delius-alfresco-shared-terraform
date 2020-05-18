@@ -19,6 +19,7 @@ phases:
       - |
         if [ ${ENVIRONMENT_NAME} == "alfresco-dev" ]; then
           python utils/manage.py create-release -b develop -sha ${CODEBUILD_RESOLVED_SOURCE_VERSION}
+          sleep 15
           rm -rf builds
           echo "REPO set to ${GITHUB_REPO}"
           export PACKAGE_VERSION=$(python utils/manage.py get-version)
