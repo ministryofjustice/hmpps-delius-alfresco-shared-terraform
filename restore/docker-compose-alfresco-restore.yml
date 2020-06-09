@@ -9,18 +9,17 @@ services:
       - ALF_RESTORE_STATUS=${ALF_RESTORE_STATUS}
     volumes:
       - /opt/scripts:/opt/scripts
-    entrypoint: [ "sh", "/opt/scripts/alfresco-asg-manager.sh" ]
+    entrypoint: ["sh", "/opt/scripts/alfresco-asg-manager.sh"]
   content-manager:
     image: mojdigitalstudio/hmpps-elasticsearch-manager:latest
     environment:
       - APP_ENVIRONMENT=dev
       - CONFIG_BUCKET=${CONFIG_BUCKET}
       - ALF_STORAGE_BUCKET=${ALF_STORAGE_BUCKET}
-      - DYNAMODB_TABLE_NAME=${ES_DYNAMODB_TABLE_NAME}
       - ALF_RESTORE_STATUS=${ALF_RESTORE_STATUS}
     volumes:
       - /opt/scripts:/opt/scripts
-    entrypoint: [ "sh", "/opt/scripts/alfresco-content-restore.sh" ]
+    entrypoint: ["sh", "/opt/scripts/alfresco-content-restore.sh"]
   psql:
     image: mojdigitalstudio/hmpps-elasticsearch-manager:latest
     environment:
@@ -35,4 +34,4 @@ services:
     volumes:
       - /opt/scripts:/opt/scripts
       - /opt/eslocal/psql:/opt/local
-    entrypoint: [ "sh", "/opt/scripts/alfresco-database-restore.sh" ]
+    entrypoint: ["sh", "/opt/scripts/alfresco-database-restore.sh"]
