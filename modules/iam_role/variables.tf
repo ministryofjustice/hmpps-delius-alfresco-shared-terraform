@@ -1,0 +1,2 @@
+variable "rolename" {}
+variable "policyfile" {}

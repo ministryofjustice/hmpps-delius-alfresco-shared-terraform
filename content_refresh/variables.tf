@@ -77,7 +77,3 @@ variable "source_code_versions" {
     esadmin = "master"
   }
 }
-
-variable "alf_refresh_enabled" {
-  default = "disabled"
-}

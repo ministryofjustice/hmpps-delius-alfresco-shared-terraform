@@ -102,7 +102,6 @@ echo "cluster.name: ${es_cluster_name}
 network.host: 0.0.0.0
 # Data Settings
 path.data: /usr/share/elasticsearch/data
- /opt/es_backup
 path.repo: ["${migration_mount_path}", "${efs_mount_path}"]
 # Node settings
 discovery.zen.minimum_master_nodes: ${es_master_nodes}
