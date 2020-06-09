@@ -146,9 +146,9 @@ data "null_data_source" "tags" {
 resource "aws_autoscaling_group" "environment" {
   name                      = "${aws_launch_configuration.environment.name}"
   vpc_zone_identifier       = ["${data.aws_subnet.selected.id}"]
-  min_size                  = 1
-  max_size                  = 1
-  desired_capacity          = 1
+  min_size                  = "${var.restoring == "enabled" ? 0 : 1}"
+  max_size                  = "${var.restoring == "enabled" ? 0 : 1}"
+  desired_capacity          = "${var.restoring == "enabled" ? 0 : 1}"
   launch_configuration      = "${aws_launch_configuration.environment.name}"
   health_check_grace_period = 900
   placement_group           = "${aws_placement_group.environment.id}"

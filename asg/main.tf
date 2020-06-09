@@ -266,9 +266,9 @@ module "asg" {
   alfresco_s3bucket            = "${local.s3bucket}"
   lb_security_groups           = ["${local.lb_security_groups}"]
   internal                     = false
-  az_asg_desired               = "${var.alfresco_asg_props["asg_desired"]}"
-  az_asg_min                   = "${var.alfresco_asg_props["asg_min"]}"
-  az_asg_max                   = "${var.alfresco_asg_props["asg_max"]}"
+  az_asg_desired               = "${var.restoring == "enabled" ? 0 : var.alfresco_asg_props["asg_desired"]}"
+  az_asg_min                   = "${var.restoring == "enabled" ? 0 : var.alfresco_asg_props["asg_min"]}"
+  az_asg_max                   = "${var.restoring == "enabled" ? 0 : var.alfresco_asg_props["asg_max"]}"
   default_cooldown             = "${var.alfresco_asg_props["default_cooldown"]}"
   cloudwatch_log_retention     = "${var.alf_cloudwatch_log_retention}"
   zone_id                      = "${local.private_zone_id}"
