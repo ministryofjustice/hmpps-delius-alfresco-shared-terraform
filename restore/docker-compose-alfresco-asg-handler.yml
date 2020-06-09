@@ -1,0 +1,12 @@
+version: "3"
+
+services:
+  asg-manager:
+    image: mojdigitalstudio/hmpps-elasticsearch-manager:latest
+    environment:
+      - APP_ENVIRONMENT=dev
+      - ALF_ASG_PREFIX=${ALF_ASG_PREFIX}
+      - ALF_RESTORE_STATUS=${ALF_RESTORE_STATUS}
+    volumes:
+      - /opt/scripts:/opt/scripts
+    entrypoint: ["sh", "/opt/scripts/alfresco-asg-manager.sh"]
