@@ -24,9 +24,9 @@ data "template_file" "es" {
 }
 
 module "create-iam-app-role-es" {
-  source     = "git::https://github.com/ministryofjustice/hmpps-terraform-modules.git?ref=pre-shared-vpc//modules//iam//role"
+  source     = "../modules/iam_role"
   rolename   = "${local.common_name}-es-admin"
-  policyfile = "ec2_policy.json"
+  policyfile = "ec2_lambda.json"
 }
 
 module "create-iam-instance-profile-es" {

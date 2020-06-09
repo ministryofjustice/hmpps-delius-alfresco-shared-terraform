@@ -111,3 +111,7 @@ variable "alf_solr_config" {
 variable "user_access_cidr_blocks" {
   type = "list"
 }
+
+variable "restoring" {
+  default = "disabled"
+}

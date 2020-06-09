@@ -84,3 +84,7 @@ variable "source_code_versions" {
     elasticbeats = "master"
   }
 }
+
+variable "restoring" {
+  default = "disabled"
+}
