@@ -6,11 +6,10 @@ alfresco_asg_props = {
 }
 
 source_code_versions = {
-  env_configs  = "1.0.0"
   boostrap     = "centos"
   alfresco     = "0.0.1"
   logstash     = "1.0.0"
   elasticbeats = "1.0.0"
-  solr         = "0.0.1"
+  solr         = "0.0.2"
   esadmin      = "0.0.5"
 }
