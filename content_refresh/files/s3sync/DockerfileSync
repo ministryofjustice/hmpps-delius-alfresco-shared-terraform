@@ -1,0 +1,17 @@
+FROM centos:7
+
+# set environment varibles
+ENV PYTHONDONTWRITEBYTECODE 1
+ENV PYTHONUNBUFFERED 1
+
+
+RUN yum install awscli -y; \
+  mkdir -p /usr/src/app
+
+# set working directory
+WORKDIR /usr/src/app
+
+COPY scripts/sync.sh sync.sh
+
+# run server
+ENTRYPOINT [ "/bin/bash" ]

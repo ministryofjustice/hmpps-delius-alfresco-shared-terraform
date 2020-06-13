@@ -79,3 +79,7 @@ output "terragrunt_iam_role" {
 output "region" {
   value = "${var.region}"
 }
+
+output "loggroup_name" {
+  value = "${module.create_loggroup.loggroup_name}"
+}

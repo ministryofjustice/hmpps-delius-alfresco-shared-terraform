@@ -36,7 +36,7 @@ cat << EOF > ~/requirements.yml
   src: singleplatform-eng.users
 - name: ansible-esadmin-role
   src: https://github.com/ministryofjustice/hmpps-ansible-esadmin-role
-  version: "0.0.5"
+  version: "${esadmin_version}"
 EOF
 
 cat << EOF > ~/bootstrap_vars.yml
@@ -52,6 +52,12 @@ cat << EOF > ~/bootstrap_vars.yml
 - aws_region: eu-west-2
 - manage_storage: false
 - redis_host: ${redis_host}
+- redis_port: ${redis_port}
+- worker_node: true
+- mount_point: false
+- log_group: ${log_group}
+- worker_count: 15
+- log_stream: worker
 EOF
 
 wget https://raw.githubusercontent.com/ministryofjustice/hmpps-delius-ansible/master/group_vars/dev.yml -O users.yml
@@ -59,12 +65,14 @@ wget https://raw.githubusercontent.com/ministryofjustice/hmpps-delius-ansible/ma
 cat << EOF > ~/bootstrap.yml
 ---
 - hosts: localhost
+  gather_facts: true
   vars_files:
      - "{{ playbook_dir }}/bootstrap_vars.yml"
      - "{{ playbook_dir }}/users.yml"
   roles:
-    #  - bootstrap
-    #  - users
+     - bootstrap
+     - rsyslog
+     - users
      - ansible-esadmin-role
 EOF
 

@@ -142,6 +142,19 @@ data "terraform_remote_state" "efs" {
 }
 
 #-------------------------------------------------------------
+### Getting the es admin details
+#-------------------------------------------------------------
+data "terraform_remote_state" "es_admin" {
+  backend = "s3"
+
+  config {
+    bucket = "${var.remote_state_bucket_name}"
+    key    = "alfresco/es_admin/terraform.tfstate"
+    region = "${var.region}"
+  }
+}
+
+#-------------------------------------------------------------
 ### Getting the latest amazon ami
 #-------------------------------------------------------------
 
@@ -197,8 +210,10 @@ locals {
   short_environment_identifier = "${data.terraform_remote_state.common.short_environment_identifier}"
   region                       = "${var.region}"
   environment                  = "${data.terraform_remote_state.common.environment}"
+  log_group                    = "${data.terraform_remote_state.es_admin.loggroup_name}"
   tags                         = "${data.terraform_remote_state.common.common_tags}"
   instance_profile             = "${data.terraform_remote_state.iam.iam_instance_es_admin_profile_name}"
+  iam_role_arn                 = "${data.terraform_remote_state.iam.iam_instance_es_admin_role_arn}"
   ssh_deployer_key             = "${data.terraform_remote_state.common.common_ssh_deployer_key}"
   s3bucket                     = "${data.terraform_remote_state.s3bucket.s3bucket}"
   bastion_inventory            = "${var.bastion_inventory}"

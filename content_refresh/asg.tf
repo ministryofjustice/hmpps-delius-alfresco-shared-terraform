@@ -1,12 +1,3 @@
-module "create_loggroup" {
-  source                   = "git::https://github.com/ministryofjustice/hmpps-terraform-modules.git?ref=master//modules//cloudwatch//loggroup"
-  log_group_path           = "${local.common_name}"
-  loggroupname             = "${local.application}"
-  cloudwatch_log_retention = "${var.alf_cloudwatch_log_retention}"
-  kms_key_id               = "${local.logs_kms_arn}"
-  tags                     = "${local.tags}"
-}
-
 data "template_file" "asg_userdata" {
   template = "${file("../user_data/es_admin_non_ci.sh")}"
 
@@ -27,6 +18,8 @@ data "template_file" "asg_userdata" {
     short_env_identifier = "${local.short_environment_identifier}"
     esadmin_version      = "${var.source_code_versions["esadmin"]}"
     redis_host           = "${aws_elasticache_cluster.redis.cache_nodes.0.address}"
+    redis_port           = "${aws_elasticache_cluster.redis.cache_nodes.0.port}"
+    log_group            = "${local.log_group}"
   }
 }
 
@@ -63,9 +56,9 @@ data "null_data_source" "tags" {
 resource "aws_autoscaling_group" "esadmin" {
   name                      = "${aws_launch_configuration.esadmin.name}"
   vpc_zone_identifier       = ["${local.private_subnet_ids}"]
-  min_size                  = 4
-  max_size                  = 4
-  desired_capacity          = 4
+  min_size                  = 8
+  max_size                  = 8
+  desired_capacity          = 8
   launch_configuration      = "${aws_launch_configuration.esadmin.name}"
   health_check_grace_period = 120
   termination_policies      = ["OldestInstance", "OldestLaunchTemplate", "OldestLaunchConfiguration"]

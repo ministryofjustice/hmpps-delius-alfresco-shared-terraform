@@ -11,5 +11,5 @@ source_code_versions = {
   logstash     = "1.0.0"
   elasticbeats = "1.0.0"
   solr         = "0.0.2"
-  esadmin      = "0.0.5"
+  esadmin      = "feature/add-worker-service"
 }
