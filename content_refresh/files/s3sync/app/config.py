@@ -13,3 +13,4 @@ class Config:
     destination_bucket = os.environ.get(
         "DESTINATION_BUCKET", None)
     redis_url = os.getenv("REDISTOGO_URL", None)
+    redis_ttl = int(os.environ.get("REDIS_TTL", 86400))

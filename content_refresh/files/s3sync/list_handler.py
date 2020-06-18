@@ -16,10 +16,24 @@ q = Queue(connection=conn)
 def lambda_handler(event, context):
     bucket = event["bucket"]
     task_dict = {
-        "bucket": bucket
+        "destination": bucket
     }
     for task in generate_task_list():
         task_dict["prefix"] = task
         q.enqueue(submit_list_task, task_dict)
 
     return task_dict
+
+
+# if __name__ == "__main__":
+#     submitted_tasks = []
+#     bucket = Config.destination_bucket
+#     task_dict = {
+#         "destination": bucket
+#     }
+#     for task in generate_task_list():
+#         task_dict["prefix"] = task
+#         q.enqueue(submit_list_task, task_dict)
+#         submitted_tasks.append(task)
+
+#     # print(submitted_tasks)

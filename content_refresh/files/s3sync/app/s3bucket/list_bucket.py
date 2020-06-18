@@ -3,7 +3,7 @@ import json
 
 
 from app.config import Config
-from app.clients import _s3_client  # , _redis_conn
+from app.clients import _s3_client, _redis_conn
 from app.helpers.logger import log_handler
 
 # Constants
@@ -22,7 +22,7 @@ START_AFTER = ''  # List objects after a specific key e.g. '/images/1000'
 # Globals
 
 logger = log_handler()
-# conn = _redis_conn()
+conn = _redis_conn()
 
 
 # Functions
@@ -77,16 +77,18 @@ def handler(bucket_dict):
         result['token'] = response.get('NextContinuationToken', '')
         result_length = len(json.dumps(result))
         if result_length <= MAX_RESULT_LENGTH:
-            # try:
-            #     logger.info(
-            #         f"Adding bucket object keys to redis list: {bucket}"
-            #     )
-            #     for bkey in result['keys']:
-            #         conn.lpush(str(bucket), str(bkey))
-            # except Exception as err:
-            #     logger.error(
-            #         f"Error adding bucket object keys to redis list: {bucket}, error: {str(err)}"
-            #     )
+            try:
+                for item in result["keys"]:
+                    logger.info(
+                        f"Adding bucket object {item} to redis set: {bucket}"
+                    )
+                    _id = str(conn.incr(f"{bucket}:"))
+                    _key_name = f"{bucket}:{_id}"
+                    conn.set(_key_name, item)
+            except Exception as err:
+                logger.error(
+                    f"Error adding bucket object keys to redis set: {bucket}, error: {str(err)}"
+                )
             return result
         else:
             # Try again with a smaller may_keys size.

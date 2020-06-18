@@ -25,3 +25,19 @@ def lambda_handler(event, context):
         q.enqueue(submit_copy_task, task_dict)
 
     return task_dict
+
+
+# if __name__ == "__main__":
+#     submitted_tasks = []
+#     source_bucket = Config.source_bucket
+#     destination_bucket = Config.destination_bucket
+#     task_dict = {
+#         "source": source_bucket,
+#         "destination": destination_bucket
+#     }
+#     for task in generate_task_list():
+#         task_dict["prefix"] = task
+#         q.enqueue(submit_copy_task, task_dict)
+#         submitted_tasks.append(task_dict)
+
+#     print(submitted_tasks)
