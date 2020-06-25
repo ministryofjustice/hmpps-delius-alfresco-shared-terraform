@@ -3,9 +3,9 @@ version: "3"
 services:
   builder:
     build:
-      context: files/alert_handler/app
+      context: files
       dockerfile: Dockerfile
     image: lambda_builder:local
     volumes:
       - ./files/alert_handler:/opt/data/build
-    entrypoint: [ "sh", "/opt/data/build/build.sh" ]
+    entrypoint: ["sh", "/opt/data/build/build.sh"]
