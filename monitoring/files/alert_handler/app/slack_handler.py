@@ -34,7 +34,7 @@ class Slack_Handler():
         title = content_obj['title']
         alarm_text = content_obj['text']
         response = self.client.chat_postMessage(
-            channel="delius-alerts-alfresco-nonprod",
+            channel=Config.slack_channel_name,
             username="AWS Lambda",
             blocks=[
                 {
