@@ -175,6 +175,8 @@ docker pull  amazon/amazon-ecs-agent:latest
 
 docker rm -f ecs-agent
 
+rm -rf /var/lib/ecs/data/ecs_agent_data.json
+
 docker run --name ecs-agent \
     --detach=true \
     --restart=on-failure:10 \
