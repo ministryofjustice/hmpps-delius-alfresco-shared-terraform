@@ -224,9 +224,7 @@ locals {
   tags                           = "${data.terraform_remote_state.common.common_tags}"
   tomcat_host                    = "alfresco"
   vpc_id                         = "${data.terraform_remote_state.common.vpc_id}"
-  messaging_broker_url = "${var.spg_messaging_broker_url_src == "data" ?
-    data.terraform_remote_state.amazonmq.amazon_mq_broker_connect_url :
-  var.spg_messaging_broker_url}"
+  messaging_broker_url           = "${data.terraform_remote_state.amazonmq.amazon_mq_broker_failover_connection_url}"
 
   self_signed_ssm = {
     ca_cert = "${data.terraform_remote_state.self_certs.self_signed_ca_ssm_cert_pem_name}"
