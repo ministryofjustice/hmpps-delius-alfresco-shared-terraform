@@ -1,0 +1,24 @@
+FROM centos
+
+# set environment varibles
+ENV PYTHONDONTWRITEBYTECODE 1
+ENV PYTHONUNBUFFERED 1
+
+
+RUN dnf install python3 -y; \
+  dnf clean all; \
+  mkdir -p /usr/src/app
+
+# set working directory
+WORKDIR /usr/src/app
+
+# add and install requirements
+COPY ./requirements.txt .
+RUN pip3 install -r requirements.txt; \
+  pip3 install awscli
+
+# add app
+COPY . .
+
+# run server
+CMD sh scripts/sync.sh

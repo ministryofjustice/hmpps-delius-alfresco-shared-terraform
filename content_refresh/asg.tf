@@ -20,6 +20,7 @@ data "template_file" "asg_userdata" {
     redis_host           = "${aws_elasticache_cluster.redis.cache_nodes.0.address}"
     redis_port           = "${aws_elasticache_cluster.redis.cache_nodes.0.port}"
     log_group            = "${local.log_group}"
+    worker_count         = 8
   }
 }
 
@@ -56,9 +57,9 @@ data "null_data_source" "tags" {
 resource "aws_autoscaling_group" "esadmin" {
   name                      = "${aws_launch_configuration.esadmin.name}"
   vpc_zone_identifier       = ["${local.private_subnet_ids}"]
-  min_size                  = 8
-  max_size                  = 8
-  desired_capacity          = 8
+  min_size                  = 5
+  max_size                  = 5
+  desired_capacity          = 5
   launch_configuration      = "${aws_launch_configuration.esadmin.name}"
   health_check_grace_period = 120
   termination_policies      = ["OldestInstance", "OldestLaunchTemplate", "OldestLaunchConfiguration"]

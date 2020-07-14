@@ -26,6 +26,7 @@ resource "aws_lambda_function" "content" {
   s3_key        = "lambda/${local.function_name}/${md5(file(local.payload_file))}/function.zip"
   publish       = true
   memory_size   = 256
+  timeout       = 120
 
   vpc_config {
     subnet_ids         = ["${local.private_subnet_ids}"]

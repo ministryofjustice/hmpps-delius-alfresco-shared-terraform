@@ -35,7 +35,7 @@ resource "aws_elasticache_parameter_group" "redis" {
 resource "aws_elasticache_cluster" "redis" {
   cluster_id           = "esadmin-redis"
   engine               = "redis"
-  node_type            = "cache.m4.large"
+  node_type            = "cache.t3.small"
   num_cache_nodes      = 1
   parameter_group_name = "${aws_elasticache_parameter_group.redis.id}"
   engine_version       = "5.0.6"

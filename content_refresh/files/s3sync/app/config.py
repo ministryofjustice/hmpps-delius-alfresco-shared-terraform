@@ -14,3 +14,5 @@ class Config:
         "DESTINATION_BUCKET", None)
     redis_url = os.getenv("REDISTOGO_URL", None)
     redis_ttl = int(os.environ.get("REDIS_TTL", 86400))
+    task_docker_image = os.environ.get(
+        "TASK_DOCKER_IMAGE", "mojdigitalstudio/redis-s3-sync:latest")

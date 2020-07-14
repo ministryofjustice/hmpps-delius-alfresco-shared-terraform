@@ -10,14 +10,34 @@ services:
   worker:
     build:
       context: s3sync
-      dockerfile: Dockerfile
+      dockerfile: DockerfileCentos
     image: mojdigitalstudio/redis-s3-sync:latest
+    entrypoint: ["python3", "worker.py"]
     volumes:
       - ${HOME}/.aws:/root/.aws
       - ./s3sync:/usr/src/app
+      - /var/run/docker.sock:/var/run/docker.sock
     environment:
       - AWS_PROFILE=hmpps-token
       - AWS_ROLE_ARN=arn:aws:iam::563502482979:role/terraform
       - REDISTOGO_URL=redis://:apps@redis:6379
       - SOURCE_BUCKET=tf-alfresco-dev-alfresco-storage-s3bucket
       - DESTINATION_BUCKET=dn-src-bucket
+    depends_on:
+      - redis
+      - worker_task
+  worker_task:
+    image: mojdigitalstudio/redis-s3-sync:latest
+    entrypoint: ["python3", "update_task.py"]
+    volumes:
+      - ${HOME}/.aws:/root/.aws
+      - ./s3sync:/usr/src/app
+      - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      - AWS_PROFILE=hmpps-token
+      - AWS_ROLE_ARN=arn:aws:iam::563502482979:role/terraform
+      - REDISTOGO_URL=redis://:apps@redis:6379
+      - SOURCE_BUCKET=tf-alfresco-dev-alfresco-storage-s3bucket
+      - DESTINATION_BUCKET=dn-src-bucket
+    depends_on:
+      - redis

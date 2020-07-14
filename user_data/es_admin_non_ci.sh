@@ -56,7 +56,7 @@ cat << EOF > ~/bootstrap_vars.yml
 - worker_node: true
 - mount_point: false
 - log_group: ${log_group}
-- worker_count: 15
+- worker_count: ${worker_count}
 - log_stream: worker
 EOF
 

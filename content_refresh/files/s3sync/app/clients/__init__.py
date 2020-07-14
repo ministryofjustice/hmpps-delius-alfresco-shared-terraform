@@ -1,5 +1,6 @@
 # app/clients/__init__py
 
+import docker
 import boto3
 import redis
 
@@ -47,4 +48,10 @@ def _s3_client():
 def _redis_conn():
     redis_url = Config.redis_url
     conn = redis.from_url(redis_url)
+
     return conn
+
+
+def docker_client():
+    _client = docker.from_env()
+    return _client
