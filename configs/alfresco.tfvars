@@ -1,8 +1,8 @@
 # ASG Configuration
 alfresco_asg_props = {
-  asg_ami  = "ami-055600fa67504d8d5"
+  asg_ami  = "ami-0acb344c6202bfff7"
   ami_name = "HMPPS Alfresco *"
-  image_id = "ami-055600fa67504d8d5"
+  image_id = "ami-0acb344c6202bfff7"
 }
 
 source_code_versions = {
@@ -10,6 +10,6 @@ source_code_versions = {
   alfresco     = "0.0.1"
   logstash     = "1.0.0"
   elasticbeats = "1.0.0"
-  solr         = "0.0.2"
-  esadmin      = "feature/add-worker-service"
+  solr         = "0.0.4"
+  esadmin      = "0.0.5"
 }
