@@ -11,5 +11,6 @@ phases:
       - export HMPPS_BUILD_WORK_DIR=${CODEBUILD_SRC_DIR}
       - make ${ACTION_TYPE} component=ami_permissions
       - make ${ACTION_TYPE} component=solr
+      - make ${ACTION_TYPE} component=solr
       - make ${ACTION_TYPE} component=asg
       - make ${ACTION_TYPE} component=waf
