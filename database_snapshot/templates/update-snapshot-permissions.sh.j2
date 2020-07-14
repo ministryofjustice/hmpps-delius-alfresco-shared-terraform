@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+
+export AWS_ACCESS_KEY_ID={{ aws_access_key_id }}
+export AWS_SECRET_ACCESS_KEY={{ aws_secret_access_key }}
+export AWS_SESSION_TOKEN={{ aws_security_token }}
+export AWS_DEFAULT_REGION={{ aws_region }}
+
+aws rds modify-db-snapshot-attribute \
+  --db-snapshot-identifier {{ snapshot_name }} \
+  --attribute-name restore \
+  --values-to-add "{{ target_account }}"

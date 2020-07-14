@@ -1,0 +1,8 @@
+---
+terragrunt_iam_role: "{{ lookup('env', 'TERRAGRUNT_IAM_ROLE') }}"
+iam_user_profile: "{{ lookup('env', 'IAM_USER_PROFILE')}}"
+snapshot_name: "{{ lookup('env', 'ALF_DB_SNAPSHOT_NAME') or 'alfresco-database-snapshot'}}"
+aws_region: "eu-west-2"
+target_account: "{{ lookup('env', 'ALF_TARGET_ACCOUNT') }}"
+target_iam_role: "{{ lookup('env', 'TARGET_IAM_ROLE') }}"
+target_instance_id: "{{ lookup('env', 'TARGET_INSTANCE_ID') }}"

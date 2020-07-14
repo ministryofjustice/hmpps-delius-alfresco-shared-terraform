@@ -151,6 +151,13 @@ case ${ACTION_TYPE} in
     terragrunt output
     exit_on_error $? !!
     ;;
+  docker-json)
+    echo "Running docker output action"
+    rm -rf .terraform *.plan
+    terragrunt init
+    terragrunt output -json > data.json
+    exit_on_error $? !!
+    ;;
   *)
     echo "${ACTION_TYPE} is not a valid argument. init - apply - test - output - destroy"
   ;;
