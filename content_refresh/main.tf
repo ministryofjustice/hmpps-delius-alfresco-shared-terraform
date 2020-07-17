@@ -240,6 +240,7 @@ locals {
   sg_rds_id                    = "${data.terraform_remote_state.security-groups.security_groups_sg_rds_id}"
   alf_efs_dns_name             = "${data.terraform_remote_state.efs.efs_dns_name}"
   alf_efs_sg                   = "${data.terraform_remote_state.security-groups.security_groups_sg_efs_sg_id}"
+  source_bucket                = "tf-eu-west-2-hmpps-delius-prod-alfresco-storage-s3bucket"
 
   monitoring_groups = [
     "${data.terraform_remote_state.network-security-groups.sg_ssh_bastion_in_id}",

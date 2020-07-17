@@ -2,7 +2,7 @@
 
 import os
 
-from rq import Queue
+from rq import Queue, get_current_job
 from app.clients import docker_client
 from app.helpers.logger import log_handler
 from app.config import Config
@@ -20,6 +20,7 @@ client = docker_client()
 def run_sync_task(task_dict: dict):
     try:
         image_id = Config.task_docker_image
+        job_id = get_current_job()
         _env_vars = {
             "SRC_BUCKET": task_dict["source"],
             "DST_BUCKET": task_dict["destination"],
@@ -27,7 +28,8 @@ def run_sync_task(task_dict: dict):
         }
         logger.info({
             "message": "environment vars",
-            "vars": _env_vars
+            "vars": _env_vars,
+            "job_id": job_id
         })
         result = client.containers.run(
             image_id,
@@ -53,14 +55,15 @@ def run_sync_task(task_dict: dict):
             "prefix": task_dict["prefix"]
         }
         task_dict["prefix"] = task_dict
-        result = q.enqueue(run_sync_task, task_dict)
+        result = q.enqueue(run_sync_task, task_dict, job_timeout=3600)
         logger.info({
             "message": "sync task resubmitted",
             "id": result
         })
     return False
 
-def update_task_status(es_task_ttl:int):
+
+def update_task_status(es_task_ttl: int):
     hash_name = "active_tasks"
     key_name = os.environ.get("ES_DOCKER_HOST") or "worker"
     ttl = int(es_task_ttl) - 5
@@ -76,7 +79,7 @@ def update_task_status(es_task_ttl:int):
             "updated": result
         })
         return False
-    
+
     logger.info({
         "message": "No sync task found",
         "tasks": size

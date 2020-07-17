@@ -37,6 +37,8 @@ resource "aws_lambda_function" "content" {
     variables = {
       LOG_GROUP     = "${local.log_group}"
       REDISTOGO_URL = "redis://${aws_elasticache_cluster.redis.cache_nodes.0.address}:${aws_elasticache_cluster.redis.cache_nodes.0.port}"
+      DESTINATION_BUCKET = "${local.storage_s3bucket}"
+      SOURCE_BUCKET = "${local.source_bucket}"
     }
   }
 }
