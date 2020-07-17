@@ -1,0 +1,5 @@
+---
+iam_user_profile: "{{ lookup('env', 'IAM_USER_PROFILE')}}"
+environment_name: "{{ lookup('env', 'ENVIRONMENT_NAME')}}"
+snapshot_name: "{{ lookup('env', 'ALF_DB_SNAPSHOT_NAME') or 'alfresco-database-snapshot'}}"
+aws_region: "eu-west-2"

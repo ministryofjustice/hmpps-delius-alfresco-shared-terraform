@@ -53,6 +53,8 @@ cat << EOF > ~/bootstrap_vars.yml
 - ssm_prefix: "alfresco/esadmin/docker"
 - docker_host: "${docker_host}"
 - mount_point: "${mount_point}"
+- log_group: ${log_group}
+- log_stream: ci
 EOF
 
 wget https://raw.githubusercontent.com/ministryofjustice/hmpps-delius-ansible/master/group_vars/${bastion_inventory}.yml -O users.yml
@@ -60,6 +62,7 @@ wget https://raw.githubusercontent.com/ministryofjustice/hmpps-delius-ansible/ma
 cat << EOF > ~/bootstrap.yml
 ---
 - hosts: localhost
+  gather_facts: true
   vars_files:
      - "{{ playbook_dir }}/bootstrap_vars.yml"
      - "{{ playbook_dir }}/users.yml"

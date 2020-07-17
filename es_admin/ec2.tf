@@ -6,6 +6,16 @@ locals {
 ####################################################
 # instance 1
 ####################################################
+module "create_loggroup" {
+  source                   = "git::https://github.com/ministryofjustice/hmpps-terraform-modules.git?ref=master//modules//cloudwatch//loggroup"
+  log_group_path           = "${local.common_name}"
+  loggroupname             = "${local.application}"
+  cloudwatch_log_retention = "${var.alf_cloudwatch_log_retention}"
+  kms_key_id               = "${local.logs_kms_arn}"
+  tags                     = "${local.tags}"
+}
+
+
 
 data "template_file" "instance_userdata" {
   template = "${file("../user_data/es_admin_userdata.sh")}"
@@ -34,6 +44,7 @@ data "template_file" "instance_userdata" {
     docker_host          = "${local.application}.${local.external_domain}"
     mount_point          = "/opt/eslocal"
     esadmin_version      = "${var.source_code_versions["esadmin"]}"
+    log_group            = "${module.create_loggroup.loggroup_name}"
   }
 }
 

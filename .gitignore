@@ -59,6 +59,9 @@ hs_err_pid*
 *.tfstate
 *.tfstate.*
 *.plan
+**/output.json
+**/update-snapshot-permissions.sh
+**/copy-snapshot.sh
 
 .idea/
 

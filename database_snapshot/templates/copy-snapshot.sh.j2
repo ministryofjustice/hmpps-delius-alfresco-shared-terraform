@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+
+export AWS_ACCESS_KEY_ID={{ target_access_key_id }}
+export AWS_SECRET_ACCESS_KEY={{ target_secret_access_key }}
+export AWS_SESSION_TOKEN={{ target_security_token }}
+export AWS_DEFAULT_REGION={{ aws_region }}
+
+aws rds copy-db-snapshot \
+    --source-db-snapshot-identifier {{ src_snapshot_arn }} \
+    --kms-key-id {{ target_kms_key }} \
+    --target-db-snapshot-identifier {{ snapshot_name }}

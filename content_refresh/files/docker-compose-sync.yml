@@ -1,0 +1,147 @@
+version: "3"
+
+services:
+  sync1:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    entrypoint: ["/bin/sh", "sync.sh"]
+    volumes:
+      - ./sync.sh:/usr/src/app/sync.sh
+    environment:
+      - SRC_BUCKET=tf-eu-west-2-hmpps-delius-prod-alfresco-storage-s3bucket
+      - DST_BUCKET=tf-eu-west-2-hmpps-delius-stage-alfresco-storage-s3bucket
+      - YEAR=${YEAR:-2016}
+      - MONTH=1
+  sync2:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    entrypoint: ["/bin/sh", "sync.sh"]
+    volumes:
+      - ./sync.sh:/usr/src/app/sync.sh
+    environment:
+      - SRC_BUCKET=tf-eu-west-2-hmpps-delius-prod-alfresco-storage-s3bucket
+      - DST_BUCKET=tf-eu-west-2-hmpps-delius-stage-alfresco-storage-s3bucket
+      - YEAR=${YEAR:-2016}
+      - MONTH=2
+  sync3:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    entrypoint: ["/bin/sh", "sync.sh"]
+    volumes:
+      - ./sync.sh:/usr/src/app/sync.sh
+    environment:
+      - SRC_BUCKET=tf-eu-west-2-hmpps-delius-prod-alfresco-storage-s3bucket
+      - DST_BUCKET=tf-eu-west-2-hmpps-delius-stage-alfresco-storage-s3bucket
+      - YEAR=${YEAR:-2016}
+      - MONTH=3
+  sync4:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    entrypoint: ["/bin/sh", "sync.sh"]
+    volumes:
+      - ./sync.sh:/usr/src/app/sync.sh
+    environment:
+      - SRC_BUCKET=tf-eu-west-2-hmpps-delius-prod-alfresco-storage-s3bucket
+      - DST_BUCKET=tf-eu-west-2-hmpps-delius-stage-alfresco-storage-s3bucket
+      - YEAR=${YEAR:-2016}
+      - MONTH=4
+  sync5:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    entrypoint: ["/bin/sh", "sync.sh"]
+    volumes:
+      - ./sync.sh:/usr/src/app/sync.sh
+    environment:
+      - SRC_BUCKET=tf-eu-west-2-hmpps-delius-prod-alfresco-storage-s3bucket
+      - DST_BUCKET=tf-eu-west-2-hmpps-delius-stage-alfresco-storage-s3bucket
+      - YEAR=${YEAR:-2016}
+      - MONTH=5
+  sync6:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    entrypoint: ["/bin/sh", "sync.sh"]
+    volumes:
+      - ./sync.sh:/usr/src/app/sync.sh
+    environment:
+      - SRC_BUCKET=tf-eu-west-2-hmpps-delius-prod-alfresco-storage-s3bucket
+      - DST_BUCKET=tf-eu-west-2-hmpps-delius-stage-alfresco-storage-s3bucket
+      - YEAR=${YEAR:-2016}
+      - MONTH=6
+  sync7:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    entrypoint: ["/bin/sh", "sync.sh"]
+    volumes:
+      - ./sync.sh:/usr/src/app/sync.sh
+    environment:
+      - SRC_BUCKET=tf-eu-west-2-hmpps-delius-prod-alfresco-storage-s3bucket
+      - DST_BUCKET=tf-eu-west-2-hmpps-delius-stage-alfresco-storage-s3bucket
+      - YEAR=${YEAR:-2016}
+      - MONTH=7
+  sync8:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    entrypoint: ["/bin/sh", "sync.sh"]
+    volumes:
+      - ./sync.sh:/usr/src/app/sync.sh
+    environment:
+      - SRC_BUCKET=tf-eu-west-2-hmpps-delius-prod-alfresco-storage-s3bucket
+      - DST_BUCKET=tf-eu-west-2-hmpps-delius-stage-alfresco-storage-s3bucket
+      - YEAR=${YEAR:-2016}
+      - MONTH=8
+  sync9:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    entrypoint: ["/bin/sh", "sync.sh"]
+    volumes:
+      - ./sync.sh:/usr/src/app/sync.sh
+    environment:
+      - SRC_BUCKET=tf-eu-west-2-hmpps-delius-prod-alfresco-storage-s3bucket
+      - DST_BUCKET=tf-eu-west-2-hmpps-delius-stage-alfresco-storage-s3bucket
+      - YEAR=${YEAR:-2016}
+      - MONTH=9
+  sync10:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    entrypoint: ["/bin/sh", "sync.sh"]
+    volumes:
+      - ./sync.sh:/usr/src/app/sync.sh
+    environment:
+      - SRC_BUCKET=tf-eu-west-2-hmpps-delius-prod-alfresco-storage-s3bucket
+      - DST_BUCKET=tf-eu-west-2-hmpps-delius-stage-alfresco-storage-s3bucket
+      - YEAR=${YEAR:-2016}
+      - MONTH=10
+  sync11:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    entrypoint: ["/bin/sh", "sync.sh"]
+    volumes:
+      - ./sync.sh:/usr/src/app/sync.sh
+    environment:
+      - SRC_BUCKET=tf-eu-west-2-hmpps-delius-prod-alfresco-storage-s3bucket
+      - DST_BUCKET=tf-eu-west-2-hmpps-delius-stage-alfresco-storage-s3bucket
+      - YEAR=${YEAR:-2016}
+      - MONTH=11
+  sync12:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    entrypoint: ["/bin/sh", "sync.sh"]
+    volumes:
+      - ./sync.sh:/usr/src/app/sync.sh
+    environment:
+      - SRC_BUCKET=tf-eu-west-2-hmpps-delius-prod-alfresco-storage-s3bucket
+      - DST_BUCKET=tf-eu-west-2-hmpps-delius-stage-alfresco-storage-s3bucket
+      - YEAR=${YEAR:-2016}
+      - MONTH=12

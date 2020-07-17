@@ -158,8 +158,13 @@
     },
     {
       "Effect": "Allow",
-      "Sid": "StepFunctionPerms",
-      "Action": ["lambda:InvokeFunction"],
+      "Sid": "LambdaPerms",
+      "Action": [
+        "lambda:InvokeFunction",
+        "ec2:CreateNetworkInterface",
+        "ec2:DescribeNetworkInterfaces",
+        "ec2:DeleteNetworkInterface"
+      ],
       "Resource": ["*"]
     }
   ]

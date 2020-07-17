@@ -1,0 +1,11 @@
+version: "3"
+
+services:
+  builder:
+    build:
+      context: s3sync
+      dockerfile: DockerfileBuilder
+    image: lambda_builder:local
+    volumes:
+      - ./s3sync:/opt/data/build
+    entrypoint: ["sh", "/opt/data/build/build.sh"]
