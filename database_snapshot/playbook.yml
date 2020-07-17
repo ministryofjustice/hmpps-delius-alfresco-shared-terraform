@@ -69,8 +69,8 @@
         src: templates/update-snapshot-permissions.sh.j2
         dest: "{{ playbook_dir }}/update-snapshot-permissions.sh"
 
-    - name: update snapshot permissions
-      command: "sh {{ playbook_dir }}/update-snapshot-permissions.sh"
+    # - name: update snapshot permissions
+    #   command: "sh {{ playbook_dir }}/update-snapshot-permissions.sh"
 
     - name: get aws creds for target account
       sts_assume_role:
