@@ -1,0 +1,11 @@
+{
+  "source": {
+    "id": "tf-eu-west-2-hmpps-delius-prod-alfresco-database-pri"
+  },
+  "targets": {
+    "delius-perf": {
+      "id": "test-alf-db-refresh",
+      "account_id": "130975965028"
+    }
+  }
+}
