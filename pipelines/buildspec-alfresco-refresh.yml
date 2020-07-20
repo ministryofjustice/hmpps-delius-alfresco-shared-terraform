@@ -9,5 +9,4 @@ phases:
   build:
     commands:
       - export HMPPS_BUILD_WORK_DIR=${CODEBUILD_SRC_DIR}
-      - make build component=es_admin
-      - make build component=content_refresh
+      - make ${ACTION_TYPE} component=content_refresh

@@ -15,117 +15,14 @@
         src_id: "{{ db_info['source']['id'] }}"
         target_id: "{{ db_info['targets'][environment_name]['id'] }}"
 
-    - name: set iam role facts
-      set_fact:
-        src_iam_role: "arn:aws:iam::050243167760:role/terraform"
-        target_iam_role: "{{ 'arn:aws:iam::' + target_account + ':role/terraform' }}"
+    - name: source database instance id
+      debug:
+        msg: "{{ src_id }}"
 
-    - name: get aws creds from iam role for execution
-      sts_assume_role:
-        role_arn: "{{ src_iam_role }}"
-        role_session_name: src-ci-task
-        profile: "{{ iam_user_profile }}"
-      register: assumed_role
+    - name: target database instance id
+      debug:
+        msg: "{{ target_id }}"
 
-    - name: set ansible environment facts for execution
-      set_fact:
-        aws_access_key_id: "{{ assumed_role.sts_creds.access_key }}"
-        aws_secret_access_key: "{{ assumed_role.sts_creds.secret_key }}"
-        aws_security_token: "{{ assumed_role.sts_creds.session_token }}"
-
-    # - name: delete alfresco snapshot
-    #   rds_snapshot:
-    #     db_snapshot_identifier: "{{ snapshot_name }}"
-    #     state: absent
-    #     aws_access_key: "{{ aws_access_key_id }}"
-    #     aws_secret_key: "{{ aws_secret_access_key }}"
-    #     security_token: "{{ aws_security_token }}"
-    #     wait: yes
-
-    # - name: create alfresco snapshot
-    #   rds_snapshot:
-    #     db_instance_identifier: "{{ src_id }}"
-    #     db_snapshot_identifier: "{{ snapshot_name }}"
-    #     aws_access_key: "{{ aws_access_key_id }}"
-    #     aws_secret_key: "{{ aws_secret_access_key }}"
-    #     security_token: "{{ aws_security_token }}"
-    #     wait: yes
-    #     wait_timeout: 1200
-
-    - name: retrieve snapshot information
-      rds_snapshot_info:
-        db_snapshot_identifier: "{{ snapshot_name }}"
-        aws_access_key: "{{ aws_access_key_id }}"
-        aws_secret_key: "{{ aws_secret_access_key }}"
-        security_token: "{{ aws_security_token }}"
-      register: snapshot_raw_info
-
-    - name: set snapshot facts
-      set_fact:
-        snapshot_info: "{{ snapshot_raw_info['snapshots'][0]}}"
-
-    - name: render snapshot permissions script
-      template:
-        src: templates/update-snapshot-permissions.sh.j2
-        dest: "{{ playbook_dir }}/update-snapshot-permissions.sh"
-
-    # - name: update snapshot permissions
-    #   command: "sh {{ playbook_dir }}/update-snapshot-permissions.sh"
-
-    - name: get aws creds for target account
-      sts_assume_role:
-        role_arn: "{{ target_iam_role }}"
-        role_session_name: target-ci-task
-        profile: "{{ iam_user_profile }}"
-      register: target_role
-
-    - name: set ansible environment facts for target account
-      set_fact:
-        target_access_key_id: "{{ target_role.sts_creds.access_key }}"
-        target_secret_access_key: "{{ target_role.sts_creds.secret_key }}"
-        target_security_token: "{{ target_role.sts_creds.session_token }}"
-
-    # - name: target delete alfresco snapshot
-    #   rds_snapshot:
-    #     db_snapshot_identifier: "{{ item }}"
-    #     state: absent
-    #     aws_access_key: "{{ target_access_key_id }}"
-    #     aws_secret_key: "{{ target_secret_access_key }}"
-    #     security_token: "{{ target_security_token }}"
-    #     wait: yes
-    #   with_items:
-    #     - "{{ snapshot_name }}-final"
-    #     - "{{ snapshot_name }}"
-
-    - name: get target rds instance
-      rds_instance_info:
-        db_instance_identifier: "{{ target_id }}"
-        aws_access_key: "{{ target_access_key_id }}"
-        aws_secret_key: "{{ target_secret_access_key }}"
-        security_token: "{{ target_security_token }}"
-      register: instance_info
-
-    - name: set target instance facts
-      set_fact:
-        target_info: "{{ instance_info['instances'][0] }}"
-
-    - name: render snapshot copy script
-      template:
-        src: templates/copy-snapshot.sh.j2
-        dest: "{{ playbook_dir }}/copy-snapshot.sh"
-      vars:
-        src_snapshot_arn: "{{ snapshot_info['db_snapshot_arn'] }}"
-        target_kms_key: "{{ target_info['kms_key_id'] }}"
-    # - name: copy snapshot target
-    #   command: "sh {{ playbook_dir }}/copy-snapshot.sh"
-    # - name: remove the target instance with a final snapshot
-    #   rds_instance:
-    #     id: "{{ target_id }}"
-    #     state: absent
-    #     final_snapshot_identifier: "{{ snapshot_name }}-final"
-    #     aws_access_key: "{{ target_access_key_id }}"
-    #     aws_secret_key: "{{ target_secret_access_key }}"
-    #     security_token: "{{ target_security_token }}"
-    # - name: debug
-    #   debug:
-    #     msg: "{{ target_info }}"
+    - name: create snapshot and destroy target instance
+      include: snapshot.yml
+      when: create_snapshot | bool

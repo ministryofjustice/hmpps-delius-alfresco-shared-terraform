@@ -62,7 +62,7 @@ hs_err_pid*
 **/output.json
 **/update-snapshot-permissions.sh
 **/copy-snapshot.sh
-
+database_snapshot/build.properties
 .idea/
 
 # Elastic Beanstalk Files

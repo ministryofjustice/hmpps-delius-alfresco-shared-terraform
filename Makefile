@@ -17,6 +17,9 @@ plan:
 build: plan
 	sh run.sh $(ENVIRONMENT_NAME) apply $(component)
 
+destroy:
+	sh run.sh $(ENVIRONMENT_NAME) destroy $(component)
+
 task_handler:
 	docker-compose -f restore/$(COMPOSE_FILE_NAME) up --exit-code-from $(TASK_NAME) $(TASK_NAME)
 
