@@ -1,0 +1,12 @@
+---
+version: 0.2
+
+phases:
+  pre_build:
+    commands:
+      - source configs/common.properties
+      - make get_configs
+  build:
+    commands:
+      - export HMPPS_BUILD_WORK_DIR=${CODEBUILD_SRC_DIR}
+      - make ${ACTION_TYPE} component=${COMPONENT}
