@@ -3,7 +3,7 @@ version: 0.2
 
 env:
   variables:
-    TARGET_PIPELINE_NAME: alf-infra-delius-core-dev
+    TARGET_PIPELINE_NAME: alf-infra-build-delius-core-dev
   parameter-store:
     HMPPS_GITHUB_USER: "/dev/jenkins/hmpps/integration/user/name"
     HMPPS_GITHUB_TOKEN: "/manually/created/engineering/dev/codepipeline/github/accesstoken"
