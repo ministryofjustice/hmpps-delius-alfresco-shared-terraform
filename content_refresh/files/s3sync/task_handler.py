@@ -22,7 +22,7 @@ def lambda_handler(event, context):
     }
     for task in generate_task_list():
         task_dict["prefix"] = task
-        q.enqueue(run_sync_task, task_dict, job_timeout=3600)
+        q.enqueue(run_sync_task, task_dict, job_timeout=7200)
 
     return task_dict
 

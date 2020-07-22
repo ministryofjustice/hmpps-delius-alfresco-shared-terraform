@@ -12,7 +12,7 @@ services:
       context: s3sync
       dockerfile: DockerfileCentos
     image: mojdigitalstudio/redis-s3-sync:latest
-    entrypoint: ["python3", "worker.py"]
+    entrypoint: ["sh", "worker.sh"]
     volumes:
       - ${HOME}/.aws:/root/.aws
       - ./s3sync:/usr/src/app
