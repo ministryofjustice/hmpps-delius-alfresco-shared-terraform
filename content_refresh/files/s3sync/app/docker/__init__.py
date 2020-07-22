@@ -2,6 +2,8 @@
 
 import os
 
+
+from rq.registry import FailedJobRegistry
 from rq import Queue, get_current_job
 from app.clients import docker_client
 from app.helpers.logger import log_handler
@@ -72,6 +74,8 @@ def update_task_status(es_task_ttl: int):
     size = len(tasks)
     if size > 0:
         result = conn.hset(hash_name, key_name, size)
+        if result:
+            requeue_jobs()
         conn.expire(hash_name, ttl)
         logger.info({
             "message": "sync tasks active",
@@ -85,3 +89,27 @@ def update_task_status(es_task_ttl: int):
         "tasks": size
     })
     return True
+
+
+def requeue_jobs():
+    try:
+        registry = q.failed_job_registry
+        failed_jobs = FailedJobRegistry(queue=q)
+        logger.info({
+            "message": "Failed jobs",
+            "count": len(failed_jobs)
+        })
+        for job_id in failed_jobs.get_job_ids():
+            result = registry.requeue(job_id)
+            logger.info({
+                "message": "Requeued job",
+                "id": job_id
+            })
+        return True
+    except Exception as err:
+        logger.error({
+            "message": "Error raised requeuing job",
+            "error": str(err),
+            "id": job_id
+        })
+        return

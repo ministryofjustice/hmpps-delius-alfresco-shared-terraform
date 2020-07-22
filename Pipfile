@@ -10,6 +10,7 @@ autopep8 = "*"
 ansible = "*"
 pygithub = "*"
 docker = "*"
+redis = "*"
 
 [requires]
 python_version = "3.8"
