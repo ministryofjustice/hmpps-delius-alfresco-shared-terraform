@@ -89,6 +89,16 @@ data "terraform_remote_state" "security-groups" {
   }
 }
 
+data "terraform_remote_state" "network-security-groups" {
+  backend = "s3"
+
+  config {
+    bucket = "${var.remote_state_bucket_name}"
+    key    = "security-groups/terraform.tfstate"
+    region = "${var.region}"
+  }
+}
+
 #-------------------------------------------------------------
 ### Getting the rds details
 #-------------------------------------------------------------
@@ -250,7 +260,6 @@ locals {
   sg_rds_id                    = "${data.terraform_remote_state.security-groups.security_groups_sg_rds_id}"
   alf_efs_dns_name             = "${data.terraform_remote_state.efs.efs_dns_name}"
   efs_mount_path               = "/opt/es_backup"
-  efs_dns_name                 = "${data.terraform_remote_state.monitoring.monitoring_server_efs_share_dns}"
   elk_kms_arn                  = "${data.terraform_remote_state.monitoring.monitoring_kms_arn}"
   es_home_dir                  = "/usr/share/elasticsearch"
   alf_efs_sg                   = "${data.terraform_remote_state.security-groups.security_groups_sg_efs_sg_id}"
@@ -263,8 +272,11 @@ locals {
   logs_kms_arn                 = "${data.terraform_remote_state.common.kms_arn}"
 
   instance_security_groups = [
-    "${data.terraform_remote_state.monitoring.instance_security_groups}",
-    "${data.terraform_remote_state.security-groups.security_groups_map["mon_jenkins"]}",
+    "${data.terraform_remote_state.network-security-groups.sg_ssh_bastion_in_id}",
+    "${data.terraform_remote_state.network-security-groups.sg_mon_efs}",
+    "${data.terraform_remote_state.network-security-groups.sg_monitoring}",
+    "${data.terraform_remote_state.network-security-groups.sg_elasticsearch}",
+    "${data.terraform_remote_state.network-security-groups.sg_mon_jenkins}",
   ]
   lb_security_groups = [
     "${data.terraform_remote_state.security-groups.security_groups_map["mon_jenkins"]}",
