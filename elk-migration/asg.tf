@@ -47,7 +47,6 @@ data "template_file" "userdata_ecs" {
     common_name          = "${local.common_name}"
     es_cluster_name      = "${local.common_name}"
     ecs_cluster          = "${module.ecs_cluster.ecs_cluster_name}"
-    efs_dns_name         = "${local.efs_dns_name}"
     alf_efs_dns_name     = "${local.alf_efs_dns_name}"
     efs_mount_path       = "${local.efs_mount_path}"
     migration_mount_path = "${local.migration_mount_path}"

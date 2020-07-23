@@ -66,8 +66,6 @@ yum install -y nfs-utils
 
 mkdir -p ${efs_mount_path} ${es_home_dir} ${migration_mount_path}
 
-mount -t nfs4 -o nfsvers=4.1,rsize=1048576,wsize=1048576,hard,timeo=600,retrans=2 ${efs_dns_name}:/ ${efs_mount_path}
-
 # backups vol
 ALF_BACKUPS_DIR=${migration_mount_path}
 
