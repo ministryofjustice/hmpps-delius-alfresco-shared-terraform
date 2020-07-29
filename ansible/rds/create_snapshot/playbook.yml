@@ -1,0 +1,57 @@
+---
+- name: Create RDS snapshot
+  hosts: localhost
+  connection: local
+  vars_files:
+    - ../../vars/common-vars.yml
+  tasks:
+    - name: load json variables
+      set_fact:
+        db_info: "{{ lookup('file', '../data.json') | from_json }}"
+
+    - name: set base facts
+      set_fact:
+        target_account: "{{ db_info['targets'][environment_name]['account_id'] }}"
+        target_id: "{{ db_info['targets'][environment_name]['id'] }}"
+
+    - name: target database instance id
+      debug:
+        msg: "{{ target_id }}"
+
+    - name: set iam role facts
+      set_fact:
+        target_iam_role: "{{ 'arn:aws:iam::' + target_account + ':role/terraform' }}"
+
+    - name: get aws credentials
+      include: ../../creds/playbook.yml
+
+    - name: delete alfresco snapshot
+      rds_snapshot:
+        db_snapshot_identifier: "{{ snapshot_name }}"
+        state: absent
+        aws_access_key: "{{ aws_access_key_id }}"
+        aws_secret_key: "{{ aws_secret_access_key }}"
+        security_token: "{{ aws_security_token }}"
+        wait: yes
+
+    - name: create alfresco snapshot
+      rds_snapshot:
+        db_instance_identifier: "{{ target_id }}"
+        db_snapshot_identifier: "{{ snapshot_name }}"
+        aws_access_key: "{{ aws_access_key_id }}"
+        aws_secret_key: "{{ aws_secret_access_key }}"
+        security_token: "{{ aws_security_token }}"
+        wait: yes
+        wait_timeout: 1200
+
+    - name: retrieve snapshot information
+      rds_snapshot_info:
+        db_snapshot_identifier: "{{ snapshot_name }}"
+        aws_access_key: "{{ aws_access_key_id }}"
+        aws_secret_key: "{{ aws_secret_access_key }}"
+        security_token: "{{ aws_security_token }}"
+      register: snapshot_raw_info
+
+    - name: show snapshot info
+      debug:
+        msg: "{{ snapshot_raw_info }}"
