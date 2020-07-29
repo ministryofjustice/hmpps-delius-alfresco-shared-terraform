@@ -1,0 +1,13 @@
+---
+- name: get aws creds from iam role for execution
+  sts_assume_role:
+    role_arn: "{{ target_iam_role }}"
+    role_session_name: target-ci-task
+    profile: "{{ iam_user_profile }}"
+  register: assumed_role
+
+- name: set ansible environment facts for execution
+  set_fact:
+    aws_access_key_id: "{{ assumed_role.sts_creds.access_key }}"
+    aws_secret_access_key: "{{ assumed_role.sts_creds.secret_key }}"
+    aws_security_token: "{{ assumed_role.sts_creds.session_token }}"
