@@ -1,33 +1,37 @@
-variable "common_name" {}
-
-variable "ec2_policy_file" {}
-
-variable "ec2_internal_policy_file" {}
-
-variable "tags" {
-  type = "map"
+variable "common_name" {
 }
 
-variable "s3-config-bucket" {}
+variable "ec2_policy_file" {
+}
 
-variable "remote_iam_role" {}
+variable "ec2_internal_policy_file" {
+}
 
-variable "remote_config_bucket" {}
+variable "tags" {
+  type = map(string)
+}
 
-variable "storage_s3bucket" {}
+variable "s3-config-bucket" {
+}
 
-variable "s3bucket_kms_arn" {}
+variable "remote_iam_role" {
+}
 
-variable depends_on {
-  default = []
-  type    = "list"
+variable "remote_config_bucket" {
+}
+
+variable "storage_s3bucket" {
+}
+
+variable "s3bucket_kms_arn" {
 }
 
 variable "asg_ssm_arns_map" {
-  type    = "map"
+  type    = map(string)
   default = {}
 }
 
 variable "alf_backups_bucket_arn" {
   default = ""
 }
+
