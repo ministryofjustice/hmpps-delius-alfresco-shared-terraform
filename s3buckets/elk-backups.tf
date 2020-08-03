@@ -17,7 +17,7 @@ resource "aws_s3_bucket" "elk_backups" {
   server_side_encryption_configuration {
     rule {
       apply_server_side_encryption_by_default {
-        kms_master_key_id = "${module.s3bucket.s3bucket_kms_id}"
+        kms_master_key_id = module.s3bucket.s3bucket_kms_id
         sse_algorithm     = "aws:kms"
       }
     }
@@ -29,10 +29,16 @@ resource "aws_s3_bucket" "elk_backups" {
     }
   }
 
-  tags = "${merge(local.tags, map("Name", "${local.common_name}-s3-bucket"))}"
+  tags = merge(
+    local.tags,
+    {
+      "Name" = "${local.common_name}-s3-bucket"
+    },
+  )
 }
 
 resource "aws_s3_bucket_metric" "elk_backups" {
-  bucket = "${aws_s3_bucket.elk_backups.bucket}"
+  bucket = aws_s3_bucket.elk_backups.bucket
   name   = "EntireBucket"
 }
+
