@@ -9,4 +9,4 @@ phases:
   build:
     commands:
       - export HMPPS_BUILD_WORK_DIR=${CODEBUILD_SRC_DIR}
-      - make ansible component=${COMPONENT}
+      - make ansible_task component=${COMPONENT}
