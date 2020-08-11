@@ -12,6 +12,7 @@ data "aws_subnet" "selected" {
 resource "aws_ebs_volume" "solr" {
   availability_zone = "${data.aws_subnet.selected.availability_zone}"
   encrypted = true
+  snapshot_id = "${var.solr_refresh_vol_id}"
   type = "${var.alf_solr_config["ebs_type"]}"
   size  = "${var.alf_solr_config["ebs_size"]}"
   iops = "${local.ebs_type == "gp2" ? 0 : local.ebs_iops}"
