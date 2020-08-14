@@ -115,7 +115,3 @@ variable "user_access_cidr_blocks" {
 variable "restoring" {
   default = "disabled"
 }
-
-variable "solr_refresh_vol_id" {
-  default = ""
-}

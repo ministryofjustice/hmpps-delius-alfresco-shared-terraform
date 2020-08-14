@@ -9,10 +9,14 @@ data "aws_subnet" "selected" {
   id = "${local.private_subnet_ids[0]}"
 }
 
+data "aws_ssm_parameter" "snapshot" {
+  name = "/alfresco/solr/ebs/snapshot_id"
+}
+
 resource "aws_ebs_volume" "solr" {
   availability_zone = "${data.aws_subnet.selected.availability_zone}"
   encrypted = true
-  snapshot_id = "${var.solr_refresh_vol_id}"
+  snapshot_id = "${data.aws_ssm_parameter.snapshot.value  != "null" ? data.aws_ssm_parameter.snapshot.value : ""}"
   type = "${var.alf_solr_config["ebs_type"]}"
   size  = "${var.alf_solr_config["ebs_size"]}"
   iops = "${local.ebs_type == "gp2" ? 0 : local.ebs_iops}"
