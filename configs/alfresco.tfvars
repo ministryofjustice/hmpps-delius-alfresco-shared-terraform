@@ -1,8 +1,8 @@
 # ASG Configuration
 alfresco_asg_props = {
-  asg_ami  = "ami-00b4eee48bf47272d"
+  asg_ami  = "ami-07e819f470df6f853"
   ami_name = "HMPPS Alfresco *"
-  image_id = "ami-00b4eee48bf47272d"
+  image_id = "ami-07e819f470df6f853"
 }
 
 source_code_versions = {
