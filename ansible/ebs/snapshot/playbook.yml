@@ -40,73 +40,73 @@
     - name: set volume facts
       set_fact:
         vol_id: "{{ vol_info.volumes[0].id }}"
-        snapshot_name: "{{ lookup('env', 'EBS_SNAPSHOT_NAME') or 'solr_refresh_snapshot' }}" 
+        snapshot_name: "{{ lookup('env', 'EBS_SNAPSHOT_NAME') or 'solr_refresh_snapshot' }}"
 
-    # - name: create solr volume snapshot
-    #   ec2_snapshot:
-    #     volume_id: "{{ vol_id }}"
-    #     description: "{{ snapshot_name }}"
-    #     aws_access_key: "{{ aws_access_key_id }}"
-    #     aws_secret_key: "{{ aws_secret_access_key }}"
-    #     security_token: "{{ aws_security_token }}"
-    #     region: "{{ aws_region }}"
-    #     wait: yes
-    #     wait_timeout: 600
-    #     last_snapshot_min_age: 60
-    #   register: snapshot_info
+    - name: create solr volume snapshot
+      ec2_snapshot:
+        volume_id: "{{ vol_id }}"
+        description: "{{ snapshot_name }}"
+        aws_access_key: "{{ aws_access_key_id }}"
+        aws_secret_key: "{{ aws_secret_access_key }}"
+        security_token: "{{ aws_security_token }}"
+        region: "{{ aws_region }}"
+        wait: yes
+        wait_timeout: 600
+        last_snapshot_min_age: 60
+      register: snapshot_info
 
-    # - name: set snapshot facts
-    #   set_fact:
-    #     snapshot_id: "{{ snapshot_info.snapshot_id }}"
+    - name: set snapshot facts
+      set_fact:
+        snapshot_id: "{{ snapshot_info.snapshot_id }}"
 
-    # - name: retrieve old refresh snapshot
-    #   ec2_snapshot_info:
-    #     aws_access_key: "{{ aws_access_key_id }}"
-    #     aws_secret_key: "{{ aws_secret_access_key }}"
-    #     security_token: "{{ aws_security_token }}"
-    #     region: "{{ aws_region }}"
-    #     filters:
-    #       "tag:Name": "{{ snapshot_name }}"
-    #   register: refresh_snapshot
+    - name: retrieve old refresh snapshot
+      ec2_snapshot_info:
+        aws_access_key: "{{ aws_access_key_id }}"
+        aws_secret_key: "{{ aws_secret_access_key }}"
+        security_token: "{{ aws_security_token }}"
+        region: "{{ aws_region }}"
+        filters:
+          "tag:Name": "{{ snapshot_name }}"
+      register: refresh_snapshot
 
-    # - name: delete old solr src snapshot
-    #   ec2_snapshot:
-    #     snapshot_id: "{{ refresh_snapshot.snapshots[0].snapshot_id }}"
-    #     state: absent
-    #     aws_access_key: "{{ aws_access_key_id }}"
-    #     aws_secret_key: "{{ aws_secret_access_key }}"
-    #     security_token: "{{ aws_security_token }}"
-    #     region: "{{ aws_region }}"
-    #   when: refresh_snapshot.snapshots != []
+    - name: delete old solr src snapshot
+      ec2_snapshot:
+        snapshot_id: "{{ refresh_snapshot.snapshots[0].snapshot_id }}"
+        state: absent
+        aws_access_key: "{{ aws_access_key_id }}"
+        aws_secret_key: "{{ aws_secret_access_key }}"
+        security_token: "{{ aws_security_token }}"
+        region: "{{ aws_region }}"
+      when: refresh_snapshot.snapshots != []
 
-    # - name: create source snapshot
-    #   ec2_snapshot_copy:
-    #     source_region: "{{ aws_region }}"
-    #     source_snapshot_id: "{{ snapshot_id }}"
-    #     encrypted: yes
-    #     kms_key_id: "{{ kms_key }}"
-    #     tags:
-    #       Name: "{{ snapshot_name }}"
-    #     aws_access_key: "{{ aws_access_key_id }}"
-    #     aws_secret_key: "{{ aws_secret_access_key }}"
-    #     security_token: "{{ aws_security_token }}"
-    #     region: "{{ aws_region }}"
-    #     wait: yes
-    #     wait_timeout: 600
-    #   register: src_snapshot
+    - name: create source snapshot
+      ec2_snapshot_copy:
+        source_region: "{{ aws_region }}"
+        source_snapshot_id: "{{ snapshot_id }}"
+        encrypted: yes
+        kms_key_id: "{{ kms_key }}"
+        tags:
+          Name: "{{ snapshot_name }}"
+        aws_access_key: "{{ aws_access_key_id }}"
+        aws_secret_key: "{{ aws_secret_access_key }}"
+        security_token: "{{ aws_security_token }}"
+        region: "{{ aws_region }}"
+        wait: yes
+        wait_timeout: 600
+      register: src_snapshot
 
-    # - name: set volume facts
-    #   set_fact:
-    #     src_snapshot_id: "{{ src_snapshot.snapshot_id }}"
+    - name: set volume facts
+      set_fact:
+        src_snapshot_id: "{{ src_snapshot.snapshot_id }}"
 
-    # - name: render snapshot permissions script
-    #   template:
-    #     src: templates/update-snapshot-permissions.sh.j2
-    #     dest: "{{ playbook_dir }}/update-snapshot-permissions.sh"
-    #     mode: 0600
+    - name: render snapshot permissions script
+      template:
+        src: templates/update-snapshot-permissions.sh.j2
+        dest: "{{ playbook_dir }}/update-snapshot-permissions.sh"
+        mode: 0600
 
-    # - name: update snapshot permissions
-    #   command: "sh {{ playbook_dir }}/update-snapshot-permissions.sh"
+    - name: update snapshot permissions
+      command: "sh {{ playbook_dir }}/update-snapshot-permissions.sh"
 
     - name: set iam role facts
       set_fact:
@@ -138,7 +138,7 @@
     - name: create snapshot copy in target account
       ec2_snapshot_copy:
         source_region: "{{ aws_region }}"
-        source_snapshot_id: snap-0ab677e87a540ed7d #"{{ src_snapshot_id }}"
+        source_snapshot_id: "{{ src_snapshot_id }}"
         encrypted: yes
         tags:
           Name: "{{ snapshot_name }}"
