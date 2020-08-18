@@ -26,5 +26,5 @@ task_handler:
 json: 
 	sh run.sh $(ENVIRONMENT_NAME) json $(component)
 
-ansible:
+ansible_task:
 	sh run.sh $(ENVIRONMENT_NAME) ansible $(component)

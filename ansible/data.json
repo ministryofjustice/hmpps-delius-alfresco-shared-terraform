@@ -1,6 +1,9 @@
 {
   "source": {
-    "id": "tf-eu-west-2-hmpps-delius-prod-alfresco-database-pri"
+    "id": "tf-eu-west-2-hmpps-delius-prod-alfresco-database-pri",
+    "account_id": "050243167760",
+    "solr_vol_name": "tf-del-prod-solr",
+    "vol_kms_id": "f32be75c-beb8-409c-a970-db9de7201473"
   },
   "targets": {
     "delius-perf": {
@@ -13,7 +16,9 @@
     },
     "alfresco-dev": {
       "id": "tf-alfresco-dev-alfresco-database-pri",
-      "account_id": "563502482979"
+      "account_id": "563502482979",
+      "solr_vol_name": "tf-alf-dev-solr",
+      "vol_kms_id": "7a0e285d-86d0-4fc3-a29b-23efe4a651e8"
     }
   }
 }

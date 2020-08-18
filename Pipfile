@@ -11,6 +11,8 @@ ansible = "*"
 pygithub = "*"
 docker = "*"
 redis = "*"
+boto = "*"
+boto3 = "*"
 
 [requires]
 python_version = "3.8"

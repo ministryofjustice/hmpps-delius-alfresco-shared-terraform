@@ -1,0 +1,52 @@
+---
+- name: Create Param Store entry
+  hosts: localhost
+  connection: local
+  vars_files:
+    - ../../vars/common-vars.yml
+  tasks:
+    - name: set iam role facts
+      set_fact:
+        target_iam_role: "{{ lookup('env', 'TERRAGRUNT_IAM_ROLE') }}"
+        snapshot_name: "{{ lookup('env', 'EBS_SNAPSHOT_NAME') or 'solr_refresh_snapshot' }}"
+        ssm_param: /alfresco/solr/ebs/snapshot_id
+        new_id: "null"
+
+    - name: get aws credentials
+      include: ../../creds/playbook.yml
+
+    - name: retrieve snapshot id in target account
+      ec2_snapshot_info:
+        aws_access_key: "{{ aws_access_key_id }}"
+        aws_secret_key: "{{ aws_secret_access_key }}"
+        security_token: "{{ aws_security_token }}"
+        region: "{{ aws_region }}"
+        filters:
+          "tag:Name": "{{ snapshot_name }}"
+      register: refresh_snapshot
+
+    - name: get snapshot id from ssm
+      set_fact:
+        snapshot_id: "{{ lookup('aws_ssm', ssm_param, aws_access_key=aws_access_key_id, aws_secret_key=aws_secret_access_key, aws_security_token=aws_security_token ) or '' }}"
+
+    - name: set new snapshot fact
+      set_fact:
+        new_id: "{{ refresh_snapshot.snapshots[0].snapshot_id }}"
+      when: refresh_snapshot.snapshots != []
+
+    - name: Create snapshot param entry
+      aws_ssm_parameter_store:
+        name: "{{ ssm_param }}"
+        description: "Used for Solr EBS volume refresh"
+        string_type: "String"
+        value: "{{ new_id }}"
+        overwrite_value: "always"
+        aws_access_key: "{{ aws_access_key_id }}"
+        aws_secret_key: "{{ aws_secret_access_key }}"
+        security_token: "{{ aws_security_token }}"
+        region: "{{ aws_region }}"
+      when: new_id != snapshot_id
+
+    - name: debug
+      debug:
+        msg: "{{ snapshot_id }}"
