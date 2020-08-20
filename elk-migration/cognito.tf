@@ -1,20 +1,24 @@
 resource "aws_cognito_user_pool" "pool" {
-  name                       = "${local.common_name}"
-  tags                       = "${merge(local.tags, map("Name", "${local.common_name}"))}"
+  name = local.common_name
+  tags = merge(
+    local.tags,
+    {
+      "Name" = local.common_name
+    },
+  )
   auto_verified_attributes   = ["email"]
   alias_attributes           = ["email"]
   email_verification_subject = "HMPSS Monitoring Verification Code"
   password_policy {
-    minimum_length    = "${var.alf_cognito_map["minimum_length"]}"
+    minimum_length    = var.alf_cognito_map["minimum_length"]
     require_lowercase = true
     require_numbers   = true
-    require_symbols   = "${var.alf_cognito_map["require_symbols"]}"
+    require_symbols   = var.alf_cognito_map["require_symbols"]
     require_uppercase = true
   }
   admin_create_user_config {
     allow_admin_create_user_only = true
-    unused_account_validity_days = "${var.alf_cognito_map["unused_account_validity_days"]}"
-
+    unused_account_validity_days = var.alf_cognito_map["unused_account_validity_days"]
   }
   device_configuration {
     challenge_required_on_new_device      = true
@@ -24,50 +28,50 @@ resource "aws_cognito_user_pool" "pool" {
 
 # iam
 data "template_file" "pool_assume" {
-  template = "${file("./policies/assume.json")}"
-  vars {}
+  template = file("./policies/assume.json")
+  vars     = {}
 }
+
 data "template_file" "pool" {
-  template = "${file("./policies/role.json")}"
-  vars {
-    account_id = "${local.account_id}"
+  template = file("./policies/role.json")
+  vars = {
+    account_id = local.account_id
   }
 }
 
 resource "aws_iam_role" "pool" {
   name               = "${local.common_name}-role"
-  assume_role_policy = "${data.template_file.pool_assume.rendered}"
+  assume_role_policy = data.template_file.pool_assume.rendered
   description        = "${local.common_name}-role"
 }
 
 resource "aws_iam_role_policy" "pool" {
   name   = "${local.common_name}-pol"
-  role   = "${aws_iam_role.pool.name}"
-  policy = "${data.template_file.pool.rendered}"
+  role   = aws_iam_role.pool.name
+  policy = data.template_file.pool.rendered
 }
 
 # domain 
 resource "aws_cognito_user_pool_domain" "pool" {
-  domain       = "${local.common_name}"
-  user_pool_id = "${aws_cognito_user_pool.pool.id}"
+  domain       = local.common_name
+  user_pool_id = aws_cognito_user_pool.pool.id
 }
-
 
 # client
 resource "aws_cognito_user_pool_client" "client" {
   name                                 = "${local.common_name}-kibana"
-  user_pool_id                         = "${aws_cognito_user_pool.pool.id}"
+  user_pool_id                         = aws_cognito_user_pool.pool.id
   generate_secret                      = true
   allowed_oauth_flows_user_pool_client = true
   supported_identity_providers         = ["COGNITO"]
   callback_urls = [
     "${local.kibana_host_url}/oauth2/idpresponse",
-    "https://${module.kibana_app_alb.lb_dns_name}/oauth2/idpresponse"
+    "https://${module.kibana_app_alb.lb_dns_name}/oauth2/idpresponse",
   ]
   allowed_oauth_flows = ["code"]
   allowed_oauth_scopes = [
     "email",
-    "openid"
+    "openid",
   ]
   read_attributes = [
     "email",
@@ -88,7 +92,7 @@ resource "aws_cognito_user_pool_client" "client" {
     "nickname",
     "profile",
     "given_name",
-    "email_verified"
+    "email_verified",
   ]
   write_attributes = [
     "email",
@@ -106,6 +110,7 @@ resource "aws_cognito_user_pool_client" "client" {
     "updated_at",
     "nickname",
     "profile",
-    "given_name"
+    "given_name",
   ]
 }
+

@@ -11,9 +11,7 @@ variable "ssl_policy" {
   default = "ELBSecurityPolicy-TLS-1-2-2017-01"
 }
 
-variable "certificate_arn" {
-  type = list(string)
-}
+variable "certificate_arn" {}
 
 variable "target_group_arn" {
 }

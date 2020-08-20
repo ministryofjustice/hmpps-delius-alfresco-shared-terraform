@@ -1,11 +1,8 @@
 terraform {
   # The configuration for this backend will be filled in by Terragrunt
-  backend "s3" {}
-}
-
-provider "aws" {
-  region  = "${var.region}"
-  version = "~> 1.16"
+  # The configuration for this backend will be filled in by Terragrunt
+  backend "s3" {
+  }
 }
 
 ####################################################
@@ -17,10 +14,10 @@ provider "aws" {
 data "terraform_remote_state" "common" {
   backend = "s3"
 
-  config {
-    bucket = "${var.remote_state_bucket_name}"
+  config = {
+    bucket = var.remote_state_bucket_name
     key    = "alfresco/common/terraform.tfstate"
-    region = "${var.region}"
+    region = var.region
   }
 }
 
@@ -30,10 +27,10 @@ data "terraform_remote_state" "common" {
 data "terraform_remote_state" "certs" {
   backend = "s3"
 
-  config {
-    bucket = "${var.remote_state_bucket_name}"
+  config = {
+    bucket = var.remote_state_bucket_name
     key    = "alfresco/certs/terraform.tfstate"
-    region = "${var.region}"
+    region = var.region
   }
 }
 
@@ -43,10 +40,10 @@ data "terraform_remote_state" "certs" {
 data "terraform_remote_state" "s3bucket" {
   backend = "s3"
 
-  config {
-    bucket = "${var.remote_state_bucket_name}"
+  config = {
+    bucket = var.remote_state_bucket_name
     key    = "alfresco/s3buckets/terraform.tfstate"
-    region = "${var.region}"
+    region = var.region
   }
 }
 
@@ -56,10 +53,10 @@ data "terraform_remote_state" "s3bucket" {
 data "terraform_remote_state" "iam" {
   backend = "s3"
 
-  config {
-    bucket = "${var.remote_state_bucket_name}"
+  config = {
+    bucket = var.remote_state_bucket_name
     key    = "alfresco/iam/terraform.tfstate"
-    region = "${var.region}"
+    region = var.region
   }
 }
 
@@ -69,10 +66,10 @@ data "terraform_remote_state" "iam" {
 data "terraform_remote_state" "monitoring" {
   backend = "s3"
 
-  config {
-    bucket = "${var.remote_state_bucket_name}"
+  config = {
+    bucket = var.remote_state_bucket_name
     key    = "shared-monitoring/terraform.tfstate"
-    region = "${var.region}"
+    region = var.region
   }
 }
 
@@ -82,20 +79,20 @@ data "terraform_remote_state" "monitoring" {
 data "terraform_remote_state" "security-groups" {
   backend = "s3"
 
-  config {
-    bucket = "${var.remote_state_bucket_name}"
+  config = {
+    bucket = var.remote_state_bucket_name
     key    = "alfresco/security-groups/terraform.tfstate"
-    region = "${var.region}"
+    region = var.region
   }
 }
 
 data "terraform_remote_state" "network-security-groups" {
   backend = "s3"
 
-  config {
-    bucket = "${var.remote_state_bucket_name}"
+  config = {
+    bucket = var.remote_state_bucket_name
     key    = "security-groups/terraform.tfstate"
-    region = "${var.region}"
+    region = var.region
   }
 }
 
@@ -105,10 +102,10 @@ data "terraform_remote_state" "network-security-groups" {
 data "terraform_remote_state" "rds" {
   backend = "s3"
 
-  config {
-    bucket = "${var.remote_state_bucket_name}"
+  config = {
+    bucket = var.remote_state_bucket_name
     key    = "alfresco/rds/terraform.tfstate"
-    region = "${var.region}"
+    region = var.region
   }
 }
 
@@ -118,10 +115,10 @@ data "terraform_remote_state" "rds" {
 data "terraform_remote_state" "efs" {
   backend = "s3"
 
-  config {
-    bucket = "${var.remote_state_bucket_name}"
+  config = {
+    bucket = var.remote_state_bucket_name
     key    = "alfresco/efs/terraform.tfstate"
-    region = "${var.region}"
+    region = var.region
   }
 }
 
@@ -152,12 +149,13 @@ data "aws_ami" "ami" {
     values = ["ebs"]
   }
 
-  owners = ["${data.terraform_remote_state.common.common_account_id}", "895523100917"] # MOJ
+  owners = [data.terraform_remote_state.common.outputs.common_account_id, "895523100917"] # MOJ
 }
 
 data "aws_ami" "aws_ecs_ami" {
   most_recent = true
   owners      = ["amazon"]
+
   # Amazon Linux 2 optimised ECS instance
   filter {
     name   = "name"
@@ -186,7 +184,7 @@ data "aws_ami" "aws_ecs_ami" {
 ### Getting ACM Cert
 #-------------------------------------------------------------
 data "aws_acm_certificate" "cert" {
-  domain      = "*.${data.terraform_remote_state.common.external_domain}"
+  domain      = "*.${data.terraform_remote_state.common.outputs.external_domain}"
   types       = ["AMAZON_ISSUED"]
   most_recent = true
 }
@@ -196,18 +194,18 @@ data "aws_acm_certificate" "cert" {
 #-------------------------------------------------------------
 
 data "aws_s3_bucket" "config_bucket" {
-  bucket = "${data.terraform_remote_state.common.common_s3-config-bucket}"
+  bucket = data.terraform_remote_state.common.outputs.common_s3-config-bucket
 }
 
 #-------------------------------------------------------------
 ## Getting creds
 #-------------------------------------------------------------
 data "aws_ssm_parameter" "elk_user" {
-  name = "${local.elk_user}"
+  name = local.elk_user
 }
 
 data "aws_ssm_parameter" "elk_password" {
-  name = "${local.elk_password}"
+  name = local.elk_password
 }
 
 ####################################################
@@ -215,77 +213,78 @@ data "aws_ssm_parameter" "elk_password" {
 ####################################################
 
 locals {
-  ami_id                       = "${data.aws_ami.ami.id}"
-  account_id                   = "${data.terraform_remote_state.common.common_account_id}"
-  vpc_id                       = "${data.terraform_remote_state.common.vpc_id}"
-  internal_domain              = "${data.terraform_remote_state.common.internal_domain}"
-  private_zone_id              = "${data.terraform_remote_state.common.private_zone_id}"
-  public_zone_id               = "${data.terraform_remote_state.common.public_zone_id}"
-  external_domain              = "${data.terraform_remote_state.common.external_domain}"
-  environment_identifier       = "${data.terraform_remote_state.common.environment_identifier}"
-  common_name                  = "${data.terraform_remote_state.common.short_environment_identifier}-mig"
-  short_environment_identifier = "${data.terraform_remote_state.common.short_environment_identifier}"
-  region                       = "${var.region}"
-  ssm_path                     = "${data.terraform_remote_state.common.credentials_ssm_path}"
+  ami_id                       = data.aws_ami.ami.id
+  account_id                   = data.terraform_remote_state.common.outputs.common_account_id
+  vpc_id                       = data.terraform_remote_state.common.outputs.vpc_id
+  internal_domain              = data.terraform_remote_state.common.outputs.internal_domain
+  private_zone_id              = data.terraform_remote_state.common.outputs.private_zone_id
+  public_zone_id               = data.terraform_remote_state.common.outputs.public_zone_id
+  external_domain              = data.terraform_remote_state.common.outputs.external_domain
+  environment_identifier       = data.terraform_remote_state.common.outputs.environment_identifier
+  common_name                  = "${data.terraform_remote_state.common.outputs.short_environment_identifier}-mig"
+  short_environment_identifier = data.terraform_remote_state.common.outputs.short_environment_identifier
+  region                       = var.region
+  ssm_path                     = data.terraform_remote_state.common.outputs.credentials_ssm_path
   elk_user                     = "${local.ssm_path}/alfresco/alfresco/elk_user"
   elk_password                 = "${local.ssm_path}/alfresco/alfresco/elk_password"
-  environment                  = "${data.terraform_remote_state.common.environment}"
-  tags                         = "${data.terraform_remote_state.common.common_tags}"
-  instance_profile             = "${data.terraform_remote_state.iam.iam_instance_es_admin_profile_name}"
-  ssh_deployer_key             = "${data.terraform_remote_state.common.common_ssh_deployer_key}"
-  s3bucket                     = "${data.terraform_remote_state.s3bucket.s3bucket}"
-  bastion_inventory            = "${var.bastion_inventory}"
+  environment                  = data.terraform_remote_state.common.outputs.environment
+  tags                         = data.terraform_remote_state.common.outputs.common_tags
+  instance_profile             = data.terraform_remote_state.iam.outputs.iam_instance_es_admin_profile_name
+  ssh_deployer_key             = data.terraform_remote_state.common.outputs.common_ssh_deployer_key
+  s3bucket                     = data.terraform_remote_state.s3bucket.outputs.s3bucket
+  bastion_inventory            = var.bastion_inventory
   application                  = "esmigration"
   service_discovery_domain     = "${local.application}-${local.internal_domain}"
-  config-bucket                = "${data.terraform_remote_state.common.common_s3-config-bucket}"
-  config_bucket_arn            = "${data.aws_s3_bucket.config_bucket.arn}"
-  certificate_arn              = "${data.aws_acm_certificate.cert.arn}"
-  public_subnet_ids            = ["${data.terraform_remote_state.common.public_subnet_ids}"]
-  private_subnet_ids           = ["${data.terraform_remote_state.common.private_subnet_ids}"]
-  ssm_tls_private_key          = "${data.terraform_remote_state.certs.self_signed_server_ssm_private_key_name}"
-  ssm_tls_cert                 = "${data.terraform_remote_state.certs.self_signed_server_ssm_cert_pem_name}"
-  ssm_tls_ca_cert              = "${data.terraform_remote_state.certs.self_signed_ca_ssm_cert_pem_name}"
-  elk_bucket_name              = "${data.terraform_remote_state.s3bucket.elk_backups_bucket_name}"
-  elk_bucket_arn               = "${data.terraform_remote_state.s3bucket.elk_backups_bucket_arn}"
-  elk_lb_dns                   = "${data.terraform_remote_state.monitoring.monitoring_server_internal_url}"
+  config-bucket                = data.terraform_remote_state.common.outputs.common_s3-config-bucket
+  config_bucket_arn            = data.aws_s3_bucket.config_bucket.arn
+  certificate_arn              = data.aws_acm_certificate.cert.arn
+  public_subnet_ids            = [data.terraform_remote_state.common.outputs.public_subnet_ids]
+  private_subnet_ids           = [data.terraform_remote_state.common.outputs.private_subnet_ids]
+  ssm_tls_private_key          = data.terraform_remote_state.certs.outputs.self_signed_server_ssm_private_key_name
+  ssm_tls_cert                 = data.terraform_remote_state.certs.outputs.self_signed_server_ssm_cert_pem_name
+  ssm_tls_ca_cert              = data.terraform_remote_state.certs.outputs.self_signed_ca_ssm_cert_pem_name
+  elk_bucket_name              = data.terraform_remote_state.s3bucket.outputs.elk_backups_bucket_name
+  elk_bucket_arn               = data.terraform_remote_state.s3bucket.outputs.elk_backups_bucket_arn
+  elk_lb_dns                   = data.terraform_remote_state.monitoring.outputs.monitoring_server_internal_url
   es_host_fqdn                 = "alf5es.${local.external_domain}"
   es_host_url                  = "https://${local.es_host_fqdn}"
   kibana_host_fqdn             = "alf5kibana.${local.external_domain}"
   kibana_host_url              = "https://${local.kibana_host_fqdn}"
   logstash_host_fqdn           = "alf5logstash.${local.internal_domain}"
-  storage_s3bucket             = "${data.terraform_remote_state.s3bucket.s3bucket}"
-  backups_bucket               = "${data.terraform_remote_state.s3bucket.alf_backups_bucket_name}"
-  storage_kms_arn              = "${data.terraform_remote_state.s3bucket.s3bucket_kms_arn}"
-  mon_jenkins_sg               = "${data.terraform_remote_state.security-groups.security_groups_map["mon_jenkins"]}"
-  sg_rds_id                    = "${data.terraform_remote_state.security-groups.security_groups_sg_rds_id}"
-  alf_efs_dns_name             = "${data.terraform_remote_state.efs.efs_dns_name}"
+  storage_s3bucket             = data.terraform_remote_state.s3bucket.outputs.s3bucket
+  backups_bucket               = data.terraform_remote_state.s3bucket.outputs.alf_backups_bucket_name
+  storage_kms_arn              = data.terraform_remote_state.s3bucket.outputs.s3bucket_kms_arn
+  mon_jenkins_sg               = data.terraform_remote_state.security-groups.outputs.security_groups_map["mon_jenkins"]
+  sg_rds_id                    = data.terraform_remote_state.security-groups.outputs.security_groups_sg_rds_id
+  alf_efs_dns_name             = data.terraform_remote_state.efs.outputs.efs_dns_name
   efs_mount_path               = "/opt/es_backup"
-  elk_kms_arn                  = "${data.terraform_remote_state.monitoring.monitoring_kms_arn}"
+  elk_kms_arn                  = data.terraform_remote_state.monitoring.outputs.monitoring_kms_arn
   es_home_dir                  = "/usr/share/elasticsearch"
-  alf_efs_sg                   = "${data.terraform_remote_state.security-groups.security_groups_sg_efs_sg_id}"
+  alf_efs_sg                   = data.terraform_remote_state.security-groups.outputs.security_groups_sg_efs_sg_id
   migration_mount_path         = "/opt/local"
-  access_logs_bucket           = "${data.terraform_remote_state.common.common_s3_lb_logs_bucket}"
+  access_logs_bucket           = data.terraform_remote_state.common.outputs.common_s3_lb_logs_bucket
   port                         = 9200
   protocol                     = "HTTP"
-  image_url                    = "${var.elk_migration_props["image_url"]}"
-  service_desired_count        = "${var.elk_migration_props["ecs_service_desired_count"]}"
-  logs_kms_arn                 = "${data.terraform_remote_state.common.kms_arn}"
+  image_url                    = var.elk_migration_props["image_url"]
+  service_desired_count        = var.elk_migration_props["ecs_service_desired_count"]
+  logs_kms_arn                 = data.terraform_remote_state.common.outputs.kms_arn
 
   instance_security_groups = [
-    "${data.terraform_remote_state.network-security-groups.sg_ssh_bastion_in_id}",
-    "${data.terraform_remote_state.network-security-groups.sg_mon_efs}",
-    "${data.terraform_remote_state.network-security-groups.sg_monitoring}",
-    "${data.terraform_remote_state.network-security-groups.sg_elasticsearch}",
-    "${data.terraform_remote_state.network-security-groups.sg_mon_jenkins}",
+    data.terraform_remote_state.network-security-groups.outputs.sg_ssh_bastion_in_id,
+    data.terraform_remote_state.network-security-groups.outputs.sg_mon_efs,
+    data.terraform_remote_state.network-security-groups.outputs.sg_monitoring,
+    data.terraform_remote_state.network-security-groups.outputs.sg_elasticsearch,
+    data.terraform_remote_state.network-security-groups.outputs.sg_mon_jenkins,
   ]
   lb_security_groups = [
-    "${data.terraform_remote_state.security-groups.security_groups_map["mon_jenkins"]}",
+    data.terraform_remote_state.security-groups.outputs.security_groups_map["mon_jenkins"],
   ]
   external_lb_sgs = [
-    "${data.terraform_remote_state.security-groups.security_groups_sg_external_lb_id}",
-    "${data.terraform_remote_state.security-groups.security_groups_map["mon_jenkins"]}"
+    data.terraform_remote_state.security-groups.outputs.security_groups_sg_external_lb_id,
+    data.terraform_remote_state.security-groups.outputs.security_groups_map["mon_jenkins"],
   ]
   efs_security_groups = [
-    "${local.mon_jenkins_sg}",
+    local.mon_jenkins_sg,
   ]
 }
+

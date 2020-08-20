@@ -4,7 +4,7 @@ resource "aws_lb_listener" "environment" {
   protocol          = var.lb_protocol
 
   ssl_policy      = var.ssl_policy
-  certificate_arn = element(var.certificate_arn, count.index)
+  certificate_arn = var.certificate_arn
 
   default_action {
     target_group_arn = var.target_group_arn
