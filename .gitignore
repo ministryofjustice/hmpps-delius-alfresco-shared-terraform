@@ -86,3 +86,4 @@ restore/services/es_client/reports
 utils/github/playbook.retry
 
 content_refresh1
+functions

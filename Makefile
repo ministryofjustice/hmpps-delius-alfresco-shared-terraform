@@ -7,9 +7,14 @@ get_configs:
 	git clone -b $(ENV_CONFIGS_VERSION) $(ENV_CONFIGS_REPO) env_configs
 
 get_package:
-	aws s3 cp --only-show-errors s3://$(CONFIG_BUCKET)/deployments/alfresco/$(PACKAGE_VERSION)/$(PACKAGE_NAME) $(PACKAGE_NAME)
+	aws s3 cp --only-show-errors s3://$(ARTEFACTS_BUCKET)/projects/alfresco/infrastructure/$(PACKAGE_VERSION)/$(PACKAGE_NAME) $(PACKAGE_NAME)
 	tar xf $(PACKAGE_NAME) --strip-components=1
 	cat output.txt
+
+get_functions:
+	rm -rf functions
+	mkdir functions
+	aws s3 sync --only-show-errors s3://$(ARTEFACTS_BUCKET)/projects/alfresco/lambda_functions/builds/$(LAMBDA_FUNCTIONS_VERSION)/ functions/
 
 plan: 
 	sh run.sh $(ENVIRONMENT_NAME) plan $(component)
