@@ -1,75 +1,95 @@
-variable "environment_identifier" {}
+variable "environment_identifier" {
+}
 
-variable "environment" {}
+variable "environment" {
+}
 
-variable "region" {}
+variable "region" {
+}
 
-variable "vpc_id" {}
+variable "vpc_id" {
+}
 
-
-variable "alfresco_app_name" {}
+variable "alfresco_app_name" {
+}
 
 variable "private_subnet_ids" {
-  type = "map"
+  type = map(string)
 }
 
 variable "public_subnet_ids" {
-  type = "list"
+  type = list(string)
 }
 
 variable "app_hostnames" {
-  type = "map"
-}
-
-variable depends_on {
-  default = []
-  type    = "list"
+  type = map(string)
 }
 
 variable "tags" {
-  type = "map"
+  type = map(string)
 }
 
-variable "monitoring_server_url" {}
+variable "monitoring_server_url" {
+}
 
-variable "db_name" {}
-variable "db_host" {}
-variable "db_username" {}
-variable "db_password" {}
+variable "db_name" {
+}
 
-variable "ami_id" {}
+variable "db_host" {
+}
 
-variable "common_name" {}
+variable "db_username" {
+}
 
-variable "account_id" {}
+variable "db_password" {
+}
 
-variable "access_logs_bucket" {}
+variable "ami_id" {
+}
+
+variable "common_name" {
+}
+
+variable "account_id" {
+}
+
+variable "access_logs_bucket" {
+}
 
 variable "lb_security_groups" {
-  type = "list"
+  type = list(string)
 }
 
 variable "instance_security_groups" {
-  type = "list"
+  type = list(string)
 }
 
-variable "internal_domain" {}
+variable "internal_domain" {
+}
 
-variable "external_domain" {}
+variable "external_domain" {
+}
 
-variable "zone_id" {}
+variable "zone_id" {
+}
 
-variable "public_zone_id" {}
+variable "public_zone_id" {
+}
 
-variable "alfresco_s3bucket" {}
+variable "alfresco_s3bucket" {
+}
 
-variable "bucket_kms_key_id" {}
+variable "bucket_kms_key_id" {
+}
 
-variable "ssh_deployer_key" {}
+variable "ssh_deployer_key" {
+}
 
-variable "short_environment_identifier" {}
+variable "short_environment_identifier" {
+}
 
-variable "instance_profile" {}
+variable "instance_profile" {
+}
 
 variable "internal" {
   description = "If true, ELB will be an internal ELB"
@@ -95,51 +115,58 @@ variable "connection_draining_timeout" {
   default     = 300
 }
 
-variable "listener" {
-  description = "A list of listener blocks"
-  type        = "list"
-}
-
 variable "access_logs" {
   description = "An access logs block"
-  type        = "list"
+  type        = list(string)
   default     = []
 }
 
-variable "health_check" {
-  description = "A health check block"
-  type        = "list"
+variable "certificate_arn" {
 }
-
-variable "certificate_arn" {}
 
 variable "enable_deletion_protection" {
   default = "false"
 }
 
 ##################### ASG SECTION #####################
-variable "service_desired_count" {}
+variable "service_desired_count" {
+}
 
-variable "user_data" {}
+variable "user_data" {
+}
 
-variable "ebs_device_name" {}
-variable "ebs_volume_type" {}
-variable "ebs_volume_size" {}
-variable "ebs_encrypted" {}
+variable "ebs_device_name" {
+}
 
-variable "instance_type" {}
+variable "ebs_volume_type" {
+}
 
-variable "volume_size" {}
+variable "ebs_volume_size" {
+}
 
-variable "az_asg_desired" {}
+variable "ebs_encrypted" {
+}
 
-variable "az_asg_max" {}
+variable "instance_type" {
+}
 
-variable "az_asg_min" {}
+variable "volume_size" {
+}
 
-variable "associate_public_ip_address" {}
+variable "az_asg_desired" {
+}
 
-variable "cache_home" {}
+variable "az_asg_max" {
+}
+
+variable "az_asg_min" {
+}
+
+variable "associate_public_ip_address" {
+}
+
+variable "cache_home" {
+}
 
 variable "deploy_across_all_azs" {
   default = false
@@ -149,28 +176,31 @@ variable "bastion_inventory" {
   default = "dev"
 }
 
-variable "jvm_memory" {}
-
-variable "source_code_versions" {
-  type = "map"
+variable "jvm_memory" {
 }
 
+variable "source_code_versions" {
+  type = map(string)
+}
 
 ############### END OF ASG SECTION #####################
 
 ##################### CLOUDWATCH SECTION #####################
-variable "cloudwatch_log_retention" {}
+variable "cloudwatch_log_retention" {
+}
 
 ############### END OF CLOUDWATCH SECTION #####################
 
 ## NGINX
-variable "keys_dir" {}
-
-variable "self_signed_ssm" {
-  type = "map"
+variable "keys_dir" {
 }
 
-variable "config_bucket" {}
+variable "self_signed_ssm" {
+  type = map(string)
+}
+
+variable "config_bucket" {
+}
 
 variable "tomcat_host" {
   description = "Alfresco host"
@@ -186,7 +216,8 @@ variable "messaging_broker_url" {
   default = "localhost:61616"
 }
 
-variable "messaging_broker_password" {}
+variable "messaging_broker_password" {
+}
 
 variable "logstash_host_fqdn" {
   default = "logstash"
@@ -199,7 +230,6 @@ variable "kibana_host" {
 variable "elasitcsearch_host" {
   default = "http://elasitcsearch"
 }
-
 
 variable "enable_monitoring" {
   default = "true"
@@ -230,7 +260,7 @@ variable "health_check_type" {
 }
 
 variable "enabled_metrics" {
-  type = "list"
+  type = list(string)
   default = [
     "GroupMinSize",
     "GroupMaxSize",
@@ -239,16 +269,17 @@ variable "enabled_metrics" {
     "GroupPendingInstances",
     "GroupStandbyInstances",
     "GroupTerminatingInstances",
-    "GroupTotalInstances"
+    "GroupTotalInstances",
   ]
 }
 
 variable "termination_policies" {
-  type    = "list"
+  type    = list(string)
   default = ["OldestInstance", "OldestLaunchTemplate", "OldestLaunchConfiguration"]
 }
 
-variable "logs_kms_arn" {}
+variable "logs_kms_arn" {
+}
 
 variable "cookie_duration" {
   default = "3600"
@@ -267,6 +298,7 @@ variable "default_cooldown" {
 }
 
 variable "solr_config" {
-  type    = "map"
+  type    = map(string)
   default = {}
 }
+
