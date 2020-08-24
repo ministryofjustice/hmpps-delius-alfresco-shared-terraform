@@ -1,18 +1,22 @@
-variable "region" {}
+variable "region" {
+}
 
-variable "role_arn" {}
+variable "role_arn" {
+}
 
 variable "remote_state_bucket_name" {
   description = "Terraform remote state bucket name"
 }
 
-variable "cloudwatch_log_retention" {}
+variable "cloudwatch_log_retention" {
+}
 
 variable "bastion_inventory" {
   default = "dev"
 }
 
-variable "environment_name" {}
+variable "environment_name" {
+}
 
 # Elasticsearch
 
@@ -36,12 +40,12 @@ variable "alf_restore_status" {
 
 variable "availability_zone" {
   description = "List of the three AZs we want to use"
-  type        = "map"
+  type        = map(string)
 }
 
 variable "es_admin_volume_props" {
-  type = "map"
-  default {
+  type = map(string)
+  default = {
     size            = 1000
     type            = "gp2"
     iops            = 100
@@ -51,14 +55,15 @@ variable "es_admin_volume_props" {
   }
 }
 
-variable "alf_cloudwatch_log_retention" {}
+variable "alf_cloudwatch_log_retention" {
+}
 
 variable "metrics_granularity" {
   default = "1Minute"
 }
 
 variable "enabled_metrics" {
-  type = "list"
+  type = list(string)
   default = [
     "GroupMinSize",
     "GroupMaxSize",
@@ -67,12 +72,12 @@ variable "enabled_metrics" {
     "GroupPendingInstances",
     "GroupStandbyInstances",
     "GroupTerminatingInstances",
-    "GroupTotalInstances"
+    "GroupTotalInstances",
   ]
 }
 
 variable "source_code_versions" {
-  type = "map"
+  type = map(string)
   default = {
     esadmin = "master"
   }
@@ -81,3 +86,4 @@ variable "source_code_versions" {
 variable "alf_refresh_enabled" {
   default = "disabled"
 }
+
