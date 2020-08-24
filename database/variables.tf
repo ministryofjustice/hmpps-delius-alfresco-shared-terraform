@@ -8,7 +8,7 @@ variable "remote_state_bucket_name" {
 }
 
 variable "alf_rds_props" {
-  type = "map"
+  type = map(string)
   default = {
     instance_class          = "db.t2.medium"
     iops                    = 10

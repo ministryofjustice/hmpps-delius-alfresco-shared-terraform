@@ -43,6 +43,9 @@ locals {
   )
   db_instance_id = element(
     concat(
+      coalescelist(
+        aws_db_instance.inst.*.id,
+      ),
       [""],
     ),
     0,
