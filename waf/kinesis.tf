@@ -16,23 +16,25 @@ resource "aws_iam_role" "firehose_role" {
   ]
 }
 EOF
+
 }
 
 resource "aws_kinesis_firehose_delivery_stream" "firehose_stream" {
-  name = "${local.firehose_stream_name}"
+  name        = local.firehose_stream_name
   destination = "s3"
 
   s3_configuration {
-    role_arn = "${aws_iam_role.firehose_role.arn}"
-    bucket_arn = "${aws_s3_bucket.firehose.arn}"
-    buffer_size = 5
-    buffer_interval = 300
+    role_arn           = aws_iam_role.firehose_role.arn
+    bucket_arn         = aws_s3_bucket.firehose.arn
+    buffer_size        = 5
+    buffer_interval    = 300
     compression_format = "GZIP"
-    prefix = "/incoming"
+    prefix             = "/incoming"
     cloudwatch_logging_options {
-      enabled = true
-      log_group_name = "${local.common_name}-firehose"
+      enabled         = true
+      log_group_name  = "${local.common_name}-firehose"
       log_stream_name = "delivery"
     }
   }
 }
+

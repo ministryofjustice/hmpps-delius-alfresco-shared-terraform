@@ -39,10 +39,16 @@ resource "aws_s3_bucket" "firehose" {
     }
   }
 
-  tags = "${merge(local.tags, map("Name", "${local.common_name}-firehose"))}"
+  tags = merge(
+    local.tags,
+    {
+      "Name" = "${local.common_name}-firehose"
+    },
+  )
 }
 
 resource "aws_s3_bucket_metric" "firehouse" {
-  bucket = "${aws_s3_bucket.firehose.bucket}"
+  bucket = aws_s3_bucket.firehose.bucket
   name   = "EntireBucket"
 }
+
