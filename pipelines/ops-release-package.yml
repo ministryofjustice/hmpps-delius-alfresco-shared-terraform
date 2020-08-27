@@ -33,11 +33,10 @@ phases:
           cat builds/output.txt
           rm -rf builds/pipelines/*.yml
           mv ${CODEBUILD_SRC_DIR}/functions builds/
-          ls builds/
           tar cf ${PACKAGE_NAME} builds
           aws s3 cp --only-show-errors ${PACKAGE_NAME} s3://${ARTEFACTS_BUCKET}/projects/alfresco/infrastructure/${PACKAGE_VERSION}/${PACKAGE_NAME}
           aws s3 cp --only-show-errors ${PACKAGE_NAME} s3://${ARTEFACTS_BUCKET}/projects/alfresco/infrastructure/latest/${PACKAGE_NAME}
           aws s3 cp --only-show-errors builds/output.txt s3://${ARTEFACTS_BUCKET}/projects/alfresco/infrastructure/${PACKAGE_VERSION}/output.txt
           aws s3 cp --only-show-errors builds/output.txt s3://${ARTEFACTS_BUCKET}/projects/alfresco/infrastructure/latest.txt
-          # aws codepipeline start-pipeline-execution --name ${TARGET_PIPELINE_NAME}
+          aws codepipeline start-pipeline-execution --name ${TARGET_PIPELINE_NAME}
         fi
