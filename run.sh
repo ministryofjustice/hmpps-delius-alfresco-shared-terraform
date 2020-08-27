@@ -59,6 +59,7 @@ fi
 #check env vars for RUNNING_IN_CONTAINER switch
 if [[ ${RUNNING_IN_CONTAINER:-False} == True ]]
 then
+    mkdir -p /home/tools/data/lambda
     workDirContainer=${3}
     echo "Output -> environment stage"
     source ${env_config_dir}/${ENVIRONMENT_NAME_ARG}/${ENVIRONMENT_NAME_ARG}.properties
