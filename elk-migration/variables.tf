@@ -1,22 +1,26 @@
-variable "region" {}
+variable "region" {
+}
 
-variable "role_arn" {}
+variable "role_arn" {
+}
 
 variable "remote_state_bucket_name" {
   description = "Terraform remote state bucket name"
 }
 
-variable "alf_cloudwatch_log_retention" {}
+variable "alf_cloudwatch_log_retention" {
+}
 
 variable "bastion_inventory" {
   default = "dev"
 }
 
-variable "environment_name" {}
+variable "environment_name" {
+}
 
 variable "availability_zone" {
   description = "List of the three AZs we want to use"
-  type        = "map"
+  type        = map(string)
 }
 
 # Elasticsearch
@@ -30,7 +34,7 @@ variable "volume_type" {
 }
 
 variable "elk_migration_props" {
-  type = "map"
+  type = map(string)
   default = {
     min_size                        = 2
     max_size                        = 2
@@ -69,7 +73,7 @@ variable "health_check_type" {
 }
 
 variable "enabled_metrics" {
-  type = "list"
+  type = list(string)
   default = [
     "GroupMinSize",
     "GroupMaxSize",
@@ -78,20 +82,21 @@ variable "enabled_metrics" {
     "GroupPendingInstances",
     "GroupStandbyInstances",
     "GroupTerminatingInstances",
-    "GroupTotalInstances"
+    "GroupTotalInstances",
   ]
 }
 
 variable "termination_policies" {
-  type    = "list"
+  type    = list(string)
   default = ["OldestInstance", "OldestLaunchTemplate", "OldestLaunchConfiguration"]
 }
 
 variable "alf_cognito_map" {
-  type = "map"
+  type = map(string)
   default = {
     minimum_length               = 12
     require_symbols              = false
     unused_account_validity_days = 2
   }
 }
+

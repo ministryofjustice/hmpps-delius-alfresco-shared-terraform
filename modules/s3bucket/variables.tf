@@ -1,13 +1,15 @@
-variable "common_name" {}
-
-variable "tags" {
-  type = "map"
+variable "common_name" {
 }
 
-variable "s3cloudtrail_policy_file" {}
+variable "tags" {
+  type = map(string)
+}
+
+variable "s3cloudtrail_policy_file" {
+}
 
 variable "s3_lifecycle_config" {
-  type = "map"
+  type = map(string)
   default = {
     noncurrent_version_transition_days         = 30
     noncurrent_version_transition_glacier_days = 60
@@ -15,5 +17,6 @@ variable "s3_lifecycle_config" {
   }
 }
 
-variable "kms_policy_template" {}
+variable "kms_policy_template" {
+}
 

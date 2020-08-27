@@ -1,5 +1,6 @@
 # RDS
-variable "region" {}
+variable "region" {
+}
 
 variable "remote_state_bucket_name" {
   description = "Terraform remote state bucket name"
@@ -18,3 +19,4 @@ variable "elastiCache_engine_version" {
   default     = "1.5.10"
   description = "Engine version"
 }
+

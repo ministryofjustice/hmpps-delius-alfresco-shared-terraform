@@ -8,7 +8,7 @@ variable "remote_state_bucket_name" {
 }
 
 variable "alf_rds_props" {
-  type = "map"
+  type = map(string)
   default = {
     instance_class          = "db.t2.medium"
     iops                    = 10
@@ -22,8 +22,11 @@ variable "alf_rds_props" {
     major_engine_version    = "9.6"
     replica_engine_version  = "9.6.9"
     master_engine_version   = "9.6.9"
-    snapshot_identifier     = ""
   }
+}
+
+variable "alf_snapshot_identifier" {
+  default = null
 }
 
 variable "alf_data_import" {

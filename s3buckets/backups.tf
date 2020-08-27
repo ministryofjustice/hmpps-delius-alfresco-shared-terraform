@@ -17,7 +17,7 @@ resource "aws_s3_bucket" "backups" {
   server_side_encryption_configuration {
     rule {
       apply_server_side_encryption_by_default {
-        kms_master_key_id = "${module.s3bucket.s3bucket_kms_id}"
+        kms_master_key_id = module.s3bucket.s3bucket_kms_id
         sse_algorithm     = "aws:kms"
       }
     }
@@ -26,19 +26,25 @@ resource "aws_s3_bucket" "backups" {
   lifecycle_rule {
     enabled = true
     transition {
-      days          = "${local.transition_days}"
+      days          = local.transition_days
       storage_class = "GLACIER"
     }
 
     expiration {
-      days = "${local.expiration_days}"
+      days = local.expiration_days
     }
   }
 
-  tags = "${merge(local.tags, map("Name", "${local.common_name}-alf-backups"))}"
+  tags = merge(
+    local.tags,
+    {
+      "Name" = "${local.common_name}-alf-backups"
+    },
+  )
 }
 
 resource "aws_s3_bucket_metric" "backups" {
-  bucket = "${aws_s3_bucket.backups.bucket}"
+  bucket = aws_s3_bucket.backups.bucket
   name   = "EntireBucket"
 }
+

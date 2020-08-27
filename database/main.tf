@@ -1,11 +1,8 @@
 terraform {
   # The configuration for this backend will be filled in by Terragrunt
-  backend "s3" {}
-}
-
-provider "aws" {
-  region  = "${var.region}"
-  version = "~> 1.16"
+  # The configuration for this backend will be filled in by Terragrunt
+  backend "s3" {
+  }
 }
 
 ####################################################
@@ -18,10 +15,10 @@ provider "aws" {
 data "terraform_remote_state" "common" {
   backend = "s3"
 
-  config {
-    bucket = "${var.remote_state_bucket_name}"
+  config = {
+    bucket = var.remote_state_bucket_name
     key    = "alfresco/common/terraform.tfstate"
-    region = "${var.region}"
+    region = var.region
   }
 }
 
@@ -31,10 +28,10 @@ data "terraform_remote_state" "common" {
 data "terraform_remote_state" "security-groups" {
   backend = "s3"
 
-  config {
-    bucket = "${var.remote_state_bucket_name}"
+  config = {
+    bucket = var.remote_state_bucket_name
     key    = "alfresco/security-groups/terraform.tfstate"
-    region = "${var.region}"
+    region = var.region
   }
 }
 
@@ -43,31 +40,31 @@ data "terraform_remote_state" "security-groups" {
 ####################################################
 
 locals {
-  vpc_id                          = "${data.terraform_remote_state.common.vpc_id}"
-  cidr_block                      = "${data.terraform_remote_state.common.vpc_cidr_block}"
-  allowed_cidr_block              = ["${data.terraform_remote_state.common.vpc_cidr_block}"]
-  internal_domain                 = "${data.terraform_remote_state.common.internal_domain}"
-  private_zone_id                 = "${data.terraform_remote_state.common.private_zone_id}"
-  external_domain                 = "${data.terraform_remote_state.common.external_domain}"
-  public_zone_id                  = "${data.terraform_remote_state.common.public_zone_id}"
-  common_name                     = "${data.terraform_remote_state.common.common_name}-database"
-  environment_identifier          = "${data.terraform_remote_state.common.environment_identifier}"
-  region                          = "${var.region}"
+  vpc_id                          = data.terraform_remote_state.common.outputs.vpc_id
+  cidr_block                      = data.terraform_remote_state.common.outputs.vpc_cidr_block
+  allowed_cidr_block              = [data.terraform_remote_state.common.outputs.vpc_cidr_block]
+  internal_domain                 = data.terraform_remote_state.common.outputs.internal_domain
+  private_zone_id                 = data.terraform_remote_state.common.outputs.private_zone_id
+  external_domain                 = data.terraform_remote_state.common.outputs.external_domain
+  public_zone_id                  = data.terraform_remote_state.common.outputs.public_zone_id
+  common_name                     = "${data.terraform_remote_state.common.outputs.common_name}-database"
+  environment_identifier          = data.terraform_remote_state.common.outputs.environment_identifier
+  region                          = var.region
   alfresco_app_name               = "alfresco"
-  environment                     = "${data.terraform_remote_state.common.environment}"
-  tags                            = "${data.terraform_remote_state.common.common_tags}"
-  public_cidr_block               = ["${data.terraform_remote_state.common.db_cidr_block}"]
-  private_cidr_block              = ["${data.terraform_remote_state.common.private_cidr_block}"]
-  db_cidr_block                   = ["${data.terraform_remote_state.common.db_cidr_block}"]
-  private_subnet_map              = "${data.terraform_remote_state.common.private_subnet_map}"
-  db_subnet_ids                   = ["${data.terraform_remote_state.common.db_subnet_ids}"]
-  security_group_ids              = ["${data.terraform_remote_state.security-groups.security_groups_sg_rds_id}"]
-  credentials_ssm_path            = "${data.terraform_remote_state.common.credentials_ssm_path}"
-  logs_kms_arn                    = "${data.terraform_remote_state.common.kms_arn}"
+  environment                     = data.terraform_remote_state.common.outputs.environment
+  tags                            = data.terraform_remote_state.common.outputs.common_tags
+  public_cidr_block               = [data.terraform_remote_state.common.outputs.db_cidr_block]
+  private_cidr_block              = [data.terraform_remote_state.common.outputs.private_cidr_block]
+  db_cidr_block                   = [data.terraform_remote_state.common.outputs.db_cidr_block]
+  private_subnet_map              = data.terraform_remote_state.common.outputs.private_subnet_map
+  db_subnet_ids                   = [data.terraform_remote_state.common.outputs.db_subnet_ids]
+  security_group_ids              = [data.terraform_remote_state.security-groups.outputs.security_groups_sg_rds_id]
+  credentials_ssm_path            = data.terraform_remote_state.common.outputs.credentials_ssm_path
+  logs_kms_arn                    = data.terraform_remote_state.common.outputs.kms_arn
   dns_name                        = "alf_db_host"
-  db_name                         = "${local.alfresco_app_name}"
-  db_user_name                    = "${data.aws_ssm_parameter.db_user.value}"
-  db_password                     = "${data.aws_ssm_parameter.db_password.value}"
+  db_name                         = local.alfresco_app_name
+  db_user_name                    = data.aws_ssm_parameter.db_user.value
+  db_password                     = data.aws_ssm_parameter.db_password.value
   family                          = "postgres9.6"
   engine                          = "postgres"
   major_engine_version            = "9.6"
@@ -98,9 +95,9 @@ data "aws_ssm_parameter" "db_password" {
 
 module "kms_key" {
   source              = "../modules/kms"
-  kms_key_name        = "${local.common_name}"
-  tags                = "${local.tags}"
-  kms_policy_template = "${var.environment_type == "prod" ? "policies/rds-kms-cross-account.json" : "policies/rds.kms.json"}"
+  kms_key_name        = local.common_name
+  tags                = local.tags
+  kms_policy_template = var.environment_type == "prod" ? "policies/rds-kms-cross-account.json" : "policies/rds.kms.json"
 }
 
 ############################################
@@ -112,13 +109,13 @@ module "kms_key" {
 #-------------------------------------------------------------
 
 module "rds_monitoring_role" {
-  source     = "git::https://github.com/ministryofjustice/hmpps-terraform-modules.git?ref=pre-shared-vpc//modules//iam//role"
-  rolename   = "${local.common_name}"
+  source     = "../modules/iam/role"
+  rolename   = local.common_name
   policyfile = "rds_monitoring.json"
 }
 
 resource "aws_iam_role_policy_attachment" "enhanced_monitoring" {
-  role       = "${module.rds_monitoring_role.iamrole_name}"
+  role       = module.rds_monitoring_role.iamrole_name
   policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonRDSEnhancedMonitoringRole"
 }
 
@@ -126,12 +123,12 @@ resource "aws_iam_role_policy_attachment" "enhanced_monitoring" {
 # CREATE DB SUBNET GROUP
 ############################################
 module "db_subnet_group" {
-  source      = "git::https://github.com/ministryofjustice/hmpps-terraform-modules.git?ref=pre-shared-vpc//modules//rds//db_subnet_group"
+  source      = "../modules/rds/db_subnet_group"
   create      = true
-  identifier  = "${local.common_name}"
+  identifier  = local.common_name
   name_prefix = "${local.common_name}-"
-  subnet_ids  = ["${local.db_subnet_ids}"]
-  tags        = "${local.tags}"
+  subnet_ids  = flatten(local.db_subnet_ids)
+  tags        = local.tags
 }
 
 ############################################
@@ -139,21 +136,21 @@ module "db_subnet_group" {
 ############################################
 
 module "parameter_group" {
-  source = "git::https://github.com/ministryofjustice/hmpps-terraform-modules.git?ref=pre-shared-vpc//modules//rds//db_parameter_group"
+  source = "../modules/rds/db_parameter_group"
 
   create      = true
-  identifier  = "${local.common_name}"
+  identifier  = local.common_name
   name_prefix = "${local.common_name}-"
-  family      = "${local.family}"
+  family      = local.family
 
-  parameters = ["${var.alf_db_parameters}"]
+  parameters = flatten(var.alf_db_parameters)
 
-  tags = "${local.tags}"
+  tags = local.tags
 }
 
 # ENBALE FOR RESTORE AND ATTACH TO PRIMARY NODE
 # module "restore_parameter_group" {
-#   source = "git::https://github.com/ministryofjustice/hmpps-terraform-modules.git?ref=pre-shared-vpc//modules//rds//db_parameter_group"
+#   source = "../modules/rds/db_parameter_group"
 
 #   create      = true
 #   identifier  = "${local.common_name}-restore"
@@ -200,16 +197,16 @@ module "parameter_group" {
 # CREATE DB OPTIONS
 ############################################
 module "db_option_group" {
-  source                   = "git::https://github.com/ministryofjustice/hmpps-terraform-modules.git?ref=pre-shared-vpc//modules//rds//db_option_group"
+  source                   = "../modules/rds/db_option_group"
   create                   = true
-  identifier               = "${local.common_name}"
+  identifier               = local.common_name
   name_prefix              = "${local.common_name}-"
   option_group_description = "${local.common_name} options group"
-  engine_name              = "${local.engine}"
-  major_engine_version     = "${local.major_engine_version}"
+  engine_name              = local.engine
+  major_engine_version     = local.major_engine_version
 
-  options = ["${var.alf_db_options}"]
+  options = flatten(var.alf_db_options)
 
-  tags = "${local.tags}"
+  tags = local.tags
 }
 

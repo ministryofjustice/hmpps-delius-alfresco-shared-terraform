@@ -36,11 +36,11 @@
         wait: yes
       when: delete_db_instance | bool
 
-    - name: remove the target instance with a final snapshot
+    - name: remove the target instance
       rds_instance:
         id: "{{ target_id }}"
         state: absent
-        final_snapshot_identifier: "{{ snapshot_name }}-final"
+        skip_final_snapshot: yes
         aws_access_key: "{{ aws_access_key_id }}"
         aws_secret_key: "{{ aws_secret_access_key }}"
         security_token: "{{ aws_security_token }}"

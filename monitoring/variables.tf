@@ -1,4 +1,5 @@
-variable "region" {}
+variable "region" {
+}
 
 variable "remote_state_bucket_name" {
   description = "Terraform remote state bucket name"
@@ -9,7 +10,7 @@ variable "short_environment_identifier" {
 }
 
 variable "alf_alarms_enabled" {
-  default = true
+  default = 1
 }
 
 variable "alf_cloudwatch_log_retention" {
@@ -17,11 +18,11 @@ variable "alf_cloudwatch_log_retention" {
 }
 
 variable "environment_name" {
-  type = "string"
+  type = string
 }
 
 variable "alf_ops_alerts" {
-  type = "map"
+  type = map(string)
   default = {
     slack_channel_name  = "delius-alerts-alfresco-nonprod"
     log_level           = "info"
@@ -34,9 +35,10 @@ variable "alf_ops_alerts" {
 
 #ASG
 variable "alfresco_asg_props" {
-  type = "map"
+  type = map(string)
   default = {
     asg_min          = 1
     min_elb_capacity = 1
   }
 }
+

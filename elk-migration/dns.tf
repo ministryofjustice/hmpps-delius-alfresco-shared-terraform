@@ -1,15 +1,14 @@
 resource "aws_service_discovery_private_dns_namespace" "elk" {
-  name        = "${local.service_discovery_domain}"
+  name        = local.service_discovery_domain
   description = "Service Discovery Service - ${local.common_name}"
-  vpc         = "${local.vpc_id}"
+  vpc         = local.vpc_id
 }
-
 
 resource "aws_service_discovery_service" "kibana" {
   name = "kibana"
 
   dns_config {
-    namespace_id = "${aws_service_discovery_private_dns_namespace.elk.id}"
+    namespace_id = aws_service_discovery_private_dns_namespace.elk.id
 
     dns_records {
       ttl  = 10
@@ -23,3 +22,4 @@ resource "aws_service_discovery_service" "kibana" {
     failure_threshold = 1
   }
 }
+

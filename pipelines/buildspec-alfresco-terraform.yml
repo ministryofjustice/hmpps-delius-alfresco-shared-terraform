@@ -6,6 +6,7 @@ phases:
     commands:
       - source configs/common.properties
       - make get_configs
+      - sh scripts/pre-build.sh
   build:
     commands:
       - export HMPPS_BUILD_WORK_DIR=${CODEBUILD_SRC_DIR}

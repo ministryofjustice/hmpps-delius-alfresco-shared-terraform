@@ -3,7 +3,8 @@ variable "eng_remote_state_bucket_name" {
   description = "Terraform remote state bucket name"
 }
 
-variable "eng_role_arn" {}
+variable "eng_role_arn" {
+}
 
 variable "environment_identifier" {
   description = "resource label or name"
@@ -21,53 +22,69 @@ variable "environment_type" {
   description = "environment"
 }
 
-variable "environment_name" {}
+variable "environment_name" {
+}
 
-variable "project_name" {}
+variable "project_name" {
+}
 
 variable "remote_state_bucket_name" {
   description = "Terraform remote state bucket name"
 }
 
-variable "lb_account_id" {}
+variable "lb_account_id" {
+}
 
-variable "role_arn" {}
+variable "role_arn" {
+}
 
-variable "route53_hosted_zone_id" {}
+variable "route53_hosted_zone_id" {
+}
 
-variable "alfresco_app_name" {}
+variable "alfresco_app_name" {
+}
 
 # self signed ca
-variable "self_signed_ca_algorithm" {}
+variable "self_signed_ca_algorithm" {
+}
 
 variable "self_signed_ca_rsa_bits" {
   default = 1024
 }
 
-variable "self_signed_ca_validity_period_hours" {}
+variable "self_signed_ca_validity_period_hours" {
+}
 
-variable "self_signed_ca_early_renewal_hours" {}
+variable "self_signed_ca_early_renewal_hours" {
+}
 
 # self signed server
-variable "self_signed_server_algorithm" {}
+variable "self_signed_server_algorithm" {
+}
 
-variable "self_signed_server_rsa_bits" {}
+variable "self_signed_server_rsa_bits" {
+}
 
-variable "self_signed_server_validity_period_hours" {}
+variable "self_signed_server_validity_period_hours" {
+}
 
-variable "self_signed_server_early_renewal_hours" {}
+variable "self_signed_server_early_renewal_hours" {
+}
 
 # RDS
-variable "rds_instance_class" {}
+variable "rds_instance_class" {
+}
 
-variable "rds_allocated_storage" {}
+variable "rds_allocated_storage" {
+}
 
 variable "alfresco_instance_ami" {
-  type    = "map"
+  type    = map(string)
   default = {}
 }
 
 variable "tags" {
-  type    = "map"
+  type    = map(string)
   default = {}
 }
+

@@ -103,11 +103,11 @@
 - name: copy snapshot target
   command: "sh {{ playbook_dir }}/copy-snapshot.sh"
 
-- name: remove the target instance with a final snapshot
+- name: remove the target instance
   rds_instance:
     id: "{{ target_id }}"
     state: absent
-    final_snapshot_identifier: "{{ snapshot_name }}-final"
+    skip_final_snapshot: yes
     aws_access_key: "{{ target_access_key_id }}"
     aws_secret_key: "{{ target_secret_access_key }}"
     security_token: "{{ target_security_token }}"
