@@ -4,6 +4,8 @@ version: 0.2
 env:
   variables:
     TARGET_PIPELINE_NAME: alf-infra-build-delius-core-dev
+    PRE_BUILD_ACTION: "lambda_packages"
+    PRE_BUILD_TARGET: "functions"
   parameter-store:
     HMPPS_GITHUB_USER: "/dev/jenkins/hmpps/integration/user/name"
     HMPPS_GITHUB_TOKEN: "/manually/created/engineering/dev/codepipeline/github/accesstoken"
@@ -14,6 +16,7 @@ phases:
     commands:
       - source configs/common.properties
       - git config --global advice.detachedHead false
+      - sh scripts/pre-build.sh
   build:
     commands:
       - |
@@ -29,6 +32,7 @@ phases:
           echo "export ENV_CONFIGS_VERSION=${ENV_CONFIGS_VERSION}" >> builds/output.txt
           cat builds/output.txt
           rm -rf builds/pipelines/*.yml
+          mv ${CODEBUILD_SRC_DIR}/functions builds/
           tar cf ${PACKAGE_NAME} builds
           aws s3 cp --only-show-errors ${PACKAGE_NAME} s3://${ARTEFACTS_BUCKET}/projects/alfresco/infrastructure/${PACKAGE_VERSION}/${PACKAGE_NAME}
           aws s3 cp --only-show-errors ${PACKAGE_NAME} s3://${ARTEFACTS_BUCKET}/projects/alfresco/infrastructure/latest/${PACKAGE_NAME}

@@ -7,7 +7,6 @@ echo "WORKDIR: ${CODEBUILD_SRC_DIR}"
 if [ -z "${PRE_BUILD_ACTION}" ]
 then
     echo "--> No pre build args provided, skipping execution"
-    env_config_dir="${HOME}/data/env_configs"
 else
     echo "PRE BUILD ARG PROVIDED: ${PRE_BUILD_ACTION}"
     make ${PRE_BUILD_ACTION} component=${PRE_BUILD_TARGET}
