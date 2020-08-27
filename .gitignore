@@ -87,3 +87,4 @@ utils/github/playbook.retry
 
 content_refresh1
 functions
+**/provider.tf
