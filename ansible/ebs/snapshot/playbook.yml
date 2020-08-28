@@ -150,6 +150,26 @@
         wait_timeout: 600
       register: target_snapshot
 
-    - name: debug
+    - name: set src account iam role creds
+      set_fact:
+        target_iam_role: "{{ 'arn:aws:iam::' + src_account + ':role/terraform' }}"
+
+    - name: renew src aws credentials
+      include: ../../creds/playbook.yml
+
+    - name: delete solr snapshot in src account
+      ec2_snapshot:
+        snapshot_id: "{{ src_snapshot_id }}"
+        state: absent
+        aws_access_key: "{{ aws_access_key_id }}"
+        aws_secret_key: "{{ aws_secret_access_key }}"
+        security_token: "{{ aws_security_token }}"
+        region: "{{ aws_region }}"
+
+    - name: source snapshot id
+      debug:
+        msg: "{{ src_snapshot_id }}"
+
+    - name: target snapshot id
       debug:
         msg: "{{ target_snapshot }}"
