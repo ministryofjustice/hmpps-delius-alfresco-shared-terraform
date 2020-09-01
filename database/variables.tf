@@ -34,7 +34,7 @@ variable "alf_data_import" {
 }
 
 variable "alf_db_parameters" {
-  type = "list"
+  type = list(map(string))
   default = [
     {
       name         = "max_connections"
@@ -76,14 +76,14 @@ variable "alf_db_parameters" {
 
 # checkpoint_segments
 variable "alf_rds_migration_parameters" {
-  type    = "list"
+  type    = list(string)
   default = []
 }
 
 variable "alf_cloudwatch_log_retention" {}
 
 variable "alf_db_options" {
-  type        = "list"
+  type        = list(string)
   description = "A list of Options to apply."
   default     = []
 }
