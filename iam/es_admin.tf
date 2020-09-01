@@ -16,9 +16,6 @@ data "template_file" "es" {
     artefacts-s3bucket-arn    = local.artefacts-s3bucket-arn
     db_user_name_arn          = data.aws_ssm_parameter.db_user.arn
     db_password_arn           = data.aws_ssm_parameter.db_password.arn
-    tls_key_arn               = data.aws_ssm_parameter.tls_key.arn
-    tls_cert_arn              = data.aws_ssm_parameter.tls_cert.arn
-    tls_ca_cert_arn           = data.aws_ssm_parameter.tls_ca_cert.arn
     elk_backups_bucket_arn    = data.terraform_remote_state.s3bucket.outputs.elk_backups_bucket_arn
   }
 }
