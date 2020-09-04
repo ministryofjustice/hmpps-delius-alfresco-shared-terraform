@@ -14,6 +14,10 @@
       "id": "tf-eu-west-2-hmpps-delius-stage-alfresco-database-pri",
       "account_id": "205048117103"
     },
+    "delius-pre-prod": {
+      "id": "tf-eu-west-2-hmpps-delius-pre-prod-alfresco-database-pri",
+      "account_id": "010587221707"
+    },
     "alfresco-dev": {
       "id": "tf-alfresco-dev-alfresco-database-pri",
       "account_id": "563502482979",
