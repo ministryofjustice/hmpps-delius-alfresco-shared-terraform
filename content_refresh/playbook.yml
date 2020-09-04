@@ -10,7 +10,7 @@
   tasks:
     - name: load json variables
       set_fact:
-        db_info: "{{ lookup('file', '../database_snapshot/data.json') | from_json }}"
+        db_info: "{{ lookup('file', '../ansible/data.json') | from_json }}"
 
     - name: set base facts
       set_fact:
