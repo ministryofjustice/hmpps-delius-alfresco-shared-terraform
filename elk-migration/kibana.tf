@@ -57,7 +57,7 @@ resource "aws_lb_listener" "kibana_https" {
   load_balancer_arn = module.kibana_app_alb.lb_arn
   port              = 443
   protocol          = "HTTPS"
-  ssl_policy        = var.elk_migration_props["ssl_policy"]
+  ssl_policy        = lookup(var.elk_migration_props, "ssl_policy", "ELBSecurityPolicy-TLS-1-2-2017-01")
   certificate_arn   = local.certificate_arn
 
   default_action {
@@ -168,7 +168,7 @@ resource "aws_ecs_service" "kibana_service" {
   deployment_minimum_healthy_percent = 50
   network_configuration {
     security_groups = flatten(local.instance_security_groups)
-    subnets = flatten(local.private_subnet_ids)
+    subnets         = flatten(local.private_subnet_ids)
   }
 
   service_registries {
@@ -209,8 +209,8 @@ resource "aws_launch_configuration" "kibana" {
   image_id                    = data.aws_ami.aws_ecs_ami.id
   instance_type               = var.elk_migration_props["kibana_instance_type"]
   key_name                    = local.ssh_deployer_key
-  security_groups = flatten(local.instance_security_groups)
-  user_data       = data.template_file.kibana_ecs.rendered
+  security_groups             = flatten(local.instance_security_groups)
+  user_data                   = data.template_file.kibana_ecs.rendered
 
   # user_data_base64            = "${base64encode(data.template_file.kibana_ecs.rendered)}"
   root_block_device {
@@ -224,7 +224,7 @@ resource "aws_launch_configuration" "kibana" {
 }
 
 resource "aws_autoscaling_group" "kibana" {
-  name = "${local.common_name}-kibana"
+  name                      = "${local.common_name}-kibana"
   vpc_zone_identifier       = flatten(local.private_subnet_ids)
   min_size                  = var.elk_migration_props["kibana_asg_size"]
   max_size                  = var.elk_migration_props["kibana_asg_size"]

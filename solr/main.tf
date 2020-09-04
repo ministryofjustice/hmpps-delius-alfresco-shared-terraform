@@ -145,16 +145,8 @@ data "aws_ami" "amazon_ami" {
   most_recent = true
 
   filter {
-    name = "name"
-    # TF-UPGRADE-TODO: In Terraform v0.10 and earlier, it was sometimes necessary to
-    # force an interpolation expression to be interpreted as a list by wrapping it
-    # in an extra set of list brackets. That form was supported for compatibility in
-    # v0.11, but is no longer supported in Terraform v0.12.
-    #
-    # If the expression in the following list itself returns a list, remove the
-    # brackets to avoid interpretation as a list of lists. If the expression
-    # returns a single list item then leave it as-is and remove this TODO comment.
-    values = [var.alfresco_asg_props["ami_name"]]
+    name   = "name"
+    values = [var.alf_config_map["ami_name"]]
   }
 
   filter {
@@ -188,13 +180,14 @@ data "aws_acm_certificate" "cert" {
 ####################################################
 
 locals {
+  alfresco_asg_props = merge(var.alfresco_asg_props, var.alf_config_map)
   access_logs_bucket = data.terraform_remote_state.common.outputs.common_s3_lb_logs_bucket
   account_id         = data.terraform_remote_state.common.outputs.common_account_id
   alfresco_app_name  = data.terraform_remote_state.common.outputs.alfresco_app_name
   allowed_cidr_block = [values(
     data.terraform_remote_state.vpc.outputs.bastion_vpc_public_cidr,
   )]
-  ami_id                         = var.environment_name != "alfresco-dev" ? var.alfresco_asg_props["asg_ami"] : data.aws_ami.amazon_ami.id
+  ami_id                         = var.environment_name != "alfresco-dev" ? local.alfresco_asg_props["asg_ami"] : data.aws_ami.amazon_ami.id
   app_hostnames                  = data.terraform_remote_state.common.outputs.app_hostnames
   bastion_inventory              = var.bastion_inventory
   certificate_arn                = data.aws_acm_certificate.cert.arn

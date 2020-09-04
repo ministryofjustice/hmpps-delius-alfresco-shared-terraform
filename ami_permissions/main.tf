@@ -4,9 +4,10 @@ terraform {
 }
 
 locals {
-  account_alias = "hmpps-${var.environment_name}"
-  image_id      = var.alfresco_asg_props["image_id"]
-  account_id    = lookup(var.alf_account_ids, local.account_alias)
+  alfresco_asg_props = merge(var.alfresco_asg_props, var.alf_config_map)
+  account_alias      = "hmpps-${var.environment_name}"
+  image_id           = local.alfresco_asg_props["image_id"]
+  account_id         = lookup(var.alf_account_ids, local.account_alias)
 }
 
 resource "null_resource" "ami_update_perms" {

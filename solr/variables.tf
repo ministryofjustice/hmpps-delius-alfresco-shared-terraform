@@ -25,6 +25,11 @@ variable "alfresco_asg_props" {
   }
 }
 
+variable "alf_config_map" {
+  type    = map(string)
+  default = {}
+}
+
 variable "source_code_versions" {
   type = map(string)
   default = {

@@ -1,5 +1,5 @@
 # ASG Configuration
-alfresco_asg_props = {
+alf_config_map = {
   asg_ami  = "ami-0e84c90acee3e4b2f"
   ami_name = "HMPPS Alfresco *"
   image_id = "ami-0e84c90acee3e4b2f"

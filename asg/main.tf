@@ -143,7 +143,7 @@ data "terraform_remote_state" "solr" {
 #-------------------------------------------------------------
 data "aws_ami" "amazon_ami" {
   most_recent = true
-  owners = [var.alf_account_ids["eng-non-prod"]]
+  owners      = [var.alf_account_ids["eng-non-prod"]]
 
   filter {
     name = "name"
@@ -155,7 +155,7 @@ data "aws_ami" "amazon_ami" {
     # If the expression in the following list itself returns a list, remove the
     # brackets to avoid interpretation as a list of lists. If the expression
     # returns a single list item then leave it as-is and remove this TODO comment.
-    values = [var.alfresco_asg_props["ami_name"]]
+    values = [local.alfresco_asg_props["ami_name"]]
   }
 
   filter {
@@ -188,7 +188,8 @@ data "aws_acm_certificate" "cert" {
 ####################################################
 
 locals {
-  ami_id                         = var.environment_name != "alfresco-dev" ? var.alfresco_asg_props["asg_ami"] : data.aws_ami.amazon_ami.id
+  alfresco_asg_props             = merge(var.alfresco_asg_props, var.alf_config_map)
+  ami_id                         = var.environment_name != "alfresco-dev" ? local.alfresco_asg_props["asg_ami"] : data.aws_ami.amazon_ami.id
   account_id                     = data.terraform_remote_state.common.outputs.common_account_id
   vpc_id                         = data.terraform_remote_state.common.outputs.vpc_id
   cidr_block                     = data.terraform_remote_state.common.outputs.vpc_cidr_block
@@ -269,10 +270,10 @@ module "asg" {
   alfresco_s3bucket            = local.s3bucket
   lb_security_groups           = flatten(local.lb_security_groups)
   internal                     = false
-  az_asg_desired               = var.restoring == "enabled" ? 0 : lookup(var.alfresco_asg_props, "asg_desired", 1)
-  az_asg_min                   = var.restoring == "enabled" ? 0 : lookup(var.alfresco_asg_props, "asg_min", 1)
-  az_asg_max                   = var.restoring == "enabled" ? 0 : lookup(var.alfresco_asg_props, "asg_max", 1)
-  default_cooldown             = lookup(var.alfresco_asg_props, "default_cooldown", 120)
+  az_asg_desired               = var.restoring == "enabled" ? 0 : lookup(local.alfresco_asg_props, "asg_desired", 1)
+  az_asg_min                   = var.restoring == "enabled" ? 0 : lookup(local.alfresco_asg_props, "asg_min", 1)
+  az_asg_max                   = var.restoring == "enabled" ? 0 : lookup(local.alfresco_asg_props, "asg_max", 1)
+  default_cooldown             = lookup(local.alfresco_asg_props, "default_cooldown", 120)
   cloudwatch_log_retention     = var.alf_cloudwatch_log_retention
   zone_id                      = local.private_zone_id
   external_domain              = local.external_domain
@@ -298,19 +299,19 @@ module "asg" {
   certificate_arn              = local.certificate_arn
   public_subnet_ids            = flatten(local.public_subnet_ids)
   public_zone_id               = local.public_zone_id
-  health_check_grace_period    = lookup(var.alfresco_asg_props, "health_check_grace_period", 600)
+  health_check_grace_period    = lookup(local.alfresco_asg_props, "health_check_grace_period", 600)
   logs_kms_arn                 = local.logs_kms_arn
-  min_elb_capacity             = lookup(var.alfresco_asg_props, "min_elb_capacity", 1)
-  wait_for_capacity_timeout    = lookup(var.alfresco_asg_props, "wait_for_capacity_timeout", "30m")
+  min_elb_capacity             = lookup(local.alfresco_asg_props, "min_elb_capacity", 1)
+  wait_for_capacity_timeout    = lookup(local.alfresco_asg_props, "wait_for_capacity_timeout", "30m")
   # ASG
   service_desired_count       = "3"
   user_data                   = "../user_data/user_data.sh"
   volume_size                 = var.alfresco_volume_size
   ebs_device_name             = "/dev/xvdb"
   ebs_volume_type             = "standard"
-  ebs_volume_size             = lookup(var.alfresco_asg_props, "ebs_volume_size", 512)
+  ebs_volume_size             = lookup(local.alfresco_asg_props, "ebs_volume_size", 512)
   ebs_encrypted               = "true"
-  instance_type               = lookup(var.alfresco_asg_props, "asg_instance_type", "m4.xlarge")
+  instance_type               = lookup(local.alfresco_asg_props, "asg_instance_type", "m4.xlarge")
   associate_public_ip_address = false
   cache_home                  = "/srv/cache"
   jvm_memory                  = local.jvm_memory
