@@ -19,3 +19,7 @@ variable "alf_account_ids" {
   }
 }
 
+variable "alf_config_map" {
+  type    = map(string)
+  default = {}
+}

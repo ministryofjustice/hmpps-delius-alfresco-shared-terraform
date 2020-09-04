@@ -76,7 +76,7 @@ variable "alf_db_parameters" {
 
 # checkpoint_segments
 variable "alf_rds_migration_parameters" {
-  type    = list(string)
+  type    = list(map(string))
   default = []
 }
 
