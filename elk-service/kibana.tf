@@ -2,33 +2,31 @@ locals {
   kibana_port           = 5601
   kibana_protocol       = "HTTP"
   kibana_container_name = "kibana"
-  target_grp_name       = var.kibana_short_name != "" ? var.kibana_short_name : local.kibana_container_name
-  kibana_image_url      = var.elk_migration_props["kibana_image_url"]
+  kibana_image_url      = lookup(var.alf_elk_service_props, "kibana_image_url", "docker.elastic.co/kibana/kibana-oss:6.8.9")
+  es_host_protocol      = lookup(var.alf_elk_service_props, "es_host_protocol", "https")
+  es_host_port          = lookup(var.alf_elk_service_props, "es_host_port", 443)
+  es_url                = "${local.es_host_protocol}://${aws_elasticsearch_domain.es.endpoint}:${local.es_host_port}"
 }
 
-# lb
 # alb
-module "kibana_app_alb" {
+module "kibana_alb" {
   source          = "../modules/loadbalancer/alb/create_lb"
-  lb_name         = "${local.common_name}-kib"
+  lb_name         = local.common_name
   subnet_ids      = flatten(local.public_subnet_ids)
-  security_groups = flatten(local.external_lb_sgs)
+  security_groups = [aws_security_group.lb.id]
   internal        = false
   s3_bucket_name  = local.access_logs_bucket
   tags            = local.tags
 }
 
-# ############################################
-# ROUTE53
-# ############################################
-resource "aws_route53_record" "kibana_migration_dns" {
+resource "aws_route53_record" "kibana_dns" {
   name    = local.kibana_host_fqdn
   type    = "A"
   zone_id = local.public_zone_id
 
   alias {
-    name                   = module.kibana_app_alb.lb_dns_name
-    zone_id                = module.kibana_app_alb.lb_zone_id
+    name                   = module.kibana_alb.lb_dns_name
+    zone_id                = module.kibana_alb.lb_zone_id
     evaluate_target_health = false
   }
 }
@@ -36,7 +34,7 @@ resource "aws_route53_record" "kibana_migration_dns" {
 # target group
 module "kibana_target_grp" {
   source              = "../modules/loadbalancer/alb/targetgroup"
-  appname             = "${local.common_name}-${local.target_grp_name}"
+  appname             = "${local.application}-kb"
   target_port         = local.kibana_port
   target_protocol     = local.kibana_protocol
   vpc_id              = local.vpc_id
@@ -54,10 +52,10 @@ module "kibana_target_grp" {
 
 # listener
 resource "aws_lb_listener" "kibana_https" {
-  load_balancer_arn = module.kibana_app_alb.lb_arn
+  load_balancer_arn = module.kibana_alb.lb_arn
   port              = 443
   protocol          = "HTTPS"
-  ssl_policy        = var.elk_migration_props["ssl_policy"]
+  ssl_policy        = lookup(var.alf_elk_service_props, "ssl_policy", "ELBSecurityPolicy-TLS-1-2-2017-01")
   certificate_arn   = local.certificate_arn
 
   default_action {
@@ -92,7 +90,7 @@ resource "aws_lb_listener_rule" "kibana_cognito" {
 }
 
 resource "aws_lb_listener" "kibana" {
-  load_balancer_arn = module.kibana_app_alb.lb_arn
+  load_balancer_arn = module.kibana_alb.lb_arn
   port              = 80
   protocol          = "HTTP"
   default_action {
@@ -123,23 +121,8 @@ module "kibana_loggroup" {
 # CREATE ECS TASK DEFINTIONS
 ############################################
 
-data "template_file" "kibana" {
-  template = file("./task_definitions/kibana.conf")
-
-  vars = {
-    kibana_image_url = local.kibana_image_url
-    container_name   = local.kibana_container_name
-    log_group_region = local.region
-    kibana_loggroup  = module.kibana_loggroup.loggroup_name
-    es_host_url      = local.es_host_url
-    server_name      = local.common_name
-    es_cluster_name  = local.common_name
-  }
-}
-
 resource "aws_ecs_task_definition" "kibana" {
   family                   = "${local.common_name}-${local.kibana_container_name}"
-  container_definitions    = data.template_file.kibana.rendered
   task_role_arn            = aws_iam_role.task.arn
   execution_role_arn       = aws_iam_role.execution.arn
   network_mode             = "awsvpc"
@@ -147,28 +130,33 @@ resource "aws_ecs_task_definition" "kibana" {
   tags = merge(
     local.tags,
     {
-      "Name" = "${local.common_name}-kibana"
-    },
+      "Name" = "${local.common_name}-${local.kibana_container_name}"
+    }
   )
-  volume {
-    name      = "config"
-    host_path = "/opt/kibana/supervisord.conf"
-  }
-  volume {
-    name      = "data"
-    host_path = "/efs/kibana/data"
-  }
+  container_definitions = templatefile(
+    "${path.module}/task_definitions/kibana.conf",
+    {
+      kibana_image_url = local.kibana_image_url
+      container_name   = local.kibana_container_name
+      log_group_region = local.region
+      kibana_loggroup  = module.kibana_loggroup.loggroup_name
+      es_host          = local.es_url
+    }
+  )
 }
 
 resource "aws_ecs_service" "kibana_service" {
   name                               = "${local.common_name}-${local.kibana_container_name}"
-  cluster                            = module.ecs_cluster.ecs_cluster_id
+  cluster                            = local.ecs_cluster_name
   task_definition                    = aws_ecs_task_definition.kibana.arn
-  desired_count                      = var.elk_migration_props["kibana_desired_count"]
+  desired_count                      = lookup(var.alf_elk_service_props, "desired_count", 2)
   deployment_minimum_healthy_percent = 50
   network_configuration {
-    security_groups = flatten(local.instance_security_groups)
-    subnets         = flatten(local.private_subnet_ids)
+    security_groups = [
+      aws_security_group.kibana.id,
+      data.terraform_remote_state.common.outputs.common_sg_outbound_id
+    ]
+    subnets = flatten(local.private_subnet_ids)
   }
 
   service_registries {
@@ -182,40 +170,30 @@ resource "aws_ecs_service" "kibana_service" {
   }
 }
 
-# launch config
-data "template_file" "kibana_ecs" {
-  template = file("../user_data/ecs_userdata_amazonlinux.sh")
-
-  vars = {
-    efs_endpoint           = aws_efs_file_system.efs.dns_name
-    efs_mount_path         = local.efs_mount_path
-    es_cluster_name        = module.ecs_cluster.ecs_cluster_name
-    es_home_dir            = local.es_home_dir
-    es_host_url            = local.es_host_url
-    es_master_nodes        = var.elk_migration_props["es_master_nodes"]
-    log_group_name         = module.kibana_loggroup.loggroup_name
-    migration_mount_path   = local.migration_mount_path
-    region                 = var.region
-    elk_user               = local.elk_user
-    elk_password           = local.elk_password
-    service_discovery_host = "kibana.${local.service_discovery_domain}"
-  }
-}
-
 resource "aws_launch_configuration" "kibana" {
-  name_prefix                 = "${local.common_name}-kibana"
+  name_prefix                 = "${local.common_name}-${local.kibana_container_name}"
   associate_public_ip_address = false
   iam_instance_profile        = module.create-iam-instance-profile-es.iam_instance_name
   image_id                    = data.aws_ami.aws_ecs_ami.id
-  instance_type               = var.elk_migration_props["kibana_instance_type"]
+  instance_type               = lookup(var.alf_elk_service_props, "kibana_instance_type", "t2.medium")
   key_name                    = local.ssh_deployer_key
-  security_groups             = flatten(local.instance_security_groups)
-  user_data                   = data.template_file.kibana_ecs.rendered
-
-  # user_data_base64            = "${base64encode(data.template_file.kibana_ecs.rendered)}"
+  security_groups = [
+    aws_security_group.kibana.id,
+    data.terraform_remote_state.common.outputs.common_sg_outbound_id,
+    data.terraform_remote_state.network-security-groups.outputs.sg_ssh_bastion_in_id
+  ]
+  user_data = templatefile(
+    "${path.module}/user_data/userdata_amazonlinux.sh",
+    {
+      svc_name        = local.common_name
+      es_cluster_name = local.ecs_cluster_name
+      log_group_name  = module.kibana_loggroup.loggroup_name
+      region          = var.region
+    }
+  )
   root_block_device {
-    volume_type = var.volume_type
-    volume_size = 60
+    volume_type = lookup(var.alf_elk_service_props, "root_volume_type", "standard")
+    volume_size = lookup(var.alf_elk_service_props, "root_volume_size", 60)
   }
 
   lifecycle {
@@ -223,12 +201,22 @@ resource "aws_launch_configuration" "kibana" {
   }
 }
 
+data "null_data_source" "tags" {
+  count = length(keys(local.tags))
+
+  inputs = {
+    key                 = element(keys(local.tags), count.index)
+    value               = element(values(local.tags), count.index)
+    propagate_at_launch = true
+  }
+}
+
 resource "aws_autoscaling_group" "kibana" {
-  name                      = "${local.common_name}-kibana"
+  name                      = aws_launch_configuration.kibana.name
   vpc_zone_identifier       = flatten(local.private_subnet_ids)
-  min_size                  = var.elk_migration_props["kibana_asg_size"]
-  max_size                  = var.elk_migration_props["kibana_asg_size"]
-  desired_capacity          = var.elk_migration_props["kibana_asg_size"]
+  min_size                  = lookup(var.alf_elk_service_props, "kibana_asg_size", 2)
+  max_size                  = lookup(var.alf_elk_service_props, "kibana_asg_size", 2)
+  desired_capacity          = lookup(var.alf_elk_service_props, "kibana_asg_size", 2)
   launch_configuration      = aws_launch_configuration.kibana.name
   health_check_grace_period = 300
   termination_policies      = var.termination_policies
@@ -244,11 +232,10 @@ resource "aws_autoscaling_group" "kibana" {
     [
       {
         key                 = "Name"
-        value               = "${local.common_name}-kibana"
+        value               = "${local.common_name}-${local.kibana_container_name}"
         propagate_at_launch = true
       },
     ],
     data.null_data_source.tags.*.outputs
   )
 }
-

@@ -193,3 +193,12 @@ output "kms_id" {
   value = aws_kms_key.kms.id
 }
 
+
+# ECS
+output "ecs_cluster" {
+  value = {
+    arn  = module.ecs_cluster.ecs_cluster_arn
+    id   = module.ecs_cluster.ecs_cluster_id
+    name = module.ecs_cluster.ecs_cluster_name
+  }
+}

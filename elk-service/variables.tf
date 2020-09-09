@@ -18,26 +18,6 @@ variable "bastion_inventory" {
 variable "environment_name" {
 }
 
-# Elasticsearch
-
-variable "es_admin_instance_type" {
-  default = "t2.large"
-}
-
-# ELasticsearch snapshot name
-variable "es_snapshot_name" {
-  default = "snapshot_1"
-}
-
-variable "es_s3_repo_name" {
-  default = "alfresco_s3_repo"
-}
-
-# Restore mode
-variable "alf_restore_status" {
-  default = "no-restore"
-}
-
 variable "availability_zone" {
   description = "List of the three AZs we want to use"
   type        = map(string)
@@ -53,5 +33,45 @@ variable "alf_elk_service_props" {
   }
 }
 
-variable "alf_cloudwatch_log_retention" {
+variable "alf_cloudwatch_log_retention" {}
+
+variable "alf_cognito_map" {
+  type    = map(string)
+  default = {}
+}
+
+variable "metrics_granularity" {
+  default = "1Minute"
+}
+
+variable "health_check_type" {
+  default = "ELB"
+}
+
+variable "enabled_metrics" {
+  type = list(string)
+  default = [
+    "GroupMinSize",
+    "GroupMaxSize",
+    "GroupDesiredCapacity",
+    "GroupInServiceInstances",
+    "GroupPendingInstances",
+    "GroupStandbyInstances",
+    "GroupTerminatingInstances",
+    "GroupTotalInstances",
+  ]
+}
+
+variable "termination_policies" {
+  type    = list(string)
+  default = ["OldestInstance", "OldestLaunchTemplate", "OldestLaunchConfiguration"]
+}
+
+variable "user_access_cidr_blocks" {
+  type = list(string)
+}
+
+variable "elasticsearch_props" {
+  type    = map(string)
+  default = {}
 }

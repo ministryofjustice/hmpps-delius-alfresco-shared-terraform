@@ -127,13 +127,16 @@ locals {
   storage_s3bucket             = data.terraform_remote_state.s3bucket.outputs.s3bucket
   backups_bucket               = data.terraform_remote_state.s3bucket.outputs.alf_backups_bucket_name
   storage_kms_arn              = data.terraform_remote_state.s3bucket.outputs.s3bucket_kms_arn
-  mon_jenkins_sg               = data.terraform_remote_state.security-groups.outputs.security_groups_map["mon_jenkins"]
+  kibana_host_fqdn             = "alf6kibana.${local.external_domain}"
+  kibana_host_url              = "https://${local.kibana_host_fqdn}"
+  access_logs_bucket           = data.terraform_remote_state.common.outputs.common_s3_lb_logs_bucket
+  ecs_cluster_name             = data.terraform_remote_state.common.outputs.ecs_cluster["name"]
+  service_discovery_domain     = "${local.application}-${local.internal_domain}"
 
-  monitoring_groups = [
-    data.terraform_remote_state.network-security-groups.outputs.sg_ssh_bastion_in_id,
-    data.terraform_remote_state.network-security-groups.outputs.sg_mon_efs,
-    data.terraform_remote_state.network-security-groups.outputs.sg_monitoring,
-    data.terraform_remote_state.network-security-groups.outputs.sg_elasticsearch,
+  allowed_cidr_block = [
+    var.user_access_cidr_blocks,
+    data.terraform_remote_state.common.outputs.nat_gateway_ips,
+    "213.205.192.246/32"
   ]
 }
 

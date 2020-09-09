@@ -10,15 +10,15 @@ resource "aws_cognito_user_pool" "pool" {
   alias_attributes           = ["email"]
   email_verification_subject = "HMPSS Monitoring Verification Code"
   password_policy {
-    minimum_length    = var.alf_cognito_map["minimum_length"]
-    require_lowercase = true
-    require_numbers   = true
-    require_symbols   = var.alf_cognito_map["require_symbols"]
-    require_uppercase = true
+    minimum_length                   = lookup(var.alf_cognito_map, "minimum_length", 12)
+    require_lowercase                = true
+    require_numbers                  = true
+    require_symbols                  = lookup(var.alf_cognito_map, "require_symbols", false)
+    require_uppercase                = true
+    temporary_password_validity_days = lookup(var.alf_cognito_map, "temporary_password_validity_days", 2)
   }
   admin_create_user_config {
     allow_admin_create_user_only = true
-    unused_account_validity_days = var.alf_cognito_map["unused_account_validity_days"]
   }
   device_configuration {
     challenge_required_on_new_device      = true
@@ -66,7 +66,7 @@ resource "aws_cognito_user_pool_client" "client" {
   supported_identity_providers         = ["COGNITO"]
   callback_urls = [
     "${local.kibana_host_url}/oauth2/idpresponse",
-    "https://${module.kibana_app_alb.lb_dns_name}/oauth2/idpresponse",
+    "https://${module.kibana_alb.lb_dns_name}/oauth2/idpresponse",
   ]
   allowed_oauth_flows = ["code"]
   allowed_oauth_scopes = [
@@ -113,3 +113,4 @@ resource "aws_cognito_user_pool_client" "client" {
     "given_name",
   ]
 }
+

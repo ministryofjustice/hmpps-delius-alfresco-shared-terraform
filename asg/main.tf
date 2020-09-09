@@ -125,6 +125,16 @@ data "terraform_remote_state" "elk_migration" {
   }
 }
 
+data "terraform_remote_state" "elk-service" {
+  backend = "s3"
+
+  config = {
+    bucket = var.remote_state_bucket_name
+    key    = "alfresco/elk-service/terraform.tfstate"
+    region = var.region
+  }
+}
+
 #-------------------------------------------------------------
 ### Getting the elk-migration details
 #-------------------------------------------------------------
@@ -216,7 +226,6 @@ locals {
   db_username_ssm                = data.terraform_remote_state.rds.outputs.rds_creds["db_username_ssm_param"]
   db_password_ssm                = data.terraform_remote_state.rds.outputs.rds_creds["db_password_ssm_param"]
   db_host                        = data.terraform_remote_state.rds.outputs.rds_db_instance_endpoint_cname
-  monitoring_server_internal_url = data.terraform_remote_state.elk_migration.outputs.public_es_host_name
   app_hostnames                  = data.terraform_remote_state.common.outputs.app_hostnames
   bastion_inventory              = var.bastion_inventory
   jvm_memory                     = var.alfresco_jvm_memory
@@ -239,7 +248,7 @@ locals {
   instance_security_groups = [
     data.terraform_remote_state.security-groups.outputs.security_groups_sg_internal_instance_id,
     data.terraform_remote_state.common.outputs.common_sg_outbound_id,
-    data.terraform_remote_state.security-groups.outputs.security_groups_sg_monitoring_client,
+    data.terraform_remote_state.elk-service.outputs.elk_service["access_sg"],
     data.terraform_remote_state.security-groups.outputs.security_groups_bastion_in_sg_id,
     data.terraform_remote_state.security-groups.outputs.security_groups_map["mon_jenkins"],
   ]
@@ -286,23 +295,26 @@ module "asg" {
   region                       = local.region
   ami_id                       = local.ami_id
   account_id                   = local.account_id
-  monitoring_server_url        = local.monitoring_server_internal_url
-  logstash_host_fqdn           = local.logstash_host_fqdn
-  kibana_host                  = local.kibana_host
-  messaging_broker_url         = local.messaging_broker_url
-  messaging_broker_password    = local.messaging_broker_password
-  bastion_inventory            = local.bastion_inventory
-  keys_dir                     = "/opt/keys"
-  self_signed_ssm              = local.self_signed_ssm
-  config_bucket                = local.config-bucket
-  tomcat_host                  = local.tomcat_host
-  certificate_arn              = local.certificate_arn
-  public_subnet_ids            = flatten(local.public_subnet_ids)
-  public_zone_id               = local.public_zone_id
-  health_check_grace_period    = lookup(local.alfresco_asg_props, "health_check_grace_period", 600)
-  logs_kms_arn                 = local.logs_kms_arn
-  min_elb_capacity             = lookup(local.alfresco_asg_props, "min_elb_capacity", 1)
-  wait_for_capacity_timeout    = lookup(local.alfresco_asg_props, "wait_for_capacity_timeout", "30m")
+  elasticsearch_props = {
+    url          = data.terraform_remote_state.elk-service.outputs.elk_service["es_url"]
+    cluster_name = data.terraform_remote_state.elk-service.outputs.elk_service["domain_name"]
+  }
+  logstash_host_fqdn        = local.logstash_host_fqdn
+  kibana_host               = local.kibana_host
+  messaging_broker_url      = local.messaging_broker_url
+  messaging_broker_password = local.messaging_broker_password
+  bastion_inventory         = local.bastion_inventory
+  keys_dir                  = "/opt/keys"
+  self_signed_ssm           = local.self_signed_ssm
+  config_bucket             = local.config-bucket
+  tomcat_host               = local.tomcat_host
+  certificate_arn           = local.certificate_arn
+  public_subnet_ids         = flatten(local.public_subnet_ids)
+  public_zone_id            = local.public_zone_id
+  health_check_grace_period = lookup(local.alfresco_asg_props, "health_check_grace_period", 600)
+  logs_kms_arn              = local.logs_kms_arn
+  min_elb_capacity          = lookup(local.alfresco_asg_props, "min_elb_capacity", 1)
+  wait_for_capacity_timeout = lookup(local.alfresco_asg_props, "wait_for_capacity_timeout", "30m")
   # ASG
   service_desired_count       = "3"
   user_data                   = "../user_data/user_data.sh"

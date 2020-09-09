@@ -7,7 +7,7 @@ alf_config_map = {
 
 source_code_versions = {
   boostrap     = "centos"
-  alfresco     = "0.0.7"
+  alfresco     = "patch/update-elasticsearch-version"
   logstash     = "1.0.0"
   elasticbeats = "1.0.0"
   solr         = "0.0.5"
