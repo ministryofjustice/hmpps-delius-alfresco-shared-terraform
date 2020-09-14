@@ -135,8 +135,7 @@ locals {
 
   allowed_cidr_block = [
     var.user_access_cidr_blocks,
-    data.terraform_remote_state.common.outputs.nat_gateway_ips,
-    "213.205.192.246/32"
+    data.terraform_remote_state.common.outputs.nat_gateway_ips
   ]
 }
 

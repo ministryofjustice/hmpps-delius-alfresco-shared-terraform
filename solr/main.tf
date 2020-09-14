@@ -138,6 +138,16 @@ data "terraform_remote_state" "elk_migration" {
   }
 }
 
+data "terraform_remote_state" "elk-service" {
+  backend = "s3"
+
+  config = {
+    bucket = var.remote_state_bucket_name
+    key    = "alfresco/elk-service/terraform.tfstate"
+    region = var.region
+  }
+}
+
 #-------------------------------------------------------------
 ### Getting the latest amazon ami
 #-------------------------------------------------------------
@@ -231,10 +241,15 @@ locals {
     key     = data.terraform_remote_state.self_certs.outputs.self_signed_server_ssm_private_key_name
   }
 
+  elasticsearch_props = {
+    url          = data.terraform_remote_state.elk-service.outputs.elk_service["es_url"]
+    cluster_name = data.terraform_remote_state.elk-service.outputs.elk_service["domain_name"]
+  }
+
   instance_security_groups = [
     data.terraform_remote_state.security-groups.outputs.security_groups_sg_internal_instance_id,
     data.terraform_remote_state.common.outputs.common_sg_outbound_id,
-    data.terraform_remote_state.security-groups.outputs.security_groups_sg_monitoring_client,
+    data.terraform_remote_state.elk-service.outputs.elk_service["access_sg"],
     data.terraform_remote_state.security-groups.outputs.security_groups_bastion_in_sg_id,
   ]
 }
