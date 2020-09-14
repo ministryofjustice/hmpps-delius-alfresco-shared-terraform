@@ -6,42 +6,41 @@ data "template_file" "user_data" {
   template = file(var.user_data)
 
   vars = {
-    env_identifier            = var.environment_identifier
-    short_env_identifier      = var.short_environment_identifier
-    app_name                  = var.alfresco_app_name
-    cldwatch_log_group        = module.create_loggroup.loggroup_name
-    region                    = var.region
-    cache_home                = var.cache_home
-    ebs_device                = var.ebs_device_name
-    app_name                  = var.alfresco_app_name
-    route53_sub_domain        = "${var.alfresco_app_name}.${var.environment}"
-    private_domain            = var.internal_domain
-    account_id                = var.account_id
-    internal_domain           = var.internal_domain
-    monitoring_server_url     = local.monitoring_server_url
-    monitoring_cluster_name   = "${var.short_environment_identifier}-es-cluster"
-    cluster_subnet            = ""
-    cluster_name              = "${var.environment_identifier}-public-ecs-cluster"
-    db_name                   = local.db_name
-    db_host                   = local.db_host
-    db_user                   = local.db_username
-    db_password               = local.db_password
-    keys_dir                  = var.keys_dir
-    tomcat_host               = var.tomcat_host
-    tomcat_port               = var.tomcat_port
-    config_file_path          = "${local.common_name}/config/nginx.conf"
-    nginx_config_file         = "/etc/nginx/conf.d/app.conf"
-    s3_bucket_config          = local.config_bucket
-    runtime_config_override   = "s3"
-    self_signed_ca_cert       = var.self_signed_ssm["ca_cert"]
-    self_signed_cert          = var.self_signed_ssm["cert"]
-    self_signed_key           = var.self_signed_ssm["key"]
-    ssm_get_command           = "aws --region ${var.region} ssm get-parameters --names"
-    messaging_broker_url      = var.messaging_broker_url
-    logstash_host_fqdn        = var.logstash_host_fqdn
-    kibana_host_fqdn          = var.kibana_host
-    elasitcsearch_host_fqdn   = var.elasitcsearch_host
-    messaging_broker_password = local.messaging_broker_password
+    env_identifier             = var.environment_identifier
+    short_env_identifier       = var.short_environment_identifier
+    app_name                   = var.alfresco_app_name
+    cldwatch_log_group         = module.create_loggroup.loggroup_name
+    region                     = var.region
+    cache_home                 = var.cache_home
+    ebs_device                 = var.ebs_device_name
+    app_name                   = var.alfresco_app_name
+    route53_sub_domain         = "${var.alfresco_app_name}.${var.environment}"
+    private_domain             = var.internal_domain
+    account_id                 = var.account_id
+    internal_domain            = var.internal_domain
+    elasticsearch_url          = var.elasticsearch_props["url"]
+    elasticsearch_cluster_name = var.elasticsearch_props["cluster_name"]
+    cluster_subnet             = ""
+    cluster_name               = "${var.environment_identifier}-public-ecs-cluster"
+    db_name                    = local.db_name
+    db_host                    = local.db_host
+    db_user                    = local.db_username
+    db_password                = local.db_password
+    keys_dir                   = var.keys_dir
+    tomcat_host                = var.tomcat_host
+    tomcat_port                = var.tomcat_port
+    config_file_path           = "${local.common_name}/config/nginx.conf"
+    nginx_config_file          = "/etc/nginx/conf.d/app.conf"
+    s3_bucket_config           = local.config_bucket
+    runtime_config_override    = "s3"
+    self_signed_ca_cert        = var.self_signed_ssm["ca_cert"]
+    self_signed_cert           = var.self_signed_ssm["cert"]
+    self_signed_key            = var.self_signed_ssm["key"]
+    ssm_get_command            = "aws --region ${var.region} ssm get-parameters --names"
+    messaging_broker_url       = var.messaging_broker_url
+    logstash_host_fqdn         = var.logstash_host_fqdn
+    kibana_host_fqdn           = var.kibana_host
+    messaging_broker_password  = local.messaging_broker_password
     #s3 config data
     bucket_name         = var.alfresco_s3bucket
     bucket_encrypt_type = "kms"
@@ -65,11 +64,11 @@ data "template_file" "user_data" {
 # ############################################
 
 resource "aws_launch_configuration" "environment" {
-  name_prefix          = "asg-alf-"
-  image_id             = var.ami_id
-  instance_type        = var.instance_type
-  iam_instance_profile = var.instance_profile
-  key_name             = var.ssh_deployer_key
+  name_prefix                 = "asg-alf-"
+  image_id                    = var.ami_id
+  instance_type               = var.instance_type
+  iam_instance_profile        = var.instance_profile
+  key_name                    = var.ssh_deployer_key
   security_groups             = flatten(local.instance_security_groups)
   associate_public_ip_address = var.associate_public_ip_address
   user_data                   = data.template_file.user_data.rendered
@@ -113,7 +112,7 @@ data "null_data_source" "tags" {
 }
 
 resource "aws_autoscaling_group" "environment" {
-  name = "${local.common_prefix}-${aws_launch_configuration.environment.name}"
+  name                      = "${local.common_prefix}-${aws_launch_configuration.environment.name}"
   vpc_zone_identifier       = flatten(local.subnet_ids)
   min_size                  = var.az_asg_min
   max_size                  = var.az_asg_max

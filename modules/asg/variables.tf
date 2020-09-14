@@ -29,9 +29,6 @@ variable "tags" {
   type = map(string)
 }
 
-variable "monitoring_server_url" {
-}
-
 variable "db_name" {
 }
 
@@ -302,3 +299,7 @@ variable "solr_config" {
   default = {}
 }
 
+variable "elasticsearch_props" {
+  type    = map(string)
+  default = {}
+}

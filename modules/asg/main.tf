@@ -14,7 +14,6 @@ locals {
   db_host                   = var.db_host
   messaging_broker_password = var.messaging_broker_password
   tags                      = var.tags
-  monitoring_server_url     = var.monitoring_server_url
   config_bucket             = var.config_bucket
 
   subnet_ids = [
