@@ -139,6 +139,19 @@ data "terraform_remote_state" "efs" {
 }
 
 #-------------------------------------------------------------
+### Getting the elk-service details
+#-------------------------------------------------------------
+data "terraform_remote_state" "elk-service" {
+  backend = "s3"
+
+  config = {
+    bucket = var.remote_state_bucket_name
+    key    = "alfresco/elk-service/terraform.tfstate"
+    region = var.region
+  }
+}
+
+#-------------------------------------------------------------
 ### Getting the latest amazon ami
 #-------------------------------------------------------------
 
@@ -225,7 +238,7 @@ locals {
 
   monitoring_groups = [
     data.terraform_remote_state.network-security-groups.outputs.sg_ssh_bastion_in_id,
-    data.terraform_remote_state.network-security-groups.outputs.sg_mon_efs,
+    data.terraform_remote_state.elk-service.outputs.elk_service["access_sg"],
     data.terraform_remote_state.network-security-groups.outputs.sg_monitoring,
     data.terraform_remote_state.network-security-groups.outputs.sg_elasticsearch,
   ]
