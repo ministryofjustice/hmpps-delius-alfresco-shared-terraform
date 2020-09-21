@@ -8,6 +8,7 @@
     - name: load json variables
       set_fact:
         db_info: "{{ lookup('file', '../ansible/data.json') | from_json }}"
+        wait_time: "{{ lookup('env', 'ALF_WAIT_TIME') or 300 }}"
 
     - name: set base facts
       set_fact:
@@ -26,3 +27,8 @@
     - name: create snapshot and destroy target instance
       include: snapshot.yml
       when: create_snapshot | bool
+
+    - name: "sleep for {{ wait_time }} seconds and continue with play"
+      wait_for:
+        timeout: "{{ wait_time }}"
+      delegate_to: localhost
