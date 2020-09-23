@@ -1,0 +1,25 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": "es:ESHttpPut",
+      "Resource": "${domain_arn}/*"
+    },
+    {
+      "Action": ["s3:ListBucket"],
+      "Effect": "Allow",
+      "Resource": ["${bucket_arn}"]
+    },
+    {
+      "Action": [
+        "s3:GetObject",
+        "s3:PutObject",
+        "s3:DeleteObject",
+        "iam:PassRole"
+      ],
+      "Effect": "Allow",
+      "Resource": ["${bucket_arn}/*"]
+    }
+  ]
+}

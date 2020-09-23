@@ -7,5 +7,7 @@ output "elk_service" {
     kibana_endpoint = local.kibana_host_url
     access_sg       = aws_security_group.access_es.id
     es_url          = local.es_url
+    snapshot_role   = aws_iam_role.elasticsearch.name
+    lambda_role     = module.es-lambda.iamrole_name
   }
 }

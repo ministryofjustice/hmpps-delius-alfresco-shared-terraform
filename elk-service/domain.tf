@@ -10,36 +10,37 @@ resource "aws_cloudwatch_log_group" "es" {
   )
 }
 
-resource "aws_iam_service_linked_role" "es" {
-  aws_service_name = "es.amazonaws.com"
-}
-
 resource "aws_cloudwatch_log_resource_policy" "example" {
   policy_name     = "${local.common_name}-logs-pol"
   policy_document = data.aws_iam_policy_document.es_cloudwatch_policy.json
 }
 
+resource "aws_iam_service_linked_role" "es" {
+  aws_service_name = "es.amazonaws.com"
+  count            = lookup(local.alf_elk_service_props, "create_service_role", 0)
+}
+
 resource "aws_elasticsearch_domain" "es" {
   domain_name           = local.common_name
-  elasticsearch_version = lookup(var.alf_elk_service_props, "elasticsearch_version", "6.8")
+  elasticsearch_version = lookup(local.alf_elk_service_props, "elasticsearch_version", "6.8")
 
   cluster_config {
-    instance_type            = lookup(var.alf_elk_service_props, "instance_type", "t2.medium.elasticsearch")
-    dedicated_master_enabled = lookup(var.alf_elk_service_props, "dedicated_master_enabled", true)
-    dedicated_master_count   = lookup(var.alf_elk_service_props, "dedicated_master_count", 3)
-    dedicated_master_type    = lookup(var.alf_elk_service_props, "dedicated_master_type", "t2.medium.elasticsearch")
-    zone_awareness_enabled   = lookup(var.alf_elk_service_props, "zone_awareness_enabled", true)
-    instance_count           = lookup(var.alf_elk_service_props, "instance_count", 3)
+    instance_type            = lookup(local.alf_elk_service_props, "instance_type", "t2.medium.elasticsearch")
+    dedicated_master_enabled = lookup(local.alf_elk_service_props, "dedicated_master_enabled", true)
+    dedicated_master_count   = lookup(local.alf_elk_service_props, "dedicated_master_count", 3)
+    dedicated_master_type    = lookup(local.alf_elk_service_props, "dedicated_master_type", "t2.medium.elasticsearch")
+    zone_awareness_enabled   = lookup(local.alf_elk_service_props, "zone_awareness_enabled", true)
+    instance_count           = lookup(local.alf_elk_service_props, "instance_count", 3)
     zone_awareness_config {
-      availability_zone_count = lookup(var.alf_elk_service_props, "availability_zone_count", 3)
+      availability_zone_count = lookup(local.alf_elk_service_props, "availability_zone_count", 3)
     }
   }
 
   ebs_options {
-    ebs_enabled = lookup(var.alf_elk_service_props, "es_ebs_enabled", true)
-    volume_type = lookup(var.alf_elk_service_props, "es_ebs_type", "gp2")
-    volume_size = lookup(var.alf_elk_service_props, "es_ebs_size", 10)
-    iops        = lookup(var.alf_elk_service_props, "iops", 0)
+    ebs_enabled = lookup(local.alf_elk_service_props, "es_ebs_enabled", true)
+    volume_type = lookup(local.alf_elk_service_props, "es_ebs_type", "gp2")
+    volume_size = lookup(local.alf_elk_service_props, "es_ebs_size", 10)
+    iops        = lookup(local.alf_elk_service_props, "iops", 0)
   }
 
   vpc_options {
@@ -57,20 +58,20 @@ resource "aws_elasticsearch_domain" "es" {
   )
 
   snapshot_options {
-    automated_snapshot_start_hour = lookup(var.alf_elk_service_props, "automated_snapshot_start_hour", 23)
+    automated_snapshot_start_hour = lookup(local.alf_elk_service_props, "automated_snapshot_start_hour", 23)
   }
 
   encrypt_at_rest {
-    enabled = lookup(var.alf_elk_service_props, "encrypt_at_rest", true)
+    enabled = lookup(local.alf_elk_service_props, "encrypt_at_rest", true)
   }
 
   node_to_node_encryption {
-    enabled = lookup(var.alf_elk_service_props, "node_to_node_encryption", true)
+    enabled = lookup(local.alf_elk_service_props, "node_to_node_encryption", true)
   }
 
   domain_endpoint_options {
     enforce_https       = true
-    tls_security_policy = lookup(var.alf_elk_service_props, "tls_security_policy", "Policy-Min-TLS-1-2-2019-07")
+    tls_security_policy = lookup(local.alf_elk_service_props, "tls_security_policy", "Policy-Min-TLS-1-2-2019-07")
   }
 
   log_publishing_options {
@@ -94,10 +95,8 @@ resource "aws_elasticsearch_domain" "es" {
   tags = merge(
     local.tags,
     {
-      "Name" = "${local.common_name}-sg"
+      "Name" = "${local.common_name}"
     },
   )
-
-  depends_on = [aws_iam_service_linked_role.es]
 
 }

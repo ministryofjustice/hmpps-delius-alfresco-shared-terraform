@@ -16,7 +16,7 @@ data "template_file" "es" {
     artefacts-s3bucket-arn    = local.artefacts-s3bucket-arn
     db_user_name_arn          = data.aws_ssm_parameter.db_user.arn
     db_password_arn           = data.aws_ssm_parameter.db_password.arn
-    elk_backups_bucket_arn    = data.terraform_remote_state.s3bucket.outputs.elk_backups_bucket_arn
+    elk_backups_bucket_arn    = local.elk_backups_bucket_arn
   }
 }
 
@@ -60,4 +60,3 @@ resource "aws_iam_role_policy_attachment" "cross_account" {
   role       = module.create-iam-app-role-es.iamrole_name
   policy_arn = aws_iam_policy.cross_account[0].arn
 }
-

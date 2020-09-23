@@ -64,6 +64,20 @@ resource "aws_security_group_rule" "egress_self" {
   self              = true
 }
 
+resource "aws_security_group_rule" "bastion_ingress" {
+  security_group_id = aws_security_group.es.id
+  type              = "ingress"
+  from_port         = 443
+  to_port           = 443
+  protocol          = "tcp"
+  cidr_blocks = [
+    local.bastion_cidrs["az1"],
+    local.bastion_cidrs["az2"],
+    local.bastion_cidrs["az3"]
+  ]
+  description = "${local.common_name}-https"
+}
+
 resource "aws_security_group_rule" "ingress_ext_kibana" {
   security_group_id = aws_security_group.lb.id
   type              = "ingress"

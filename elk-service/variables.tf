@@ -33,6 +33,12 @@ variable "alf_elk_service_props" {
   }
 }
 
+variable "alf_elk_service_map" {
+  type    = map(string)
+  default = {}
+}
+
+
 variable "alf_cloudwatch_log_retention" {}
 
 variable "alf_cognito_map" {
