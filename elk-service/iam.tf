@@ -57,3 +57,45 @@ module "create-iam-app-policy-es" {
   )
   rolename = module.create-iam-app-role-es.iamrole_name
 }
+
+# Snapshot Role
+resource "aws_iam_role" "elasticsearch" {
+  name = "${local.common_name}-elasticsearch-role"
+  assume_role_policy = templatefile(
+    "${path.module}/./policies/es_assume.json",
+    {}
+  )
+  description = "${local.common_name}-snapshot-role"
+  tags        = local.tags
+}
+
+module "create-snapshot-policy-es" {
+  source = "../modules/iam/rolepolicy"
+  policyfile = templatefile(
+    "${path.module}/./policies/snapshotRole.json",
+    {
+      bucket_arn = local.elk_backups_bucket_arn
+      domain_arn = aws_elasticsearch_domain.es.arn
+      kms_arn    = local.storage_kms_arn
+    }
+  )
+  rolename = aws_iam_role.elasticsearch.name
+}
+
+module "es-lambda" {
+  source     = "../modules/iam_role"
+  rolename   = "${local.common_name}-lambda"
+  policyfile = "lambda.json"
+}
+
+module "es-lamda-policy" {
+  source = "../modules/iam/rolepolicy"
+  policyfile = templatefile(
+    "${path.module}/./policies/lambdaRole.json",
+    {
+      role_arn   = aws_iam_role.elasticsearch.arn
+      domain_arn = aws_elasticsearch_domain.es.arn
+    }
+  )
+  rolename = module.es-lambda.iamrole_name
+}

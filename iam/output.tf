@@ -46,4 +46,3 @@ output "iam_instance_es_admin_profile_name" {
 output "es_admin_policy_name" {
   value = module.create-iam-app-policy-es.iampolicy_name
 }
-

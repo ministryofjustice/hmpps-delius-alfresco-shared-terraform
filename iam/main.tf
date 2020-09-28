@@ -126,6 +126,7 @@ locals {
   vpc_cidr                  = data.terraform_remote_state.common.outputs.vpc_cidr_block
   monitoring_kms_arn        = data.terraform_remote_state.mon.outputs.monitoring_kms_arn
   alf_backups_bucket_arn    = data.terraform_remote_state.s3bucket.outputs.alf_backups_bucket_arn
+  elk_backups_bucket_arn    = data.terraform_remote_state.s3bucket.outputs.elk_backups_bucket_arn
   artefacts-s3bucket-arn    = var.is_production == true ? data.terraform_remote_state.prod_artefacts.outputs.s3bucket_artefacts_iam_arn : data.terraform_remote_state.artefacts.outputs.s3bucket_artefacts_iam_arn
   ssm_path                  = data.terraform_remote_state.common.outputs.credentials_ssm_path
 }

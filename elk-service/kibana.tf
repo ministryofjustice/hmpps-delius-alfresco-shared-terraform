@@ -2,9 +2,9 @@ locals {
   kibana_port           = 5601
   kibana_protocol       = "HTTP"
   kibana_container_name = "kibana"
-  kibana_image_url      = lookup(var.alf_elk_service_props, "kibana_image_url", "docker.elastic.co/kibana/kibana-oss:6.8.9")
-  es_host_protocol      = lookup(var.alf_elk_service_props, "es_host_protocol", "https")
-  es_host_port          = lookup(var.alf_elk_service_props, "es_host_port", 443)
+  kibana_image_url      = lookup(local.alf_elk_service_props, "kibana_image_url", "docker.elastic.co/kibana/kibana-oss:6.8.9")
+  es_host_protocol      = lookup(local.alf_elk_service_props, "es_host_protocol", "https")
+  es_host_port          = lookup(local.alf_elk_service_props, "es_host_port", 443)
   es_url                = "${local.es_host_protocol}://${aws_elasticsearch_domain.es.endpoint}:${local.es_host_port}"
 }
 
@@ -55,7 +55,7 @@ resource "aws_lb_listener" "kibana_https" {
   load_balancer_arn = module.kibana_alb.lb_arn
   port              = 443
   protocol          = "HTTPS"
-  ssl_policy        = lookup(var.alf_elk_service_props, "ssl_policy", "ELBSecurityPolicy-TLS-1-2-2017-01")
+  ssl_policy        = lookup(local.alf_elk_service_props, "ssl_policy", "ELBSecurityPolicy-TLS-1-2-2017-01")
   certificate_arn   = local.certificate_arn
 
   default_action {
@@ -149,7 +149,7 @@ resource "aws_ecs_service" "kibana_service" {
   name                               = "${local.common_name}-${local.kibana_container_name}"
   cluster                            = local.ecs_cluster_name
   task_definition                    = aws_ecs_task_definition.kibana.arn
-  desired_count                      = lookup(var.alf_elk_service_props, "desired_count", 2)
+  desired_count                      = lookup(local.alf_elk_service_props, "desired_count", 2)
   deployment_minimum_healthy_percent = 50
   network_configuration {
     security_groups = [
@@ -175,7 +175,7 @@ resource "aws_launch_configuration" "kibana" {
   associate_public_ip_address = false
   iam_instance_profile        = module.create-iam-instance-profile-es.iam_instance_name
   image_id                    = data.aws_ami.aws_ecs_ami.id
-  instance_type               = lookup(var.alf_elk_service_props, "kibana_instance_type", "t2.medium")
+  instance_type               = lookup(local.alf_elk_service_props, "kibana_instance_type", "t2.medium")
   key_name                    = local.ssh_deployer_key
   security_groups = [
     aws_security_group.kibana.id,
@@ -192,8 +192,8 @@ resource "aws_launch_configuration" "kibana" {
     }
   )
   root_block_device {
-    volume_type = lookup(var.alf_elk_service_props, "root_volume_type", "standard")
-    volume_size = lookup(var.alf_elk_service_props, "root_volume_size", 60)
+    volume_type = lookup(local.alf_elk_service_props, "root_volume_type", "standard")
+    volume_size = lookup(local.alf_elk_service_props, "root_volume_size", 60)
   }
 
   lifecycle {
@@ -214,9 +214,9 @@ data "null_data_source" "tags" {
 resource "aws_autoscaling_group" "kibana" {
   name                      = aws_launch_configuration.kibana.name
   vpc_zone_identifier       = flatten(local.private_subnet_ids)
-  min_size                  = lookup(var.alf_elk_service_props, "kibana_asg_size", 2)
-  max_size                  = lookup(var.alf_elk_service_props, "kibana_asg_size", 2)
-  desired_capacity          = lookup(var.alf_elk_service_props, "kibana_asg_size", 2)
+  min_size                  = lookup(local.alf_elk_service_props, "kibana_asg_size", 2)
+  max_size                  = lookup(local.alf_elk_service_props, "kibana_asg_size", 2)
+  desired_capacity          = lookup(local.alf_elk_service_props, "kibana_asg_size", 2)
   launch_configuration      = aws_launch_configuration.kibana.name
   health_check_grace_period = 300
   termination_policies      = var.termination_policies

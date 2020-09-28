@@ -27,11 +27,17 @@ variable "alf_elk_service_props" {
   type = map(string)
   default = {
     elasticsearch_version         = "6.8"
-    instance_type                 = "t2.medium.elasticsearch"
+    instance_type                 = "t3.medium.elasticsearch"
     automated_snapshot_start_hour = 23
-    encrypt_at_rest               = false
+    encrypt_at_rest               = true
   }
 }
+
+variable "alf_elk_service_map" {
+  type    = map(string)
+  default = {}
+}
+
 
 variable "alf_cloudwatch_log_retention" {}
 

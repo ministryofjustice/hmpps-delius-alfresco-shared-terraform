@@ -15,8 +15,8 @@ actions:
       max_wait: -1
       disable_action: False
     filters:
-    - filtertype: age
-      source: creation_date
-      direction: younger
-      unit: days
-      unit_count: 7
+      - filtertype: age
+        source: creation_date
+        direction: younger
+        unit: days
+        unit_count: 7

@@ -8,11 +8,19 @@
     - name: load json variables
       set_fact:
         db_info: "{{ lookup('file', '../../data.json') | from_json }}"
+        prod_target: "{{ lookup('env', 'ALF_TARGET_IS_PROD') or 'no'}}"
 
-    - name: set base facts
+    - name: set base facts when target is not prod
       set_fact:
         target_account: "{{ db_info['targets'][environment_name]['account_id'] }}"
         target_id: "{{ db_info['targets'][environment_name]['id'] }}"
+      when: not prod_target | bool
+
+    - name: set base facts when target is prod
+      set_fact:
+        target_account: "{{ db_info['source']['account_id'] }}"
+        target_id: "{{ db_info['source']['id'] }}"
+      when: prod_target | bool
 
     - name: target database instance id
       debug:

@@ -9,6 +9,18 @@ terraform {
 # DATA SOURCE MODULES FROM OTHER TERRAFORM BACKENDS
 ####################################################
 #-------------------------------------------------------------
+### Getting the current vpc
+#-------------------------------------------------------------
+data "terraform_remote_state" "vpc" {
+  backend = "s3"
+
+  config = {
+    bucket = var.remote_state_bucket_name
+    key    = "vpc/terraform.tfstate"
+    region = var.region
+  }
+}
+#-------------------------------------------------------------
 ### Getting the common details
 #-------------------------------------------------------------
 data "terraform_remote_state" "common" {
@@ -115,15 +127,18 @@ locals {
   environment                  = data.terraform_remote_state.common.outputs.environment
   tags                         = data.terraform_remote_state.common.outputs.common_tags
   instance_profile             = data.terraform_remote_state.iam.outputs.iam_instance_es_admin_profile_name
+  es_admin_role_name           = data.terraform_remote_state.iam.outputs.iam_instance_es_admin_role_name
   ssh_deployer_key             = data.terraform_remote_state.common.outputs.common_ssh_deployer_key
   s3bucket                     = data.terraform_remote_state.s3bucket.outputs.s3bucket
   bastion_inventory            = var.bastion_inventory
+  bastion_cidrs                = data.terraform_remote_state.vpc.outputs.bastion_vpc_public_cidr
   logs_kms_arn                 = data.terraform_remote_state.common.outputs.kms_arn
   config-bucket                = data.terraform_remote_state.common.outputs.common_s3-config-bucket
   certificate_arn              = data.aws_acm_certificate.cert.arn
   public_subnet_ids            = data.terraform_remote_state.common.outputs.public_subnet_ids
   private_subnet_ids           = data.terraform_remote_state.common.outputs.private_subnet_ids
   elk_bucket_name              = data.terraform_remote_state.s3bucket.outputs.elk_backups_bucket_name
+  elk_backups_bucket_arn       = data.terraform_remote_state.s3bucket.outputs.elk_backups_bucket_arn
   storage_s3bucket             = data.terraform_remote_state.s3bucket.outputs.s3bucket
   backups_bucket               = data.terraform_remote_state.s3bucket.outputs.alf_backups_bucket_name
   storage_kms_arn              = data.terraform_remote_state.s3bucket.outputs.s3bucket_kms_arn
@@ -132,6 +147,7 @@ locals {
   access_logs_bucket           = data.terraform_remote_state.common.outputs.common_s3_lb_logs_bucket
   ecs_cluster_name             = data.terraform_remote_state.common.outputs.ecs_cluster["name"]
   service_discovery_domain     = "${local.application}-${local.internal_domain}"
+  alf_elk_service_props        = merge(var.alf_elk_service_props, var.alf_elk_service_map)
 
   allowed_cidr_block = [
     var.user_access_cidr_blocks,
