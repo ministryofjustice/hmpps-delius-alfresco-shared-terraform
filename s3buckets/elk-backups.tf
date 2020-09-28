@@ -25,7 +25,7 @@ resource "aws_s3_bucket" "elk_backups" {
   lifecycle_rule {
     enabled = true
     expiration {
-      days = 2
+      days = lookup(var.alf_backups_config, "backups_expiration", 30)
     }
   }
 

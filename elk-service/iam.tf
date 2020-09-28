@@ -76,6 +76,7 @@ module "create-snapshot-policy-es" {
     {
       bucket_arn = local.elk_backups_bucket_arn
       domain_arn = aws_elasticsearch_domain.es.arn
+      kms_arn    = local.storage_kms_arn
     }
   )
   rolename = aws_iam_role.elasticsearch.name
@@ -87,7 +88,7 @@ module "es-lambda" {
   policyfile = "lambda.json"
 }
 
-module "create-snapshot-policy-admin" {
+module "es-lamda-policy" {
   source = "../modules/iam/rolepolicy"
   policyfile = templatefile(
     "${path.module}/./policies/lambdaRole.json",

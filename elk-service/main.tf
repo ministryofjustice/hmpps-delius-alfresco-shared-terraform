@@ -131,7 +131,7 @@ locals {
   ssh_deployer_key             = data.terraform_remote_state.common.outputs.common_ssh_deployer_key
   s3bucket                     = data.terraform_remote_state.s3bucket.outputs.s3bucket
   bastion_inventory            = var.bastion_inventory
-  bastion_cidrs                 = data.terraform_remote_state.vpc.outputs.bastion_vpc_public_cidr
+  bastion_cidrs                = data.terraform_remote_state.vpc.outputs.bastion_vpc_public_cidr
   logs_kms_arn                 = data.terraform_remote_state.common.outputs.kms_arn
   config-bucket                = data.terraform_remote_state.common.outputs.common_s3-config-bucket
   certificate_arn              = data.aws_acm_certificate.cert.arn

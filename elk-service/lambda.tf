@@ -39,7 +39,7 @@ resource "aws_lambda_function" "repo" {
     variables = {
       ROLE_ARN    = aws_iam_role.elasticsearch.arn
       BUCKET_NAME = local.elk_bucket_name
-      AWS_ES_HOST = "https://${aws_elasticsearch_domain.es.endpoint}"
+      AWS_ES_HOST = aws_elasticsearch_domain.es.endpoint
     }
   }
 
@@ -47,7 +47,8 @@ resource "aws_lambda_function" "repo" {
     subnet_ids = flatten(local.private_subnet_ids)
     security_group_ids = [
       aws_security_group.access_es.id,
-      data.terraform_remote_state.common.outputs.common_sg_outbound_id
+      data.terraform_remote_state.common.outputs.common_sg_outbound_id,
+      data.terraform_remote_state.security-groups.outputs.security_groups_map["mon_jenkins"]
     ]
   }
 }

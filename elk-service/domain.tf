@@ -25,10 +25,10 @@ resource "aws_elasticsearch_domain" "es" {
   elasticsearch_version = lookup(local.alf_elk_service_props, "elasticsearch_version", "6.8")
 
   cluster_config {
-    instance_type            = lookup(local.alf_elk_service_props, "instance_type", "t2.medium.elasticsearch")
+    instance_type            = lookup(local.alf_elk_service_props, "instance_type", "t3.medium.elasticsearch")
     dedicated_master_enabled = lookup(local.alf_elk_service_props, "dedicated_master_enabled", true)
     dedicated_master_count   = lookup(local.alf_elk_service_props, "dedicated_master_count", 3)
-    dedicated_master_type    = lookup(local.alf_elk_service_props, "dedicated_master_type", "t2.medium.elasticsearch")
+    dedicated_master_type    = lookup(local.alf_elk_service_props, "dedicated_master_type", "t3.medium.elasticsearch")
     zone_awareness_enabled   = lookup(local.alf_elk_service_props, "zone_awareness_enabled", true)
     instance_count           = lookup(local.alf_elk_service_props, "instance_count", 3)
     zone_awareness_config {
@@ -91,6 +91,17 @@ resource "aws_elasticsearch_domain" "es" {
     cloudwatch_log_group_arn = aws_cloudwatch_log_group.es.arn
     log_type                 = "ES_APPLICATION_LOGS"
   }
+
+  # advanced_security_options {
+  #   enabled                        = true
+  #   internal_user_database_enabled = true
+
+  #   master_user_options {
+  #     # master_user_arn = "admin"
+  #     master_user_name     = "admin"
+  #     master_user_password = "hamm3rTime!"
+  #   }
+  # }
 
   tags = merge(
     local.tags,
