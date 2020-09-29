@@ -19,3 +19,7 @@ variable "alf_backups_config" {
   }
 }
 
+variable "alf_backups_map" {
+  type    = map(string)
+  default = {}
+}

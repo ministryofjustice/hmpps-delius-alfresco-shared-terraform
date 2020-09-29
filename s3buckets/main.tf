@@ -26,12 +26,13 @@ data "terraform_remote_state" "common" {
 ####################################################
 
 locals {
-  region            = var.region
-  alfresco_app_name = data.terraform_remote_state.common.outputs.alfresco_app_name
-  common_name       = data.terraform_remote_state.common.outputs.common_name
-  tags              = data.terraform_remote_state.common.outputs.common_tags
-  transition_days   = var.alf_backups_config["transition_days"]
-  expiration_days   = var.alf_backups_config["expiration_days"]
+  region             = var.region
+  alfresco_app_name  = data.terraform_remote_state.common.outputs.alfresco_app_name
+  common_name        = data.terraform_remote_state.common.outputs.common_name
+  tags               = data.terraform_remote_state.common.outputs.common_tags
+  alf_backups_config = merge(var.alf_backups_config, var.alf_backups_map)
+  transition_days    = local.alf_backups_config["transition_days"]
+  expiration_days    = local.alf_backups_config["expiration_days"]
 }
 
 ####################################################

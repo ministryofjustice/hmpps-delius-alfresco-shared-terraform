@@ -1,0 +1,28 @@
+---
+- name: Trigger lambda function
+  hosts: localhost
+  connection: local
+  vars:
+    iam_user_profile: "{{ lookup('env', 'IAM_USER_PROFILE')}}"
+    aws_region: "eu-west-2"
+    function_name: "{{ lookup('env', 'FUNCTION_NAME') or 'AlfElasticSearch' }}"
+    target_iam_role: "{{ lookup('env', 'TERRAGRUNT_IAM_ROLE')}}"
+    task_name: "{{ lookup('env', 'TASK_NAME') or 'get-all-snapshots'}}"
+  tasks:
+    - name: get aws credentials
+      include: ../../creds/playbook.yml
+
+    - name: "trigger {{ function_name }} lambda function"
+      execute_lambda:
+        name: "{{ function_name }}"
+        wait: yes
+        aws_access_key: "{{ aws_access_key_id }}"
+        aws_secret_key: "{{ aws_secret_access_key }}"
+        security_token: "{{ aws_security_token }}"
+        payload:
+          task: "{{ task_name }}"
+      register: response
+
+    - name: function output
+      debug:
+        msg: "{{ response }}"

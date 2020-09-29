@@ -37,9 +37,12 @@ resource "aws_lambda_function" "repo" {
 
   environment {
     variables = {
-      ROLE_ARN    = aws_iam_role.elasticsearch.arn
-      BUCKET_NAME = local.elk_bucket_name
-      AWS_ES_HOST = aws_elasticsearch_domain.es.endpoint
+      ROLE_ARN            = aws_iam_role.elasticsearch.arn
+      BUCKET_NAME         = local.elk_bucket_name
+      AWS_ES_HOST         = aws_elasticsearch_domain.es.endpoint
+      INDICES_UNIT_COUNT  = lookup(local.alf_elk_service_props, "indices_unit_count", 30)
+      SNAPSHOT_UNIT_COUNT = lookup(local.alf_elk_service_props, "snapshot_unit_count", 28)
+      BACKUP_UNITS_COUNT  = lookup(local.alf_elk_service_props, "backup_units_count", 2)
     }
   }
 
@@ -64,3 +67,38 @@ resource "aws_cloudwatch_log_group" "lambda" {
   )
 }
 
+module "create_snapshot" {
+  source = "../modules/cloudwatch/rule_trigger_lambda"
+  target_function = {
+    rule_name = "alf-elasticsearch-create-snapshot"
+    name      = aws_lambda_function.repo.function_name
+    id        = aws_lambda_function.repo.id
+    arn       = aws_lambda_function.repo.arn
+    input     = jsonencode({ "task" = "submit-create-snapshot" })
+    schedule  = lookup(local.alf_elk_service_props, "snapshot_schedule", "30 19 * * ? *")
+  }
+}
+
+module "delete_indices" {
+  source = "../modules/cloudwatch/rule_trigger_lambda"
+  target_function = {
+    rule_name = "alf-elasticsearch-delete-indices"
+    name      = aws_lambda_function.repo.function_name
+    id        = aws_lambda_function.repo.id
+    arn       = aws_lambda_function.repo.arn
+    input     = jsonencode({ "task" = "submit-delete-indices-task" })
+    schedule  = lookup(local.alf_elk_service_props, "indices_schedule", "30 21 * * ? *")
+  }
+}
+
+module "delete_snapshots" {
+  source = "../modules/cloudwatch/rule_trigger_lambda"
+  target_function = {
+    rule_name = "alf-elasticsearch-delete-snapshot"
+    name      = aws_lambda_function.repo.function_name
+    id        = aws_lambda_function.repo.id
+    arn       = aws_lambda_function.repo.arn
+    input     = jsonencode({ "task" = "submit-delete-snapshot" })
+    schedule  = lookup(local.alf_elk_service_props, "delete_schedule", "30 22 * * ? *")
+  }
+}
