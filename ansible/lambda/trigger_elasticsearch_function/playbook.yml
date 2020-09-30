@@ -7,10 +7,23 @@
     aws_region: "eu-west-2"
     function_name: "{{ lookup('env', 'FUNCTION_NAME') or 'AlfElasticSearch' }}"
     target_iam_role: "{{ lookup('env', 'TERRAGRUNT_IAM_ROLE')}}"
-    task_name: "{{ lookup('env', 'TASK_NAME') or 'get-all-snapshots'}}"
   tasks:
+    - name: set payload facts
+      set_fact:
+        template_file: "{{ lookup('env', 'TASK_TEMPLATE') or 'task.json.j2'}}"
+        task_name: "{{ lookup('env', 'TASK_NAME') or 'get-all-indices'}}"
+        ssm_param: "{{ lookup('env', 'SSM_PARAM_NAME') or '/alfresco/elasticsearch/es5_endpoint'}}"
+
     - name: get aws credentials
       include: ../../creds/playbook.yml
+
+    - name: set lb endpoint name
+      set_fact:
+        endpoint: "{{ lookup('aws_ssm', ssm_param, aws_access_key=aws_access_key_id, aws_secret_key=aws_secret_access_key, aws_security_token=aws_security_token ) }}"
+
+    - name: set payload data
+      set_fact:
+        task_payload: "{{ lookup('template', template_file ) }}"
 
     - name: "trigger {{ function_name }} lambda function"
       execute_lambda:
@@ -19,8 +32,7 @@
         aws_access_key: "{{ aws_access_key_id }}"
         aws_secret_key: "{{ aws_secret_access_key }}"
         security_token: "{{ aws_security_token }}"
-        payload:
-          task: "{{ task_name }}"
+        payload: "{{ task_payload }}"
       register: response
 
     - name: function output
