@@ -57,7 +57,7 @@ resource "aws_lb_listener" "kibana_https" {
   load_balancer_arn = module.kibana_app_alb.lb_arn
   port              = 443
   protocol          = "HTTPS"
-  ssl_policy        = var.elk_migration_props["ssl_policy"]
+  ssl_policy        = lookup(var.elk_migration_props, "ssl_policy", "ELBSecurityPolicy-TLS-1-2-2017-01")
   certificate_arn   = local.certificate_arn
 
   default_action {
