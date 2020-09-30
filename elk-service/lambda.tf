@@ -67,6 +67,18 @@ resource "aws_cloudwatch_log_group" "lambda" {
   )
 }
 
+module "register_repo" {
+  source = "../modules/cloudwatch/rule_trigger_lambda"
+  target_function = {
+    rule_name = "alf-elasticsearch-register-repo"
+    name      = aws_lambda_function.repo.function_name
+    id        = aws_lambda_function.repo.id
+    arn       = aws_lambda_function.repo.arn
+    input     = jsonencode({ "task" = "register-repo" })
+    schedule  = lookup(local.alf_elk_service_props, "repo_schedule", "30 18 * * ? *")
+  }
+}
+
 module "create_snapshot" {
   source = "../modules/cloudwatch/rule_trigger_lambda"
   target_function = {
@@ -87,7 +99,7 @@ module "delete_indices" {
     id        = aws_lambda_function.repo.id
     arn       = aws_lambda_function.repo.arn
     input     = jsonencode({ "task" = "submit-delete-indices-task" })
-    schedule  = lookup(local.alf_elk_service_props, "indices_schedule", "30 21 * * ? *")
+    schedule  = lookup(local.alf_elk_service_props, "indices_schedule", "30 20 * * ? *")
   }
 }
 
@@ -99,6 +111,6 @@ module "delete_snapshots" {
     id        = aws_lambda_function.repo.id
     arn       = aws_lambda_function.repo.arn
     input     = jsonencode({ "task" = "submit-delete-snapshot" })
-    schedule  = lookup(local.alf_elk_service_props, "delete_schedule", "30 22 * * ? *")
+    schedule  = lookup(local.alf_elk_service_props, "delete_schedule", "30 21 * * ? *")
   }
 }
