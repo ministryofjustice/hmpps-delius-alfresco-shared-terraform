@@ -30,6 +30,11 @@ variable "alf_elk_service_props" {
     instance_type                 = "t3.medium.elasticsearch"
     automated_snapshot_start_hour = 23
     encrypt_at_rest               = true
+    snapshot_unit_count           = 28
+    indices_unit_count            = 30
+    backup_units_count            = 2
+    delete_schedule               = "30 3 * * ? *"
+    snapshot_schedule             = "30 21 * * ? *"
   }
 }
 

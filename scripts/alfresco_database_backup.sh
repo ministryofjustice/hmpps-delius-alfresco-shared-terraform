@@ -62,9 +62,6 @@ case ${JOB_TYPE} in
     echo "Running elasticsearch backup"
     export DAILY_SNAPSHOT_NAME="${ES_SNAPSHOT_NAME}-$(date '+%Y-%-m-%-d')"
 
-    echo "Clearing backup bucket"
-    aws s3 rm --recursive --only-show-errors s3://${ELK_BACKUP_BUCKET}/
-
     echo "Creating repos"
     elasticsearch-manager addrepository ${ELK_S3_REPO_NAME} --repo-type s3 --bucket ${ELK_BACKUP_BUCKET} && echo Success || exit $?
 

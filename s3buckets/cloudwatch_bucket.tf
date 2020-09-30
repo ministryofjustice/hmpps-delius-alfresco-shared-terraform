@@ -34,17 +34,17 @@ resource "aws_s3_bucket" "logs" {
     }
 
     noncurrent_version_transition {
-      days          = var.alf_backups_config["noncurrent_version_transition_days"]
+      days          = local.alf_backups_config["noncurrent_version_transition_days"]
       storage_class = "STANDARD_IA"
     }
 
     noncurrent_version_transition {
-      days          = var.alf_backups_config["noncurrent_version_transition_glacier_days"]
+      days          = local.alf_backups_config["noncurrent_version_transition_glacier_days"]
       storage_class = "GLACIER"
     }
 
     noncurrent_version_expiration {
-      days = var.alf_backups_config["noncurrent_version_expiration_days"]
+      days = local.alf_backups_config["noncurrent_version_expiration_days"]
     }
   }
 
