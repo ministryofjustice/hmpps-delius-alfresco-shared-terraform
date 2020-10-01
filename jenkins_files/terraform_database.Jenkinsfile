@@ -37,7 +37,7 @@ def do_terraform(env_name, comp) {
 }
 
 pipeline {
-    agent { label "jenkins_slave" }
+    agent { label "jenkins_agent" }
     options {
         ansiColor('xterm')
     }

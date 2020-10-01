@@ -10,7 +10,7 @@ def deploy(environments) {
 
 pipeline {
 
-    agent { label "jenkins_slave" }
+    agent { label "jenkins_agent" }
 
     options {
         ansiColor('xterm')

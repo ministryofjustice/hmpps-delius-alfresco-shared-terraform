@@ -106,7 +106,7 @@ def debug_env() {
 
 pipeline {
 
-    agent { label "jenkins_slave" }
+    agent { label "jenkins_agent" }
 
     parameters {
         choice(

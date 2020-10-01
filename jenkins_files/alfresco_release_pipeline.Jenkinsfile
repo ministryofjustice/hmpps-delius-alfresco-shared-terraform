@@ -121,7 +121,7 @@ def debug_env() {
 }
 
 pipeline {
-    agent { label "jenkins_slave" }
+    agent { label "jenkins_agent" }
     options {
         ansiColor('xterm')
     }

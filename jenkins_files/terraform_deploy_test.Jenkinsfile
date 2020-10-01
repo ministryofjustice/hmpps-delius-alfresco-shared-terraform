@@ -38,7 +38,7 @@ def do_terraform(env_name, comp) {
 }
 
 pipeline {
-    agent { label "jenkins_slave" }
+    agent { label "jenkins_agent" }
     environment {
         environment_name = "alfresco-dev"
     }
