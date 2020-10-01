@@ -33,7 +33,7 @@ resource "aws_lambda_function" "repo" {
   s3_key      = "lambda/${local.function_name}/${filemd5(local.payload_file)}/function.zip"
   publish     = true
   memory_size = 256
-  timeout     = 30
+  timeout     = 120
 
   environment {
     variables = {
