@@ -21,7 +21,7 @@ resource "aws_iam_service_linked_role" "es" {
 }
 
 resource "aws_elasticsearch_domain" "es" {
-  domain_name           = local.common_name
+  domain_name           = local.domain_name
   elasticsearch_version = lookup(local.alf_elk_service_props, "elasticsearch_version", "6.8")
 
   cluster_config {
@@ -51,7 +51,7 @@ resource "aws_elasticsearch_domain" "es" {
   access_policies = templatefile(
     "${path.module}/templates/iam/es_access_policy.conf",
     {
-      domain_name = local.common_name
+      domain_name = local.domain_name
       region      = var.region
       account_id  = local.account_id
     }
