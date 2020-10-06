@@ -122,6 +122,7 @@ locals {
   environment_identifier       = data.terraform_remote_state.common.outputs.environment_identifier
   application                  = "alf-elk-svc"
   common_name                  = "${data.terraform_remote_state.common.outputs.short_environment_identifier}-${local.application}"
+  domain_name                  = local.alf_elk_service_props["domain_name_type"] == "full" ? local.common_name : local.application
   short_environment_identifier = data.terraform_remote_state.common.outputs.short_environment_identifier
   region                       = var.region
   environment                  = data.terraform_remote_state.common.outputs.environment

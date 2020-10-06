@@ -35,6 +35,7 @@ variable "alf_elk_service_props" {
     backup_units_count            = 2
     delete_schedule               = "30 3 * * ? *"
     snapshot_schedule             = "30 21 * * ? *"
+    domain_name_type              = "full"
   }
 }
 
