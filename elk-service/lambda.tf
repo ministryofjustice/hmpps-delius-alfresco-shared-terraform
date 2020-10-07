@@ -14,7 +14,7 @@ resource "aws_s3_bucket_object" "build_code" {
 }
 
 resource "aws_lambda_function" "repo" {
-  function_name = "${local.function_name}"
+  function_name = local.function_name
   description   = local.function_name
   role          = module.es-lambda.iamrole_arn
   handler       = "main.lambda_handler"

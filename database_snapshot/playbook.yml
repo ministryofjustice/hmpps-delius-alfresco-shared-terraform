@@ -32,3 +32,4 @@
       wait_for:
         timeout: "{{ wait_time }}"
       delegate_to: localhost
+      when: create_snapshot | bool
