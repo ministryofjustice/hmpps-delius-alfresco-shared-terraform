@@ -10,8 +10,6 @@ data "template_file" "es" {
     app_role_arn              = module.create-iam-app-role-es.iamrole_arn
     alfresco_kms_arn          = local.alfresco_kms_arn
     alfresco-storage_s3bucket = local.alfresco-storage_s3bucket
-    monitoring_bucket_arn     = local.monitoring_bucket_arn
-    monitoring_kms_arn        = local.monitoring_kms_arn
     alf_backups_bucket_arn    = local.alf_backups_bucket_arn
     artefacts-s3bucket-arn    = local.artefacts-s3bucket-arn
     db_user_name_arn          = data.aws_ssm_parameter.db_user.arn
