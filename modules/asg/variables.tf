@@ -192,10 +192,6 @@ variable "cloudwatch_log_retention" {
 variable "keys_dir" {
 }
 
-variable "self_signed_ssm" {
-  type = map(string)
-}
-
 variable "config_bucket" {
 }
 
@@ -214,14 +210,6 @@ variable "messaging_broker_url" {
 }
 
 variable "messaging_broker_password" {
-}
-
-variable "logstash_host_fqdn" {
-  default = "logstash"
-}
-
-variable "kibana_host" {
-  default = "http://kibana:5601"
 }
 
 variable "elasitcsearch_host" {

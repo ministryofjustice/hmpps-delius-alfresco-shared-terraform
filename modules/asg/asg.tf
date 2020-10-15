@@ -33,13 +33,8 @@ data "template_file" "user_data" {
     nginx_config_file          = "/etc/nginx/conf.d/app.conf"
     s3_bucket_config           = local.config_bucket
     runtime_config_override    = "s3"
-    self_signed_ca_cert        = var.self_signed_ssm["ca_cert"]
-    self_signed_cert           = var.self_signed_ssm["cert"]
-    self_signed_key            = var.self_signed_ssm["key"]
     ssm_get_command            = "aws --region ${var.region} ssm get-parameters --names"
     messaging_broker_url       = var.messaging_broker_url
-    logstash_host_fqdn         = var.logstash_host_fqdn
-    kibana_host_fqdn           = var.kibana_host
     messaging_broker_password  = local.messaging_broker_password
     #s3 config data
     bucket_name         = var.alfresco_s3bucket

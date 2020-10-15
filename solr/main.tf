@@ -115,16 +115,6 @@ data "terraform_remote_state" "amazonmq" {
 #-------------------------------------------------------------
 ### Getting the elk-migration details
 #-------------------------------------------------------------
-data "terraform_remote_state" "elk_migration" {
-  backend = "s3"
-
-  config = {
-    bucket = var.remote_state_bucket_name
-    key    = "alfresco/elk-migration/terraform.tfstate"
-    region = var.region
-  }
-}
-
 data "terraform_remote_state" "elk-service" {
   backend = "s3"
 
@@ -184,43 +174,40 @@ locals {
   allowed_cidr_block = [values(
     data.terraform_remote_state.vpc.outputs.bastion_vpc_public_cidr,
   )]
-  ami_id                         = var.environment_name != "alfresco-dev" ? local.alfresco_asg_props["asg_ami"] : data.aws_ami.amazon_ami.id
-  app_hostnames                  = data.terraform_remote_state.common.outputs.app_hostnames
-  bastion_inventory              = var.bastion_inventory
-  certificate_arn                = data.aws_acm_certificate.cert.arn
-  cidr_block                     = data.terraform_remote_state.common.outputs.vpc_cidr_block
-  common_name                    = "${data.terraform_remote_state.common.outputs.short_environment_identifier}-solr"
-  config-bucket                  = data.terraform_remote_state.common.outputs.common_s3-config-bucket
-  db_host                        = data.terraform_remote_state.rds.outputs.rds_db_instance_endpoint_cname
-  db_name                        = data.terraform_remote_state.rds.outputs.rds_creds["db_name"]
-  db_password_ssm                = data.terraform_remote_state.rds.outputs.rds_creds["db_password_ssm_param"]
-  db_username_ssm                = data.terraform_remote_state.rds.outputs.rds_creds["db_username_ssm_param"]
-  environment                    = data.terraform_remote_state.common.outputs.environment
-  environment_identifier         = data.terraform_remote_state.common.outputs.environment_identifier
-  external_domain                = data.terraform_remote_state.common.outputs.external_domain
-  instance_profile               = data.terraform_remote_state.iam.outputs.iam_policy_int_app_instance_profile_name
-  internal_domain                = data.terraform_remote_state.common.outputs.internal_domain
-  kibana_host                    = data.terraform_remote_state.elk_migration.outputs.kibana_host
-  logs_kms_arn                   = data.terraform_remote_state.common.outputs.kms_arn
-  logstash_host_fqdn             = data.terraform_remote_state.elk_migration.outputs.internal_logstash_host
-  messaging_broker_password      = "${data.terraform_remote_state.common.outputs.credentials_ssm_path}/weblogic/spg-domain/remote_broker_password"
-  monitoring_server_internal_url = data.terraform_remote_state.elk_migration.outputs.public_es_host_name
-  private_subnet_map             = data.terraform_remote_state.common.outputs.private_subnet_map
-  private_zone_id                = data.terraform_remote_state.common.outputs.private_zone_id
-  public_subnet_ids              = [data.terraform_remote_state.common.outputs.public_subnet_ids]
-  private_subnet_ids             = [data.terraform_remote_state.common.outputs.private_subnet_ids]
-  public_zone_id                 = data.terraform_remote_state.common.outputs.public_zone_id
-  region                         = var.region
-  s3bucket                       = data.terraform_remote_state.s3bucket.outputs.s3bucket
-  backups_bucket                 = data.terraform_remote_state.s3bucket.outputs.alf_backups_bucket_name
-  s3bucket_kms_id                = data.terraform_remote_state.s3bucket.outputs.s3bucket_kms_id
-  short_environment_identifier   = data.terraform_remote_state.common.outputs.short_environment_identifier
-  ssh_deployer_key               = data.terraform_remote_state.common.outputs.common_ssh_deployer_key
-  solr_port                      = 8983
-  tags                           = data.terraform_remote_state.common.outputs.common_tags
-  tomcat_host                    = "alfresco"
-  vpc_id                         = data.terraform_remote_state.common.outputs.vpc_id
-  messaging_broker_url           = data.terraform_remote_state.amazonmq.outputs.amazon_mq_broker_failover_connection_url
+  ami_id                       = var.environment_name != "alfresco-dev" ? local.alfresco_asg_props["asg_ami"] : data.aws_ami.amazon_ami.id
+  app_hostnames                = data.terraform_remote_state.common.outputs.app_hostnames
+  bastion_inventory            = var.bastion_inventory
+  certificate_arn              = data.aws_acm_certificate.cert.arn
+  cidr_block                   = data.terraform_remote_state.common.outputs.vpc_cidr_block
+  common_name                  = "${data.terraform_remote_state.common.outputs.short_environment_identifier}-solr"
+  config-bucket                = data.terraform_remote_state.common.outputs.common_s3-config-bucket
+  db_host                      = data.terraform_remote_state.rds.outputs.rds_db_instance_endpoint_cname
+  db_name                      = data.terraform_remote_state.rds.outputs.rds_creds["db_name"]
+  db_password_ssm              = data.terraform_remote_state.rds.outputs.rds_creds["db_password_ssm_param"]
+  db_username_ssm              = data.terraform_remote_state.rds.outputs.rds_creds["db_username_ssm_param"]
+  environment                  = data.terraform_remote_state.common.outputs.environment
+  environment_identifier       = data.terraform_remote_state.common.outputs.environment_identifier
+  external_domain              = data.terraform_remote_state.common.outputs.external_domain
+  instance_profile             = data.terraform_remote_state.iam.outputs.iam_policy_int_app_instance_profile_name
+  internal_domain              = data.terraform_remote_state.common.outputs.internal_domain
+  logs_kms_arn                 = data.terraform_remote_state.common.outputs.kms_arn
+  messaging_broker_password    = "${data.terraform_remote_state.common.outputs.credentials_ssm_path}/weblogic/spg-domain/remote_broker_password"
+  private_subnet_map           = data.terraform_remote_state.common.outputs.private_subnet_map
+  private_zone_id              = data.terraform_remote_state.common.outputs.private_zone_id
+  public_subnet_ids            = [data.terraform_remote_state.common.outputs.public_subnet_ids]
+  private_subnet_ids           = [data.terraform_remote_state.common.outputs.private_subnet_ids]
+  public_zone_id               = data.terraform_remote_state.common.outputs.public_zone_id
+  region                       = var.region
+  s3bucket                     = data.terraform_remote_state.s3bucket.outputs.s3bucket
+  backups_bucket               = data.terraform_remote_state.s3bucket.outputs.alf_backups_bucket_name
+  s3bucket_kms_id              = data.terraform_remote_state.s3bucket.outputs.s3bucket_kms_id
+  short_environment_identifier = data.terraform_remote_state.common.outputs.short_environment_identifier
+  ssh_deployer_key             = data.terraform_remote_state.common.outputs.common_ssh_deployer_key
+  solr_port                    = 8983
+  tags                         = data.terraform_remote_state.common.outputs.common_tags
+  tomcat_host                  = "alfresco"
+  vpc_id                       = data.terraform_remote_state.common.outputs.vpc_id
+  messaging_broker_url         = data.terraform_remote_state.amazonmq.outputs.amazon_mq_broker_failover_connection_url
 
   elasticsearch_props = {
     url          = data.terraform_remote_state.elk-service.outputs.elk_service["es_url"]
