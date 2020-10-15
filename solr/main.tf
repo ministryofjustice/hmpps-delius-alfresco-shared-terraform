@@ -35,19 +35,6 @@ data "terraform_remote_state" "common" {
 }
 
 #-------------------------------------------------------------
-### Getting the security groups details
-#-------------------------------------------------------------
-data "terraform_remote_state" "self_certs" {
-  backend = "s3"
-
-  config = {
-    bucket = var.remote_state_bucket_name
-    key    = "alfresco/certs/terraform.tfstate"
-    region = var.region
-  }
-}
-
-#-------------------------------------------------------------
 ### Getting the s3 details
 #-------------------------------------------------------------
 data "terraform_remote_state" "s3bucket" {
@@ -234,12 +221,6 @@ locals {
   tomcat_host                    = "alfresco"
   vpc_id                         = data.terraform_remote_state.common.outputs.vpc_id
   messaging_broker_url           = data.terraform_remote_state.amazonmq.outputs.amazon_mq_broker_failover_connection_url
-
-  self_signed_ssm = {
-    ca_cert = data.terraform_remote_state.self_certs.outputs.self_signed_ca_ssm_cert_pem_name
-    cert    = data.terraform_remote_state.self_certs.outputs.self_signed_server_ssm_cert_pem_name
-    key     = data.terraform_remote_state.self_certs.outputs.self_signed_server_ssm_private_key_name
-  }
 
   elasticsearch_props = {
     url          = data.terraform_remote_state.elk-service.outputs.elk_service["es_url"]

@@ -1,11 +1,8 @@
 terraform {
   # The configuration for this backend will be filled in by Terragrunt
-  backend "s3" {}
-}
-
-provider "aws" {
-  region  = "${var.region}"
-  version = "~> 1.16"
+  # The configuration for this backend will be filled in by Terragrunt
+  backend "s3" {
+  }
 }
 
 ####################################################
@@ -18,10 +15,10 @@ provider "aws" {
 data "terraform_remote_state" "common" {
   backend = "s3"
 
-  config {
-    bucket = "${var.remote_state_bucket_name}"
+  config = {
+    bucket = var.remote_state_bucket_name
     key    = "alfresco/common/terraform.tfstate"
-    region = "${var.region}"
+    region = var.region
   }
 }
 
@@ -30,6 +27,7 @@ data "terraform_remote_state" "common" {
 ####################################################
 
 locals {
-  region                   = "${var.region}"
+  region                   = var.region
   spg_messaging_broker_url = "localhost:61616"
 }
+
