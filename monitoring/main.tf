@@ -34,19 +34,6 @@ data "terraform_remote_state" "asg" {
   }
 }
 
-#-------------------------------------------------------------
-### Getting the elk details
-#-------------------------------------------------------------
-data "terraform_remote_state" "elk" {
-  backend = "s3"
-
-  config = {
-    bucket = var.remote_state_bucket_name
-    key    = "alfresco/elk-migration/terraform.tfstate"
-    region = var.region
-  }
-}
-
 data "terraform_remote_state" "elk-service" {
   backend = "s3"
 

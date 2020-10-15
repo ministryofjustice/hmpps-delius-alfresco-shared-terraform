@@ -18,7 +18,7 @@ data "template_file" "dashboard" {
   vars = {
     region                  = var.region
     asg_autoscale_name      = data.terraform_remote_state.asg.outputs.asg_autoscale_name
-    elk_prefix              = data.terraform_remote_state.elk.outputs.loggroup_prefix
+    elk_prefix              = data.terraform_remote_state.elk-service.outputs.elk_service["kibana_asg_name"]
     common_prefix           = data.terraform_remote_state.common.outputs.common_name
     lb_arn_suffix           = data.aws_lb.alb.arn_suffix
     target_group_arn_suffix = data.aws_lb_target_group.target_group.arn_suffix

@@ -30,11 +30,6 @@ output "internal_domain" {
   value = local.internal_domain
 }
 
-# elk elb
-output "elk_lb_dns" {
-  value = local.elk_lb_dns
-}
-
 output "es_snapshot_name" {
   value = var.es_snapshot_name
 }
