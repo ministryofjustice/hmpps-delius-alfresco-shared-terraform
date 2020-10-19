@@ -27,7 +27,7 @@
         "s3:ListBucketMultipartUploads",
         "s3:ListBucketVersions"
       ],
-      "Resource": ["${monitoring_bucket_arn}", "${elk_backups_bucket_arn}"]
+      "Resource": ["${elk_backups_bucket_arn}"]
     },
     {
       "Sid": "allowAccessToEsBucketsub",
@@ -39,7 +39,7 @@
         "s3:AbortMultipartUpload",
         "s3:ListMultipartUploadParts"
       ],
-      "Resource": ["${monitoring_bucket_arn}/*", "${elk_backups_bucket_arn}/*"]
+      "Resource": ["${elk_backups_bucket_arn}/*"]
     },
     {
       "Sid": "allowAccessToS3Buckets",
@@ -89,7 +89,7 @@
         "kms:GenerateDataKey*",
         "kms:DescribeKey"
       ],
-      "Resource": ["${alfresco_kms_arn}", "${monitoring_kms_arn}"]
+      "Resource": ["${alfresco_kms_arn}"]
     },
     {
       "Sid": "AllowAttachmentOfPersistentResources",

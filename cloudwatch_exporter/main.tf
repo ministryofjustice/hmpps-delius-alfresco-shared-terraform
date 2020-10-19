@@ -55,20 +55,7 @@ data "terraform_remote_state" "rds" {
 
   config = {
     bucket = var.remote_state_bucket_name
-    key    = "alfresco/rds/terraform.tfstate"
-    region = var.region
-  }
-}
-
-#-------------------------------------------------------------
-### Getting the elk-migration details
-#-------------------------------------------------------------
-data "terraform_remote_state" "elk-migration" {
-  backend = "s3"
-
-  config = {
-    bucket = var.remote_state_bucket_name
-    key    = "alfresco/elk-migration/terraform.tfstate"
+    key    = "alfresco/database/terraform.tfstate"
     region = var.region
   }
 }

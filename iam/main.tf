@@ -22,19 +22,6 @@ data "terraform_remote_state" "common" {
 }
 
 #-------------------------------------------------------------
-### Getting the certs details
-#-------------------------------------------------------------
-data "terraform_remote_state" "certs" {
-  backend = "s3"
-
-  config = {
-    bucket = var.remote_state_bucket_name
-    key    = "alfresco/certs/terraform.tfstate"
-    region = var.region
-  }
-}
-
-#-------------------------------------------------------------
 ### Getting the S3bucket details
 #-------------------------------------------------------------
 data "terraform_remote_state" "s3bucket" {
@@ -43,19 +30,6 @@ data "terraform_remote_state" "s3bucket" {
   config = {
     bucket = var.remote_state_bucket_name
     key    = "alfresco/s3buckets/terraform.tfstate"
-    region = var.region
-  }
-}
-
-#-------------------------------------------------------------
-### Getting the monitoring details
-#-------------------------------------------------------------
-data "terraform_remote_state" "mon" {
-  backend = "s3"
-
-  config = {
-    bucket = var.remote_state_bucket_name
-    key    = "shared-monitoring/terraform.tfstate"
     region = var.region
   }
 }
@@ -118,13 +92,10 @@ locals {
   tags                      = data.terraform_remote_state.common.outputs.common_tags
   alfresco-storage_s3bucket = data.terraform_remote_state.s3bucket.outputs.s3bucket
   config-bucket             = data.terraform_remote_state.common.outputs.common_s3-config-bucket
-  monitoring_bucket_arn     = data.terraform_remote_state.mon.outputs.monitoring_server_bucket_arn
-  monitoring_bucket_name    = data.terraform_remote_state.mon.outputs.monitoring_server_bucket_name
   remote_config_bucket      = data.terraform_remote_state.common.outputs.remote_config_bucket
   remote_iam_role           = data.terraform_remote_state.common.outputs.remote_iam_role
   alfresco_kms_arn          = data.terraform_remote_state.s3bucket.outputs.s3bucket_kms_arn
   vpc_cidr                  = data.terraform_remote_state.common.outputs.vpc_cidr_block
-  monitoring_kms_arn        = data.terraform_remote_state.mon.outputs.monitoring_kms_arn
   alf_backups_bucket_arn    = data.terraform_remote_state.s3bucket.outputs.alf_backups_bucket_arn
   elk_backups_bucket_arn    = data.terraform_remote_state.s3bucket.outputs.elk_backups_bucket_arn
   artefacts-s3bucket-arn    = var.is_production == true ? data.terraform_remote_state.prod_artefacts.outputs.s3bucket_artefacts_iam_arn : data.terraform_remote_state.artefacts.outputs.s3bucket_artefacts_iam_arn

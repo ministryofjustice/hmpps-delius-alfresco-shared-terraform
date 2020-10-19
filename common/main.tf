@@ -42,19 +42,6 @@ data "terraform_remote_state" "nat" {
 }
 
 #-------------------------------------------------------------
-### Getting the monitoring instance details
-#-------------------------------------------------------------
-data "terraform_remote_state" "monitor" {
-  backend = "s3"
-
-  config = {
-    bucket = var.remote_state_bucket_name
-    key    = "shared-monitoring/terraform.tfstate"
-    region = var.region
-  }
-}
-
-#-------------------------------------------------------------
 ### Getting the engineer vpc
 #-------------------------------------------------------------
 data "terraform_remote_state" "remote_vpc" {

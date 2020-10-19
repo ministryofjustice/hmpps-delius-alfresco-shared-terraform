@@ -22,8 +22,8 @@ resource "aws_ebs_volume" "solr" {
   tags = merge(
     local.tags,
     {
-      "Name"                          = local.common_name
-      "CreateSnapshotSolr"            = 1
+      "Name"               = local.common_name
+      "CreateSnapshotSolr" = 1
     },
   )
 }
@@ -37,8 +37,8 @@ resource "aws_ebs_volume" "solr_temp" {
   tags = merge(
     local.tags,
     {
-      "Name"                          = "${local.common_name}-temp"
-      "CreateSnapshotSolr"            = 1
+      "Name"               = "${local.common_name}-temp"
+      "CreateSnapshotSolr" = 1
     },
   )
 }
@@ -51,33 +51,31 @@ data "template_file" "user_data" {
   template = file("../user_data/solr_user_data.sh")
 
   vars = {
-    env_identifier            = local.environment_identifier
-    short_env_identifier      = local.short_environment_identifier
-    app_name                  = local.alfresco_app_name
-    cldwatch_log_group        = module.create_loggroup.loggroup_name
-    region                    = var.region
-    cache_home                = "/srv/cache"
-    ebs_device                = "/dev/xvdb"
-    app_name                  = local.alfresco_app_name
-    route53_sub_domain        = "${local.alfresco_app_name}.${local.environment}"
-    private_domain            = local.internal_domain
-    private_zone_id           = local.private_zone_id
-    account_id                = local.account_id
-    internal_domain           = local.internal_domain
+    env_identifier             = local.environment_identifier
+    short_env_identifier       = local.short_environment_identifier
+    app_name                   = local.alfresco_app_name
+    cldwatch_log_group         = module.create_loggroup.loggroup_name
+    region                     = var.region
+    cache_home                 = "/srv/cache"
+    ebs_device                 = "/dev/xvdb"
+    app_name                   = local.alfresco_app_name
+    route53_sub_domain         = "${local.alfresco_app_name}.${local.environment}"
+    private_domain             = local.internal_domain
+    private_zone_id            = local.private_zone_id
+    account_id                 = local.account_id
+    internal_domain            = local.internal_domain
     elasticsearch_url          = local.elasticsearch_props["url"]
     elasticsearch_cluster_name = local.elasticsearch_props["cluster_name"]
-    cluster_subnet            = ""
-    cluster_name              = "${local.environment_identifier}-public-ecs-cluster"
-    db_name                   = local.db_name
-    db_host                   = local.db_host
-    db_user                   = local.db_username_ssm
-    db_password               = local.db_password_ssm
-    s3_bucket_config          = local.config-bucket
-    ssm_get_command           = "aws --region ${var.region} ssm get-parameters --names"
-    messaging_broker_url      = local.messaging_broker_url
-    logstash_host_fqdn        = local.logstash_host_fqdn
-    kibana_host_fqdn          = local.kibana_host
-    messaging_broker_password = local.messaging_broker_password
+    cluster_subnet             = ""
+    cluster_name               = "${local.environment_identifier}-public-ecs-cluster"
+    db_name                    = local.db_name
+    db_host                    = local.db_host
+    db_user                    = local.db_username_ssm
+    db_password                = local.db_password_ssm
+    s3_bucket_config           = local.config-bucket
+    ssm_get_command            = "aws --region ${var.region} ssm get-parameters --names"
+    messaging_broker_url       = local.messaging_broker_url
+    messaging_broker_password  = local.messaging_broker_password
     #s3 config data
     bucket_name         = local.s3bucket
     bucket_encrypt_type = "kms"
@@ -109,11 +107,11 @@ data "template_file" "user_data" {
 # ############################################
 
 resource "aws_launch_configuration" "environment" {
-  name_prefix          = "${local.common_name}-"
-  image_id             = local.ami_id
-  instance_type        = lookup(var.alfresco_asg_props, "asg_instance_type", "m4.xlarge")
-  iam_instance_profile = data.terraform_remote_state.iam.outputs.solr_profile_name
-  key_name             = data.terraform_remote_state.common.outputs.common_ssh_deployer_key
+  name_prefix                 = "${local.common_name}-"
+  image_id                    = local.ami_id
+  instance_type               = lookup(var.alfresco_asg_props, "asg_instance_type", "m4.xlarge")
+  iam_instance_profile        = data.terraform_remote_state.iam.outputs.solr_profile_name
+  key_name                    = data.terraform_remote_state.common.outputs.common_ssh_deployer_key
   security_groups             = flatten(local.instance_security_groups)
   associate_public_ip_address = false
   user_data                   = data.template_file.user_data.rendered

@@ -51,7 +51,7 @@
                     ]
                 ],
                 "region": "${region}",
-                "title": "ElasticSearch"
+                "title": "KibanaASG"
             }
         },
         {

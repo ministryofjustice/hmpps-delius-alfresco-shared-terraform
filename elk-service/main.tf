@@ -60,19 +60,6 @@ data "terraform_remote_state" "iam" {
 }
 
 #-------------------------------------------------------------
-### Getting the shared monitoring details
-#-------------------------------------------------------------
-data "terraform_remote_state" "monitoring" {
-  backend = "s3"
-
-  config = {
-    bucket = var.remote_state_bucket_name
-    key    = "shared-monitoring/terraform.tfstate"
-    region = var.region
-  }
-}
-
-#-------------------------------------------------------------
 ### Getting the security groups details
 #-------------------------------------------------------------
 data "terraform_remote_state" "security-groups" {
