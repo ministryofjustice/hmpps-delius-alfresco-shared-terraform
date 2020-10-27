@@ -1,8 +1,8 @@
 # ASG Configuration
 alf_config_map = {
-  asg_ami  = "ami-0cd719f458dfa9185"
+  asg_ami  = "ami-06522fdabb87f2839"
   ami_name = "HMPPS Alfresco *"
-  image_id = "ami-0cd719f458dfa9185"
+  image_id = "ami-06522fdabb87f2839"
 }
 
 source_code_versions = {
