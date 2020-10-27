@@ -176,7 +176,7 @@ data "aws_acm_certificate" "cert" {
 ####################################################
 
 locals {
-  alfresco_asg_props           = merge(var.alfresco_asg_props, var.alf_config_map)
+  alfresco_asg_props           = merge(var.alfresco_asg_props, var.alf_asg_map, var.alf_config_map)
   ami_id                       = var.environment_name != "alfresco-dev" ? local.alfresco_asg_props["asg_ami"] : data.aws_ami.amazon_ami.id
   account_id                   = data.terraform_remote_state.common.outputs.common_account_id
   vpc_id                       = data.terraform_remote_state.common.outputs.vpc_id
@@ -253,6 +253,7 @@ module "asg" {
   az_asg_min                   = var.restoring == "enabled" ? 0 : lookup(local.alfresco_asg_props, "asg_min", 1)
   az_asg_max                   = var.restoring == "enabled" ? 0 : lookup(local.alfresco_asg_props, "asg_max", 1)
   default_cooldown             = lookup(local.alfresco_asg_props, "default_cooldown", 120)
+  alf_deploy_iwp_fix           = lookup(local.alfresco_asg_props, "alf_deploy_iwp_fix", 0)
   cloudwatch_log_retention     = var.alf_cloudwatch_log_retention
   zone_id                      = local.private_zone_id
   external_domain              = local.external_domain

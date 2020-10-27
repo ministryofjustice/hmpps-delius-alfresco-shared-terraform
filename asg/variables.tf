@@ -31,6 +31,11 @@ variable "alf_config_map" {
   default = {}
 }
 
+variable "alf_asg_map" {
+  type    = map(string)
+  default = {}
+}
+
 variable "alf_cloudwatch_log_retention" {
 }
 
