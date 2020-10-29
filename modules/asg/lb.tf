@@ -14,8 +14,8 @@ resource "aws_lb" "environment" {
   name               = "${local.common_prefix}-ext"
   internal           = var.internal
   load_balancer_type = "application"
-  security_groups = flatten(local.lb_security_groups)
-  subnets = flatten(local.public_subnet_ids)
+  security_groups    = flatten(local.lb_security_groups)
+  subnets            = flatten(local.public_subnet_ids)
 
   enable_deletion_protection = var.enable_deletion_protection
 
@@ -59,11 +59,6 @@ resource "aws_lb_listener" "http_listener" {
   port              = local.http_port
   protocol          = local.http_protocol
 
-  # default_action {
-  #   target_group_arn = "${aws_lb_target_group.environment.arn}"
-  #   type             = "forward"
-  # }
-
   default_action {
     type = "redirect"
 
@@ -100,7 +95,7 @@ resource "aws_lb_target_group" "environment" {
   port                 = local.http_port
   protocol             = local.http_protocol
   vpc_id               = var.vpc_id
-  deregistration_delay = 300
+  deregistration_delay = 60
   target_type          = "instance"
 
   health_check {
