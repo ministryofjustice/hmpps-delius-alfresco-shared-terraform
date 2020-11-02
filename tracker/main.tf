@@ -113,8 +113,9 @@ data "terraform_remote_state" "amazonmq" {
 }
 
 #-------------------------------------------------------------
-### Getting the elk-migration details
+### Getting the elk details
 #-------------------------------------------------------------
+
 data "terraform_remote_state" "elk-service" {
   backend = "s3"
 
@@ -179,7 +180,7 @@ locals {
   bastion_inventory            = var.bastion_inventory
   certificate_arn              = data.aws_acm_certificate.cert.arn
   cidr_block                   = data.terraform_remote_state.common.outputs.vpc_cidr_block
-  common_name                  = "${data.terraform_remote_state.common.outputs.short_environment_identifier}-solr"
+  common_name                  = "${data.terraform_remote_state.common.outputs.short_environment_identifier}-tracker"
   config-bucket                = data.terraform_remote_state.common.outputs.common_s3-config-bucket
   db_host                      = data.terraform_remote_state.rds.outputs.aurora["reader_endpoint"]
   db_name                      = data.terraform_remote_state.rds.outputs.rds_creds["db_name"]
@@ -203,7 +204,10 @@ locals {
   s3bucket_kms_id              = data.terraform_remote_state.s3bucket.outputs.s3bucket_kms_id
   short_environment_identifier = data.terraform_remote_state.common.outputs.short_environment_identifier
   ssh_deployer_key             = data.terraform_remote_state.common.outputs.common_ssh_deployer_key
-  solr_port                    = 8983
+  http_port                    = 80
+  http_protocol                = "HTTP"
+  https_port                   = 443
+  https_protocol               = "HTTPS"
   tags                         = data.terraform_remote_state.common.outputs.common_tags
   tomcat_host                  = "alfresco"
   vpc_id                       = data.terraform_remote_state.common.outputs.vpc_id
