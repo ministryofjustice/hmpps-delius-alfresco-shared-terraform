@@ -16,6 +16,17 @@ class Release_Handler(GitHub_Config):
         self.tag_details = None
         self.create_release_status = False
 
+
+    def get_commit_ids(self):
+        request_data = {
+            "method": "GET",
+            "headers": self.req_headers,
+            "url": f"{self.repo_url}/commits"
+        }
+        response = request_handler(request_data)
+        commit_ids = [id["sha"] for id in response.json()]
+        return commit_ids
+
     def get_latest_version(self):
         """
         Retrieves information about a tag
@@ -81,6 +92,17 @@ class Release_Handler(GitHub_Config):
             return None
         else:
             return None
+    
+    def create_alpha_tag(self):
+        _file = "configs/package.properties"
+        src_file = open(_file, "rt")
+        data = src_file.read()
+        data = data.replace("no", "yes")
+        src_file.close()
+        target_file = open(_file, "wt")
+        target_file.write(data)
+        target_file.close()
+        return None
 
     def create_release(self, branch_name: str, commit_id: str):
         """
@@ -106,7 +128,9 @@ class Release_Handler(GitHub_Config):
 
             if current_tag is not None:
                 if current_tag['object']["sha"] != commit_id:
-                    self.create_release_status = True
+                    _ids = self.get_commit_ids()
+                    if commit_id in _ids:
+                        self.create_release_status = True
 
             if self.create_release_status == False:
                 resp_obj['message'] = f"Release {current_version} using commit id {commit_id}, skipping creating new release"
@@ -133,6 +157,7 @@ class Release_Handler(GitHub_Config):
             response = request_handler(request_data)
 
             if response.json() is not None and response.status_code == 201:
+                self.create_alpha_tag()
                 self.release_details = response.json()
                 resp_obj['message'] = f"Release {release_name} created using branch {branch_name}"
                 resp_obj['exit_code'] = 0
