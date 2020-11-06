@@ -14,7 +14,7 @@ get_package:
 lambda_packages:
 	rm -rf $(component)
 	mkdir $(component)
-	aws s3 sync --only-show-errors s3://$(ARTEFACTS_BUCKET)/projects/alfresco/lambda_functions/builds/$(LAMBDA_FUNCTIONS_VERSION)/ $(CODEBUILD_SRC_DIR)/$(component)/
+	aws s3 sync --only-show-errors s3://$(ARTEFACTS_BUCKET)/projects/engineering/lambda_functions/builds/$(LAMBDA_FUNCTIONS_VERSION)/ $(CODEBUILD_SRC_DIR)/$(component)/
 
 plan: 
 	sh run.sh $(ENVIRONMENT_NAME) plan $(component)
