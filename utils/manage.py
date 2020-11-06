@@ -37,6 +37,11 @@ def create_release(branch: str, commit: str):
     """
         Manages Github repo releases
     """
+    tag_branch = "develop"
+    if branch != tag_branch:
+        message = f"Only {tag_branch} branch can be used for release tags, no release tag created."
+        click.echo(message=message)
+        return sys.exit(0)
     manager = Release_Handler()
     resp = manager.task_handler(branch, commit)
     message = resp['message']
