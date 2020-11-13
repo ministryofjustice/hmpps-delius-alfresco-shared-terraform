@@ -71,48 +71,6 @@ The deployer key is stored in AWS [Parameter store](https://eu-west-2.console.aw
 terragrunt output ssh_private_key_pem
 ```
 
-## ASG setup
-
-```
-
-# ALFRESCO AMI
-alfresco_instance_ami = {
-  az1 = ""
-
-  az2 = "ami-0d0cfea5db992db12"
-
-  az3 = "ami-02a2337c574b6d5e2"
-}
-```
-
-The ASG uses a map to control the AMI deployed, if the variable is set to empty the launch configuration will default to the latest AMI found by terrafrom. If specified the launch configuration will use the AMI defined.
-
-```
-az_asg_desired = {
-  az1 = "1"
-
-  az2 = "0"
-
-  az3 = "0"
-}
-az_asg_max = {
-  az1 = "1"
-
-  az2 = "0"
-
-  az3 = "0"
-}
-az_asg_min = {
-  az1 = "1"
-
-  az2 = "0"
-
-  az3 = "0"
-}
-```
-
-Above controls ASG sizes
-
 ## TERRAGRUNT
 
 
