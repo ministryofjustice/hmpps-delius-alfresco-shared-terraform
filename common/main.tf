@@ -129,6 +129,9 @@ locals {
     {
       "source-hash" = "ignored"
     },
+    {
+      "source-code" = "hmpps-delius-alfresco-shared-terraform"
+    }
   )
 
   remote_iam_role      = data.terraform_remote_state.remote_iam.outputs.alfresco_iam_arn
