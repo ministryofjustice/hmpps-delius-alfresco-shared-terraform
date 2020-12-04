@@ -38,7 +38,7 @@ Alfresco external - [https://alfresco.probation.service.justice.gov.uk](https://
 
 ## USING TERRAFORM
 
-A make has been created to orchestrate the container locally using docker-compose
+A makefile has been created to orchestrate the container locally using docker-compose
 
 Example
 
