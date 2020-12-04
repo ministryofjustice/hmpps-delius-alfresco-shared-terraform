@@ -1,0 +1,12 @@
+version: "3.3"
+services:
+  builder:
+    image: mojdigitalstudio/hmpps-terraform-builder-lite
+    command: top
+    volumes:
+      - ${PWD}:/home/tools/data
+      - ${HOME}/.aws:/home/tools/.aws
+    environment:
+      - AWS_PROFILE=${AWS_PROFILE}
+      - ENVIRONMENT_NAME=${ENVIRONMENT_NAME:-alfresco-dev}
+      - RUNNING_IN_CONTAINER=True

@@ -88,3 +88,6 @@ utils/github/playbook.retry
 content_refresh1
 functions
 **/provider.tf
+.env
+run.sh
+utils
