@@ -13,16 +13,16 @@ get_utils:
 	mv utils/run.sh run.sh
 
 init:
-	rm -rf $(component)/.terraform/terraform.tfstate
+	rm -rf $(COMPONENT)/.terraform/terraform.tfstate
 
 plan: init
-	sh run.sh $(ENVIRONMENT_NAME) plan $(component) || (exit $$?)
+	sh run.sh $(ENVIRONMENT_NAME) plan $(COMPONENT) || (exit $$?)
 
 destroy:
-	sh run.sh $(ENVIRONMENT_NAME) destroy $(component) || (exit $$?)
+	sh run.sh $(ENVIRONMENT_NAME) destroy $(COMPONENT) || (exit $$?)
 
 apply:
-	sh run.sh $(ENVIRONMENT_NAME) apply $(component) || (exit $$?)
+	sh run.sh $(ENVIRONMENT_NAME) apply $(COMPONENT) || (exit $$?)
 
 start: restart
 	docker-compose exec builder env| sort
@@ -36,3 +36,8 @@ cleanup:
 restart: stop
 	docker-compose up -d
 
+local_plan: restart
+	docker-compose exec builder make plan component=$(COMPONENT)
+
+local_apply: restart
+	docker-compose exec builder make apply component=$(COMPONENT)

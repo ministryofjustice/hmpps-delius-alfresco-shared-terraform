@@ -46,8 +46,8 @@ Example
   start -> make start
   stop -> make stop
   reload env vars -> make restart or make start
-  plan -> docker-compose exec builder make plan component=common
-  apply -> docker-compose exec builder make apply component=common
+  plan -> make local_plan
+  apply -> make local_apply
   get configs -> make get_configs
   get utils -> make get_utils
 ```

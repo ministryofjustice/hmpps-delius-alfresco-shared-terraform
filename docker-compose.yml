@@ -10,3 +10,4 @@ services:
       - AWS_PROFILE=${AWS_PROFILE}
       - ENVIRONMENT_NAME=${ENVIRONMENT_NAME:-alfresco-dev}
       - RUNNING_IN_CONTAINER=True
+      - COMPONENT=${COMPONENT}
