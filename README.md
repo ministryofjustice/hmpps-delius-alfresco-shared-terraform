@@ -1,14 +1,12 @@
 ## hmpps-delius-alfresco-shared-terraform
+
 Terraform Repo for the Alfresco in the shared VPC
 
-
 ## URLS
-
 
 ### Alfresco Dev
 
 Alfresco external - [alfresco.dev.alfresco.probation.hmpps.dsd.io](alfresco.dev.alfresco.probation.hmpps.dsd.io)
-
 
 ### Alfresco Delius Core Dev
 
@@ -40,39 +38,33 @@ Alfresco external - [https://alfresco.probation.service.justice.gov.uk](https://
 
 ## USING TERRAFORM
 
-
-A shell script has been created to automate the running of terraform.
-Script takes the following arguments
-
-* environment_type: Target environment eg dev - prod - int
-* action_type: Operation to be completed eg plan - apply - test - output
-* AWS_TOKEN: token to use when running locally eg hmpps-token
+A makefile has been created to orchestrate the container locally using docker-compose
 
 Example
 
 ```
-sh run.sh plan hmpps-token
+  start -> make start
+  stop -> make stop
+  reload env vars -> make restart or make start
+  plan -> make local_plan
+  apply -> make local_apply
+  get configs -> make get_configs
+  get utils -> make get_utils
 ```
 
-
 ## REMOTE STATE
-
 
 Bucket name: [tf-eu-west-2-hmpps-delius-core-dev-remote-state](https://s3.console.aws.amazon.com/s3/object/tf-eu-west-2-hmpps-delius-core-dev-remote-state/vpc/terraform.tfstate?region=eu-west-2&tab=overview)
 
 ## DEPLOYER KEY
 
-
 The deployer key is stored in AWS [Parameter store](https://eu-west-2.console.aws.amazon.com/systems-manager/parameters/tf-eu-west-2-hmpps-delius-core-dev-alfresco-ssh-private-key/description?region=eu-west-2)
-
-
 
 ```
 terragrunt output ssh_private_key_pem
 ```
 
 ## TERRAGRUNT
-
 
 ### DOCKER CONTAINER IMAGE
 
@@ -111,6 +103,7 @@ AWS_PROFILE
 #### COMMAND
 
 cd to the directory above this repo, replace 'hmpps-token' in the command below with one of your own, and run
+
 ```
 docker run -it --rm \
 	-v $(pwd)/hmpps-delius-alfresco-shared-terraform:/home/tools/data \
@@ -118,11 +111,13 @@ docker run -it --rm \
 	-e AWS_PROFILE=hmpps-token \
 	hmpps/terraform-builder:latest bash
 ```
+
 Once in the container, run
 
 ```
 source env_configs/dev.properties
 ```
+
 Now navigate to the directory for your configuration (e.g. service-jenkins-eng) and run terragrunt commands as normal?
 
 ```
@@ -131,7 +126,6 @@ terragrunt apply ${TG_ENVIRONMENT_TYPE}.plan
 ```
 
 ## Terraform - automated run
-
 
 A python script has been written up: docker-run.py.
 
@@ -157,7 +151,7 @@ optional arguments:
                         configs.git
   --branch BRANCH       git repo branch for env configs, defaults to master
                         branch
-````
+```
 
 ## Usage
 
@@ -173,7 +167,6 @@ When running in CI environment:
 python docker-run.py --env dev --action test
 ```
 
-
 ## INSPEC
 
 [Reference material](https://www.inspec.io/docs/reference/resources/#aws-resources)
@@ -182,7 +175,7 @@ python docker-run.py --env dev --action test
 
 #### Temporary AWS creds
 
-Script __scripts/aws-get-temp-creds.sh__ has been written up to automate the process of generating the creds into a file __env_configs/inspec-creds.properties__
+Script **scripts/aws-get-temp-creds.sh** has been written up to automate the process of generating the creds into a file **env_configs/inspec-creds.properties**
 
 #### Usage
 
@@ -206,19 +199,23 @@ rm -rf env_configs/inspec-creds.properties
 
 # Alfresco DB Restore
 
-Below is the procedure to perform the Alfresco Database restore on the RDS Postgres DB. The restore is performed from Jenkins pipeline. The pipeline will standup a docker container: mojdigitalstudio/hmpps-base-psql. The docker container will then run a script which will start the restore process dry run, then will do an actual restore after approval. Script location is hmpps-delius-alfresco-shared-terraform/scripts/alfresco\_db_restore.sh. The script will collect the restore file (*.sql) from S3 buckets to the container, then will perform the restore to RDS from the container. Below are the steps to follow:
+Below is the procedure to perform the Alfresco Database restore on the RDS Postgres DB. The restore is performed from Jenkins pipeline. The pipeline will standup a docker container: mojdigitalstudio/hmpps-base-psql. The docker container will then run a script which will start the restore process dry run, then will do an actual restore after approval. Script location is hmpps-delius-alfresco-shared-terraform/scripts/alfresco_db_restore.sh. The script will collect the restore file (\*.sql) from S3 buckets to the container, then will perform the restore to RDS from the container. Below are the steps to follow:
 
 #### Alfresco Env Configs
-For each env requiring Alfresco data restore, env configs are required. This file will contain the name of the Source S3 bucket where the data to restore will be stored and the name of the sql file to restore. The files are located here: hmpps-delius-alfresco-shared-terraform/alf\_env_configs/. If the file for the env you intend to restore is not present, then one should be created before proceeding with the restore.
+
+For each env requiring Alfresco data restore, env configs are required. This file will contain the name of the Source S3 bucket where the data to restore will be stored and the name of the sql file to restore. The files are located here: hmpps-delius-alfresco-shared-terraform/alf_env_configs/. If the file for the env you intend to restore is not present, then one should be created before proceeding with the restore.
 
 #### Alfresco EC2 Instances
+
 Destroy the running Alfresco instances or ensure tomcat is not running on the Alfresco instances. There should be no connections to the RDS db during the data restore.
 
 #### Perform DB Restore
+
 Run the Alfresco-db-restore pipeline for the env. This can be found under DAMS > Environments > ${env name} > Alfresco.
 The pipeline will ask for confirmation before it proceeds the steps to restore the DB.
 
 #### Stand up EC2 instances
+
 After successful restore, stand up the Alfresco instances. Ensure tomcat is running on the EC2 instance and check /usr/share/tomcat/alfresco.log for any errors.
 
 #### Startup Alfresco
@@ -230,7 +227,6 @@ Rename the license file: /usr/share/tomcat/shared/classes/alfresco/extension/lic
 ```
 mv /usr/share/tomcat/shared/classes/alfresco/extension/license/alfresco-ent-5.2-NOMS.lic.installed /usr/share/tomcat/shared/classes/alfresco/extension/license/alfresco-ent-5.2-NOMS.lic
 ```
-
 
 #### Start up the tomcat service
 

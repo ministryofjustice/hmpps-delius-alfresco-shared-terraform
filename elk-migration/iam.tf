@@ -38,7 +38,6 @@ data "template_file" "es" {
     app_role_arn      = module.create-iam-app-role-es.iamrole_arn
     config_bucket_arn = local.config_bucket_arn
     elk_bucket_arn    = local.elk_bucket_arn
-    elk_kms_arn       = local.elk_kms_arn
     storage_kms_arn   = local.storage_kms_arn
     elk_user_arn      = data.aws_ssm_parameter.elk_user.arn
     elk_password_arn  = data.aws_ssm_parameter.elk_password.arn
