@@ -1,0 +1,7 @@
+{
+  "branch": "develop",
+  "github": {
+    "org": "ministryofjustice",
+    "repository": "hmpps-delius-alfresco-shared-terraform"
+  }
+}

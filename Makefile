@@ -1,35 +1,43 @@
-default: build
-.PHONY: build
+include configs/common.properties
+
+.PHONY: start
 
 get_configs:
 	rm -rf env_configs
 	git config --global advice.detachedHead false
-	git clone -b $(ENV_CONFIGS_VERSION) $(ENV_CONFIGS_REPO) env_configs
+	git clone -b $(ENV_CONFIGS_VERSION) $(ENV_CONFIGS_REPO) env_configs || (exit $$?)
 
-get_package:
-	aws s3 cp --only-show-errors s3://$(ARTEFACTS_BUCKET)/projects/alfresco/infrastructure/$(PACKAGE_VERSION)/$(PACKAGE_NAME) $(PACKAGE_NAME)
-	tar xf $(PACKAGE_NAME) --strip-components=1
-	cat output.txt
+get_utils:
+	rm -rf utils run.sh
+	git clone https://github.com/ministryofjustice/hmpps-engineering-pipelines-utils.git utils
+	mv utils/run.sh run.sh
 
-lambda_packages:
-	rm -rf $(component)
-	mkdir $(component)
-	aws s3 sync --only-show-errors s3://$(ARTEFACTS_BUCKET)/lambda/eng-lambda-functions-builder/latest/ $(CODEBUILD_SRC_DIR)/$(component)/
+init:
+	rm -rf $(COMPONENT)/.terraform/terraform.tfstate
 
-plan: 
-	sh run.sh $(ENVIRONMENT_NAME) plan $(component)
-
-build: plan
-	sh run.sh $(ENVIRONMENT_NAME) apply $(component)
+plan: init
+	sh run.sh $(ENVIRONMENT_NAME) plan $(COMPONENT) || (exit $$?)
 
 destroy:
-	sh run.sh $(ENVIRONMENT_NAME) destroy $(component)
+	sh run.sh $(ENVIRONMENT_NAME) destroy $(COMPONENT) || (exit $$?)
 
-task_handler:
-	docker-compose -f restore/$(COMPOSE_FILE_NAME) up --exit-code-from $(TASK_NAME) $(TASK_NAME)
+apply:
+	sh run.sh $(ENVIRONMENT_NAME) apply $(COMPONENT) || (exit $$?)
 
-json: 
-	sh run.sh $(ENVIRONMENT_NAME) json $(component)
+start: restart
+	docker-compose exec builder env| sort
 
-ansible_task:
-	sh run.sh $(ENVIRONMENT_NAME) ansible $(component)
+stop:
+	docker-compose down
+
+cleanup:
+	docker-compose down -v --rmi local
+
+restart: stop
+	docker-compose up -d
+
+local_plan: restart
+	docker-compose exec builder make plan component=$(COMPONENT)
+
+local_apply: restart
+	docker-compose exec builder make apply component=$(COMPONENT)

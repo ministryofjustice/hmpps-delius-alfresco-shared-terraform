@@ -22,19 +22,6 @@ data "terraform_remote_state" "common" {
 }
 
 #-------------------------------------------------------------
-### Getting the certs details
-#-------------------------------------------------------------
-data "terraform_remote_state" "certs" {
-  backend = "s3"
-
-  config = {
-    bucket = var.remote_state_bucket_name
-    key    = "alfresco/certs/terraform.tfstate"
-    region = var.region
-  }
-}
-
-#-------------------------------------------------------------
 ### Getting the s3 details
 #-------------------------------------------------------------
 data "terraform_remote_state" "s3bucket" {
@@ -56,19 +43,6 @@ data "terraform_remote_state" "iam" {
   config = {
     bucket = var.remote_state_bucket_name
     key    = "alfresco/iam/terraform.tfstate"
-    region = var.region
-  }
-}
-
-#-------------------------------------------------------------
-### Getting the shared monitoring details
-#-------------------------------------------------------------
-data "terraform_remote_state" "monitoring" {
-  backend = "s3"
-
-  config = {
-    bucket = var.remote_state_bucket_name
-    key    = "shared-monitoring/terraform.tfstate"
     region = var.region
   }
 }
@@ -227,12 +201,8 @@ locals {
   certificate_arn              = data.aws_acm_certificate.cert.arn
   public_subnet_ids            = [data.terraform_remote_state.common.outputs.public_subnet_ids]
   private_subnet_ids           = [data.terraform_remote_state.common.outputs.private_subnet_ids]
-  ssm_tls_private_key          = data.terraform_remote_state.certs.outputs.self_signed_server_ssm_private_key_name
-  ssm_tls_cert                 = data.terraform_remote_state.certs.outputs.self_signed_server_ssm_cert_pem_name
-  ssm_tls_ca_cert              = data.terraform_remote_state.certs.outputs.self_signed_ca_ssm_cert_pem_name
   elk_bucket_name              = data.terraform_remote_state.s3bucket.outputs.elk_backups_bucket_name
   elk_bucket_arn               = data.terraform_remote_state.s3bucket.outputs.elk_backups_bucket_arn
-  elk_lb_dns                   = data.terraform_remote_state.monitoring.outputs.monitoring_server_internal_url
   es_host_fqdn                 = "alf5es.${local.external_domain}"
   es_host_url                  = "https://${local.es_host_fqdn}"
   kibana_host_fqdn             = "alf5kibana.${local.external_domain}"
@@ -245,7 +215,6 @@ locals {
   sg_rds_id                    = data.terraform_remote_state.security-groups.outputs.security_groups_sg_rds_id
   alf_efs_dns_name             = data.terraform_remote_state.efs.outputs.efs_dns_name
   efs_mount_path               = "/opt/es_backup"
-  elk_kms_arn                  = data.terraform_remote_state.monitoring.outputs.monitoring_kms_arn
   es_home_dir                  = "/usr/share/elasticsearch"
   alf_efs_sg                   = data.terraform_remote_state.security-groups.outputs.security_groups_sg_efs_sg_id
   migration_mount_path         = "/opt/local"
@@ -259,7 +228,6 @@ locals {
   instance_security_groups = [
     data.terraform_remote_state.network-security-groups.outputs.sg_ssh_bastion_in_id,
     data.terraform_remote_state.network-security-groups.outputs.sg_mon_efs,
-    data.terraform_remote_state.network-security-groups.outputs.sg_monitoring,
     data.terraform_remote_state.network-security-groups.outputs.sg_elasticsearch,
     data.terraform_remote_state.network-security-groups.outputs.sg_mon_jenkins,
   ]
