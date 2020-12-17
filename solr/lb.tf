@@ -59,13 +59,8 @@ resource "aws_lb_listener" "http_listener" {
   port              = local.http_port
   protocol          = local.http_protocol
   default_action {
-    type = "redirect"
-
-    redirect {
-      port        = "443"
-      protocol    = "HTTPS"
-      status_code = "HTTP_301"
-    }
+    type             = "forward"
+    target_group_arn = aws_lb_target_group.environment.arn
   }
 }
 

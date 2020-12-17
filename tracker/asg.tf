@@ -44,7 +44,7 @@ data "template_file" "user_data" {
     logstash_version     = var.source_code_versions["logstash"]
     elasticbeats_version = var.source_code_versions["elasticbeats"]
     solr_host            = local.solr_host
-    solr_port            = 443
+    solr_port            = 8983
   }
 }
 
