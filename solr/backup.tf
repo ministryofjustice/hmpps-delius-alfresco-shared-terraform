@@ -29,11 +29,11 @@ resource "aws_backup_plan" "solr_backup" {
   rule {
     rule_name         = "${local.common_name}-ebs-bkup"
     target_vault_name = aws_backup_vault.solr_backup.name
-    schedule          = var.alf_solr_config["schedule"]
+    schedule          = local.solr_asg_props["schedule"]
 
     lifecycle {
-      cold_storage_after = var.alf_solr_config["cold_storage_after"]
-      delete_after       = var.alf_solr_config["delete_after"]
+      cold_storage_after = local.solr_asg_props["cold_storage_after"]
+      delete_after       = local.solr_asg_props["delete_after"]
     }
   }
 
@@ -52,7 +52,7 @@ resource "aws_backup_selection" "solr_backup" {
 
   selection_tag {
     type  = "STRINGEQUALS"
-    key   = var.alf_solr_config["snap_tag"]
+    key   = local.solr_asg_props["snap_tag"]
     value = "1"
   }
 }

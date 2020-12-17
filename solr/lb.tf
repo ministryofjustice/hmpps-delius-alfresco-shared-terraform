@@ -15,7 +15,7 @@ resource "aws_lb" "environment" {
   internal           = true
   load_balancer_type = "application"
   security_groups    = [aws_security_group.sg_solr_alb.id]
-  subnets = flatten(local.private_subnet_ids)
+  subnets            = flatten(local.private_subnet_ids)
 
   enable_deletion_protection = false
 
@@ -43,7 +43,7 @@ resource "aws_lb" "environment" {
 
 resource "aws_route53_record" "dns_entry" {
   zone_id = local.public_zone_id
-  name    = "${lookup(var.alf_solr_config, "solr_host", "alf-solr")}.${local.external_domain}"
+  name    = local.solr_host
   type    = "A"
 
   alias {

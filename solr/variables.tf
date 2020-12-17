@@ -30,6 +30,11 @@ variable "alf_config_map" {
   default = {}
 }
 
+variable "solr_config_map" {
+  type    = map(string)
+  default = {}
+}
+
 variable "source_code_versions" {
   type = map(string)
   default = {
@@ -82,12 +87,12 @@ variable "alf_solr_config" {
   default = {
     solr_host            = "alf-solr"
     solr_port            = 443
-    ebs_size             = 20
+    ebs_size             = 100
     ebs_iops             = 100
     ebs_type             = "gp2"
     ebs_device_name      = "/dev/xvdc"
     ebs_temp_device_name = "/dev/xvdd"
-    ebs_temp_size        = 20
+    ebs_temp_size        = 100
     ebs_temp_type        = "gp2"
     java_xms             = "4000m"
     java_xmx             = "4000m"
@@ -96,6 +101,7 @@ variable "alf_solr_config" {
     cold_storage_after   = 14
     delete_after         = 120
     snap_tag             = "CreateSnapshotSolr"
+    instance_type        = "m4.xlarge"
   }
 }
 

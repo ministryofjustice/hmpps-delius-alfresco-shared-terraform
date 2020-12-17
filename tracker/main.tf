@@ -182,7 +182,7 @@ locals {
   cidr_block                   = data.terraform_remote_state.common.outputs.vpc_cidr_block
   common_name                  = "${data.terraform_remote_state.common.outputs.short_environment_identifier}-tracker"
   config-bucket                = data.terraform_remote_state.common.outputs.common_s3-config-bucket
-  db_host                      = data.terraform_remote_state.rds.outputs.aurora["reader_endpoint"]
+  db_host                      = data.terraform_remote_state.rds.outputs.rds_db_instance_endpoint_cname
   db_name                      = data.terraform_remote_state.rds.outputs.rds_creds["db_name"]
   db_password_ssm              = data.terraform_remote_state.rds.outputs.rds_creds["db_password_ssm_param"]
   db_username_ssm              = data.terraform_remote_state.rds.outputs.rds_creds["db_username_ssm_param"]
@@ -212,6 +212,9 @@ locals {
   tomcat_host                  = "alfresco"
   vpc_id                       = data.terraform_remote_state.common.outputs.vpc_id
   messaging_broker_url         = data.terraform_remote_state.amazonmq.outputs.amazon_mq_broker_failover_connection_url
+  solr_host                    = "${lookup(var.alf_solr_config, "solr_host", "alf-solr")}.${local.external_domain}"
+  tracker_host                 = "${lookup(var.alf_solr_config, "tracker_host", "alf-tracker")}.${local.external_domain}"
+  tracker_internal_host        = "${lookup(var.alf_solr_config, "tracker_host", "alf-tracker")}.${local.internal_domain}"
 
   elasticsearch_props = {
     url          = data.terraform_remote_state.elk-service.outputs.elk_service["es_url"]

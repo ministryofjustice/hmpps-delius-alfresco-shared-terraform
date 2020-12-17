@@ -35,7 +35,7 @@ data "template_file" "user_data" {
     bucket_name         = local.s3bucket
     bucket_encrypt_type = "kms"
     bucket_key_id       = local.s3bucket_kms_id
-    external_fqdn       = "localhost"
+    external_fqdn       = local.tracker_internal_host
     jvm_memory          = var.alfresco_jvm_memory
     # For bootstrapping
     bastion_inventory    = var.bastion_inventory
@@ -43,6 +43,8 @@ data "template_file" "user_data" {
     alfresco_version     = var.source_code_versions["alfresco"]
     logstash_version     = var.source_code_versions["logstash"]
     elasticbeats_version = var.source_code_versions["elasticbeats"]
+    solr_host            = local.solr_host
+    solr_port            = 443
   }
 }
 
@@ -101,15 +103,15 @@ data "null_data_source" "tags" {
 resource "aws_autoscaling_group" "environment" {
   name                      = aws_launch_configuration.environment.name
   vpc_zone_identifier       = flatten(local.private_subnet_ids)
-  min_size                  = var.restoring == "enabled" ? 0 : lookup(local.alfresco_asg_props, "tracker_nodes_count", 1)
-  max_size                  = var.restoring == "enabled" ? 0 : lookup(local.alfresco_asg_props, "tracker_nodes_count", 1)
-  desired_capacity          = var.restoring == "enabled" ? 0 : lookup(local.alfresco_asg_props, "tracker_nodes_count", 1)
+  min_size                  = var.restoring == "enabled" ? 0 : lookup(local.alfresco_asg_props, "tracker_nodes_count", 2)
+  max_size                  = var.restoring == "enabled" ? 0 : lookup(local.alfresco_asg_props, "tracker_nodes_count", 2)
+  desired_capacity          = var.restoring == "enabled" ? 0 : lookup(local.alfresco_asg_props, "tracker_nodes_count", 2)
   launch_configuration      = aws_launch_configuration.environment.name
   health_check_grace_period = 900
   placement_group           = aws_placement_group.environment.id
   target_group_arns         = [aws_lb_target_group.environment.arn]
   health_check_type         = "ELB"
-  min_elb_capacity          = lookup(local.alfresco_asg_props, "tracker_nodes_count", 1)
+  min_elb_capacity          = lookup(local.alfresco_asg_props, "tracker_min_elb_capacity", 1)
   wait_for_capacity_timeout = var.wait_for_capacity_timeout
   metrics_granularity       = "1Minute"
   enabled_metrics = [

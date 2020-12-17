@@ -38,16 +38,14 @@ cat << EOF > ~/requirements.yml
 - name: logstash
   src: https://github.com/ministryofjustice/hmpps-logstash
   version: ${logstash_version}
-- name: alfresco
-  src: https://github.com/ministryofjustice/hmpps-alfresco-bootstrap
-  version: ${alfresco_version}
 - name: users
   src: singleplatform-eng.users
+- name: solr
+  src: https://github.com/ministryofjustice/hmpps-solr-bootstrap.git
+  version: ${solr_version}
 EOF
 
 cat << EOF > ~/bootstrap_vars.yml
-- mount_point: "${cache_home}"
-- device_name: "${ebs_device}"
 - elasticsearch_url: "${elasticsearch_url}"
 - monitoring_host: "${elasticsearch_url}"
 - elasticsearch_cluster_name: "${elasticsearch_cluster_name}"
@@ -56,29 +54,26 @@ cat << EOF > ~/bootstrap_vars.yml
 - bucket_name: "${bucket_name}" 
 - bucket_encrypt_type: "${bucket_encrypt_type}"
 - bucket_key_id: "${bucket_key_id}"
-- db_user: "{{ lookup('aws_ssm', '${db_user}', region='${region}') }}"
-- db_password: "{{ lookup('aws_ssm', '${db_password}', decrypt=True, region='${region}') }}"
-- db_name: "${db_name}"
-- db_host: "${db_host}"
-- cluster_name: "${cluster_name}"
-- cluster_subnet: "${cluster_subnet}"
-- cldwatch_log_group: "${cldwatch_log_group}"
-- region: "${region}"
-- external_fqdn: "${external_fqdn}"
-- alfresco_protocol: "http"
-- alfresco_port: "8080"
-- cluster_enabled: "true"
-- messaging_broker_url: "${messaging_broker_url}"
-- messaging_broker_password: "{{ lookup('aws_ssm', '${messaging_broker_password}', decrypt=True, region='${region}') }}"
 - remote_user_filename: "${bastion_inventory}"
-- tomcat_maxthreads: "150"
-- alfresco_server_allow_write: "false"
+- solr_port: "${solr_port}"
+- solr_host: "${solr_host}"
+- solr_data_device_name: "${solr_data_device_name}"
+- solr_java_xms: "${solr_java_xms}"
+- solr_java_xmx: "${solr_java_xmx}"
+- solr_stream_logs: "enabled"
+- solr_backups_bucket: "${backups_bucket}"
+- solr_temp_device_name: "${solr_temp_device_name}"
+- solr_temp_dir: "${solr_temp_dir}"
+- solr_additional_opts: "-Xss256k -Djava.io.tmpdir=${solr_temp_dir}"
+- dns_zone_id: "${private_zone_id}"
 - es_version: "6.8.12"
 - logstash_version: "6.8.12"
 - base_version: 6
-- solr_host: "${solr_host}"
-- solr_port: "${solr_port}"
-- solr_index: true
+- alfresco_host: "${alfresco_host}"
+- alfresco_port: "${alfresco_port}"
+- alfresco_ssl_port: "${alfresco_ssl_port}"
+- cldwatch_log_group: "${cldwatch_log_group}"
+- prefix: "${prefix}"
 EOF
 
 wget https://raw.githubusercontent.com/ministryofjustice/hmpps-delius-ansible/master/group_vars/${bastion_inventory}.yml -O ~/users.yml
@@ -95,7 +90,7 @@ cat << EOF > ~/bootstrap.yml
     - elasticbeats
     - logstash
     - users
-    - alfresco
+    - solr
 EOF
 
 logger "ansible prep stage complete"
@@ -129,3 +124,7 @@ logger "alfresco bootstrap complete"
 
 # restart awslogs
 systemctl restart awslogs
+
+# solr tmp folder perms
+chown -R solr:solr ${solr_temp_dir}
+systemctl restart solr

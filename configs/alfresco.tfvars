@@ -5,11 +5,15 @@ alf_config_map = {
   image_id = "ami-072548d2dd6688dde"
 }
 
+solr_config_map = {
+  ami_id = "ami-02ce4079e4808de08"
+}
+
 source_code_versions = {
   boostrap     = "centos"
   alfresco     = "0.0.8"
   logstash     = "1.0.1"
   elasticbeats = "1.0.1"
-  solr         = "0.0.5"
+  solr         = "patch/dev-solr-role"
   esadmin      = "0.0.6"
 }

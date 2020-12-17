@@ -36,7 +36,19 @@ resource "aws_lb" "environment" {
 
 resource "aws_route53_record" "dns_entry" {
   zone_id = local.public_zone_id
-  name    = "${lookup(var.alf_solr_config, "tracker_host", "alf-tracker")}.${local.external_domain}"
+  name    = local.tracker_host
+  type    = "A"
+
+  alias {
+    name                   = aws_lb.environment.dns_name
+    zone_id                = aws_lb.environment.zone_id
+    evaluate_target_health = false
+  }
+}
+
+resource "aws_route53_record" "dns_internal" {
+  zone_id = local.private_zone_id
+  name    = local.tracker_internal_host
   type    = "A"
 
   alias {
@@ -52,13 +64,8 @@ resource "aws_lb_listener" "http_listener" {
   port              = local.http_port
   protocol          = local.http_protocol
   default_action {
-    type = "redirect"
-
-    redirect {
-      port        = "443"
-      protocol    = "HTTPS"
-      status_code = "HTTP_301"
-    }
+    type             = "forward"
+    target_group_arn = aws_lb_target_group.environment.arn
   }
 }
 

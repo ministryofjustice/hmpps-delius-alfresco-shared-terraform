@@ -203,7 +203,7 @@ locals {
   db_name                      = data.terraform_remote_state.rds.outputs.rds_creds["db_name"]
   db_username_ssm              = data.terraform_remote_state.rds.outputs.rds_creds["db_username_ssm_param"]
   db_password_ssm              = data.terraform_remote_state.rds.outputs.rds_creds["db_password_ssm_param"]
-  db_host                      = data.terraform_remote_state.rds.outputs.aurora["cluster_endpoint"]
+  db_host                      = data.terraform_remote_state.rds.outputs.rds_db_instance_endpoint_cname
   app_hostnames                = data.terraform_remote_state.common.outputs.app_hostnames
   bastion_inventory            = var.bastion_inventory
   jvm_memory                   = var.alfresco_jvm_memory
@@ -224,7 +224,7 @@ locals {
   ]
 
   solr_config = {
-    solr_host = "solr.${data.terraform_remote_state.common.outputs.internal_domain}"
+    solr_host = data.terraform_remote_state.solr.outputs.alb_dns_cname
     solr_port = 8983
   }
 }
