@@ -15,6 +15,22 @@
     - name: get aws credentials
       include: ../../creds/playbook.yml
 
+    - name: Create snapshot param entry
+      aws_ssm_parameter_store:
+        name: "/alfresco/solr/ebs/snapshot_ids/{{ item }}"
+        description: "Used for Solr EBS volume refresh"
+        string_type: "String"
+        value: "{{ new_id }}"
+        overwrite_value: "always"
+        aws_access_key: "{{ aws_access_key_id }}"
+        aws_secret_key: "{{ aws_secret_access_key }}"
+        security_token: "{{ aws_security_token }}"
+        region: "{{ aws_region }}"
+      loop:
+        - eu-west-2a
+        - eu-west-2b
+        - eu-west-2c
+
     - name: retrieve snapshot id in target account
       ec2_snapshot_info:
         aws_access_key: "{{ aws_access_key_id }}"
