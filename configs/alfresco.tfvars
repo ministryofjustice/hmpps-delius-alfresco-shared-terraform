@@ -6,7 +6,7 @@ alf_config_map = {
 }
 
 solr_config_map = {
-  ami_id = "ami-02ce4079e4808de08"
+  ami_id = "ami-08048b2b1b4871b5a"
 }
 
 source_code_versions = {
