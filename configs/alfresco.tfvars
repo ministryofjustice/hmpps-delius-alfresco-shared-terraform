@@ -14,6 +14,6 @@ source_code_versions = {
   alfresco     = "0.0.9"
   logstash     = "1.0.1"
   elasticbeats = "1.0.1"
-  solr         = "patch/dev-solr-role"
+  solr         = "0.0.1"
   esadmin      = "0.0.6"
 }
