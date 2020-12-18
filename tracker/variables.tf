@@ -2,11 +2,11 @@
 variable "region" {
 }
 
-variable "environment_name" {
-}
-
 variable "remote_state_bucket_name" {
   description = "Terraform remote state bucket name"
+}
+
+variable "environment_name" {
 }
 
 #ASG
@@ -18,11 +18,10 @@ variable "alfresco_asg_props" {
     asg_max                   = 2
     asg_instance_type         = "m4.xlarge"
     ebs_volume_size           = 512
-    health_check_grace_period = 900
+    health_check_grace_period = 600
     min_elb_capacity          = 1
     wait_for_capacity_timeout = "30m"
     default_cooldown          = 120
-    ami_name                  = "HMPPS Alfresco master*"
   }
 }
 
@@ -31,9 +30,15 @@ variable "alf_config_map" {
   default = {}
 }
 
-variable "alf_asg_map" {
-  type    = map(string)
-  default = {}
+variable "source_code_versions" {
+  type = map(string)
+  default = {
+    boostrap     = "centos"
+    alfresco     = "master"
+    logstash     = "master"
+    elasticbeats = "master"
+    solr         = "master"
+  }
 }
 
 variable "alf_cloudwatch_log_retention" {
@@ -68,23 +73,30 @@ variable "alfresco_volume_size" {
   default = 20
 }
 
-# source code versions
-variable "source_code_versions" {
-  type = map(string)
-  default = {
-    boostrap     = "centos"
-    alfresco     = "master"
-    logstash     = "master"
-    elasticbeats = "master"
-  }
+variable "cookie_duration" {
+  default = "3600"
+}
+
+variable "user_access_cidr_blocks" {
+  type = list(string)
 }
 
 variable "restoring" {
   default = "disabled"
 }
 
+variable "min_elb_capacity" {
+  default = 1
+}
 
-variable "alf_account_ids" {
-  type    = map(string)
-  default = {}
+variable "wait_for_capacity_timeout" {
+  default = "15m"
+}
+
+variable "alf_solr_config" {
+  type = map(string)
+  default = {
+    solr_host = "alf-solr"
+    solr_port = 443
+  }
 }

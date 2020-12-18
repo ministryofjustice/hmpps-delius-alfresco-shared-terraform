@@ -24,6 +24,9 @@ destroy:
 apply:
 	sh run.sh $(ENVIRONMENT_NAME) apply $(COMPONENT) || (exit $$?)
 
+output:
+	sh run.sh $(ENVIRONMENT_NAME) output $(COMPONENT) || (exit $$?)
+
 start: restart
 	docker-compose exec builder env| sort
 
@@ -37,7 +40,10 @@ restart: stop
 	docker-compose up -d
 
 local_plan: restart
-	docker-compose exec builder make plan component=$(COMPONENT)
+	docker-compose exec builder make plan
 
 local_apply: restart
-	docker-compose exec builder make apply component=$(COMPONENT)
+	docker-compose exec builder make apply
+
+local_output: restart
+	docker-compose exec builder make output

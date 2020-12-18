@@ -224,8 +224,8 @@ locals {
   ]
 
   solr_config = {
-    solr_host = "solr.${data.terraform_remote_state.common.outputs.internal_domain}"
-    solr_port = 8983
+    solr_host = data.terraform_remote_state.solr.outputs.alb_dns_cname
+    solr_port = 80
   }
 }
 
@@ -279,7 +279,7 @@ module "asg" {
   certificate_arn           = local.certificate_arn
   public_subnet_ids         = flatten(local.public_subnet_ids)
   public_zone_id            = local.public_zone_id
-  health_check_grace_period = lookup(local.alfresco_asg_props, "health_check_grace_period", 600)
+  health_check_grace_period = lookup(local.alfresco_asg_props, "health_check_grace_period", 900)
   logs_kms_arn              = local.logs_kms_arn
   min_elb_capacity          = lookup(local.alfresco_asg_props, "min_elb_capacity", 1)
   wait_for_capacity_timeout = lookup(local.alfresco_asg_props, "wait_for_capacity_timeout", "30m")

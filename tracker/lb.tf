@@ -1,10 +1,3 @@
-locals {
-  http_port      = 80
-  http_protocol  = "HTTP"
-  https_port     = 443
-  https_protocol = "HTTPS"
-}
-
 ############################################
 # CREATE LB FOR SOLR
 ############################################
@@ -14,7 +7,7 @@ resource "aws_lb" "environment" {
   name               = local.common_name
   internal           = true
   load_balancer_type = "application"
-  security_groups    = [aws_security_group.sg_solr_alb.id]
+  security_groups    = [aws_security_group.sg_tracker_alb.id]
   subnets            = flatten(local.private_subnet_ids)
 
   enable_deletion_protection = false
@@ -43,7 +36,19 @@ resource "aws_lb" "environment" {
 
 resource "aws_route53_record" "dns_entry" {
   zone_id = local.public_zone_id
-  name    = local.solr_host
+  name    = local.tracker_host
+  type    = "A"
+
+  alias {
+    name                   = aws_lb.environment.dns_name
+    zone_id                = aws_lb.environment.zone_id
+    evaluate_target_health = false
+  }
+}
+
+resource "aws_route53_record" "dns_internal" {
+  zone_id = local.private_zone_id
+  name    = local.tracker_internal_host
   type    = "A"
 
   alias {
@@ -77,7 +82,7 @@ module "https_listener" {
 
 resource "aws_lb_target_group" "environment" {
   name                 = local.common_name
-  port                 = local.solr_port
+  port                 = local.http_port
   protocol             = local.http_protocol
   vpc_id               = local.vpc_id
   deregistration_delay = 120
@@ -85,8 +90,8 @@ resource "aws_lb_target_group" "environment" {
 
   health_check {
     interval            = 30
-    path                = "/solr/"
-    port                = local.solr_port
+    path                = "/alfresco/"
+    port                = local.http_port
     protocol            = local.http_protocol
     timeout             = 5
     healthy_threshold   = 3

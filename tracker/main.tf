@@ -113,27 +113,15 @@ data "terraform_remote_state" "amazonmq" {
 }
 
 #-------------------------------------------------------------
-### Getting the elk-migration details
+### Getting the elk details
 #-------------------------------------------------------------
+
 data "terraform_remote_state" "elk-service" {
   backend = "s3"
 
   config = {
     bucket = var.remote_state_bucket_name
     key    = "alfresco/elk-service/terraform.tfstate"
-    region = var.region
-  }
-}
-
-#-------------------------------------------------------------
-### Getting the elk-migration details
-#-------------------------------------------------------------
-data "terraform_remote_state" "tracker" {
-  backend = "s3"
-
-  config = {
-    bucket = var.remote_state_bucket_name
-    key    = "alfresco/tracker/terraform.tfstate"
     region = var.region
   }
 }
@@ -181,7 +169,6 @@ data "aws_acm_certificate" "cert" {
 
 locals {
   alfresco_asg_props = merge(var.alfresco_asg_props, var.alf_config_map)
-  solr_asg_props     = merge(var.alf_solr_config, var.solr_config_map)
   access_logs_bucket = data.terraform_remote_state.common.outputs.common_s3_lb_logs_bucket
   account_id         = data.terraform_remote_state.common.outputs.common_account_id
   alfresco_app_name  = data.terraform_remote_state.common.outputs.alfresco_app_name
@@ -193,7 +180,7 @@ locals {
   bastion_inventory            = var.bastion_inventory
   certificate_arn              = data.aws_acm_certificate.cert.arn
   cidr_block                   = data.terraform_remote_state.common.outputs.vpc_cidr_block
-  common_name                  = "${data.terraform_remote_state.common.outputs.short_environment_identifier}-solr"
+  common_name                  = "${data.terraform_remote_state.common.outputs.short_environment_identifier}-tracker"
   config-bucket                = data.terraform_remote_state.common.outputs.common_s3-config-bucket
   db_host                      = data.terraform_remote_state.rds.outputs.rds_db_instance_endpoint_cname
   db_name                      = data.terraform_remote_state.rds.outputs.rds_creds["db_name"]
@@ -217,13 +204,17 @@ locals {
   s3bucket_kms_id              = data.terraform_remote_state.s3bucket.outputs.s3bucket_kms_id
   short_environment_identifier = data.terraform_remote_state.common.outputs.short_environment_identifier
   ssh_deployer_key             = data.terraform_remote_state.common.outputs.common_ssh_deployer_key
-  tracker_host                 = "${lookup(local.solr_asg_props, "tracker_host", "alf-tracker")}.${local.external_domain}"
-  solr_host                    = "${lookup(local.solr_asg_props, "solr_host", "alf-solr")}.${local.external_domain}"
-  solr_port                    = 8983
+  http_port                    = 80
+  http_protocol                = "HTTP"
+  https_port                   = 443
+  https_protocol               = "HTTPS"
   tags                         = data.terraform_remote_state.common.outputs.common_tags
   tomcat_host                  = "alfresco"
   vpc_id                       = data.terraform_remote_state.common.outputs.vpc_id
   messaging_broker_url         = data.terraform_remote_state.amazonmq.outputs.amazon_mq_broker_failover_connection_url
+  solr_host                    = "${lookup(var.alf_solr_config, "solr_host", "alf-solr")}.${local.external_domain}"
+  tracker_host                 = "${lookup(var.alf_solr_config, "tracker_host", "alf-tracker")}.${local.external_domain}"
+  tracker_internal_host        = "${lookup(var.alf_solr_config, "tracker_host", "alf-tracker")}.${local.internal_domain}"
 
   elasticsearch_props = {
     url          = data.terraform_remote_state.elk-service.outputs.elk_service["es_url"]
