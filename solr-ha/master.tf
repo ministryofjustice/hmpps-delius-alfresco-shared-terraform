@@ -43,13 +43,13 @@ data "template_file" "master_user_data" {
     solr_version         = var.source_code_versions["solr"]
     # SOLR
     solr_port             = local.solr_port
-    solr_device_name      = var.alf_solr_config["ebs_device_name"]
+    solr_device_name      = local.solr_asg_props["ebs_device_name"]
     solr_volume_name      = local.common_name
-    solr_java_xms         = var.alf_solr_config["java_xms"]
-    solr_java_xmx         = var.alf_solr_config["java_xmx"]
-    jvm_memory            = var.alf_solr_config["alf_jvm_memory"]
+    solr_java_xms         = local.solr_asg_props["java_xms"]
+    solr_java_xmx         = local.solr_asg_props["java_xmx"]
+    jvm_memory            = local.solr_asg_props["alf_jvm_memory"]
     backups_bucket        = local.backups_bucket
-    solr_temp_device_name = var.alf_solr_config["ebs_temp_device_name"]
+    solr_temp_device_name = local.solr_asg_props["ebs_temp_device_name"]
     solr_temp_volume_name = "${local.common_name}-temp"
     solr_temp_dir         = "/tmp/solr"
   }
