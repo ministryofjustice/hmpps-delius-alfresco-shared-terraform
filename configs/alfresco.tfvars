@@ -12,11 +12,12 @@ solr_config_map = {
 }
 
 source_code_versions = {
-  boostrap     = "centos"
-  alfresco     = "0.0.9"
-  logstash     = "1.0.1"
-  elasticbeats = "1.0.1"
-  solr         = "0.0.5"
-  solr_ha      = "0.0.1"
-  esadmin      = "0.0.6"
+  boostrap         = "centos"
+  alfresco         = "0.0.8"
+  alfresco_tracker = "0.0.9"
+  logstash         = "1.0.1"
+  elasticbeats     = "1.0.1"
+  solr             = "0.0.5"
+  solr_ha          = "0.0.1"
+  esadmin          = "0.0.6"
 }
