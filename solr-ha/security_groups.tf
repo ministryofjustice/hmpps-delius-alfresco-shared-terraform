@@ -59,8 +59,8 @@ resource "aws_security_group_rule" "external_lb_ingress_https" {
 # alfresco to alb
 resource "aws_security_group_rule" "alf_lb_ingress_http" {
   security_group_id        = aws_security_group.sg_solr_alb.id
-  from_port                = 80
-  to_port                  = 80
+  from_port                = local.http_port
+  to_port                  = local.http_port
   protocol                 = "tcp"
   type                     = "ingress"
   description              = "${local.common_name}-alf-http"
