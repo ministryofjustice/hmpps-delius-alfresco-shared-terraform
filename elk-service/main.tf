@@ -109,6 +109,7 @@ locals {
   environment_identifier       = data.terraform_remote_state.common.outputs.environment_identifier
   application                  = "alf-elk-svc"
   common_name                  = "${data.terraform_remote_state.common.outputs.short_environment_identifier}-${local.application}"
+  alf_elk_service_props        = merge(var.alf_elk_service_props, var.alf_elk_service_map)
   domain_name                  = local.alf_elk_service_props["domain_name_type"] == "full" ? local.common_name : local.application
   short_environment_identifier = data.terraform_remote_state.common.outputs.short_environment_identifier
   region                       = var.region
@@ -135,7 +136,6 @@ locals {
   access_logs_bucket           = data.terraform_remote_state.common.outputs.common_s3_lb_logs_bucket
   ecs_cluster_name             = data.terraform_remote_state.common.outputs.ecs_cluster["name"]
   service_discovery_domain     = "${local.application}-${local.internal_domain}"
-  alf_elk_service_props        = merge(var.alf_elk_service_props, var.alf_elk_service_map)
 
   allowed_cidr_block = [
     var.user_access_cidr_blocks,
