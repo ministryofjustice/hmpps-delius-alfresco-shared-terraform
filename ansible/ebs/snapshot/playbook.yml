@@ -51,7 +51,7 @@
         security_token: "{{ aws_security_token }}"
         region: "{{ aws_region }}"
         wait: yes
-        wait_timeout: 600
+        wait_timeout: 2700
         last_snapshot_min_age: 60
       register: snapshot_info
 
@@ -92,7 +92,7 @@
         security_token: "{{ aws_security_token }}"
         region: "{{ aws_region }}"
         wait: yes
-        wait_timeout: 600
+        wait_timeout: 2700
       register: src_snapshot
 
     - name: set volume facts
@@ -147,7 +147,7 @@
         security_token: "{{ aws_security_token }}"
         region: "{{ aws_region }}"
         wait: yes
-        wait_timeout: 600
+        wait_timeout: 2700
       register: target_snapshot
 
     - name: set src account iam role creds
