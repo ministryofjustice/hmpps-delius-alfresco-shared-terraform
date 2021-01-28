@@ -3,6 +3,7 @@ services:
   builder:
     image: mojdigitalstudio/hmpps-terraform-builder-lite
     command: top
+    user: "${UID}:${UID}"
     volumes:
       - ${PWD}:/home/tools/data
       - ${HOME}/.aws:/home/tools/.aws
