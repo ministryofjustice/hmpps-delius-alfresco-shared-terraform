@@ -69,6 +69,17 @@ resource "aws_lb_listener" "http_listener" {
   }
 }
 
+# listener
+resource "aws_lb_listener" "solr_listener" {
+  load_balancer_arn = aws_lb.environment.arn
+  port              = local.solr_port
+  protocol          = local.http_protocol
+  default_action {
+    type             = "forward"
+    target_group_arn = aws_lb_target_group.environment.arn
+  }
+}
+
 module "https_listener" {
   source           = "../modules/loadbalancer/alb/create_listener_with_https"
   lb_arn           = aws_lb.environment.arn
