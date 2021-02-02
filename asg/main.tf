@@ -217,7 +217,7 @@ locals {
   ]
 
   solr_config = {
-    solr_host = data.terraform_remote_state.solr.outputs.alb_dns_cname
+    solr_host = data.terraform_remote_state.solr.outputs.alb_dns_internal
     solr_port = 8983
   }
 }

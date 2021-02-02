@@ -53,6 +53,18 @@ resource "aws_route53_record" "dns_entry" {
   }
 }
 
+resource "aws_route53_record" "dns_internal" {
+  zone_id = local.private_zone_id
+  name    = "solr.${local.internal_domain}"
+  type    = "A"
+
+  alias {
+    name                   = aws_lb.environment.dns_name
+    zone_id                = aws_lb.environment.zone_id
+    evaluate_target_health = false
+  }
+}
+
 # listener
 resource "aws_lb_listener" "http_listener" {
   load_balancer_arn = aws_lb.environment.arn
