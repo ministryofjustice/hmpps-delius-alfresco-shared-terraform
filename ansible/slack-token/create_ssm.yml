@@ -1,0 +1,12 @@
+---
+- name: get aws credentials
+  include: ../creds/playbook.yml
+  vars:
+    target_iam_role: "arn:aws:iam::{{ account_id }}:role/terraform"
+
+- name: "Create ssm param entry for account {{ account_id }}"
+  include: ../ssm/add_ssm_param.yml
+  vars:
+    ssm_param_name: "{{ ssm_param }}"
+    ssm_param_value: "{{ slack_token }}"
+

@@ -1,0 +1,11 @@
+---
+- name: Create ssm param entry
+  aws_ssm_parameter_store:
+    name: "{{ ssm_param_name}}"
+    string_type: "SecureString"
+    value: "{{ ssm_param_value }}"
+    overwrite_value: "always"
+    aws_access_key: "{{ aws_access_key_id }}"
+    aws_secret_key: "{{ aws_secret_access_key }}"
+    security_token: "{{ aws_security_token }}"
+    region: "{{ aws_region }}"
