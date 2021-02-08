@@ -28,7 +28,7 @@ variable "alf_ops_alerts" {
     log_level           = "info"
     messaging_status    = "disabled"
     runtime             = "python3.7"
-    ssm_token           = "manual-ops-alerts-slack-token"
+    ssm_token           = "/alfresco/slack/token"
     datapoints_to_alarm = "1"
   }
 }

@@ -1,0 +1,49 @@
+---
+- name: Add Slack Param Store entry
+  hosts: localhost
+  connection: local
+  vars_files:
+    - ../vars/common-vars.yml
+  tasks:
+    - name: set iam role facts
+      set_fact:
+        eng_iam_role: "arn:aws:iam::895523100917:role/admin"
+        account_iam_role: "{{ lookup('env', 'TERRAGRUNT_IAM_ROLE') }}"
+        slack_token_ssm: "manual-ops-alerts-slack-token"
+        ssm_param: "/alfresco/slack/token"
+
+    - name: get aws credentials
+      include: ../creds/playbook.yml
+      vars:
+        target_iam_role: "{{ eng_iam_role }}"
+
+    - name:  get slack token value
+      set_fact:
+        slack_token: "{{ lookup('aws_ssm', slack_token_ssm, aws_access_key=aws_access_key_id, aws_secret_key=aws_secret_access_key, aws_security_token=aws_security_token ) or '' }}"
+      no_log: yes
+
+    - name: add ssm param to account
+      include: create_ssm.yml
+      vars:
+        account_id: "{{ item }}"
+      loop:
+        - 563502482979 #alf-dev
+        - 723123699647 #delius-core-non-prod
+        - 728765553488 #delius-test
+        - 330914586320 #delius-training
+        - 130847504577 #delius-training-test
+        - 716683748953 #potest
+        - 645753425509 #delius-int
+        - 431912413968 #auto-test
+        - 010587221707 #pre-prod
+        - 205048117103 #stage
+        # - 050243167760 #prod
+        - 130975965028 #perf
+      
+
+    # - name: Create ssm param entry
+    #   include: ../ssm/add_ssm_param.yml
+    #   vars:
+    #     ssm_param_name: "{{ ssm_param }}"
+    #     ssm_param_value: "{{ slack_token }}"
+
