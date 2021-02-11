@@ -99,6 +99,7 @@ data "template_file" "user_data" {
     solr_temp_device_name = local.solr_asg_props["ebs_temp_device_name"]
     solr_temp_volume_name = "${local.common_name}-temp"
     solr_temp_dir         = "/tmp/solr"
+    solr_cmis_managed     = var.solr_cmis_managed
   }
 }
 

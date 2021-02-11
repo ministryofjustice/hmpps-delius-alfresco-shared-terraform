@@ -291,5 +291,6 @@ module "asg" {
   instance_security_groups    = flatten(local.instance_security_groups)
   solr_config                 = local.solr_config
   source_code_versions        = var.source_code_versions
+  solr_cmis_managed           = var.solr_cmis_managed
 }
 

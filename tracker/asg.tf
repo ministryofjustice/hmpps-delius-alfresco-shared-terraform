@@ -45,6 +45,7 @@ data "template_file" "user_data" {
     elasticbeats_version = var.source_code_versions["elasticbeats"]
     solr_host            = local.solr_host
     solr_port            = 8983
+    solr_cmis_managed    = var.solr_cmis_managed
   }
 }
 

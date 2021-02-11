@@ -80,6 +80,7 @@ cat << EOF > ~/bootstrap_vars.yml
 - es_version: "6.8.12"
 - logstash_version: "6.8.12"
 - base_version: 6
+- solr_cmis_managed: ${solr_cmis_managed}
 EOF
 
 wget https://raw.githubusercontent.com/ministryofjustice/hmpps-delius-ansible/master/group_vars/${bastion_inventory}.yml -O ~/users.yml

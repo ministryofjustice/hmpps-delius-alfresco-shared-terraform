@@ -79,6 +79,7 @@ cat << EOF > ~/bootstrap_vars.yml
 - solr_host: "${solr_host}"
 - solr_port: "${solr_port}"
 - solr_index: true
+- solr_cmis_managed: ${solr_cmis_managed}
 EOF
 
 wget https://raw.githubusercontent.com/ministryofjustice/hmpps-delius-ansible/master/group_vars/${bastion_inventory}.yml -O ~/users.yml

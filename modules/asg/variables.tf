@@ -295,3 +295,7 @@ variable "elasticsearch_props" {
 variable "alf_deploy_iwp_fix" {
   default = 0
 }
+
+variable "solr_cmis_managed" {
+  default = false
+}
