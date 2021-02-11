@@ -88,3 +88,7 @@ variable "alf_account_ids" {
   type    = map(string)
   default = {}
 }
+
+variable "solr_cmis_managed" {
+  default = false
+}

@@ -100,3 +100,7 @@ variable "alf_solr_config" {
     solr_port = 443
   }
 }
+
+variable "solr_cmis_managed" {
+  default = false
+}

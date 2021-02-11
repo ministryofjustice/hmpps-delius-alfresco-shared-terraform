@@ -118,3 +118,6 @@ variable "restoring" {
   default = "disabled"
 }
 
+variable "solr_cmis_managed" {
+  default = false
+}

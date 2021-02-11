@@ -51,6 +51,7 @@ data "template_file" "user_data" {
     # SOLR
     solr_host = var.solr_config["solr_host"]
     solr_port = var.solr_config["solr_port"]
+    solr_cmis_managed    = var.solr_cmis_managed
   }
 }
 
