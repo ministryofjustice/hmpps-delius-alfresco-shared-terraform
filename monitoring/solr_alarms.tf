@@ -28,6 +28,7 @@ resource "aws_cloudwatch_metric_alarm" "solr_lb_unhealthy_alert" {
   period              = local.alarm_period
   statistic           = "Average"
   threshold           = "2"
+  count               = 0
   actions_enabled     = local.messaging_status == "enabled" ? true : false
   alarm_description   = "Some Solr hosts are unhealthy, check for EC2 instances maybe an instance is cycling. Please contact ${local.support_team}"
   alarm_actions       = [aws_sns_topic.alarm_notification.arn]
