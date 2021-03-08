@@ -134,7 +134,7 @@ data "aws_ami" "amazon_ami" {
   owners      = [var.alf_account_ids["eng-non-prod"]]
 
   filter {
-    name = "name"
+    name   = "name"
     values = [local.alfresco_asg_props["ami_name"]]
   }
 
@@ -195,7 +195,7 @@ locals {
   db_name                      = data.terraform_remote_state.rds.outputs.rds_creds["db_name"]
   db_username_ssm              = data.terraform_remote_state.rds.outputs.rds_creds["db_username_ssm_param"]
   db_password_ssm              = data.terraform_remote_state.rds.outputs.rds_creds["db_password_ssm_param"]
-  db_host                      = data.terraform_remote_state.rds.outputs.rds_db_instance_endpoint_cname
+  db_host                      = data.terraform_remote_state.rds.outputs.aurora["cluster_endpoint"]
   solr_host                    = "solr.${local.internal_domain}"
   app_hostnames                = data.terraform_remote_state.common.outputs.app_hostnames
   bastion_inventory            = var.bastion_inventory
