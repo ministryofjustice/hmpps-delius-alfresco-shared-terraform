@@ -87,3 +87,8 @@ variable "alf_db_options" {
   description = "A list of Options to apply."
   default     = []
 }
+
+variable "alf_database_map" {
+  type    = map(string)
+  default = {}
+}
