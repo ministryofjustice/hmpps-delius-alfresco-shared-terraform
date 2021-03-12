@@ -182,7 +182,7 @@ locals {
   cidr_block                   = data.terraform_remote_state.common.outputs.vpc_cidr_block
   common_name                  = "${data.terraform_remote_state.common.outputs.short_environment_identifier}-solr"
   config-bucket                = data.terraform_remote_state.common.outputs.common_s3-config-bucket
-  db_host                      = data.terraform_remote_state.rds.outputs.rds_db_instance_endpoint_cname
+  db_host                      = data.terraform_remote_state.rds.outputs.aurora["cluster_endpoint"]
   db_name                      = data.terraform_remote_state.rds.outputs.rds_creds["db_name"]
   db_password_ssm              = data.terraform_remote_state.rds.outputs.rds_creds["db_password_ssm_param"]
   db_username_ssm              = data.terraform_remote_state.rds.outputs.rds_creds["db_username_ssm_param"]
