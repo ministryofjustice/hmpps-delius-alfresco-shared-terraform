@@ -74,7 +74,3 @@ output "aurora" {
     reader_endpoint  = module.db.this_rds_cluster_reader_endpoint
   }
 }
-
-output "config_map" {
-  value = local.alf_database_config
-}
