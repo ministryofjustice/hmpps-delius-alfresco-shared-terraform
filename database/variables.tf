@@ -25,6 +25,11 @@ variable "alf_rds_props" {
   }
 }
 
+variable "alf_database_map" {
+  type    = map(string)
+  default = {}
+}
+
 variable "alf_snapshot_identifier" {
   default = null
 }

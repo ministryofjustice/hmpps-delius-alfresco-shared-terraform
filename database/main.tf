@@ -40,6 +40,7 @@ data "terraform_remote_state" "security-groups" {
 ####################################################
 
 locals {
+  alf_database_config             = merge(var.alf_rds_props, var.alf_database_map)
   vpc_id                          = data.terraform_remote_state.common.outputs.vpc_id
   cidr_block                      = data.terraform_remote_state.common.outputs.vpc_cidr_block
   allowed_cidr_block              = [data.terraform_remote_state.common.outputs.vpc_cidr_block]
