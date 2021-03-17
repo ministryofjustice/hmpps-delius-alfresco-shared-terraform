@@ -1,0 +1,36 @@
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "ec2InstanceRole",
+            "Effect": "Allow",
+            "Action": [
+                "ec2:Describe*"
+            ],
+            "Resource": [
+                "*"
+            ]
+        },
+        {
+            "Sid": "ListAllBuckets",
+            "Effect": "Allow",
+            "Action": [
+                "s3:ListAllMyBuckets"
+            ],
+            "Resource": [
+                "*"
+            ]
+        },
+        {
+            "Sid": "allowAccessToS3Buckets",
+            "Effect": "Allow",
+            "Action": [
+                "s3:GetObject"
+            ],
+            "Resource": [
+                "arn:aws:s3:::${bucket}",
+                "arn:aws:s3:::${bucket}/*"
+            ]
+        }
+    ]
+}
