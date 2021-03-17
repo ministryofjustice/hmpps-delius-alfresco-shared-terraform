@@ -1,8 +1,3 @@
-data "aws_db_snapshot" "snapshot" {
-  db_snapshot_identifier = "alfresco-aurora-snapshot" #var.alf_snapshot_identifier
-  most_recent            = true
-}
-
 module "db" {
   source                          = "terraform-aws-modules/rds-aurora/aws"
   version                         = "2.26.0"
@@ -13,7 +8,7 @@ module "db" {
   kms_key_id                      = module.kms_key.kms_arn
   engine                          = "aurora-postgresql"
   engine_version                  = lookup(local.alf_database_config, "aurora_engine_version", "9.6.19")
-  snapshot_identifier             = data.aws_db_snapshot.snapshot.db_snapshot_arn
+  snapshot_identifier             = lookup(local.alf_database_config, "aurora_snapshot", "alfresco-aurora-snapshot") 
   vpc_id                          = local.vpc_id
   subnets                         = flatten(local.db_subnet_ids)
   replica_count                   = lookup(local.alf_database_config, "aurora_replica_count", 1)
