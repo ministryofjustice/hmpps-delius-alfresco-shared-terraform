@@ -81,3 +81,4 @@ resource "aws_instance" "instance" {
     ignore_changes = [ami]
   }
 }
+ec2 
