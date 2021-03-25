@@ -47,3 +47,6 @@ local_apply: restart
 
 local_output: restart
 	docker-compose exec builder make output
+
+local_destroy: restart
+	docker-compose exec builder make destroy
