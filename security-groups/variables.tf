@@ -46,3 +46,8 @@ variable "user_access_cidr_blocks" {
   type = list(string)
 }
 
+variable "alfresco_access_cidr_blocks" {
+  type    = list(string)
+  default = []
+}
+
