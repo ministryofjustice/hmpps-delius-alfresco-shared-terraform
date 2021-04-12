@@ -1,8 +1,8 @@
 # ASG Configuration
 alf_config_map = {
-  asg_ami  = "ami-010cf2704a275424f"
+  asg_ami  = "ami-0d873d4a613809f01"
   ami_name = "HMPPS Alfresco *"
-  image_id = "ami-010cf2704a275424f"
+  image_id = "ami-0d873d4a613809f01"
 }
 
 solr_config_map = {
