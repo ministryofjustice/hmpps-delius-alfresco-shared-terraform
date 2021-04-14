@@ -202,3 +202,11 @@ output "ecs_cluster" {
     name = module.ecs_cluster.ecs_cluster_name
   }
 }
+
+output "bastion_cidr_ranges" {
+  value = [
+    local.bastions_cidr_ranges["az1"],
+    local.bastions_cidr_ranges["az2"],
+    local.bastions_cidr_ranges["az3"]
+  ]
+}

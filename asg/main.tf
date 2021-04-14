@@ -9,6 +9,19 @@ terraform {
 # DATA SOURCE MODULES FROM OTHER TERRAFORM BACKENDS
 ####################################################
 #-------------------------------------------------------------
+### Getting the current vpc
+#-------------------------------------------------------------
+data "terraform_remote_state" "vpc" {
+  backend = "s3"
+
+  config = {
+    bucket = var.remote_state_bucket_name
+    key    = "vpc/terraform.tfstate"
+    region = var.region
+  }
+}
+
+#-------------------------------------------------------------
 ### Getting the common details
 #-------------------------------------------------------------
 data "terraform_remote_state" "common" {
@@ -244,7 +257,20 @@ locals {
         }
       ]
       conditions = [{
-        source_ips = data.terraform_remote_state.common.outputs.nat_gateway_ips
+        source_ips = data.terraform_remote_state.common.outputs.bastion_cidr_ranges
+      }]
+    },
+    {
+      https_listener_index = 0
+      priority             = 60
+      actions = [
+        {
+          type               = "forward"
+          target_group_index = 0
+        }
+      ]
+      conditions = [{
+        source_ips = [local.alfresco_asg_props["vpn_ip"]]
       }]
     },
     {
