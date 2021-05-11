@@ -87,19 +87,6 @@ data "terraform_remote_state" "security-groups" {
 }
 
 #-------------------------------------------------------------
-### Getting the Amazon broker url
-#-------------------------------------------------------------
-data "terraform_remote_state" "amazonmq" {
-  backend = "s3"
-
-  config = {
-    bucket = var.remote_state_bucket_name
-    key    = "${var.spg_messaging_broker_url_src == "data" ? "spg" : "alfresco"}/amazonmq/terraform.tfstate"
-    region = var.region
-  }
-}
-
-#-------------------------------------------------------------
 ### Getting the elk-migration details
 #-------------------------------------------------------------
 
@@ -204,8 +191,6 @@ locals {
   tomcat_host                  = "alfresco"
   certificate_arn              = data.aws_acm_certificate.cert.arn
   public_subnet_ids            = [data.terraform_remote_state.common.outputs.public_subnet_ids]
-  messaging_broker_url         = data.terraform_remote_state.amazonmq.outputs.amazon_mq_broker_failover_connection_url
-  messaging_broker_password    = "${data.terraform_remote_state.common.outputs.credentials_ssm_path}/weblogic/spg-domain/remote_broker_password"
   logs_kms_arn                 = data.terraform_remote_state.common.outputs.kms_arn
 
   instance_security_groups = [

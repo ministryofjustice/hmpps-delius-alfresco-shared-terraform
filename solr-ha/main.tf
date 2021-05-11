@@ -100,19 +100,6 @@ data "terraform_remote_state" "security-groups" {
 }
 
 #-------------------------------------------------------------
-### Getting the Amazon broker url
-#-------------------------------------------------------------
-data "terraform_remote_state" "amazonmq" {
-  backend = "s3"
-
-  config = {
-    bucket = var.remote_state_bucket_name
-    key    = "${var.spg_messaging_broker_url_src == "data" ? "spg" : "alfresco"}/amazonmq/terraform.tfstate"
-    region = var.region
-  }
-}
-
-#-------------------------------------------------------------
 ### Getting the elk-migration details
 #-------------------------------------------------------------
 data "terraform_remote_state" "elk-service" {

@@ -71,8 +71,6 @@ cat << EOF > ~/bootstrap_vars.yml
 - alfresco_protocol: "http"
 - alfresco_port: "8080"
 - cluster_enabled: "true"
-- messaging_broker_url: "${messaging_broker_url}"
-- messaging_broker_password: "{{ lookup('aws_ssm', '${messaging_broker_password}', decrypt=True, region='${region}') }}"
 - remote_user_filename: "${bastion_inventory}"
 - tomcat_maxthreads: "150"
 - solr_port: "${solr_port}"

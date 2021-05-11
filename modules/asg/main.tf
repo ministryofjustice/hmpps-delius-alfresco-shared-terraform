@@ -12,7 +12,6 @@ locals {
   db_username               = var.db_username
   db_password               = var.db_password
   db_host                   = var.db_host
-  messaging_broker_password = var.messaging_broker_password
   tags                      = var.tags
   config_bucket             = var.config_bucket
 
