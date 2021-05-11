@@ -248,8 +248,6 @@ module "asg" {
     url          = data.terraform_remote_state.elk-service.outputs.elk_service["es_url"]
     cluster_name = data.terraform_remote_state.elk-service.outputs.elk_service["domain_name"]
   }
-  messaging_broker_url      = local.messaging_broker_url
-  messaging_broker_password = local.messaging_broker_password
   bastion_inventory         = local.bastion_inventory
   keys_dir                  = "/opt/keys"
   config_bucket             = local.config-bucket

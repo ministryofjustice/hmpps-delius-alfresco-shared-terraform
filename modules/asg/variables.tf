@@ -204,14 +204,6 @@ variable "tomcat_port" {
   description = "Alfresco port"
   default     = "8080"
 }
-
-variable "messaging_broker_url" {
-  default = "localhost:61616"
-}
-
-variable "messaging_broker_password" {
-}
-
 variable "elasitcsearch_host" {
   default = "http://elasitcsearch"
 }
