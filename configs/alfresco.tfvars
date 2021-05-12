@@ -13,8 +13,8 @@ solr_config_map = {
 
 source_code_versions = {
   boostrap         = "centos"
-  alfresco         = "0.0.14" # Will be used until Solr HA in place
-  alfresco_tracker = "0.0.14"
+  alfresco         = "0.0.15" # Will be used until Solr HA in place
+  alfresco_tracker = "0.0.15"
   logstash         = "1.0.1"
   elasticbeats     = "1.0.1"
   solr             = "0.0.6"
