@@ -78,7 +78,7 @@ locals {
   }
 
   allowed_cidr_block = [
-    concat(var.user_access_cidr_blocks, var.alfresco_access_cidr_blocks),
+    distinct(concat(var.user_access_cidr_blocks, var.alfresco_access_cidr_blocks)),
     data.terraform_remote_state.common.outputs.nat_gateway_ips,
   ]
 }
