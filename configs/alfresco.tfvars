@@ -1,8 +1,8 @@
 # ASG Configuration
 alf_config_map = {
-  asg_ami  = "ami-0d873d4a613809f01"
+  asg_ami  = "ami-0be9e24d7d3de80d9"
   ami_name = "HMPPS Alfresco *"
-  image_id = "ami-0d873d4a613809f01"
+  image_id = "ami-0be9e24d7d3de80d9"
   vpn_ip   = "81.134.202.29/32" #MOJ_VPN
 }
 
@@ -14,8 +14,8 @@ solr_config_map = {
 
 source_code_versions = {
   boostrap         = "centos"
-  alfresco         = "0.0.14" # Will be used until Solr HA in place
-  alfresco_tracker = "0.0.14"
+  alfresco         = "0.0.16" # Will be used until Solr HA in place
+  alfresco_tracker = "0.0.16"
   logstash         = "1.0.1"
   elasticbeats     = "1.0.1"
   solr             = "0.0.6"
