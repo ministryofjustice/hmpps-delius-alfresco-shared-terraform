@@ -14,6 +14,7 @@ redis = "*"
 boto = "*"
 boto3 = "*"
 cryptography = ">=3.3.2"
+urllib3 = ">=1.26.4"
 
 [requires]
-python_version = "3.8"
+python_version = "3.9"
