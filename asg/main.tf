@@ -9,6 +9,19 @@ terraform {
 # DATA SOURCE MODULES FROM OTHER TERRAFORM BACKENDS
 ####################################################
 #-------------------------------------------------------------
+### Getting the current vpc
+#-------------------------------------------------------------
+data "terraform_remote_state" "vpc" {
+  backend = "s3"
+
+  config = {
+    bucket = var.remote_state_bucket_name
+    key    = "vpc/terraform.tfstate"
+    region = var.region
+  }
+}
+
+#-------------------------------------------------------------
 ### Getting the common details
 #-------------------------------------------------------------
 data "terraform_remote_state" "common" {
@@ -220,6 +233,60 @@ locals {
     solr_host = data.terraform_remote_state.solr.outputs.alb_dns_internal
     solr_port = 8983
   }
+  https_listener_rules = [
+    {
+      https_listener_index = 0
+      priority             = 50
+      actions = [
+        {
+          type               = "forward"
+          target_group_index = 0
+        }
+      ]
+      conditions = [{
+        source_ips = data.terraform_remote_state.common.outputs.nat_gateway_ips
+      }]
+    },
+    {
+      https_listener_index = 0
+      priority             = 55
+      actions = [
+        {
+          type               = "forward"
+          target_group_index = 0
+        }
+      ]
+      conditions = [{
+        source_ips = data.terraform_remote_state.common.outputs.bastion_cidr_ranges
+      }]
+    },
+    {
+      https_listener_index = 0
+      priority             = 60
+      actions = [
+        {
+          type               = "forward"
+          target_group_index = 0
+        }
+      ]
+      conditions = [{
+        source_ips = [local.alfresco_asg_props["vpn_ip"]]
+      }]
+    },
+    {
+      https_listener_index = 0
+      priority             = 20
+      actions = [
+        {
+          type               = "forward"
+          target_group_index = 0
+        }
+      ]
+      conditions = [{
+        path_patterns = ["/alfresco/aos/*", "/alfresco/share/*"]
+      }]
+    },
+  ]
 }
 
 ####################################################
@@ -292,5 +359,6 @@ module "asg" {
   solr_config                 = local.solr_config
   source_code_versions        = var.source_code_versions
   solr_cmis_managed           = var.solr_cmis_managed
+  https_listener_rules        = local.https_listener_rules
 }
 

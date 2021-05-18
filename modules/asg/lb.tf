@@ -71,7 +71,7 @@ resource "aws_lb_listener" "http_listener" {
 }
 
 module "https_listener" {
-  source           = "../loadbalancer/alb/create_listener_with_https"
+  source           = "../loadbalancer/alb/create_listener_default_401"
   lb_arn           = aws_lb.environment.arn
   lb_port          = 443
   lb_protocol      = local.https_protocol
@@ -122,4 +122,3 @@ resource "aws_lb_target_group" "environment" {
     },
   )
 }
-
