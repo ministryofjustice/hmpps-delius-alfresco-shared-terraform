@@ -258,7 +258,7 @@ locals {
         }
       ]
       conditions = [{
-        source_ips = [local.alfresco_asg_props["vpn_ip"]]
+        source_ips = var.internal_moj_access_cidr_blocks
       }]
     },
     {
