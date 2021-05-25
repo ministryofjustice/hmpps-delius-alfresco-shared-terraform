@@ -3,7 +3,6 @@ alf_config_map = {
   asg_ami  = "ami-0be9e24d7d3de80d9"
   ami_name = "HMPPS Alfresco *"
   image_id = "ami-0be9e24d7d3de80d9"
-  vpn_ip   = "81.134.202.29/32" #MOJ_VPN
 }
 
 solr_config_map = {

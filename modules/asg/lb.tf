@@ -77,6 +77,7 @@ module "https_listener" {
   lb_protocol      = local.https_protocol
   target_group_arn = aws_lb_target_group.environment.arn
   certificate_arn  = local.certificate_arn
+  message_body     = "Source IP is not authorized to access endpoint"
 }
 
 module "file_listener" {

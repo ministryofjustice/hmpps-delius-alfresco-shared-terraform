@@ -10,6 +10,7 @@ resource "aws_lb_listener" "environment" {
     fixed_response {
       content_type = "text/plain"
       status_code  = "401"
+      message_body = var.message_body
     }
   }
 }
