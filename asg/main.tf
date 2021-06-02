@@ -274,6 +274,19 @@ locals {
         path_patterns = ["/alfresco/aos/*", "/alfresco/share/*"]
       }]
     },
+    {
+      https_listener_index = 0
+      priority             = 65
+      actions = [
+        {
+          type               = "forward"
+          target_group_index = 0
+        }
+      ]
+      conditions = [{
+        source_ips = data.terraform_remote_state.common.outputs.eng_public_cidr_ranges
+      }]
+    }
   ]
 }
 

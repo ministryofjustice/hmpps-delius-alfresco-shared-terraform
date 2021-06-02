@@ -210,3 +210,7 @@ output "bastion_cidr_ranges" {
     local.bastions_cidr_ranges["az3"]
   ]
 }
+
+output "eng_public_cidr_ranges" {
+  value = local.eng_public_cidr_ranges
+}
