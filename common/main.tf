@@ -55,6 +55,17 @@ data "terraform_remote_state" "remote_vpc" {
   }
 }
 
+data "terraform_remote_state" "remote_nat" {
+  backend = "s3"
+
+  config = {
+    bucket   = var.eng_remote_state_bucket_name
+    key      = "natgateway/terraform.tfstate"
+    region   = var.region
+    role_arn = var.eng_role_arn
+  }
+}
+
 #-------------------------------------------------------------
 ### Getting the eng alfresco IAM role
 #-------------------------------------------------------------
@@ -181,6 +192,11 @@ locals {
     "${data.terraform_remote_state.nat.outputs.natgateway_common-nat-public-ip-az3}/32",
   ]
   bastions_cidr_ranges = data.terraform_remote_state.vpc.outputs.bastion_vpc_public_cidr
+  eng_public_cidr_ranges = [
+    "${data.terraform_remote_state.remote_nat.outputs.common-nat-public-ip-az1}/32",
+    "${data.terraform_remote_state.remote_nat.outputs.common-nat-public-ip-az2}/32",
+    "${data.terraform_remote_state.remote_nat.outputs.common-nat-public-ip-az3}/32"
+  ]
 }
 
 ####################################################
