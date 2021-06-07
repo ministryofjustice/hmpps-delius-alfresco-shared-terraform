@@ -70,6 +70,16 @@ resource "aws_lb_listener" "http_listener" {
   }
 }
 
+# module "https_listener" {
+#   source           = "../loadbalancer/alb/create_listener_default_401"
+#   lb_arn           = aws_lb.environment.arn
+#   lb_port          = 443
+#   lb_protocol      = local.https_protocol
+#   target_group_arn = aws_lb_target_group.environment.arn
+#   certificate_arn  = local.certificate_arn
+#   message_body     = "Source IP is not authorized to access endpoint"
+# }
+
 module "https_listener" {
   source           = "../loadbalancer/alb/create_listener_with_https"
   lb_arn           = aws_lb.environment.arn
@@ -122,4 +132,3 @@ resource "aws_lb_target_group" "environment" {
     },
   )
 }
-

@@ -92,3 +92,8 @@ variable "alf_account_ids" {
 variable "solr_cmis_managed" {
   default = false
 }
+
+variable "internal_moj_access_cidr_blocks" {
+  type    = list
+  default = []
+}

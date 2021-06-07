@@ -291,3 +291,9 @@ variable "alf_deploy_iwp_fix" {
 variable "solr_cmis_managed" {
   default = false
 }
+
+variable "https_listener_rules" {
+  description = "A list of maps describing the Listener Rules for this ALB. Required key/values: actions, conditions. Optional key/values: priority, https_listener_index (default to https_listeners[count.index])"
+  type        = any
+  default     = []
+}
