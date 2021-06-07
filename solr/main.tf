@@ -100,19 +100,6 @@ data "terraform_remote_state" "security-groups" {
 }
 
 #-------------------------------------------------------------
-### Getting the Amazon broker url
-#-------------------------------------------------------------
-data "terraform_remote_state" "amazonmq" {
-  backend = "s3"
-
-  config = {
-    bucket = var.remote_state_bucket_name
-    key    = "${var.spg_messaging_broker_url_src == "data" ? "spg" : "alfresco"}/amazonmq/terraform.tfstate"
-    region = var.region
-  }
-}
-
-#-------------------------------------------------------------
 ### Getting the elk-migration details
 #-------------------------------------------------------------
 data "terraform_remote_state" "elk-service" {
@@ -192,7 +179,6 @@ locals {
   instance_profile             = data.terraform_remote_state.iam.outputs.iam_policy_int_app_instance_profile_name
   internal_domain              = data.terraform_remote_state.common.outputs.internal_domain
   logs_kms_arn                 = data.terraform_remote_state.common.outputs.kms_arn
-  messaging_broker_password    = "${data.terraform_remote_state.common.outputs.credentials_ssm_path}/weblogic/spg-domain/remote_broker_password"
   private_subnet_map           = data.terraform_remote_state.common.outputs.private_subnet_map
   private_zone_id              = data.terraform_remote_state.common.outputs.private_zone_id
   public_subnet_ids            = [data.terraform_remote_state.common.outputs.public_subnet_ids]
@@ -208,7 +194,6 @@ locals {
   tags                         = data.terraform_remote_state.common.outputs.common_tags
   tomcat_host                  = "alfresco"
   vpc_id                       = data.terraform_remote_state.common.outputs.vpc_id
-  messaging_broker_url         = data.terraform_remote_state.amazonmq.outputs.amazon_mq_broker_failover_connection_url
 
   elasticsearch_props = {
     url          = data.terraform_remote_state.elk-service.outputs.elk_service["es_url"]

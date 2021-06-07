@@ -29,8 +29,6 @@ data "template_file" "user_data" {
     db_password                = local.db_password_ssm
     s3_bucket_config           = local.config-bucket
     ssm_get_command            = "aws --region ${var.region} ssm get-parameters --names"
-    messaging_broker_url       = local.messaging_broker_url
-    messaging_broker_password  = local.messaging_broker_password
     #s3 config data
     bucket_name         = local.s3bucket
     bucket_encrypt_type = "kms"

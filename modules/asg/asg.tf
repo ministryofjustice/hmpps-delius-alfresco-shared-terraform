@@ -34,8 +34,6 @@ data "template_file" "user_data" {
     s3_bucket_config           = local.config_bucket
     runtime_config_override    = "s3"
     ssm_get_command            = "aws --region ${var.region} ssm get-parameters --names"
-    messaging_broker_url       = var.messaging_broker_url
-    messaging_broker_password  = local.messaging_broker_password
     #s3 config data
     bucket_name         = var.alfresco_s3bucket
     bucket_encrypt_type = "kms"
