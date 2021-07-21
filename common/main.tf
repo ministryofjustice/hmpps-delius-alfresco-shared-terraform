@@ -192,6 +192,7 @@ locals {
     "${data.terraform_remote_state.nat.outputs.natgateway_common-nat-public-ip-az3}/32",
   ]
   bastions_cidr_ranges = data.terraform_remote_state.vpc.outputs.bastion_vpc_public_cidr
+  vpn_cidr_ranges      = data.terraform_remote_state.vpc.outputs.vpn_vpc_cidr
   eng_public_cidr_ranges = [
     "${data.terraform_remote_state.remote_nat.outputs.common-nat-public-ip-az1}/32",
     "${data.terraform_remote_state.remote_nat.outputs.common-nat-public-ip-az2}/32",

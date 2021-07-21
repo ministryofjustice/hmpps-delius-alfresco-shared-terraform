@@ -214,3 +214,7 @@ output "bastion_cidr_ranges" {
 output "eng_public_cidr_ranges" {
   value = local.eng_public_cidr_ranges
 }
+
+output "vpn_cidr_ranges" {
+  value = local.vpn_cidr_ranges
+}

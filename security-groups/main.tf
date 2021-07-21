@@ -156,3 +156,13 @@ resource "aws_security_group_rule" "bastion_tunnel_alf" {
   description = "bastion tunnelling"
 }
 
+resource "aws_security_group_rule" "vpn_tcp" {
+  security_group_id = local.sg_map_ids["internal_inst_sg_id"]
+  type              = "ingress"
+  from_port         = 0
+  to_port           = 65535
+  protocol          = "tcp"
+  cidr_blocks       = [data.terraform_remote_state.common.outputs.vpn_cidr_ranges]
+  description       = "vpn subnet"
+}
+
