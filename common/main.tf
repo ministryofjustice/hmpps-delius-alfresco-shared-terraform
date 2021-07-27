@@ -81,6 +81,20 @@ data "terraform_remote_state" "remote_iam" {
 }
 
 #-------------------------------------------------------------
+### Getting vpn info
+#-------------------------------------------------------------
+data "terraform_remote_state" "vpn" {
+  backend = "s3"
+
+  config = {
+    bucket   = var.bastion_remote_state_bucket_name
+    key      = "service-vpn/terraform.tfstate"
+    region   = var.region
+    role_arn = var.bastion_role_arn
+  }
+}
+
+#-------------------------------------------------------------
 ### Getting the latest amazon ami
 #-------------------------------------------------------------
 data "aws_ami" "amazon_ami" {
@@ -131,6 +145,7 @@ locals {
   remote_state_bucket_name     = var.remote_state_bucket_name
   s3_lb_policy_file            = "../policies/s3_alb_policy.json"
   environment                  = var.environment_type
+  vpn_info                     = data.terraform_remote_state.vpn.outputs.vpn_info
 
   tags = merge(
     var.tags,
@@ -192,6 +207,7 @@ locals {
     "${data.terraform_remote_state.nat.outputs.natgateway_common-nat-public-ip-az3}/32",
   ]
   bastions_cidr_ranges = data.terraform_remote_state.vpc.outputs.bastion_vpc_public_cidr
+  vpn_cidr_ranges      = data.terraform_remote_state.vpc.outputs.vpn_vpc_cidr
   eng_public_cidr_ranges = [
     "${data.terraform_remote_state.remote_nat.outputs.common-nat-public-ip-az1}/32",
     "${data.terraform_remote_state.remote_nat.outputs.common-nat-public-ip-az2}/32",
