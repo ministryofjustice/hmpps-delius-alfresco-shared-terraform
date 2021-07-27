@@ -63,6 +63,7 @@ locals {
   public_cidr_block      = [data.terraform_remote_state.common.outputs.db_cidr_block]
   private_cidr_block     = [data.terraform_remote_state.common.outputs.private_cidr_block]
   db_cidr_block          = [data.terraform_remote_state.common.outputs.db_cidr_block]
+  vpn_source_cidrs       = data.terraform_remote_state.common.outputs.vpn_info["source_cidrs"]
 
   sg_map_ids = {
     internal_inst_sg_id = data.terraform_remote_state.security-groups.outputs.sg_alfresco_api_in
@@ -154,15 +155,5 @@ resource "aws_security_group_rule" "bastion_tunnel_alf" {
     data.terraform_remote_state.vpc.outputs.bastion_vpc_public_cidr,
   ))
   description = "bastion tunnelling"
-}
-
-resource "aws_security_group_rule" "vpn_tcp" {
-  security_group_id = local.sg_map_ids["internal_inst_sg_id"]
-  type              = "ingress"
-  from_port         = 0
-  to_port           = 65535
-  protocol          = "tcp"
-  cidr_blocks       = [data.terraform_remote_state.common.outputs.vpn_cidr_ranges]
-  description       = "vpn subnet"
 }
 

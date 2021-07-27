@@ -88,3 +88,11 @@ variable "tags" {
   default = {}
 }
 
+
+variable "bastion_role_arn" {
+  description = "arn to use for bastion terraform"
+}
+
+variable "bastion_remote_state_bucket_name" {
+  description = "Terraform remote state bucket name for bastion vpc"
+}

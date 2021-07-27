@@ -218,3 +218,7 @@ output "eng_public_cidr_ranges" {
 output "vpn_cidr_ranges" {
   value = local.vpn_cidr_ranges
 }
+
+output "vpn_info" {
+  value = local.vpn_info
+}
