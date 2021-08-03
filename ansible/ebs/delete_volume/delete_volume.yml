@@ -1,0 +1,38 @@
+---
+- name: retrieve volume info
+  amazon.aws.ec2_vol_info:
+    aws_access_key: "{{ aws_access_key_id }}"
+    aws_secret_key: "{{ aws_secret_access_key }}"
+    security_token: "{{ aws_security_token }}"
+    region: "{{ aws_region }}"
+    filters:
+      "tag:Name": "{{ volume_name}}"
+      "availability-zone": "{{ availability_zone }}"
+  register: volume_info
+
+- name: set volume facts
+  set_fact:
+    volume_data: "{{ volume_info.volumes }}"
+
+- name: set volume facts
+  set_fact:
+    volume_status: "{{ volume_info.volumes[0].status }}"
+    volume_id: "{{ volume_info.volumes[0].id }}"
+
+- name: Detach volume if in use
+  amazon.aws.ec2_vol:
+    aws_access_key: "{{ aws_access_key_id }}"
+    aws_secret_key: "{{ aws_secret_access_key }}"
+    security_token: "{{ aws_security_token }}"
+    id: "{{ volume_id }}"
+    instance: None
+    region: "{{ aws_region }}"
+  when: volume_status == "in-use"
+
+- name: Delete volume
+  amazon.aws.ec2_vol:
+    aws_access_key: "{{ aws_access_key_id }}"
+    aws_secret_key: "{{ aws_secret_access_key }}"
+    security_token: "{{ aws_security_token }}"
+    id: "{{ volume_id }}"
+    state: absent

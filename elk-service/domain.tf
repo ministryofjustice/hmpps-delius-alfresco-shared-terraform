@@ -39,7 +39,7 @@ resource "aws_elasticsearch_domain" "es" {
   ebs_options {
     ebs_enabled = lookup(local.alf_elk_service_props, "es_ebs_enabled", true)
     volume_type = lookup(local.alf_elk_service_props, "es_ebs_type", "gp2")
-    volume_size = lookup(local.alf_elk_service_props, "es_ebs_size", 10)
+    volume_size = lookup(local.alf_elk_service_props, "es_ebs_size", 20)
     iops        = lookup(local.alf_elk_service_props, "iops", 0)
   }
 

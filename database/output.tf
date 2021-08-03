@@ -68,9 +68,11 @@ output "rds_creds" {
   }
 }
 
-# output "aurora" {
-#   value = {
-#     cluster_endpoint = module.db.this_rds_cluster_endpoint
-#     reader_endpoint  = module.db.this_rds_cluster_reader_endpoint
-#   }
-# }
+output "info" {
+  value = {
+    address           = module.database.db_instance_address
+    endpoint          = module.database.db_instance_endpoint
+    id                = module.database.db_instance_id
+    security_group_id = data.terraform_remote_state.security-groups.outputs.security_groups_sg_rds_id
+  }
+}

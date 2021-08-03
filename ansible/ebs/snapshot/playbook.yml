@@ -1,5 +1,5 @@
 ---
-- name: Create RDS snapshot
+- name: Create Volume snapshot
   hosts: localhost
   connection: local
   vars_files:
@@ -15,6 +15,7 @@
         target_account: "{{ env_info['targets'][environment_name]['account_id'] }}"
         vol_name: "{{ env_info['source']['solr_vol_name'] }}"
         kms_key: "{{ env_info['source']['vol_kms_id']}}"
+        availability_zone: "{{ lookup('env', 'SOLR_EBS_AVAILABILITY_ZONE')}}"
 
     - name: source volume name
       debug:
@@ -31,6 +32,7 @@
       ec2_vol_info:
         filters:
           "tag:Name": "{{ vol_name }}"
+          "availability-zone": "{{ availability_zone }}"
         aws_access_key: "{{ aws_access_key_id }}"
         aws_secret_key: "{{ aws_secret_access_key }}"
         security_token: "{{ aws_security_token }}"
@@ -40,7 +42,11 @@
     - name: set volume facts
       set_fact:
         vol_id: "{{ vol_info.volumes[0].id }}"
-        snapshot_name: "{{ lookup('env', 'EBS_SNAPSHOT_NAME') or 'solr_refresh_snapshot' }}"
+        snapshot_prefix: "{{ lookup('env', 'EBS_SNAPSHOT_NAME') or 'solr_refresh_snapshot' }}"
+
+    - name: set volume facts
+      set_fact:
+        snapshot_name: "{{ snapshot_prefix }}_{{ availability_zone }}"
 
     - name: create solr volume snapshot
       ec2_snapshot:
@@ -51,7 +57,7 @@
         security_token: "{{ aws_security_token }}"
         region: "{{ aws_region }}"
         wait: yes
-        wait_timeout: 2700
+        wait_timeout: 5400
         last_snapshot_min_age: 60
       register: snapshot_info
 
@@ -92,7 +98,7 @@
         security_token: "{{ aws_security_token }}"
         region: "{{ aws_region }}"
         wait: yes
-        wait_timeout: 2700
+        wait_timeout: 5400
       register: src_snapshot
 
     - name: set volume facts
@@ -147,7 +153,7 @@
         security_token: "{{ aws_security_token }}"
         region: "{{ aws_region }}"
         wait: yes
-        wait_timeout: 2700
+        wait_timeout: 5400
       register: target_snapshot
 
     - name: set src account iam role creds
