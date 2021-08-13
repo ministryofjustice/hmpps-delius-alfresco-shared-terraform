@@ -23,6 +23,7 @@ locals {
   storage_bucket_arn      = data.aws_s3_bucket.storage_bucket.arn
   storage_kms_arn         = data.terraform_remote_state.s3bucket.outputs.s3bucket_kms_arn
   database_security_group = data.terraform_remote_state.rds.outputs.info["security_group_id"]
-  cache_volume_name       = format("%s-cache-vol", local.common_name)
+  cache_volume_name       = format("%s-cache-volume", local.common_name)
+  cache_location          = "/srv/alf_data"
 }
 

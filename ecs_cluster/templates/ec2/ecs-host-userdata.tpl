@@ -24,6 +24,7 @@ echo -e 'lowercaseOutputName: true\nlowercaseOutputLabelNames: true' > /jmx-expo
 # Volume plugin for providing EBS/EFS docker volumes
 docker plugin install rexray/efs REXRAY_PREEMPT=true EFS_REGION=${region} EFS_SECURITYGROUPS=${efs_sg} --grant-all-permissions
 docker plugin install rexray/ebs \
+    LINUX_VOLUME_FILEMODE=0777 \
     REXRAY_PREEMPT=true \
     EBS_REGION=${region} \
     EBS_KMSKEYID=${kms_key_arn} \

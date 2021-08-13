@@ -18,6 +18,7 @@ resource "aws_ssm_parameter" "config" {
       alfresco_port    = 8080
       s3_bucket_name   = aws_s3_bucket.s3.id #local.storage_bucket_name
       s3_bucket_region = local.region
+      cache_location   = local.cache_location
     }
   )
   tags = local.tags

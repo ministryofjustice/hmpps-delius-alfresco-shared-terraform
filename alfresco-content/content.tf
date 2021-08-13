@@ -35,6 +35,7 @@ module "ecs_service" {
       app_port          = tonumber(local.alfresco_content_props["app_port"])
       ssm_java_options  = aws_ssm_parameter.config.arn
       cache_volume_name = local.cache_volume_name
+      cache_location    = local.cache_location
     }
   )
   ebs_volumes = [
@@ -42,7 +43,7 @@ module "ecs_service" {
       autoprovision = true
       driver        = "rexray/ebs"
       name          = local.cache_volume_name
-      scope         = "task"
+      scope         = "shared"
       size          = 100
       type          = "gp2"
       kms_key_id    = local.storage_kms_arn
