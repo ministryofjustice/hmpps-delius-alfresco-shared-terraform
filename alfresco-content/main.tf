@@ -25,5 +25,6 @@ locals {
   database_security_group = data.terraform_remote_state.rds.outputs.info["security_group_id"]
   cache_volume_name       = format("%s-cache-volume", local.common_name)
   cache_location          = "/srv/alf_data"
+  subnet_ids              = data.terraform_remote_state.common.outputs.private_subnet_ids
 }
 

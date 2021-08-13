@@ -9,9 +9,6 @@ variable "ecs_config" {
     account_id            = "account_id"
     region                = "eu-west-2"
     log_group_arn         = "arn"
-    storage_bucket_name   = "bucket name"
-    storage_bucket_arn    = "arn"
-    storage_kms_arn       = "kms arn"
     ecs_cluster_name      = "ecs cluster name"
     desired_count         = "1"
     capacity_provider     = "capacity_provider"
@@ -38,7 +35,7 @@ variable "security_groups" {
   type        = list(string)
 }
 
-variable "subnets_ids" {
+variable "subnet_ids" {
   description = "Subnet IDs"
   type        = list(string)
 }
@@ -53,6 +50,18 @@ variable "ebs_volumes" {
       type          = string
       size          = number
       kms_key_id    = string
+      iops          = number
+    }
+  ))
+  default = []
+}
+
+variable "load_balancer_targets" {
+  type = list(object(
+    {
+      target_group_arn = string
+      container_name   = string
+      container_port   = number
     }
   ))
   default = []

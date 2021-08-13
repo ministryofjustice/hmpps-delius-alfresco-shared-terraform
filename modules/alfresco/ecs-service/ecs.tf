@@ -38,7 +38,7 @@ resource "aws_ecs_service" "ecs_service" {
   desired_count   = tonumber(var.ecs_config["desired_count"])
   network_configuration {
     security_groups = var.security_groups
-    subnets         = var.subnets_ids
+    subnets         = var.subnet_ids
   }
   capacity_provider_strategy {
     capacity_provider = var.ecs_config["capacity_provider"]
@@ -58,4 +58,12 @@ resource "aws_ecs_service" "ecs_service" {
   #   container_name   = local.kibana_container_name
   #   container_port   = local.kibana_port
   # }
+  dynamic "load_balancer" {
+    for_each = var.load_balancer_targets
+    content {
+      target_group_arn = load_balancer.value.target_group_arn
+      container_name   = load_balancer.value.container_name
+      container_port   = load_balancer.value.container_port
+    }
+  }
 }
