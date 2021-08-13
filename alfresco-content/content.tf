@@ -1,5 +1,5 @@
 module "ecs_service" {
-  source = "./modules/ecs-service"
+  source = "../modules/alfresco/ecs-service"
   ecs_config = {
     name                  = local.common_name
     ecs_cluster_name      = data.terraform_remote_state.ecs_cluster.outputs.info["ecs_cluster_name"]
