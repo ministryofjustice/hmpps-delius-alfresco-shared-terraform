@@ -95,6 +95,19 @@
             "Resource": "*"
         },
         {
+            "Sid": "AllowAccessToStorageKMS",
+            "Effect": "Allow",
+            "Action": [
+                "kms:Encrypt",
+                "kms:Decrypt",
+                "kms:ReEncrypt*",
+                "kms:GenerateDataKey*",
+                "kms:DescribeKey",
+                "kms:CreateGrant"
+            ],
+            "Resource": "${kms_arn}"
+        },
+        {
             "Sid": "AllowSSMActions",
             "Effect": "Allow",
             "Action": [

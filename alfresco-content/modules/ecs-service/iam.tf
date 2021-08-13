@@ -58,7 +58,7 @@ data "aws_iam_policy_document" "execution_policy" {
       sid       = "Parameters"
       effect    = "Allow"
       actions   = ["ssm:GetParameter", "ssm:GetParameters"]
-      resources = formatlist(local.secrets_format, values(var.secrets))
+      resources = values(var.secrets)
     }
   }
 }

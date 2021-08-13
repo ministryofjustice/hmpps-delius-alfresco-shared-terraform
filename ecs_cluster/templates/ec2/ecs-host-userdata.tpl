@@ -23,6 +23,11 @@ echo -e 'lowercaseOutputName: true\nlowercaseOutputLabelNames: true' > /jmx-expo
 # Install any docker plugins
 # Volume plugin for providing EBS/EFS docker volumes
 docker plugin install rexray/efs REXRAY_PREEMPT=true EFS_REGION=${region} EFS_SECURITYGROUPS=${efs_sg} --grant-all-permissions
+docker plugin install rexray/ebs \
+    REXRAY_PREEMPT=true \
+    EBS_REGION=${region} \
+    EBS_KMSKEYID=${kms_key_arn} \
+    --grant-all-permissions
 
 # Set any ECS agent configuration options
 echo "ECS_CLUSTER=${ecs_cluster_name}" >> /etc/ecs/ecs.config
@@ -80,5 +85,5 @@ sed -i -e "s/region = us-east-1/region = ${region}/g" /etc/awslogs/awscli.conf
 # Start the awslogs service
 sudo systemctl enable awslogsd.service
 sudo systemctl start awslogsd
-
+sudo systemctl restart docker
 # ECS service is started by cloud-init once this userdata script has returned

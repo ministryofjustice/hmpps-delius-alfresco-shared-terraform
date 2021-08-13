@@ -45,3 +45,26 @@ data "aws_s3_bucket" "storage_bucket" {
   bucket = local.storage_bucket_name
 }
 
+#-------------------------------------------------------------
+### Getting the rds details
+#-------------------------------------------------------------
+data "terraform_remote_state" "rds" {
+  backend = "s3"
+
+  config = {
+    bucket = var.remote_state_bucket_name
+    key    = "alfresco/database/terraform.tfstate"
+    region = var.region
+  }
+}
+
+#-------------------------------------------------------------
+## Getting the rds db password
+#-------------------------------------------------------------
+data "aws_ssm_parameter" "db_user" {
+  name = data.terraform_remote_state.rds.outputs.rds_creds["db_username_ssm_param"]
+}
+
+data "aws_ssm_parameter" "db_password" {
+  name = data.terraform_remote_state.rds.outputs.rds_creds["db_password_ssm_param"]
+}

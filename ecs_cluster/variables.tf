@@ -13,7 +13,7 @@ variable "alf_cloudwatch_log_retention" {
 variable "alf_ecs_config" {
   type = map(string)
   default = {
-    ecs_instance_type             = "m5.large"
+    ecs_instance_type             = "m5.xlarge"
     node_max_count                = "5"
     node_min_count                = "2"
     ecs_cluster_target_capacity   = "75"
