@@ -36,7 +36,7 @@ data "terraform_remote_state" "load_balancer" {
 
   config = {
     bucket = var.remote_state_bucket_name
-    key    = "alfresco/app-load-balancer/terraform.tfstate"
+    key    = "alfresco/app-internal-load-balancer/terraform.tfstate"
     region = var.region
   }
 }

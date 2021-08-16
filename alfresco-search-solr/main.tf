@@ -26,7 +26,7 @@ locals {
   cache_volume_name          = format("%s-cache-vol", local.common_name)
   data_volume_name           = format("%s-data-volume", local.common_name)
   logs_volume_name           = format("%s-logs-vol", local.common_name)
-  alfresco_private_dns_host  = data.terraform_remote_state.load_balancer.outputs.info["dns_hostname"]
+  internal_private_dns_host  = data.terraform_remote_state.load_balancer.outputs.info["dns_hostname"]
   lb_security_group          = data.terraform_remote_state.load_balancer.outputs.info["security_group_id"]
   lb_arn                     = data.terraform_remote_state.load_balancer.outputs.info["arn"]
   subnet_ids                 = [element(data.terraform_remote_state.common.outputs.private_subnet_ids, 0)]

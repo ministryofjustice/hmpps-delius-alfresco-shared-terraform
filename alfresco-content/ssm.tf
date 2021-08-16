@@ -10,8 +10,8 @@ resource "aws_ssm_parameter" "config" {
       db_password      = data.aws_ssm_parameter.db_password.value
       db_endpoint      = "alfresco-database2.cbtjc5uz9xwp.eu-west-2.rds.amazonaws.com:5432" #data.terraform_remote_state.rds.outputs.info["address"]
       heap_size        = tonumber(local.alfresco_content_props["heap_size"])
-      solr_host        = "solr6"
-      solr_port        = 8983
+      solr_host        = local.internal_private_dns_host
+      solr_port        = local.solr_port
       share_host       = "127.0.0.1"
       share_port       = 8080
       alfresco_host    = "localhost"

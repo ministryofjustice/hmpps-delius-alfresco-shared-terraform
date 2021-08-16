@@ -8,7 +8,7 @@ variable "availability_zone" {
 }
 
 variable "kms_key_id" {
-  type = "string"
+  type = string
 }
 
 variable "ebs_data_type" {

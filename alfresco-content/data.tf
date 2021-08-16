@@ -68,3 +68,29 @@ data "aws_ssm_parameter" "db_user" {
 data "aws_ssm_parameter" "db_password" {
   name = data.terraform_remote_state.rds.outputs.rds_creds["db_password_ssm_param"]
 }
+
+#-------------------------------------------------------------
+### Getting the load balancer details
+#-------------------------------------------------------------
+data "terraform_remote_state" "load_balancer" {
+  backend = "s3"
+
+  config = {
+    bucket = var.remote_state_bucket_name
+    key    = "alfresco/app-internal-load-balancer/terraform.tfstate"
+    region = var.region
+  }
+}
+
+#-------------------------------------------------------------
+### Getting the solr details
+#-------------------------------------------------------------
+data "terraform_remote_state" "solr" {
+  backend = "s3"
+
+  config = {
+    bucket = var.remote_state_bucket_name
+    key    = "alfresco/alfresco-search-solr/terraform.tfstate"
+    region = var.region
+  }
+}
