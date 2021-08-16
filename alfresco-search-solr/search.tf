@@ -1,7 +1,7 @@
 module "ecs_service" {
   source = "../modules/alfresco/ecs-service"
   ecs_config = {
-    name                  = local.common_name
+    name                  = local.application_name
     ecs_cluster_name      = data.terraform_remote_state.ecs_cluster.outputs.info["ecs_cluster_name"]
     region                = local.region
     account_id            = local.account_id
@@ -9,6 +9,7 @@ module "ecs_service" {
     desired_count         = length(local.subnet_ids)
     capacity_provider     = data.terraform_remote_state.ecs_cluster.outputs.capacity_provider["name"]
     deployment_controller = "ECS"
+    namespace_id          = local.ecs_cluster_namespace_id
   }
   security_groups = [
     aws_security_group.app.id,

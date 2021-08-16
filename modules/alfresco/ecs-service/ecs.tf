@@ -32,7 +32,7 @@ resource "aws_ecs_task_definition" "task_def" {
 }
 
 resource "aws_ecs_service" "ecs_service" {
-  name            = format("%s-service", var.ecs_config["name"])
+  name            = var.ecs_config["name"]
   cluster         = var.ecs_config["ecs_cluster_name"]
   task_definition = aws_ecs_task_definition.task_def.arn
   desired_count   = tonumber(var.ecs_config["desired_count"])
@@ -49,15 +49,10 @@ resource "aws_ecs_service" "ecs_service" {
     type = var.ecs_config["deployment_controller"]
   }
 
-  # service_registries {
-  #   registry_arn = aws_service_discovery_service.kibana.arn
-  # }
-
-  # load_balancer {
-  #   target_group_arn = module.kibana_target_grp.target_group_arn
-  #   container_name   = local.kibana_container_name
-  #   container_port   = local.kibana_port
-  # }
+  service_registries {
+    registry_arn   = aws_service_discovery_service.svc_record.arn
+    container_name = var.ecs_config["name"]
+  }
   dynamic "load_balancer" {
     for_each = var.load_balancer_targets
     content {
@@ -65,5 +60,24 @@ resource "aws_ecs_service" "ecs_service" {
       container_name   = load_balancer.value.container_name
       container_port   = load_balancer.value.container_port
     }
+  }
+}
+
+resource "aws_service_discovery_service" "svc_record" {
+  name = var.ecs_config["name"]
+
+  dns_config {
+    namespace_id = var.ecs_config["namespace_id"]
+
+    dns_records {
+      ttl  = 10
+      type = "A"
+    }
+
+    routing_policy = "MULTIVALUE"
+  }
+
+  health_check_custom_config {
+    failure_threshold = 1
   }
 }

@@ -82,6 +82,16 @@ data "terraform_remote_state" "load_balancer" {
   }
 }
 
+data "terraform_remote_state" "external_load_balancer" {
+  backend = "s3"
+
+  config = {
+    bucket = var.remote_state_bucket_name
+    key    = "alfresco/app-external-load-balancer/terraform.tfstate"
+    region = var.region
+  }
+}
+
 #-------------------------------------------------------------
 ### Getting the solr details
 #-------------------------------------------------------------

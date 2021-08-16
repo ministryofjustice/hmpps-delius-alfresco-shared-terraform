@@ -26,6 +26,9 @@ locals {
   cache_volume_name          = format("%s-cache-vol", local.common_name)
   data_volume_name           = format("%s-data-volume", local.common_name)
   logs_volume_name           = format("%s-logs-vol", local.common_name)
+  ecs_cluster_namespace_id   = data.terraform_remote_state.ecs_cluster.outputs.info["ecs_cluster_namespace_id"]
+  ecs_cluster_namespace_domain = data.terraform_remote_state.ecs_cluster.outputs.info["ecs_cluster_namespace_domain"]
+  service_discovery_name      = format("%s.%s", local.application_name, local.ecs_cluster_namespace_domain)
   internal_private_dns_host  = data.terraform_remote_state.load_balancer.outputs.info["dns_hostname"]
   lb_security_group          = data.terraform_remote_state.load_balancer.outputs.info["security_group_id"]
   lb_arn                     = data.terraform_remote_state.load_balancer.outputs.info["arn"]

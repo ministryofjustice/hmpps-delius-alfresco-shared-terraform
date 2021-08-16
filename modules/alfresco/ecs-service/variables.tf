@@ -13,6 +13,7 @@ variable "ecs_config" {
     desired_count         = "1"
     capacity_provider     = "capacity_provider"
     deployment_controller = "ECS"
+    namespace_id          = "namespace id"
   }
 }
 

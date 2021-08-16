@@ -43,15 +43,6 @@ resource "aws_security_group_rule" "solr_out" {
   protocol                 = "tcp"
 }
 
-resource "aws_security_group_rule" "solr_out_lb" {
-  security_group_id        = aws_security_group.app.id
-  source_security_group_id = local.internal_lb_security_grp
-  type                     = "egress"
-  from_port                = local.solr_port
-  to_port                  = local.solr_port
-  protocol                 = "tcp"
-}
-
 resource "aws_security_group_rule" "solr_in" {
   source_security_group_id = aws_security_group.app.id
   security_group_id        = local.solr_security_group
@@ -59,4 +50,33 @@ resource "aws_security_group_rule" "solr_in" {
   from_port                = local.solr_port
   to_port                  = local.solr_port
   protocol                 = "tcp"
+}
+
+# alfresco
+locals {
+  alfresco_access_groups = {
+    solr        = local.solr_security_group
+    external_lb = local.external_lb_security_grp
+  }
+}
+resource "aws_security_group_rule" "alfresco_in" {
+  for_each                 = local.alfresco_access_groups
+  security_group_id        = aws_security_group.app.id
+  source_security_group_id = each.value
+  type                     = "ingress"
+  from_port                = local.app_port
+  to_port                  = local.app_port
+  protocol                 = "tcp"
+  description              = format("%s outbound rule", each.key)
+}
+
+resource "aws_security_group_rule" "alfresco_out" {
+  for_each                 = local.alfresco_access_groups
+  security_group_id        = each.value
+  source_security_group_id = aws_security_group.app.id
+  type                     = "ingress"
+  from_port                = local.app_port
+  to_port                  = local.app_port
+  protocol                 = "tcp"
+  description              = format("%s inbound rule", each.key)
 }
