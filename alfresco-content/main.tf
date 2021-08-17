@@ -31,6 +31,7 @@ locals {
   subnet_ids                = data.terraform_remote_state.common.outputs.private_subnet_ids
   internal_private_dns_host = data.terraform_remote_state.load_balancer.outputs.info["dns_hostname"]
   external_private_dns_host = data.terraform_remote_state.external_load_balancer.outputs.info["dns_hostname"]
+  vpn_source_cidrs          = data.terraform_remote_state.common.outputs.vpn_info["source_cidrs"]
   solr_port                 = 8983
   app_port                  = tonumber(local.alfresco_content_props["app_port"])
 }

@@ -12,10 +12,12 @@ resource "aws_ssm_parameter" "config" {
       heap_size        = tonumber(local.alfresco_content_props["heap_size"])
       solr_host        = local.internal_private_dns_host
       solr_port        = local.solr_port
-      share_host       = "127.0.0.1"
-      share_port       = 8080
+      share_host       = local.internal_private_dns_host
+      share_port       = 8070
       alfresco_host    = "localhost"
       alfresco_port    = 8080
+      transform_host   = local.internal_private_dns_host
+      transform_port   = 8090
       s3_bucket_name   = aws_s3_bucket.s3.id #local.storage_bucket_name
       s3_bucket_region = local.region
       cache_location   = local.cache_location

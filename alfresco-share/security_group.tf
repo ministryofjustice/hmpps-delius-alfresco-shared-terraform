@@ -30,31 +30,50 @@ resource "aws_security_group" "access" {
   }
 }
 
-
-resource "aws_security_group_rule" "solr_lb_out" {
+# app
+resource "aws_security_group_rule" "lb_out" {
   security_group_id        = local.lb_security_group
   source_security_group_id = aws_security_group.app.id
   type                     = "egress"
-  from_port                = local.solr_port
-  to_port                  = local.solr_port
+  from_port                = local.app_port
+  to_port                  = local.app_port
   protocol                 = "tcp"
 }
 
-resource "aws_security_group_rule" "solr_lb_in" {
+resource "aws_security_group_rule" "lb_in" {
   source_security_group_id = local.lb_security_group
   security_group_id        = aws_security_group.app.id
   type                     = "ingress"
-  from_port                = local.solr_port
-  to_port                  = local.solr_port
+  from_port                = local.app_port
+  to_port                  = local.app_port
   protocol                 = "tcp"
 }
 
-resource "aws_security_group_rule" "solr_access_in" {
+resource "aws_security_group_rule" "access_in" {
   source_security_group_id = aws_security_group.access.id
   security_group_id        = local.lb_security_group
   type                     = "ingress"
-  from_port                = local.solr_port
-  to_port                  = local.solr_port
+  from_port                = local.app_port
+  to_port                  = local.app_port
+  protocol                 = "tcp"
+}
+
+# alfresco access
+resource "aws_security_group_rule" "alfresco_app_out" {
+  source_security_group_id = local.lb_security_group
+  security_group_id        = aws_security_group.app.id
+  type                     = "egress"
+  from_port                = local.alfresco_port
+  to_port                  = local.alfresco_port
+  protocol                 = "tcp"
+}
+
+resource "aws_security_group_rule" "alfresco_lb_in" {
+  source_security_group_id = aws_security_group.app.id
+  security_group_id        = local.lb_security_group
+  type                     = "ingress"
+  from_port                = local.alfresco_port
+  to_port                  = local.alfresco_port
   protocol                 = "tcp"
 }
 
@@ -62,8 +81,8 @@ resource "aws_security_group_rule" "solr_access_in" {
 resource "aws_security_group_rule" "vpn_access_alb" {
   security_group_id = local.lb_security_group
   type              = "ingress"
-  from_port         = local.solr_port
-  to_port           = local.solr_port
+  from_port         = local.app_port
+  to_port           = local.app_port
   protocol          = "tcp"
   cidr_blocks       = local.vpn_source_cidrs
   description       = "vpn tunnelling"
@@ -72,8 +91,8 @@ resource "aws_security_group_rule" "vpn_access_alb" {
 resource "aws_security_group_rule" "vpn_access" {
   security_group_id = aws_security_group.app.id
   type              = "ingress"
-  from_port         = local.solr_port
-  to_port           = local.solr_port
+  from_port         = local.app_port
+  to_port           = local.app_port
   protocol          = "tcp"
   cidr_blocks       = local.vpn_source_cidrs
   description       = "vpn tunnelling"
