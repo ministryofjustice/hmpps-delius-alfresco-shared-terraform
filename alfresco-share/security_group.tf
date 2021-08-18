@@ -53,27 +53,17 @@ resource "aws_security_group_rule" "access_in" {
   source_security_group_id = aws_security_group.access.id
   security_group_id        = local.lb_security_group
   type                     = "ingress"
-  from_port                = local.app_port
-  to_port                  = local.app_port
+  from_port                = local.target_group_port
+  to_port                  = local.target_group_port
   protocol                 = "tcp"
 }
 
-# alfresco access
-resource "aws_security_group_rule" "alfresco_app_out" {
+resource "aws_security_group_rule" "access_out" {
   source_security_group_id = local.lb_security_group
-  security_group_id        = aws_security_group.app.id
+  security_group_id        = aws_security_group.access.id
   type                     = "egress"
-  from_port                = local.alfresco_port
-  to_port                  = local.alfresco_port
-  protocol                 = "tcp"
-}
-
-resource "aws_security_group_rule" "alfresco_lb_in" {
-  source_security_group_id = aws_security_group.app.id
-  security_group_id        = local.lb_security_group
-  type                     = "ingress"
-  from_port                = local.alfresco_port
-  to_port                  = local.alfresco_port
+  from_port                = local.target_group_port
+  to_port                  = local.target_group_port
   protocol                 = "tcp"
 }
 
@@ -81,8 +71,8 @@ resource "aws_security_group_rule" "alfresco_lb_in" {
 resource "aws_security_group_rule" "vpn_access_alb" {
   security_group_id = local.lb_security_group
   type              = "ingress"
-  from_port         = local.app_port
-  to_port           = local.app_port
+  from_port         = local.target_group_port
+  to_port           = local.target_group_port
   protocol          = "tcp"
   cidr_blocks       = local.vpn_source_cidrs
   description       = "vpn tunnelling"

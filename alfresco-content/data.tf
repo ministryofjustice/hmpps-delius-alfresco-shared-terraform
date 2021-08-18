@@ -104,3 +104,29 @@ data "terraform_remote_state" "solr" {
     region = var.region
   }
 }
+
+#-------------------------------------------------------------
+### Getting the share details
+#-------------------------------------------------------------
+data "terraform_remote_state" "share" {
+  backend = "s3"
+
+  config = {
+    bucket = var.remote_state_bucket_name
+    key    = "alfresco/alfresco-share/terraform.tfstate"
+    region = var.region
+  }
+}
+
+#-------------------------------------------------------------
+### Getting the transform details
+#-------------------------------------------------------------
+data "terraform_remote_state" "transform" {
+  backend = "s3"
+
+  config = {
+    bucket = var.remote_state_bucket_name
+    key    = "alfresco/alfresco-transform-core-aio/terraform.tfstate"
+    region = var.region
+  }
+}

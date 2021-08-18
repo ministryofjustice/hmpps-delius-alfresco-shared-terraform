@@ -14,6 +14,22 @@ resource "aws_security_group" "app" {
   }
 }
 
+resource "aws_security_group" "access" {
+  name        = format("%s-access", local.common_name)
+  description = "security group for ${local.common_name}-access-traffic"
+  vpc_id      = local.vpc_id
+  tags = merge(
+    local.tags,
+    {
+      "Name" = format("%s-access", local.common_name)
+    },
+  )
+
+  lifecycle {
+    create_before_destroy = true
+  }
+}
+
 # database
 resource "aws_security_group_rule" "postgres_out" {
   security_group_id        = aws_security_group.app.id
@@ -53,16 +69,6 @@ resource "aws_security_group_rule" "solr_in" {
 }
 
 # vpn
-resource "aws_security_group_rule" "vpn_access_alb" {
-  security_group_id = local.lb_security_group
-  type              = "ingress"
-  from_port         = local.app_port
-  to_port           = local.app_port
-  protocol          = "tcp"
-  cidr_blocks       = local.vpn_source_cidrs
-  description       = "vpn tunnelling"
-}
-
 resource "aws_security_group_rule" "vpn_access" {
   security_group_id = aws_security_group.app.id
   type              = "ingress"
@@ -73,31 +79,50 @@ resource "aws_security_group_rule" "vpn_access" {
   description       = "vpn tunnelling"
 }
 
-# alfresco
-locals {
-  alfresco_access_groups = {
-    solr        = local.solr_security_group
-    external_lb = local.external_lb_security_grp
-  }
-}
-resource "aws_security_group_rule" "alfresco_in" {
-  for_each                 = local.alfresco_access_groups
-  security_group_id        = aws_security_group.app.id
-  source_security_group_id = each.value
-  type                     = "ingress"
-  from_port                = local.app_port
-  to_port                  = local.app_port
-  protocol                 = "tcp"
-  description              = format("%s outbound rule", each.key)
+resource "aws_security_group_rule" "vpn_access_alb" {
+  count             = 0 # share service create similar rule
+  security_group_id = local.lb_security_group
+  type              = "ingress"
+  from_port         = local.app_port
+  to_port           = local.app_port
+  protocol          = "tcp"
+  cidr_blocks       = local.vpn_source_cidrs
+  description       = "vpn tunnelling"
 }
 
-resource "aws_security_group_rule" "alfresco_out" {
-  for_each                 = local.alfresco_access_groups
-  security_group_id        = each.value
+# alfresco
+resource "aws_security_group_rule" "lb_out" {
+  security_group_id        = local.lb_security_group
   source_security_group_id = aws_security_group.app.id
+  type                     = "egress"
+  from_port                = local.app_port
+  to_port                  = local.app_port
+  protocol                 = "tcp"
+}
+
+resource "aws_security_group_rule" "lb_in" {
+  source_security_group_id = local.lb_security_group
+  security_group_id        = aws_security_group.app.id
   type                     = "ingress"
   from_port                = local.app_port
   to_port                  = local.app_port
   protocol                 = "tcp"
-  description              = format("%s inbound rule", each.key)
+}
+
+resource "aws_security_group_rule" "access_in" {
+  source_security_group_id = aws_security_group.access.id
+  security_group_id        = local.lb_security_group
+  type                     = "ingress"
+  from_port                = local.app_port
+  to_port                  = local.app_port
+  protocol                 = "tcp"
+}
+
+resource "aws_security_group_rule" "access_out" {
+  source_security_group_id = local.lb_security_group
+  security_group_id        = aws_security_group.access.id
+  type                     = "egress"
+  from_port                = local.app_port
+  to_port                  = local.app_port
+  protocol                 = "tcp"
 }

@@ -1,7 +1,7 @@
 module "ecs_service" {
   source = "../modules/alfresco/ecs-service"
   ecs_config = {
-    name                  = local.common_name
+    name                  = local.application_name
     ecs_cluster_name      = data.terraform_remote_state.ecs_cluster.outputs.info["ecs_cluster_name"]
     region                = local.region
     account_id            = local.account_id
@@ -9,10 +9,13 @@ module "ecs_service" {
     desired_count         = local.alfresco_content_props["desired_count"]
     capacity_provider     = data.terraform_remote_state.ecs_cluster.outputs.capacity_provider["name"]
     deployment_controller = "ECS"
+    namespace_id          = local.ecs_cluster_namespace_id
   }
   security_groups = [
     aws_security_group.app.id,
-    data.terraform_remote_state.common.outputs.common_sg_outbound_id
+    data.terraform_remote_state.common.outputs.common_sg_outbound_id,
+    data.terraform_remote_state.share.outputs.info["access_security_group"],
+    data.terraform_remote_state.transform.outputs.info["access_security_group"],
   ]
   subnet_ids = local.subnet_ids
   tags       = local.tags
@@ -45,6 +48,13 @@ module "ecs_service" {
       type          = "gp2"
       kms_key_id    = local.storage_kms_arn
       iops          = 300
+    }
+  ]
+  load_balancer_targets = [
+    {
+      target_group_arn = aws_lb_target_group.app.arn
+      container_name   = local.container_name
+      container_port   = local.app_port
     }
   ]
 }
