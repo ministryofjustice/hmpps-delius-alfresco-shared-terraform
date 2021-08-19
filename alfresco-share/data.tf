@@ -55,6 +55,19 @@ data "terraform_remote_state" "s3bucket" {
 }
 
 #-------------------------------------------------------------
+### Getting the content details
+#-------------------------------------------------------------
+data "terraform_remote_state" "content" {
+  backend = "s3"
+
+  config = {
+    bucket = var.remote_state_bucket_name
+    key    = "alfresco/alfresco-content/terraform.tfstate"
+    region = var.region
+  }
+}
+
+#-------------------------------------------------------------
 ### Getting the rds details
 #-------------------------------------------------------------
 data "terraform_remote_state" "rds" {

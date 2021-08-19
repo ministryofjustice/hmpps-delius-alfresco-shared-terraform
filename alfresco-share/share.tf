@@ -16,7 +16,8 @@ module "ecs_service" {
   }
   security_groups = [
     aws_security_group.app.id,
-    data.terraform_remote_state.common.outputs.common_sg_outbound_id
+    data.terraform_remote_state.common.outputs.common_sg_outbound_id,
+    data.terraform_remote_state.content.outputs.info["access_security_group"]
   ]
   subnet_ids       = local.subnet_ids
   tags             = local.tags
@@ -24,16 +25,17 @@ module "ecs_service" {
   container_definitions = templatefile(
     "${path.module}/templates/task_definitions/task_definition.conf",
     {
-      image_url        = format("%s:%s", local.alfresco_share_props["image_url"], local.alfresco_share_props["version"])
-      container_name   = local.container_name
-      region           = local.region
-      loggroup         = module.create_loggroup.loggroup_name
-      memory           = tonumber(local.alfresco_share_props["memory"])
-      cpu              = tonumber(local.alfresco_share_props["cpu"])
-      app_port         = local.app_port
-      repo_host        = local.internal_private_dns_host
-      repo_port        = 8080
-      ssm_java_options = aws_ssm_parameter.config.arn
+      image_url            = format("%s:%s", local.alfresco_share_props["image_url"], local.alfresco_share_props["version"])
+      container_name       = local.container_name
+      region               = local.region
+      loggroup             = module.create_loggroup.loggroup_name
+      memory               = tonumber(local.alfresco_share_props["memory"])
+      cpu                  = tonumber(local.alfresco_share_props["cpu"])
+      app_port             = local.app_port
+      repo_host            = local.internal_private_dns_host
+      repo_port            = 8080
+      ssm_java_options     = aws_ssm_parameter.config.arn
+      web_extension_volume = local.web_extension_volume
     }
   )
   load_balancer_targets = [
@@ -41,6 +43,18 @@ module "ecs_service" {
       target_group_arn = aws_lb_target_group.app.arn
       container_name   = local.container_name
       container_port   = local.app_port
+    }
+  ]
+  ebs_volumes = [
+    {
+      autoprovision = true
+      driver        = "rexray/ebs"
+      name          = local.web_extension_volume
+      scope         = "shared"
+      size          = 1
+      type          = "gp2"
+      kms_key_id    = local.storage_kms_arn
+      iops          = 100
     }
   ]
 }

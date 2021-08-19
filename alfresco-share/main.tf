@@ -36,5 +36,6 @@ locals {
   url_path_patterns = [
     "/*"
   ]
+  web_extension_volume = format("%s-web-extensions", local.common_name)
 }
 
