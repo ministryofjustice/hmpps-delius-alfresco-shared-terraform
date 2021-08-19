@@ -47,7 +47,7 @@ locals {
   public_zone_id     = data.terraform_remote_state.common.outputs.public_zone_id
   app_name           = "alf-external"
   external_domain    = data.terraform_remote_state.common.outputs.external_domain
-  dns_hostname       = format("%s.%s", local.app_name, local.external_domain)
+  dns_hostname       = format("alfresco.%s", local.external_domain)
   common_name        = format("%s-%s", data.terraform_remote_state.common.outputs.short_environment_identifier, local.app_name)
   region             = var.region
   tags               = data.terraform_remote_state.common.outputs.common_tags
