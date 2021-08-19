@@ -4,5 +4,6 @@ output "info" {
     app_security_group     = aws_security_group.app.id
     access_security_group  = aws_security_group.access.id
     service_discovery_name = local.service_discovery_name
+    endpoint               = format("https://%s", local.external_private_dns_host)
   }
 }

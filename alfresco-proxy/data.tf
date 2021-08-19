@@ -114,6 +114,15 @@ data "terraform_remote_state" "content" {
   }
 }
 
+#-------------------------------------------------------------
+### Getting ACM Cert
+#-------------------------------------------------------------
+data "aws_acm_certificate" "cert" {
+  domain      = "*.${data.terraform_remote_state.common.outputs.external_domain}"
+  types       = ["AMAZON_ISSUED"]
+  most_recent = true
+}
+
 # Nginx template
 data "template_file" "nginx_host" {
   template = file("${path.module}/templates/config/host.conf")

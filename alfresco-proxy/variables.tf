@@ -20,15 +20,25 @@ variable "alfresco_proxy_props" {
     cpu                   = "500"
     memory                = "2048"
     app_port              = "80"
-    image_url             = "nginx"
-    version               = "1.19"
+    image_url             = "895523100917.dkr.ecr.eu-west-2.amazonaws.com/hmpps/alfresco-proxy"
+    version               = "0.1.0"
     desired_count         = "1"
     cookie_duration       = "3600"
     health_check_endpoint = "/h3alth/checkz"
+    ssl_policy            = "ELBSecurityPolicy-TLS-1-2-2017-01"
   }
 }
 
 variable "alfresco_proxy_configs" {
   type    = map(string)
   default = {}
+}
+
+variable "user_access_cidr_blocks" {
+  type = list(string)
+}
+
+variable "alfresco_access_cidr_blocks" {
+  type    = list(string)
+  default = []
 }

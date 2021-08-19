@@ -25,16 +25,22 @@ locals {
   service_discovery_name       = format("%s.%s", local.application_name, local.ecs_cluster_namespace_domain)
   internal_private_dns_host    = data.terraform_remote_state.load_balancer.outputs.info["dns_hostname"]
   external_private_dns_host    = data.terraform_remote_state.external_load_balancer.outputs.info["dns_hostname"]
-  lb_security_group            = data.terraform_remote_state.load_balancer.outputs.info["security_group_id"]
-  lb_arn                       = data.terraform_remote_state.load_balancer.outputs.info["arn"]
+  lb_security_group            = data.terraform_remote_state.external_load_balancer.outputs.info["security_group_id"]
+  lb_arn                       = data.terraform_remote_state.external_load_balancer.outputs.info["arn"]
   subnet_ids                   = data.terraform_remote_state.common.outputs.private_subnet_ids
   vpn_source_cidrs             = data.terraform_remote_state.common.outputs.vpn_info["source_cidrs"]
   app_port                     = tonumber(local.alfresco_proxy_props["app_port"])
   http_protocol                = "HTTP"
   container_name               = local.application_name
+  certificate_arn              = data.aws_acm_certificate.cert.arn
   url_path_patterns = [
-    "/*"
+    "/alfresco/*",
+    "/share/*"
   ]
   nginx_volume = format("%s-nginx_config", local.common_name)
+  allowed_cidr_block = [
+    distinct(concat(var.user_access_cidr_blocks, var.alfresco_access_cidr_blocks)),
+    data.terraform_remote_state.common.outputs.nat_gateway_ips,
+  ]
 }
 

@@ -46,11 +46,11 @@ module "ecs_service" {
       iops          = 100
     }
   ]
-  # load_balancer_targets = [
-  #   {
-  #     target_group_arn = aws_lb_target_group.app.arn
-  #     container_name   = local.container_name
-  #     container_port   = local.app_port
-  #   }
-  # ]
+  load_balancer_targets = [
+    {
+      target_group_arn = aws_lb_target_group.app.arn
+      container_name   = local.container_name
+      container_port   = local.app_port
+    }
+  ]
 }

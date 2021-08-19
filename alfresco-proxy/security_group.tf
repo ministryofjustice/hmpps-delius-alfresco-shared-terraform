@@ -49,6 +49,23 @@ resource "aws_security_group_rule" "lb_in" {
   protocol                 = "tcp"
 }
 
+resource "aws_security_group_rule" "http_access_cidr_rule" {
+  security_group_id = local.lb_security_group
+  type              = "ingress"
+  from_port         = 80
+  to_port           = 80
+  protocol          = "tcp"
+  cidr_blocks       = flatten(local.allowed_cidr_block)
+}
+
+resource "aws_security_group_rule" "https_access_cidr_rule" {
+  security_group_id = local.lb_security_group
+  type              = "ingress"
+  from_port         = 443
+  to_port           = 443
+  protocol          = "tcp"
+  cidr_blocks       = flatten(local.allowed_cidr_block)
+}
 resource "aws_security_group_rule" "access_in" {
   source_security_group_id = aws_security_group.access.id
   security_group_id        = local.lb_security_group

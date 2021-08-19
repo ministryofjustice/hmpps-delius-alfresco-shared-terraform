@@ -42,18 +42,42 @@ resource "aws_lb_listener" "http_listener" {
   port              = local.app_port
   protocol          = local.http_protocol
   default_action {
-    type = "fixed-response"
-    fixed_response {
-      content_type = "text/plain"
-      message_body = "Please use specific URL path"
-      status_code  = "200"
+    type = "redirect"
+    redirect {
+      protocol    = "HTTPS"
+      host        = "#{host}"
+      port        = 443
+      path        = "/#{path}"
+      query       = "#{query}"
+      status_code = "HTTP_301"
+    }
+  }
+}
+
+# listener
+resource "aws_lb_listener" "https_listener" {
+  load_balancer_arn = local.lb_arn
+  port              = 443
+  protocol          = "HTTPS"
+  ssl_policy        = local.alfresco_proxy_props["ssl_policy"]
+  certificate_arn   = local.certificate_arn
+
+  default_action {
+    type = "redirect"
+    redirect {
+      protocol    = "HTTPS"
+      host        = "#{host}"
+      port        = 443
+      path        = "/share/page"
+      query       = "#{query}"
+      status_code = "HTTP_301"
     }
   }
 }
 
 #Rules
 resource "aws_lb_listener_rule" "app_rule" {
-  listener_arn = aws_lb_listener.http_listener.arn
+  listener_arn = aws_lb_listener.https_listener.arn
 
   condition {
     path_pattern {
