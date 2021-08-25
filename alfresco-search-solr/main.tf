@@ -33,7 +33,7 @@ locals {
   lb_security_group            = data.terraform_remote_state.load_balancer.outputs.info["security_group_id"]
   vpn_source_cidrs             = data.terraform_remote_state.common.outputs.vpn_info["source_cidrs"]
   lb_arn                       = data.terraform_remote_state.load_balancer.outputs.info["arn"]
-  subnet_ids                   = [element(data.terraform_remote_state.common.outputs.private_subnet_ids, 0)]
+  subnet_ids                   = data.terraform_remote_state.common.outputs.private_subnet_ids
   ebs_iops                     = tonumber(local.alfresco_search_solr_props["ebs_iops"])
   ebs_type                     = local.alfresco_search_solr_props["ebs_type"]
   solr_port                    = tonumber(local.alfresco_search_solr_props["app_port"])

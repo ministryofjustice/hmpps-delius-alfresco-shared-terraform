@@ -17,8 +17,6 @@ data "aws_iam_policy_document" "task_policy" {
     resources = [
       local.storage_bucket_arn,
       format("%s/*", local.storage_bucket_arn),
-      aws_s3_bucket.s3.arn,
-      format("%s/*", aws_s3_bucket.s3.arn),
     ]
   }
   statement {

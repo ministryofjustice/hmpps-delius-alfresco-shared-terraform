@@ -18,7 +18,7 @@ module "solr_volume_az2" {
   prefix            = local.data_volume_name
   tags              = local.tags
   kms_key_id        = local.storage_kms_arn
-  create            = length(local.subnet_ids) == 2 ? 1 : 0
+  create            = 1
 }
 
 module "solr_volume_az3" {
@@ -30,5 +30,5 @@ module "solr_volume_az3" {
   prefix            = local.data_volume_name
   tags              = local.tags
   kms_key_id        = local.storage_kms_arn
-  create            = length(local.subnet_ids) == 3 ? 1 : 0
+  create            = 1
 }
