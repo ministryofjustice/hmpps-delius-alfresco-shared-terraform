@@ -15,7 +15,7 @@ module "database" {
   db_subnet_group_name            = module.db_subnet_group.db_subnet_group_id
   enabled_cloudwatch_logs_exports = flatten(local.enabled_cloudwatch_logs_exports)
   engine                          = local.engine
-  engine_version                  = local.master_engine_version #"11.4"
+  engine_version                  = "9.6.14" #local.master_engine_version #"11.4"
   final_snapshot_identifier       = "alfresco-database-final-snapshot"
   identifier                      = "alfresco-database"
   instance_class                  = lookup(var.alf_rds_props, "instance_class", "db.t2.medium")

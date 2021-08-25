@@ -58,6 +58,15 @@ resource "aws_security_group_rule" "solr_access_in" {
   protocol                 = "tcp"
 }
 
+
+resource "aws_security_group_rule" "solr_access_out" {
+  source_security_group_id = local.lb_security_group
+  security_group_id        = aws_security_group.access.id
+  type                     = "egress"
+  from_port                = local.solr_port
+  to_port                  = local.solr_port
+  protocol                 = "tcp"
+}
 # vpn
 resource "aws_security_group_rule" "vpn_access_alb" {
   security_group_id = local.lb_security_group

@@ -16,6 +16,7 @@ module "ecs_service" {
     data.terraform_remote_state.common.outputs.common_sg_outbound_id,
     data.terraform_remote_state.share.outputs.info["access_security_group"],
     data.terraform_remote_state.transform.outputs.info["access_security_group"],
+    data.terraform_remote_state.solr.outputs.info["access_security_group"]
   ]
   subnet_ids = local.subnet_ids
   tags       = local.tags
