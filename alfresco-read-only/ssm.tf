@@ -21,8 +21,8 @@ resource "aws_ssm_parameter" "config" {
       s3_bucket_name    = local.storage_bucket_name
       s3_bucket_region  = local.region
       cache_location    = local.cache_location
-      server_allowWrite = true
-      db_schema_update  = true
+      server_allowWrite = false
+      db_schema_update  = false
     }
   )
   tags = local.tags
