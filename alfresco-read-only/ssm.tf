@@ -14,8 +14,10 @@ resource "aws_ssm_parameter" "config" {
       solr_port         = local.solr_port
       share_host        = local.internal_private_dns_host
       share_port        = 8070
-      alfresco_host     = local.external_private_dns_host
-      alfresco_port     = 8080
+      alfresco_host     = format("http://%s", local.internal_private_dns_host)
+      base_url_overwrite = format("http://%s:%s", local.internal_private_dns_host, local.target_group_port)
+      alfresco_port     = local.target_group_port
+      alfresco_protocol = "http"
       transform_host    = local.internal_private_dns_host
       transform_port    = 8090
       s3_bucket_name    = local.storage_bucket_name

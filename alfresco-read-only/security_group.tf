@@ -68,6 +68,25 @@ resource "aws_security_group_rule" "solr_in" {
   protocol                 = "tcp"
 }
 
+resource "aws_security_group_rule" "solr_access_in" {
+  source_security_group_id = local.solr_security_group
+  security_group_id        = local.lb_security_group
+  type                     = "ingress"
+  from_port                = local.target_group_port
+  to_port                  = local.target_group_port
+  protocol                 = "tcp"
+}
+
+resource "aws_security_group_rule" "solr_access_out" {
+  source_security_group_id = local.lb_security_group
+  security_group_id        = local.solr_security_group
+  type                     = "egress"
+  from_port                = local.target_group_port
+  to_port                  = local.target_group_port
+  protocol                 = "tcp"
+}
+
+
 # vpn
 resource "aws_security_group_rule" "vpn_access" {
   security_group_id = aws_security_group.app.id
