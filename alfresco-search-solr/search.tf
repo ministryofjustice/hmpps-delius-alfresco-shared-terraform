@@ -29,7 +29,7 @@ module "ecs_service" {
       cpu                = tonumber(local.alfresco_search_solr_props["cpu"])
       app_port           = local.solr_port
       solr_alfresco_host = local.internal_private_dns_host
-      solr_alfresco_port = 8080
+      solr_alfresco_port = 9000
       solr_solr_host     = local.internal_private_dns_host
       cache_volume_name  = local.cache_volume_name
       data_volume_name   = local.data_volume_name
