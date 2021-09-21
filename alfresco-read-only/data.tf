@@ -45,6 +45,10 @@ data "aws_s3_bucket" "storage_bucket" {
   bucket = local.storage_bucket_name
 }
 
+data "aws_s3_bucket" "config_bucket" {
+  bucket = local.config_bucket_name
+}
+
 #-------------------------------------------------------------
 ### Getting the rds details
 #-------------------------------------------------------------

@@ -10,6 +10,8 @@ module "ecs_service" {
     capacity_provider     = data.terraform_remote_state.ecs_cluster.outputs.capacity_provider["name"]
     deployment_controller = "ECS"
     namespace_id          = local.ecs_cluster_namespace_id
+    fluentbit_s3_arn      = format("%s/%s", local.config_bucket_arn, local.fluentbit_s3_path)
+    config_bucket_arn     = local.config_bucket_arn
   }
   security_groups = [
     aws_security_group.app.id,

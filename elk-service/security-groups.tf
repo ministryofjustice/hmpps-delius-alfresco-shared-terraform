@@ -158,3 +158,14 @@ resource "aws_security_group_rule" "access_ingress" {
   source_security_group_id = aws_security_group.access_es.id
   description              = "${local.common_name}-es"
 }
+
+# vpn
+resource "aws_security_group_rule" "vpn_access" {
+  security_group_id = aws_security_group.es.id
+  type              = "ingress"
+  from_port         = 443
+  to_port           = 443
+  protocol          = "tcp"
+  cidr_blocks       = local.vpn_source_cidrs
+  description       = "vpn tunnelling"
+}

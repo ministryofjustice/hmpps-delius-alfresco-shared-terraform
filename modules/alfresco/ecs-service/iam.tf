@@ -68,9 +68,7 @@ data "aws_iam_policy_document" "execution_policy" {
       "logs:PutLogEvents",
       "logs:DescribeLogStreams"
     ]
-    resources = [
-      format("%s", var.ecs_config["log_group_arn"])
-    ]
+    resources = ["*"]
   }
   dynamic "statement" {
     for_each = length(keys(var.secrets)) > 0 ? [""] : []

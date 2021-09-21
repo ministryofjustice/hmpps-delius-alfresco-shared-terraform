@@ -4,7 +4,7 @@ resource "aws_s3_bucket_object" "s3_fluent_bit_conf" {
   content = templatefile(
     "../templates/config/fluentbit/fluent-bit.conf",
     {
-      stream_name = local.application_name
+      stream_name = local.firehose_stream_name
       region      = local.region
     }
   )
