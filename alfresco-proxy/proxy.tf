@@ -10,6 +10,8 @@ module "ecs_service" {
     capacity_provider     = data.terraform_remote_state.ecs_cluster.outputs.capacity_provider["name"]
     deployment_controller = "ECS"
     namespace_id          = local.ecs_cluster_namespace_id
+    fluentbit_s3_arn      = format("%s/%s", local.config_bucket_arn, local.fluentbit_s3_path)
+    config_bucket_arn     = local.config_bucket_arn
   }
   security_groups = [
     aws_security_group.app.id,
@@ -23,15 +25,17 @@ module "ecs_service" {
   container_definitions = templatefile(
     "${path.module}/templates/task_definitions/task_definition.conf",
     {
-      image_url      = format("%s:%s", local.alfresco_proxy_props["image_url"], local.alfresco_proxy_props["version"])
-      container_name = local.container_name
-      region         = local.region
-      loggroup       = module.create_loggroup.loggroup_name
-      memory         = tonumber(local.alfresco_proxy_props["memory"])
-      cpu            = tonumber(local.alfresco_proxy_props["cpu"])
-      app_port       = local.app_port
-      nginx_host     = base64encode(data.template_file.nginx_host.rendered)
-      nginx_volume   = local.nginx_volume
+      image_url        = format("%s:%s", local.alfresco_proxy_props["image_url"], local.alfresco_proxy_props["version"])
+      container_name   = local.container_name
+      region           = local.region
+      loggroup         = module.create_loggroup.loggroup_name
+      memory           = tonumber(local.alfresco_proxy_props["memory"])
+      cpu              = tonumber(local.alfresco_proxy_props["cpu"])
+      app_port         = local.app_port
+      nginx_host       = base64encode(data.template_file.nginx_host.rendered)
+      nginx_volume     = local.nginx_volume
+      fluentbit_s3_arn = format("%s/%s", local.config_bucket_arn, local.fluentbit_s3_path)
+      delivery_stream  = local.firehose_stream_name
     }
   )
   ebs_volumes = [
