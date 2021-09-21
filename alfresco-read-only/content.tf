@@ -39,6 +39,8 @@ module "ecs_service" {
       ssm_java_options  = aws_ssm_parameter.config.arn
       cache_volume_name = local.cache_volume_name
       cache_location    = local.cache_location
+      fluentbit_s3_arn  = format("%s/%s", local.config_bucket_arn, local.fluentbit_s3_path)
+      delivery_stream   = local.firehose_stream_name
     }
   )
   ebs_volumes = [

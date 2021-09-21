@@ -21,6 +21,7 @@ locals {
   logs_kms_arn             = data.terraform_remote_state.common.outputs.kms_arn
   fluent_config_file       = "fluent.conf"
   fluentbit_s3_path        = format("ecs-services/%s/%s", local.application_name, local.fluent_config_file)
+  firehose_stream_name    = data.terraform_remote_state.firehose.outputs.info["stream_name"]
   config_bucket_name       = data.terraform_remote_state.common.outputs.common_s3-config-bucket
   config_bucket_arn        = data.aws_s3_bucket.config_bucket.arn
   storage_bucket_name      = data.terraform_remote_state.s3bucket.outputs.s3bucket
