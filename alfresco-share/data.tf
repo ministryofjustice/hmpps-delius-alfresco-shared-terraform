@@ -54,6 +54,22 @@ data "terraform_remote_state" "s3bucket" {
   }
 }
 
+data "aws_s3_bucket" "config_bucket" {
+  bucket = local.config_bucket_name
+}
+
+#-------------------------------------------------------------
+### Getting the firehose details
+#-------------------------------------------------------------
+data "terraform_remote_state" "firehose" {
+  backend = "s3"
+
+  config = {
+    bucket = var.remote_state_bucket_name
+    key    = "alfresco/firehose-stream/terraform.tfstate"
+    region = var.region
+  }
+}
 #-------------------------------------------------------------
 ### Getting the content details
 #-------------------------------------------------------------

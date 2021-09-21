@@ -10,6 +10,8 @@ module "ecs_service" {
     capacity_provider     = data.terraform_remote_state.ecs_cluster.outputs.capacity_provider["name"]
     deployment_controller = "ECS"
     namespace_id          = local.ecs_cluster_namespace_id
+    fluentbit_s3_arn      = format("%s/%s", local.config_bucket_arn, local.fluentbit_s3_path)
+    config_bucket_arn     = local.config_bucket_arn
   }
   secrets = {
     config = aws_ssm_parameter.config.arn
@@ -36,6 +38,8 @@ module "ecs_service" {
       repo_port            = 8080
       ssm_java_options     = aws_ssm_parameter.config.arn
       web_extension_volume = local.web_extension_volume
+      fluentbit_s3_arn     = format("%s/%s", local.config_bucket_arn, local.fluentbit_s3_path)
+      delivery_stream      = local.firehose_stream_name
     }
   )
   load_balancer_targets = [
