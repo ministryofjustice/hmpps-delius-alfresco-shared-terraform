@@ -61,6 +61,16 @@ resource "aws_ecs_service" "ecs_service" {
       container_port   = load_balancer.value.container_port
     }
   }
+
+  ordered_placement_strategy {
+    type  = "spread"
+    field = "host"
+  }
+
+  placement_constraints {
+    type       = "memberOf"
+    expression = "attribute:ecs.availability-zone in [eu-west-2a, eu-west-2b, eu-west-2c]"
+  }
 }
 
 resource "aws_service_discovery_service" "svc_record" {
