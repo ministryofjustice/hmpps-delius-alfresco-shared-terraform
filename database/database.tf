@@ -15,7 +15,7 @@ module "database" {
   db_subnet_group_name            = module.db_subnet_group.db_subnet_group_id
   enabled_cloudwatch_logs_exports = flatten(local.enabled_cloudwatch_logs_exports)
   engine                          = local.engine
-  engine_version                  = "9.6.14" #local.master_engine_version #"11.4"
+  engine_version                  = "11.4"
   final_snapshot_identifier       = "alfresco-database-final-snapshot"
   identifier                      = "alfresco-database"
   instance_class                  = lookup(var.alf_rds_props, "instance_class", "db.t2.medium")
@@ -27,13 +27,13 @@ module "database" {
   monitoring_role_name            = module.rds_monitoring_role.iamrole_name
   multi_az                        = var.alf_data_import == "enabled" ? false : true
   name                            = local.db_name
-  option_group_name               = module.db_option_group.db_option_group_id    #"default:postgres-11"
-  parameter_group_name            = module.parameter_group.db_parameter_group_id #"default.postgres11"  #
+  option_group_name               = "default:postgres-11"
+  parameter_group_name            = "default.postgres11"
   password                        = local.db_password
   port                            = local.port
   publicly_accessible             = false
   skip_final_snapshot             = false
-  snapshot_identifier             = "alfresco-snapshot" #var.alf_snapshot_identifier
+  snapshot_identifier             = lookup(var.alf_rds_props, "snapshot_identifier", "alfresco-snapshot")
   storage_encrypted               = true
   storage_type                    = lookup(var.alf_rds_props, "storage_type", "gp2")
   tags                            = local.tags
