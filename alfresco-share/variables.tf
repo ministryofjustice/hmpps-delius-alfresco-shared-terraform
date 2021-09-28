@@ -34,3 +34,8 @@ variable "alfresco_share_configs" {
   type    = map(string)
   default = {}
 }
+
+variable "alf_stop_services" {
+  type    = string
+  default = "no"
+}

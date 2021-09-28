@@ -6,7 +6,7 @@ module "ecs_service" {
     region                = local.region
     account_id            = local.account_id
     log_group_arn         = module.create_loggroup.loggroup_arn
-    desired_count         = length(local.subnet_ids)
+    desired_count         = var.alf_stop_services == "yes" ? 0 : length(local.subnet_ids)
     capacity_provider     = data.terraform_remote_state.ecs_cluster.outputs.capacity_provider["name"]
     deployment_controller = "ECS"
     namespace_id          = local.ecs_cluster_namespace_id

@@ -36,3 +36,8 @@ variable "alfresco_search_solr_configs" {
   type    = map(string)
   default = {}
 }
+
+variable "alf_stop_services" {
+  type    = string
+  default = "no"
+}

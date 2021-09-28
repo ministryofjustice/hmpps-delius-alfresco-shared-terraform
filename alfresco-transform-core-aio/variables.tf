@@ -32,3 +32,8 @@ variable "alfresco_transfor_core_aio_configs" {
   type    = map(string)
   default = {}
 }
+
+variable "alf_stop_services" {
+  type    = string
+  default = "no"
+}
