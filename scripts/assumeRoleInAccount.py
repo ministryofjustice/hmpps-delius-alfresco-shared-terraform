@@ -2,7 +2,8 @@ import boto3
 import os
 
 aws_envs = dict(
-    eng_dev="arn:aws:iam::563502482979:role/terraform"
+    eng_dev="arn:aws:iam::895523100917:role/terraform",
+    alf_dev="arn:aws:iam::563502482979:role/terraform"
 )
 
 region = 'eu-west-2'
