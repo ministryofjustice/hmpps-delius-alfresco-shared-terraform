@@ -29,7 +29,7 @@ locals {
   storage_kms_arn              = data.terraform_remote_state.s3bucket.outputs.s3bucket_kms_arn
   database_security_group      = data.terraform_remote_state.rds.outputs.info["security_group_id"]
   cache_volume_name            = format("%s-cache-vol", local.common_name)
-  data_volume_name             = format("%s-data-volume", local.common_name)
+  data_volume_name             = format("%s-data-volume", local.application_name)
   logs_volume_name             = format("%s-logs-vol", local.common_name)
   ecs_cluster_namespace_id     = data.terraform_remote_state.ecs_cluster.outputs.info["ecs_cluster_namespace_id"]
   ecs_cluster_namespace_domain = data.terraform_remote_state.ecs_cluster.outputs.info["ecs_cluster_namespace_domain"]

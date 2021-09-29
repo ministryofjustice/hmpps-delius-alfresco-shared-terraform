@@ -8,7 +8,7 @@ aws_envs = dict(
 
 region = 'eu-west-2'
 aws_profile_name = 'hmpps-token'
-aws_role_arn = aws_envs["eng_dev"]
+aws_role_arn = aws_envs["alf_dev"]
 
 session = boto3.Session(profile_name=aws_profile_name)
 
