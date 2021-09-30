@@ -47,5 +47,44 @@ locals {
   url_path_patterns = [
     "/solr/*"
   ]
+  load_balancer_targets = [
+    {
+      target_group_arn = aws_lb_target_group.app.arn
+      container_name   = local.container_name
+      container_port   = local.solr_port
+    }
+  ]
+  ebs_volumes = [
+    {
+      autoprovision = true
+      driver        = "rexray/ebs"
+      name          = local.cache_volume_name
+      scope         = "shared"
+      size          = 100
+      type          = "gp2"
+      kms_key_id    = local.storage_kms_arn
+      iops          = 300
+    },
+    {
+      autoprovision = false
+      driver        = "rexray/ebs"
+      name          = local.data_volume_name
+      scope         = "shared"
+      size          = local.alfresco_search_solr_props["ebs_size"]
+      type          = local.alfresco_search_solr_props["ebs_type"]
+      kms_key_id    = local.storage_kms_arn
+      iops          = tonumber(local.ebs_type == "gp2" ? 0 : local.ebs_iops)
+    },
+    {
+      autoprovision = true
+      driver        = "rexray/ebs"
+      name          = local.logs_volume_name
+      scope         = "shared"
+      size          = 100
+      type          = "gp2"
+      kms_key_id    = local.storage_kms_arn
+      iops          = 300
+    }
+  ]
 }
 
