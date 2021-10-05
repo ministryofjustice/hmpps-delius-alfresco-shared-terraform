@@ -15,6 +15,8 @@ data "aws_region" "current" {
 data "aws_caller_identity" "current" {
 }
 
+data "aws_partition" "current" {}
+
 #-------------------------------------------------------------
 ### Getting the vpc details
 #-------------------------------------------------------------
@@ -168,7 +170,7 @@ locals {
 
   app_hostnames = {
     internal = "${var.alfresco_app_name}-int"
-    external = var.alfresco_app_name
+    external = format("%s-5", var.alfresco_app_name)
   }
 
   private_subnet_map = {

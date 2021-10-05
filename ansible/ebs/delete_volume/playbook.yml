@@ -1,0 +1,29 @@
+---
+- name: Create Param Store entry
+  hosts: localhost
+  connection: local
+  vars_files:
+    - ../../vars/common-vars.yml
+  tasks:
+    - name: set iam role facts
+      set_fact:
+        target_iam_role: "{{ lookup('env', 'TERRAGRUNT_IAM_ROLE') }}"
+        volume_name: "{{ lookup('env', 'EBS_VOLUME_NAME') or 'alfresco-search-solr-data-volume' }}"
+
+    - name: get aws credentials
+      include: ../../creds/playbook.yml
+
+    - name: manage eu-west-2a volume
+      include_tasks: ./delete_volume.yml
+      vars:
+        - availability_zone: eu-west-2a
+
+    - name: manage eu-west-2b volume
+      include_tasks: ./delete_volume.yml
+      vars:
+        - availability_zone: eu-west-2b
+
+    - name: manage eu-west-2c volume
+      include_tasks: ./delete_volume.yml
+      vars:
+        - availability_zone: eu-west-2c

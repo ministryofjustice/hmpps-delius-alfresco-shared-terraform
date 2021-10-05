@@ -7,14 +7,14 @@
 #   password                        = local.db_password
 #   kms_key_id                      = module.kms_key.kms_arn
 #   engine                          = "aurora-postgresql"
-#   engine_version                  = lookup(local.alf_database_config, "aurora_engine_version", "9.6.19")
-#   snapshot_identifier             = lookup(local.alf_database_config, "aurora_snapshot", "alfresco-aurora-snapshot")
+#   engine_version                  = "9.6.21"                                                               #lookup(local.alf_database_config, "aurora_engine_version", "9.6.19")
+#   snapshot_identifier             = "arn:aws:rds:eu-west-2:563502482979:snapshot:alfresco-aurora-snapshot" #lookup(local.alf_database_config, "aurora_snapshot", "alfresco-aurora-snapshot")
 #   vpc_id                          = local.vpc_id
 #   subnets                         = flatten(local.db_subnet_ids)
 #   replica_count                   = lookup(local.alf_database_config, "aurora_replica_count", 1)
 #   vpc_security_group_ids          = flatten(local.security_group_ids)
 #   allowed_cidr_blocks             = []
-#   instance_type                   = lookup(local.alf_database_config, "aurora_instance_class", "db.r5.large")
+#   instance_type                   = "db.r5.large" #lookup(local.alf_database_config, "aurora_instance_class", "db.r5.large")
 #   storage_encrypted               = true
 #   apply_immediately               = true
 #   monitoring_interval             = 10
