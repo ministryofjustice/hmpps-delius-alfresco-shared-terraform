@@ -39,3 +39,8 @@ variable "alf_stop_services" {
   type    = string
   default = "no"
 }
+
+variable "alf_config_map" {
+  type    = map(string)
+  default = {}
+}

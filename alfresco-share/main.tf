@@ -10,7 +10,7 @@ terraform {
 ####################################################
 
 locals {
-  alfresco_share_props         = merge(var.alfresco_share_props, var.alfresco_share_configs)
+  alfresco_share_props         = merge(var.alfresco_share_props, var.alfresco_share_configs, var.alf_config_map)
   region                       = var.region
   account_id                   = data.terraform_remote_state.common.outputs.common_account_id
   vpc_id                       = data.terraform_remote_state.common.outputs.vpc_id

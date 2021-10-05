@@ -89,10 +89,10 @@ data "terraform_remote_state" "vpn" {
   backend = "s3"
 
   config = {
-    bucket   = var.bastion_remote_state_bucket_name
+    bucket   = "tf-eu-west-2-hmpps-bastion-dev-remote-state"
     key      = "service-vpn/terraform.tfstate"
     region   = var.region
-    role_arn = var.bastion_role_arn
+    role_arn = "arn:aws:iam::895523100917:role/terraform"
   }
 }
 
