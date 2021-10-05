@@ -16,6 +16,19 @@ data "terraform_remote_state" "common" {
 }
 
 #-------------------------------------------------------------
+### Getting the security-groups details
+#-------------------------------------------------------------
+data "terraform_remote_state" "security_groups" {
+  backend = "s3"
+
+  config = {
+    bucket = var.remote_state_bucket_name
+    key    = "alfresco/security-groups/terraform.tfstate"
+    region = var.region
+  }
+}
+
+#-------------------------------------------------------------
 ### Getting the ecs cluster details
 #-------------------------------------------------------------
 data "terraform_remote_state" "ecs_cluster" {

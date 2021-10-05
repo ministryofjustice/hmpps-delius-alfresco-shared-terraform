@@ -71,14 +71,14 @@ data "terraform_remote_state" "firehose" {
   }
 }
 #-------------------------------------------------------------
-### Getting the content details
+### Getting the security-groups details
 #-------------------------------------------------------------
-data "terraform_remote_state" "content" {
+data "terraform_remote_state" "security_groups" {
   backend = "s3"
 
   config = {
     bucket = var.remote_state_bucket_name
-    key    = "alfresco/alfresco-content/terraform.tfstate"
+    key    = "alfresco/security-groups/terraform.tfstate"
     region = var.region
   }
 }

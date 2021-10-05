@@ -16,6 +16,7 @@ locals {
   vpc_id                       = data.terraform_remote_state.common.outputs.vpc_id
   prefix                       = data.terraform_remote_state.common.outputs.short_environment_identifier
   application_name             = "alfresco-share-ecs"
+  application_short_name       = "alf-share"
   common_name                  = format("%s-%s", local.prefix, local.application_name)
   tags                         = data.terraform_remote_state.common.outputs.common_tags
   logs_kms_arn                 = data.terraform_remote_state.common.outputs.kms_arn
@@ -41,6 +42,8 @@ locals {
   url_path_patterns = [
     "/*"
   ]
-  web_extension_volume = format("%s-web-extensions", local.common_name)
+  web_extension_volume    = format("%s-web-extensions", local.common_name)
+  content_access_group_id = data.terraform_remote_state.security_groups.outputs.alf_access_groups["content"]
+  access_group_id         = data.terraform_remote_state.security_groups.outputs.alf_access_groups["share"]
 }
 

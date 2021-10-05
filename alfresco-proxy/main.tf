@@ -16,6 +16,7 @@ locals {
   vpc_id                       = data.terraform_remote_state.common.outputs.vpc_id
   prefix                       = data.terraform_remote_state.common.outputs.short_environment_identifier
   application_name             = "alfresco-proxy"
+  application_short_name       = "alf-proxy"
   common_name                  = format("%s-%s", local.prefix, local.application_name)
   tags                         = data.terraform_remote_state.common.outputs.common_tags
   logs_kms_arn                 = data.terraform_remote_state.common.outputs.kms_arn

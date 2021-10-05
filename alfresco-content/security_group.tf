@@ -128,7 +128,7 @@ resource "aws_security_group_rule" "lb_in" {
 }
 
 resource "aws_security_group_rule" "access_in" {
-  source_security_group_id = aws_security_group.access.id
+  source_security_group_id = local.access_group_id
   security_group_id        = local.lb_security_group
   type                     = "ingress"
   from_port                = local.app_port
@@ -138,7 +138,7 @@ resource "aws_security_group_rule" "access_in" {
 
 resource "aws_security_group_rule" "access_out" {
   source_security_group_id = local.lb_security_group
-  security_group_id        = aws_security_group.access.id
+  security_group_id        = local.access_group_id
   type                     = "egress"
   from_port                = local.app_port
   to_port                  = local.app_port
