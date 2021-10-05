@@ -16,12 +16,13 @@ locals {
   vpc_id                   = data.terraform_remote_state.common.outputs.vpc_id
   prefix                   = data.terraform_remote_state.common.outputs.short_environment_identifier
   application_name         = "alfresco-content"
+  application_short_name   = "alf-content"
   common_name              = format("%s-%s", local.prefix, local.application_name)
   tags                     = data.terraform_remote_state.common.outputs.common_tags
   logs_kms_arn             = data.terraform_remote_state.common.outputs.kms_arn
   fluent_config_file       = "fluent.conf"
   fluentbit_s3_path        = format("ecs-services/%s/%s", local.application_name, local.fluent_config_file)
-  firehose_stream_name    = data.terraform_remote_state.firehose.outputs.info["stream_name"]
+  firehose_stream_name     = data.terraform_remote_state.firehose.outputs.info["stream_name"]
   config_bucket_name       = data.terraform_remote_state.common.outputs.common_s3-config-bucket
   config_bucket_arn        = data.aws_s3_bucket.config_bucket.arn
   storage_bucket_name      = data.terraform_remote_state.s3bucket.outputs.s3bucket
@@ -51,5 +52,6 @@ locals {
   url_path_patterns = [
     "/*"
   ]
+  access_group_id = data.terraform_remote_state.security_groups.outputs.alf_access_groups["content"]
 }
 
