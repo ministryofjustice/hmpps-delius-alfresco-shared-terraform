@@ -1,6 +1,6 @@
 # target group
 resource "aws_lb_target_group" "app" {
-  name                 = local.common_name
+  name                 = substr(local.common_name, 0, 32)
   port                 = local.solr_port
   protocol             = local.http_protocol
   vpc_id               = local.vpc_id

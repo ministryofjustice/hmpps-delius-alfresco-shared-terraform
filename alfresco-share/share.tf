@@ -19,7 +19,7 @@ module "ecs_service" {
   security_groups = [
     aws_security_group.app.id,
     data.terraform_remote_state.common.outputs.common_sg_outbound_id,
-    data.terraform_remote_state.content.outputs.info["access_security_group"]
+    local.content_access_group_id
   ]
   subnet_ids       = local.subnet_ids
   tags             = local.tags
