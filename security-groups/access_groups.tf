@@ -64,9 +64,7 @@ resource "aws_security_group" "search" {
 
 output "alf_access_groups" {
   value = {
-    content   = aws_security_group.content.id
-    share     = aws_security_group.share.id
-    transform = aws_security_group.transform.id
-    search    = aws_security_group.search.id
+    content = aws_security_group.content.id
+    share   = aws_security_group.share.id
   }
 }
