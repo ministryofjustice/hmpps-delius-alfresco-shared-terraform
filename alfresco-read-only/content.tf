@@ -12,6 +12,7 @@ module "ecs_service" {
     namespace_id          = local.ecs_cluster_namespace_id
     fluentbit_s3_arn      = format("%s/%s", local.config_bucket_arn, local.fluentbit_s3_path)
     config_bucket_arn     = local.config_bucket_arn
+    grace_period          = "180"
   }
   security_groups = [
     aws_security_group.app.id,

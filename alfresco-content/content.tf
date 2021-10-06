@@ -12,6 +12,7 @@ module "ecs_service" {
     namespace_id          = local.ecs_cluster_namespace_id
     fluentbit_s3_arn      = format("%s/%s", local.config_bucket_arn, local.fluentbit_s3_path)
     config_bucket_arn     = local.config_bucket_arn
+    grace_period          = "180"
   }
   security_groups = [
     aws_security_group.app.id,
@@ -27,7 +28,7 @@ module "ecs_service" {
   }
   task_policy_json = data.aws_iam_policy_document.task_policy.json
   container_definitions = templatefile(
-    "${path.module}/templates/task_definitions/task_definition.conf",
+    "${path.module}/templates/task_definitions/${local.task_definition_file}",
     {
       image_url         = format("%s:%s", local.alfresco_content_props["image_url"], local.alfresco_content_props["version"])
       container_name    = local.application_name
