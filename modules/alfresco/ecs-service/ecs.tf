@@ -36,7 +36,7 @@ resource "aws_ecs_service" "ecs_service" {
   cluster                           = var.ecs_config["ecs_cluster_name"]
   task_definition                   = aws_ecs_task_definition.task_def.arn
   desired_count                     = tonumber(var.ecs_config["desired_count"])
-  health_check_grace_period_seconds = tonumber(var.ecs_config["grace_period"])
+  health_check_grace_period_seconds = tonumber(var.health_check_grace_period_seconds)
   network_configuration {
     security_groups = var.security_groups
     subnets         = var.subnet_ids

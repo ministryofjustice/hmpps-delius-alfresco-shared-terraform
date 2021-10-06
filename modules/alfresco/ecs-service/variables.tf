@@ -14,7 +14,6 @@ variable "ecs_config" {
     capacity_provider     = "capacity_provider"
     deployment_controller = "ECS"
     namespace_id          = "namespace id"
-    grace_period          = "0"
   }
 }
 
@@ -67,4 +66,9 @@ variable "load_balancer_targets" {
     }
   ))
   default = []
+}
+
+variable "health_check_grace_period_seconds" {
+  description = "Healthcheck grace period"
+  default     = "0"
 }
