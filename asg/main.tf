@@ -185,14 +185,18 @@ locals {
   db_password_ssm              = data.terraform_remote_state.rds.outputs.rds_creds["db_password_ssm_param"]
   db_host                      = data.terraform_remote_state.rds.outputs.rds_db_instance_endpoint_cname # data.terraform_remote_state.rds.outputs.aurora["cluster_endpoint"]
   solr_host                    = "solr.${local.internal_domain}"
-  app_hostnames                = data.terraform_remote_state.common.outputs.app_hostnames
-  bastion_inventory            = var.bastion_inventory
-  jvm_memory                   = var.alfresco_jvm_memory
-  config-bucket                = data.terraform_remote_state.common.outputs.common_s3-config-bucket
-  tomcat_host                  = "alfresco"
-  certificate_arn              = data.aws_acm_certificate.cert.arn
-  public_subnet_ids            = [data.terraform_remote_state.common.outputs.public_subnet_ids]
-  logs_kms_arn                 = data.terraform_remote_state.common.outputs.kms_arn
+  # app_hostnames                = data.terraform_remote_state.common.outputs.app_hostnames
+  app_hostnames = {
+    "external" = "alfresco-5"
+    "internal" = "alfresco-int"
+  }
+  bastion_inventory = var.bastion_inventory
+  jvm_memory        = var.alfresco_jvm_memory
+  config-bucket     = data.terraform_remote_state.common.outputs.common_s3-config-bucket
+  tomcat_host       = "alfresco"
+  certificate_arn   = data.aws_acm_certificate.cert.arn
+  public_subnet_ids = [data.terraform_remote_state.common.outputs.public_subnet_ids]
+  logs_kms_arn      = data.terraform_remote_state.common.outputs.kms_arn
 
   instance_security_groups = [
     data.terraform_remote_state.security-groups.outputs.security_groups_sg_internal_instance_id,

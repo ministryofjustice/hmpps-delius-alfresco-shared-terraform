@@ -14,6 +14,7 @@ variable "ecs_config" {
     capacity_provider     = "capacity_provider"
     deployment_controller = "ECS"
     namespace_id          = "namespace id"
+    grace_period          = "0"
   }
 }
 
