@@ -53,6 +53,7 @@ locals {
   url_path_patterns = [
     "/*"
   ]
-  access_group_id = data.terraform_remote_state.security_groups.outputs.alf_access_groups["content"]
+  access_group_id      = data.terraform_remote_state.security_groups.outputs.alf_access_groups["content"]
+  task_definition_file = var.alf_push_to_cloudwatch == "yes" ? "task_definition-cloudwatch.conf" : "task_definition.conf"
 }
 
