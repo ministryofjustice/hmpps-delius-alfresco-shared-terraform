@@ -14,6 +14,7 @@ module "ecs_service" {
     config_bucket_arn     = local.config_bucket_arn
     grace_period          = "300"
   }
+  health_check_grace_period_seconds = "300"
   security_groups = [
     aws_security_group.app.id,
     data.terraform_remote_state.common.outputs.common_sg_outbound_id,

@@ -68,3 +68,8 @@ variable "load_balancer_targets" {
   ))
   default = []
 }
+
+variable "health_check_grace_period_seconds" {
+  description = "Healthcheck grace period"
+  default     = "0"
+}
