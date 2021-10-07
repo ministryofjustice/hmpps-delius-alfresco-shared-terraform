@@ -41,3 +41,7 @@ variable "alf_stop_services" {
   type    = string
   default = "no"
 }
+
+variable "alf_push_to_cloudwatch" {
+  default = "no"
+}

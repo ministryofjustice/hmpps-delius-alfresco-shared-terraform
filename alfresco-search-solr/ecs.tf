@@ -1,7 +1,7 @@
 resource "aws_ecs_task_definition" "task_def" {
   family = format("%s-task-definition", local.application_name)
   container_definitions = templatefile(
-    "${path.module}/templates/task_definitions/task_definition.conf",
+    "${path.module}/templates/task_definitions/${local.task_definition_file}",
     {
       image_url          = format("%s:%s", local.alfresco_search_solr_props["image_url"], local.alfresco_search_solr_props["version"])
       container_name     = local.container_name

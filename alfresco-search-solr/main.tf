@@ -45,6 +45,7 @@ locals {
   solr_port                    = tonumber(local.alfresco_search_solr_props["app_port"])
   http_protocol                = "HTTP"
   container_name               = local.application_name
+  task_definition_file         = var.alf_push_to_cloudwatch == "yes" ? "task_definition-cloudwatch.conf" : "task_definition.conf"
   url_path_patterns = [
     "/solr/*"
   ]

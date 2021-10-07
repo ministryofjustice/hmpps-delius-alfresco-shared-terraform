@@ -19,12 +19,12 @@ data "terraform_remote_state" "common" {
 #-------------------------------------------------------------
 ### Getting the asg details
 #-------------------------------------------------------------
-data "terraform_remote_state" "asg" {
+data "terraform_remote_state" "lb" {
   backend = "s3"
 
   config = {
     bucket = var.remote_state_bucket_name
-    key    = "alfresco/asg/terraform.tfstate"
+    key    = "alfresco/app-external-load-balancer/terraform.tfstate"
     region = var.region
   }
 }
@@ -32,7 +32,7 @@ data "terraform_remote_state" "asg" {
 # locals
 
 locals {
-  load_balancer_id     = data.terraform_remote_state.asg.outputs.asg_elb_id
+  load_balancer_id     = data.terraform_remote_state.lb.outputs.info["id"]
   application          = data.terraform_remote_state.common.outputs.alfresco_app_name
   common_name          = "${data.terraform_remote_state.common.outputs.short_environment_identifier}-${local.application}"
   tags                 = data.terraform_remote_state.common.outputs.common_tags
