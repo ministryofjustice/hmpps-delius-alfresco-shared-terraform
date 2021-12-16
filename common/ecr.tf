@@ -12,3 +12,40 @@ resource "aws_ecr_repository" "repos" {
   }
   tags = local.tags
 }
+
+data "aws_iam_policy_document" "ecr_policy" {
+  statement {
+    actions = [
+      "ecr:GetDownloadUrlForLayer",
+      "ecr:BatchGetImage",
+      "ecr:BatchCheckLayerAvailability",
+      "ecr:PutImage",
+      "ecr:InitiateLayerUpload",
+      "ecr:UploadLayerPart",
+      "ecr:CompleteLayerUpload",
+      "ecr:DescribeRepositories",
+      "ecr:GetRepositoryPolicy",
+      "ecr:ListImages",
+      "ecr:DeleteRepository",
+      "ecr:BatchDeleteImage",
+      "ecr:SetRepositoryPolicy",
+      "ecr:DeleteRepositoryPolicy"
+    ]
+    principals {
+      type = "AWS"
+      identifiers = [
+        "arn:aws:iam::895523100917:role/hmpps-eng-builds",
+        format("arn:aws:iam::%s:root", local.account_id)
+      ]
+    }
+  }
+}
+
+resource "aws_ecr_repository_policy" "ecr_policy" {
+  for_each   = toset(local.ecr_repos)
+  repository = each.key
+  policy     = data.aws_iam_policy_document.ecr_policy.json
+  depends_on = [
+    aws_ecr_repository.repos
+  ]
+}
