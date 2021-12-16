@@ -45,5 +45,6 @@ locals {
   web_extension_volume    = format("%s-web-extensions", local.common_name)
   content_access_group_id = data.terraform_remote_state.security_groups.outputs.alf_access_groups["content"]
   access_group_id         = data.terraform_remote_state.security_groups.outputs.alf_access_groups["share"]
+  task_definition_file    = var.alf_push_to_cloudwatch == "yes" ? "task_definition-cloudwatch.conf" : "task_definition.conf"
 }
 

@@ -40,5 +40,6 @@ locals {
   url_path_patterns = [
     "/*"
   ]
+    task_definition_file = var.alf_push_to_cloudwatch == "yes" ? "task_definition-cloudwatch.conf" : "task_definition.conf"
 }
 

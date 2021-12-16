@@ -21,7 +21,7 @@ module "ecs_service" {
   tags             = local.tags
   task_policy_json = data.aws_iam_policy_document.task_policy.json
   container_definitions = templatefile(
-    "${path.module}/templates/task_definitions/task_definition.conf",
+    "${path.module}/templates/task_definitions/${local.task_definition_file}",
     {
       image_url        = format("%s:%s", local.alfresco_transfor_core_aio_props["image_url"], local.alfresco_transfor_core_aio_props["version"])
       container_name   = local.container_name

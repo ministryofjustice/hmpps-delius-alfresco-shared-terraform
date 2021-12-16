@@ -48,5 +48,6 @@ locals {
     distinct(concat(var.user_access_cidr_blocks, var.alfresco_access_cidr_blocks)),
     data.terraform_remote_state.common.outputs.nat_gateway_ips,
   ]
+  task_definition_file = var.alf_push_to_cloudwatch == "yes" ? "task_definition-cloudwatch.conf" : "task_definition.conf"
 }
 
