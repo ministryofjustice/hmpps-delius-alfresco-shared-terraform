@@ -3,13 +3,13 @@ resource "aws_ssm_parameter" "config" {
   description = "Runtime configuration for ECS container"
   type        = "SecureString"
   value = templatefile(
-    "../templates/config/alfresco-content/runtime.conf",
+    "${path.module}/templates/config/runtime.conf",
     {
       db_name           = data.terraform_remote_state.rds.outputs.rds_creds["db_name"]
       db_user           = data.aws_ssm_parameter.db_user.value
       db_password       = data.aws_ssm_parameter.db_password.value
       db_endpoint       = data.terraform_remote_state.rds.outputs.info["address"]
-      heap_size         = tonumber(local.alfresco_content_props["heap_size"])
+      memory            = tonumber(local.alfresco_content_props["memory"])
       solr_host         = local.internal_private_dns_host
       solr_port         = local.solr_port
       share_host        = local.internal_private_dns_host
