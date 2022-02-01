@@ -106,7 +106,7 @@ locals {
   tags                          = data.terraform_remote_state.common.outputs.common_tags
   config-bucket                 = data.terraform_remote_state.common.outputs.common_s3-config-bucket
   account_id                    = data.terraform_remote_state.common.outputs.common_account_id
-  db_instance_id                = data.terraform_remote_state.rds.outputs.rds_db_instance_id
+  db_instance_id                = data.terraform_remote_state.rds.outputs.info.id
   load_balancer_arn_suffix      = data.aws_lb.asg_lb.arn_suffix
   solr_load_balancer_arn_suffix = data.aws_lb.solr_lb.arn_suffix
   target_group_suffix           = data.aws_lb_target_group.asg_target_group.arn_suffix

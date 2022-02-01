@@ -40,4 +40,3 @@ module "database" {
   username                        = local.db_user_name
   vpc_security_group_ids          = flatten(local.security_group_ids)
 }
-
