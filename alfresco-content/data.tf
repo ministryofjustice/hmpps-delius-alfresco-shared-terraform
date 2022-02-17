@@ -160,3 +160,11 @@ data "terraform_remote_state" "transform" {
     region = var.region
   }
 }
+
+#-------------------------------------------------------------
+### Getting Subnet CIDRs
+#-------------------------------------------------------------
+data "aws_subnet" "ecs_subnets" {
+  for_each = toset(local.subnet_ids)
+  id       = each.value
+}

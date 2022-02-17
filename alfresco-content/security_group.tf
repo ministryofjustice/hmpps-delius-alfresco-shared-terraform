@@ -144,3 +144,23 @@ resource "aws_security_group_rule" "access_out" {
   to_port                  = local.app_port
   protocol                 = "tcp"
 }
+
+resource "aws_security_group_rule" "hazelcast_in" {
+  cidr_blocks       = [for s in data.aws_subnet.ecs_subnets : s.cidr_block]
+  security_group_id = aws_security_group.app.id
+  type              = "ingress"
+  from_port         = 5701
+  to_port           = 5701
+  protocol          = "tcp"
+  description       = "Hazelcast cluster"
+}
+
+resource "aws_security_group_rule" "hazelcast_out" {
+  cidr_blocks       = [for s in data.aws_subnet.ecs_subnets : s.cidr_block]
+  security_group_id = aws_security_group.app.id
+  type              = "egress"
+  from_port         = 5701
+  to_port           = 5701
+  protocol          = "tcp"
+  description       = "Hazelcast cluster"
+}
