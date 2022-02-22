@@ -33,7 +33,6 @@ locals {
   lb_security_group            = data.terraform_remote_state.load_balancer.outputs.info["security_group_id"]
   lb_arn                       = data.terraform_remote_state.load_balancer.outputs.info["arn"]
   subnet_ids                   = data.terraform_remote_state.common.outputs.private_subnet_ids
-  vpn_source_cidrs             = data.terraform_remote_state.common.outputs.vpn_info["source_cidrs"]
   app_port                     = tonumber(local.alfresco_share_props["app_port"])
   alfresco_port                = tonumber(local.alfresco_share_props["alfresco_port"])
   target_group_port            = tonumber(local.alfresco_share_props["target_group_port"])
