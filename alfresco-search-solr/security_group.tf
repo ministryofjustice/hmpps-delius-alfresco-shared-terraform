@@ -86,24 +86,3 @@ resource "aws_security_group_rule" "solr_lb_from_instance" {
   to_port                  = local.solr_port
   protocol                 = "tcp"
 }
-
-# vpn
-resource "aws_security_group_rule" "vpn_access_alb" {
-  security_group_id = local.lb_security_group
-  type              = "ingress"
-  from_port         = local.solr_port
-  to_port           = local.solr_port
-  protocol          = "tcp"
-  cidr_blocks       = local.vpn_source_cidrs
-  description       = "vpn tunnelling"
-}
-
-resource "aws_security_group_rule" "vpn_access" {
-  security_group_id = aws_security_group.app.id
-  type              = "ingress"
-  from_port         = local.solr_port
-  to_port           = local.solr_port
-  protocol          = "tcp"
-  cidr_blocks       = local.vpn_source_cidrs
-  description       = "vpn tunnelling"
-}

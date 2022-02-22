@@ -147,7 +147,6 @@ locals {
   remote_state_bucket_name     = var.remote_state_bucket_name
   s3_lb_policy_file            = "../policies/s3_alb_policy.json"
   environment                  = var.environment_type
-  vpn_info                     = data.terraform_remote_state.vpn.outputs.vpn_info
 
   tags = merge(
     var.tags,

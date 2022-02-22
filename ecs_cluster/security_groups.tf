@@ -36,16 +36,6 @@ resource "aws_security_group" "ecs_efs_sg" {
   )
 }
 
-resource "aws_security_group_rule" "vpn_ssh" {
-  security_group_id = local.ecs_security_groups["host"]
-  type              = "ingress"
-  from_port         = 22
-  to_port           = 22
-  protocol          = "tcp"
-  cidr_blocks       = data.terraform_remote_state.common.outputs.vpn_info["source_cidrs"]
-  description       = "vpn tunnelling"
-}
-
 resource "aws_security_group_rule" "bastion_ssh" {
   security_group_id = local.ecs_security_groups["host"]
   type              = "ingress"

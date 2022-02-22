@@ -136,7 +136,6 @@ locals {
   access_logs_bucket           = data.terraform_remote_state.common.outputs.common_s3_lb_logs_bucket
   ecs_cluster_name             = data.terraform_remote_state.common.outputs.ecs_cluster["name"]
   service_discovery_domain     = "${local.application}-${local.internal_domain}"
-  vpn_source_cidrs             = data.terraform_remote_state.common.outputs.vpn_info["source_cidrs"]
 
   allowed_cidr_block = [
     var.user_access_cidr_blocks,

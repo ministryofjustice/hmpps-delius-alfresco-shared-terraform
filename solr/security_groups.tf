@@ -76,23 +76,3 @@ resource "aws_security_group_rule" "alf_lb_egress_http" {
   description              = "${local.common_name}-alf-http"
   source_security_group_id = aws_security_group.sg_solr_alb.id
 }
-
-resource "aws_security_group_rule" "vpn_solr" {
-  security_group_id = local.instance_sg
-  type              = "ingress"
-  from_port         = "8983"
-  to_port           = "8983"
-  protocol          = "tcp"
-  cidr_blocks       = data.terraform_remote_state.common.outputs.vpn_info["source_cidrs"]
-  description       = "vpn tunnelling"
-}
-
-resource "aws_security_group_rule" "vpn_solr_lb" {
-  security_group_id = aws_security_group.sg_solr_alb.id
-  type              = "ingress"
-  from_port         = "8983"
-  to_port           = "8983"
-  protocol          = "tcp"
-  cidr_blocks       = data.terraform_remote_state.common.outputs.vpn_info["source_cidrs"]
-  description       = "vpn tunnelling"
-}

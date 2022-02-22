@@ -37,7 +37,6 @@ locals {
   service_discovery_name       = format("%s.%s", local.application_name, local.ecs_cluster_namespace_domain)
   internal_private_dns_host    = data.terraform_remote_state.load_balancer.outputs.info["dns_hostname"]
   lb_security_group            = data.terraform_remote_state.load_balancer.outputs.info["security_group_id"]
-  vpn_source_cidrs             = data.terraform_remote_state.common.outputs.vpn_info["source_cidrs"]
   lb_arn                       = data.terraform_remote_state.load_balancer.outputs.info["arn"]
   subnet_ids                   = data.terraform_remote_state.common.outputs.private_subnet_ids
   ebs_iops                     = tonumber(local.alfresco_search_solr_props["ebs_iops"])
