@@ -9,7 +9,7 @@ resource "aws_lb_target_group" "app" {
 
   health_check {
     interval            = 30
-    path                = "/solr/"
+    path                = "/solr/alfresco/admin/ping"
     port                = local.solr_port
     protocol            = local.http_protocol
     timeout             = 5
