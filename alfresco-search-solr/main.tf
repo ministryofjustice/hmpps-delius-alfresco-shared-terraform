@@ -57,10 +57,10 @@ locals {
   ]
   ebs_volumes = [
     {
-      autoprovision = true
+      autoprovision = false
       driver        = "rexray/ebs"
       name          = local.cache_volume_name
-      scope         = "shared"
+      scope         = "task"
       size          = 100
       type          = "gp2"
       kms_key_id    = local.storage_kms_arn
