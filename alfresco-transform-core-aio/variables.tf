@@ -17,7 +17,7 @@ variable "alf_cloudwatch_log_retention" {
 variable "alfresco_transfor_core_aio_props" {
   type = map(string)
   default = {
-    cpu             = "500"
+    cpu             = "1024"
     memory          = "4096"
     app_port        = "8090"
     image_url       = "alfresco/alfresco-transform-core-aio"
