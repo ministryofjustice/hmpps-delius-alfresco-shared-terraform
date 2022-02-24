@@ -17,7 +17,7 @@ variable "alf_cloudwatch_log_retention" {
 variable "alfresco_content_props" {
   type = map(string)
   default = {
-    cpu             = "500"
+    cpu             = "1024"
     memory          = "4096"
     app_port        = "8080"
     heap_size       = "1500"

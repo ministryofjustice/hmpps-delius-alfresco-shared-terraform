@@ -17,7 +17,7 @@ variable "alf_cloudwatch_log_retention" {
 variable "alfresco_proxy_props" {
   type = map(string)
   default = {
-    cpu                   = "500"
+    cpu                   = "1024"
     memory                = "2048"
     app_port              = "80"
     image_url             = "895523100917.dkr.ecr.eu-west-2.amazonaws.com/hmpps/alfresco-proxy"
