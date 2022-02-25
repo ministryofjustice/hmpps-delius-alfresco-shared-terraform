@@ -83,20 +83,6 @@ data "terraform_remote_state" "remote_iam" {
 }
 
 #-------------------------------------------------------------
-### Getting vpn info
-#-------------------------------------------------------------
-data "terraform_remote_state" "vpn" {
-  backend = "s3"
-
-  config = {
-    bucket   = "tf-eu-west-2-hmpps-bastion-dev-remote-state"
-    key      = "service-vpn/terraform.tfstate"
-    region   = var.region
-    role_arn = "arn:aws:iam::895523100917:role/terraform"
-  }
-}
-
-#-------------------------------------------------------------
 ### Getting the latest amazon ami
 #-------------------------------------------------------------
 data "aws_ami" "amazon_ami" {
@@ -237,4 +223,3 @@ module "common" {
   tags                         = local.tags
   vpc_id                       = local.vpc_id
 }
-
