@@ -17,12 +17,12 @@ variable "alf_cloudwatch_log_retention" {
 variable "alfresco_transfor_core_aio_props" {
   type = map(string)
   default = {
-    cpu             = "1024"
-    memory          = "4096"
+    cpu             = "2048"
+    memory          = "8192"
     app_port        = "8090"
     image_url       = "alfresco/alfresco-transform-core-aio"
     version         = "2.5.2"
-    java_opts       = " -Xms1229m -Xmx3891m"
+    java_opts       = ""
     desired_count   = "1"
     cookie_duration = "3600"
   }
