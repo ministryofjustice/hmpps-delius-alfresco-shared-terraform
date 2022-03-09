@@ -44,7 +44,3 @@ variable "alf_config_map" {
   type    = map(string)
   default = {}
 }
-
-variable "alf_push_to_cloudwatch" {
-  default = "no"
-}

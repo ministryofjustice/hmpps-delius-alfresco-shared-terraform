@@ -1,7 +1,7 @@
 resource "aws_ecs_task_definition" "task_def" {
   family = format("%s-task-definition", local.application_name)
   container_definitions = templatefile(
-    "${path.module}/templates/task_definitions/${local.task_definition_file}",
+    "${path.module}/templates/task_definitions/task_definition.conf",
     {
       image_url          = format("%s:%s", local.alfresco_search_solr_props["image_url"], local.alfresco_search_solr_props["version"])
       container_name     = local.container_name
@@ -16,8 +16,6 @@ resource "aws_ecs_task_definition" "task_def" {
       cache_volume_name  = local.cache_volume_name
       data_volume_name   = local.data_volume_name
       logs_volume_name   = local.logs_volume_name
-      fluentbit_s3_arn   = format("%s/%s", local.config_bucket_arn, local.fluentbit_s3_path)
-      delivery_stream    = local.firehose_stream_name
     }
   )
   task_role_arn            = aws_iam_role.task.arn

@@ -85,16 +85,3 @@ data "aws_ssm_parameter" "db_user" {
 data "aws_ssm_parameter" "db_password" {
   name = data.terraform_remote_state.rds.outputs.rds_creds["db_password_ssm_param"]
 }
-
-#-------------------------------------------------------------
-### Getting the firehose details
-#-------------------------------------------------------------
-data "terraform_remote_state" "firehose" {
-  backend = "s3"
-
-  config = {
-    bucket = var.remote_state_bucket_name
-    key    = "alfresco/firehose-stream/terraform.tfstate"
-    region = var.region
-  }
-}

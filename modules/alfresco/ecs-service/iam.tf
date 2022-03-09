@@ -28,16 +28,6 @@ data "aws_iam_policy_document" "execution_policy" {
     ]
   }
   statement {
-    sid    = "allowAccessToFluentBitConfigs"
-    effect = "Allow"
-    actions = [
-      "s3:GetObject"
-    ]
-    resources = [
-      var.ecs_config["fluentbit_s3_arn"]
-    ]
-  }
-  statement {
     sid    = "ECR"
     effect = "Allow"
     actions = [
