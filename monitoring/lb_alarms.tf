@@ -153,4 +153,3 @@ resource "aws_cloudwatch_metric_alarm" "lb_4xx_error_request_warning" {
     }
   }
 }
-
