@@ -14,7 +14,7 @@ variable "remote_state_bucket_name" {
 variable "alf_cloudwatch_log_retention" {
 }
 
-variable "alfresco_content_props" {
+variable "alfresco_ro_content_props" {
   type = map(string)
   default = {
     cpu               = "1024"
@@ -30,7 +30,7 @@ variable "alfresco_content_props" {
   }
 }
 
-variable "alfresco_content_configs" {
+variable "alfresco_ro_content_configs" {
   type    = map(string)
   default = {}
 }
@@ -40,6 +40,7 @@ variable "alf_stop_services" {
   default = "no"
 }
 
+# Config map in hmpps-delius-alfresco-shared-terraform/configs/alfresco.tfvars
 variable "alf_config_map" {
   type    = map(string)
   default = {}
