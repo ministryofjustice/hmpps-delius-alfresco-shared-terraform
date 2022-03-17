@@ -6,7 +6,7 @@ module "ecs_service" {
     region                = local.region
     account_id            = local.account_id
     log_group_arn         = module.create_loggroup.loggroup_arn
-    desired_count         = var.alf_stop_services == "yes" ? 0 : local.alfresco_content_props["desired_count"]
+    desired_count         = var.alf_stop_services == "yes" ? 0 : local.alfresco_ro_content_props["desired_count"]
     capacity_provider     = data.terraform_remote_state.ecs_cluster.outputs.capacity_provider["name"]
     deployment_controller = "ECS"
     namespace_id          = local.ecs_cluster_namespace_id
@@ -31,13 +31,13 @@ module "ecs_service" {
   container_definitions = templatefile(
     "${path.module}/templates/task_definitions/${local.task_definition_file}",
     {
-      image_url         = format("%s:%s", local.alfresco_content_props["image_url"], local.alfresco_content_props["version"])
+      image_url         = format("%s:%s", local.alfresco_ro_content_props["image_url"], local.alfresco_ro_content_props["version"])
       container_name    = local.application_name
       region            = local.region
       loggroup          = module.create_loggroup.loggroup_name
-      memory            = tonumber(local.alfresco_content_props["memory"])
-      cpu               = tonumber(local.alfresco_content_props["cpu"])
-      app_port          = tonumber(local.alfresco_content_props["app_port"])
+      memory            = tonumber(local.alfresco_ro_content_props["memory"])
+      cpu               = tonumber(local.alfresco_ro_content_props["cpu"])
+      app_port          = tonumber(local.alfresco_ro_content_props["app_port"])
       ssm_java_options  = aws_ssm_parameter.config.arn
       cache_volume_name = local.cache_volume_name
       cache_location    = local.cache_location

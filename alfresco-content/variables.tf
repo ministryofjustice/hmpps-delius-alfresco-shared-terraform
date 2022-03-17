@@ -39,6 +39,7 @@ variable "alf_stop_services" {
   default = "no"
 }
 
+# Config map in hmpps-delius-alfresco-shared-terraform/configs/alfresco.tfvars
 variable "alf_config_map" {
   type    = map(string)
   default = {}
