@@ -44,7 +44,7 @@ data "template_file" "instance_userdata" {
 }
 
 #-------------------------------------------------------------
-### Create instance 
+### Create instance
 #-------------------------------------------------------------
 
 resource "aws_instance" "instance" {
@@ -95,4 +95,3 @@ resource "aws_route53_record" "instance" {
   ttl     = "300"
   records = [aws_instance.instance.private_ip]
 }
-
