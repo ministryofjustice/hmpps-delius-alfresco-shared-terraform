@@ -14,7 +14,7 @@ variable "remote_state_bucket_name" {
 variable "alf_cloudwatch_log_retention" {
 }
 
-variable "alfresco_transfor_core_aio_props" {
+variable "alfresco_transform_core_aio_props" {
   type = map(string)
   default = {
     cpu             = "2048"
@@ -28,7 +28,7 @@ variable "alfresco_transfor_core_aio_props" {
   }
 }
 
-variable "alfresco_transfor_core_aio_configs" {
+variable "alfresco_transform_core_aio_configs" {
   type    = map(string)
   default = {}
 }

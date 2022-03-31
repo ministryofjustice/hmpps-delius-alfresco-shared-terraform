@@ -10,7 +10,7 @@ terraform {
 ####################################################
 
 locals {
-  alfresco_transfor_core_aio_props = merge(var.alfresco_transfor_core_aio_props, var.alfresco_transfor_core_aio_configs)
+  alfresco_transform_core_aio_props = merge(var.alfresco_transform_core_aio_props, var.alfresco_transform_core_aio_configs)
   region                           = var.region
   account_id                       = data.terraform_remote_state.common.outputs.common_account_id
   vpc_id                           = data.terraform_remote_state.common.outputs.vpc_id
@@ -33,7 +33,7 @@ locals {
   lb_security_group                = data.terraform_remote_state.load_balancer.outputs.info["security_group_id"]
   lb_arn                           = data.terraform_remote_state.load_balancer.outputs.info["arn"]
   subnet_ids                       = data.terraform_remote_state.common.outputs.private_subnet_ids
-  app_port                         = tonumber(local.alfresco_transfor_core_aio_props["app_port"])
+  app_port                         = tonumber(local.alfresco_transform_core_aio_props["app_port"])
   http_protocol                    = "HTTP"
   container_name                   = local.application_name
   url_path_patterns = [

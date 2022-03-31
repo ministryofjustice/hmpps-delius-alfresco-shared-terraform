@@ -20,7 +20,7 @@ resource "aws_lb_target_group" "app" {
 
   stickiness {
     type            = "lb_cookie"
-    cookie_duration = tonumber(local.alfresco_transfor_core_aio_props["cookie_duration"])
+    cookie_duration = tonumber(local.alfresco_transform_core_aio_props["cookie_duration"])
     enabled         = true
   }
 
