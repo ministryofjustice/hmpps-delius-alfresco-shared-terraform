@@ -44,10 +44,10 @@ locals {
   external_private_dns_host = data.terraform_remote_state.external_load_balancer.outputs.info["dns_hostname"]
   lb_security_group         = data.terraform_remote_state.load_balancer.outputs.info["security_group_id"]
 
-  solr_port        = 8983
-  app_port         = tonumber(local.alfresco_content_props["app_port"])
-  http_protocol    = "HTTP"
-  container_name   = local.application_name
+  solr_port      = 8983
+  app_port       = tonumber(local.alfresco_content_props["app_port"])
+  http_protocol  = "HTTP"
+  container_name = local.application_name
   url_path_patterns = [
     "/*"
   ]
