@@ -6,7 +6,7 @@ module "ecs_service" {
     region                = local.region
     account_id            = local.account_id
     log_group_arn         = module.create_loggroup.loggroup_arn
-    desired_count         = var.alf_stop_services == "yes" ? 0 : tonumber(local.alfresco_transfor_core_aio_props["desired_count"])
+    desired_count         = var.alf_stop_services == "yes" ? 0 : tonumber(local.alfresco_transform_core_aio_props["desired_count"])
     capacity_provider     = data.terraform_remote_state.ecs_cluster.outputs.capacity_provider["name"]
     deployment_controller = "ECS"
     namespace_id          = local.ecs_cluster_namespace_id
@@ -23,14 +23,14 @@ module "ecs_service" {
   container_definitions = templatefile(
     "${path.module}/templates/task_definitions/${local.task_definition_file}",
     {
-      image_url        = format("%s:%s", local.alfresco_transfor_core_aio_props["image_url"], local.alfresco_transfor_core_aio_props["version"])
+      image_url        = format("%s:%s", local.alfresco_transform_core_aio_props["image_url"], local.alfresco_transform_core_aio_props["version"])
       container_name   = local.container_name
       region           = local.region
       loggroup         = module.create_loggroup.loggroup_name
-      memory           = tonumber(local.alfresco_transfor_core_aio_props["memory"])
-      cpu              = tonumber(local.alfresco_transfor_core_aio_props["cpu"])
+      memory           = tonumber(local.alfresco_transform_core_aio_props["memory"])
+      cpu              = tonumber(local.alfresco_transform_core_aio_props["cpu"])
       app_port         = local.app_port
-      java_opts        = local.alfresco_transfor_core_aio_props["java_opts"]
+      java_opts        = local.alfresco_transform_core_aio_props["java_opts"]
       fluentbit_s3_arn = format("%s/%s", local.config_bucket_arn, local.fluentbit_s3_path)
       delivery_stream  = local.firehose_stream_name
     }
