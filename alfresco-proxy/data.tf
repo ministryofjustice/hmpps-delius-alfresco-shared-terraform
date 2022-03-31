@@ -140,14 +140,20 @@ data "aws_acm_certificate" "cert" {
   most_recent = true
 }
 
+#-------------------------------------------------------------
+### Getting VPC CIDR - required because we want to derive the Amazon DNS Server IP for the VPC
+#-------------------------------------------------------------
+data "aws_vpc" "vpc" {
+  id = local.vpc_id
+}
+
 # Nginx template
 data "template_file" "nginx_host" {
   template = file("${path.module}/templates/config/host.conf")
 
   vars = {
-    alfresco_endpoint     = data.terraform_remote_state.content.outputs.info["end_point"]
-    share_endpoint        = data.terraform_remote_state.share.outputs.info["end_point"]
-    server_name           = "proxy"
-    health_check_endpoint = local.alfresco_proxy_props["health_check_endpoint"]
+    alfresco_endpoint = data.terraform_remote_state.content.outputs.info["end_point"]
+    share_endpoint    = data.terraform_remote_state.share.outputs.info["end_point"]
+    vpc_dns_ip        = cidrhost(data.aws_vpc.vpc.cidr_block, 2) # Derive IP of Amazon DNS endpoint in VPC
   }
 }
