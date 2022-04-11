@@ -39,10 +39,10 @@ cleanup:
 restart: stop
 	docker-compose up -d
 
-local_plan: 
+local_plan:
 	docker-compose exec builder make plan
 
-local_apply: 
+local_apply:
 	docker-compose exec builder make apply
 
 local_output: restart
