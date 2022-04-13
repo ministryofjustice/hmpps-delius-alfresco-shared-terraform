@@ -202,7 +202,6 @@ locals {
   db_username_ssm              = data.terraform_remote_state.rds.outputs.rds_creds["db_username_ssm_param"]
   db_name                      = data.terraform_remote_state.rds.outputs.rds_creds["db_name"]
   db_password_ssm              = data.terraform_remote_state.rds.outputs.rds_creds["db_password_ssm_param"]
-  db_host                      = data.terraform_remote_state.rds.outputs.rds_db_instance_endpoint_cname
   mon_jenkins_sg               = data.terraform_remote_state.security-groups.outputs.security_groups_map["mon_jenkins"]
   sg_rds_id                    = data.terraform_remote_state.security-groups.outputs.security_groups_sg_rds_id
   alf_efs_dns_name             = data.terraform_remote_state.efs.outputs.efs_dns_name

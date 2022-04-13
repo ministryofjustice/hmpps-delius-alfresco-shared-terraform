@@ -1,25 +1,25 @@
 {
   "source": {
-    "id": "tf-eu-west-2-hmpps-delius-prod-alfresco-database-pri",
+    "id": "alfresco-database",
     "account_id": "050243167760",
     "solr_vol_name": "tf-del-prod-solr",
     "vol_kms_id": "f32be75c-beb8-409c-a970-db9de7201473"
   },
   "targets": {
     "delius-perf": {
-      "id": "tf-eu-west-2-hmpps-delius-perf-alfresco-database-pri",
+      "id": "alfresco-database",
       "account_id": "130975965028"
     },
     "delius-stage": {
-      "id": "tf-eu-west-2-hmpps-delius-stage-alfresco-database-pri",
+      "id": "alfresco-database",
       "account_id": "205048117103"
     },
     "delius-pre-prod": {
-      "id": "tf-eu-west-2-hmpps-delius-pre-prod-alfresco-database-pri",
+      "id": "alfresco-database",
       "account_id": "010587221707"
     },
     "alfresco-dev": {
-      "id": "tf-alfresco-dev-alfresco-database-pri",
+      "id": "alfresco-database",
       "account_id": "563502482979",
       "solr_vol_name": "tf-alf-dev-solr",
       "vol_kms_id": "7a0e285d-86d0-4fc3-a29b-23efe4a651e8"
