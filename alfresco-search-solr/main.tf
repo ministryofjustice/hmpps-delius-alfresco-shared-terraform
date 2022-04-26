@@ -10,7 +10,7 @@ terraform {
 ####################################################
 
 locals {
-  alfresco_search_solr_props   = merge(var.alfresco_search_solr_props, var.alfresco_search_solr_configs)
+  alfresco_search_solr_props   = merge(var.alfresco_search_solr_props, var.alfresco_search_solr_configs, var.alfresco_search_solr_configs_overrides)
   region                       = var.region
   account_id                   = data.terraform_remote_state.common.outputs.common_account_id
   vpc_id                       = data.terraform_remote_state.common.outputs.vpc_id
