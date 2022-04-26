@@ -29,11 +29,11 @@ resource "aws_backup_plan" "solr_backup" {
   rule {
     rule_name         = "${local.common_name}-ebs-bkup"
     target_vault_name = aws_backup_vault.solr_backup.name
-    schedule          = local.alfresco_search_solr_props["schedule"]
+    schedule          = local.alfresco_search_solr_props["backup_schedule"]
 
     lifecycle {
-      cold_storage_after = local.alfresco_search_solr_props["cold_storage_after"]
-      delete_after       = local.alfresco_search_solr_props["delete_after"]
+      cold_storage_after = local.alfresco_search_solr_props["backup_cold_storage_after"]
+      delete_after       = local.alfresco_search_solr_props["backup_delete_after"]
     }
   }
 
