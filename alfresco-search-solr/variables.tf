@@ -30,8 +30,8 @@ variable "alfresco_search_solr_props" {
     desired_count             = "3"
     cookie_duration           = "3600"
     backup_schedule           = "cron(0 01 * * ? *)"
-    backup_cold_storage_after = 7
-    backup_delete_after       = 14
+    backup_cold_storage_after = 0
+    backup_delete_after       = 7
     snap_tag                  = "CreateSnapshotSolr"
   }
 }
