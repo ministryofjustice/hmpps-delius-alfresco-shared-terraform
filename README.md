@@ -24,10 +24,6 @@ Alfresco external - [https://alfresco.training-test.delius.probation.hmpps.dsd.i
 
 Alfresco external - [https://alfresco.test.delius.probation.hmpps.dsd.io](https://alfresco.test.delius.probation.hmpps.dsd.io)
 
-### Alfresco Delius AutoTest
-
-Alfresco external - [https://alfresco.auto-test.delius.probation.hmpps.dsd.io](https://alfresco.auto-test.delius.probation.hmpps.dsd.io)
-
 ### Alfresco PreProd
 
 Alfresco external - [alfresco.pre-prod.delius.probation.hmpps.dsd.io](alfresco.pre-prod.delius.probation.hmpps.dsd.io)

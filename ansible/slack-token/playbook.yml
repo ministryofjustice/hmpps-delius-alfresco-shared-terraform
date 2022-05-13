@@ -34,16 +34,14 @@
         - 130847504577 #delius-training-test
         - 716683748953 #potest
         - 645753425509 #delius-int
-        - 431912413968 #auto-test
         - 010587221707 #pre-prod
         - 205048117103 #stage
         # - 050243167760 #prod
         - 130975965028 #perf
-      
+
 
     # - name: Create ssm param entry
     #   include: ../ssm/add_ssm_param.yml
     #   vars:
     #     ssm_param_name: "{{ ssm_param }}"
     #     ssm_param_value: "{{ slack_token }}"
-
