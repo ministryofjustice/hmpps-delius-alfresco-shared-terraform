@@ -5,7 +5,6 @@ project.branch = 'master'
 def environments = [
   'delius-training-test',
   'delius-test',
-  'delius-po-test1',
   'delius-po-test2'
 ]
 
