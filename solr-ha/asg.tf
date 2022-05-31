@@ -17,8 +17,6 @@ data "template_file" "user_data" {
     private_zone_id            = local.private_zone_id
     account_id                 = local.account_id
     internal_domain            = local.internal_domain
-    elasticsearch_url          = local.elasticsearch_props["url"]
-    elasticsearch_cluster_name = local.elasticsearch_props["cluster_name"]
     s3_bucket_config           = local.config-bucket
     ssm_get_command            = "aws --region ${var.region} ssm get-parameters --names"
     #s3 config data

@@ -18,8 +18,6 @@ data "template_file" "user_data" {
     private_domain             = var.internal_domain
     account_id                 = var.account_id
     internal_domain            = var.internal_domain
-    elasticsearch_url          = var.elasticsearch_props["url"]
-    elasticsearch_cluster_name = var.elasticsearch_props["cluster_name"]
     cluster_subnet             = ""
     cluster_name               = "${var.environment_identifier}-public-ecs-cluster"
     db_name                    = local.db_name
@@ -137,4 +135,3 @@ resource "aws_autoscaling_group" "environment" {
     data.null_data_source.tags.*.outputs
   )
 }
-

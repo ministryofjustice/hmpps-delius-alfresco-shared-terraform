@@ -29,60 +29,6 @@
         },
         {
             "type": "metric",
-            "x": 18,
-            "y": 6,
-            "width": 6,
-            "height": 6,
-            "properties": {
-                "view": "timeSeries",
-                "stacked": true,
-                "metrics": [
-                    [
-                        "AWS/EC2",
-                        "CPUUtilization",
-                        "AutoScalingGroupName",
-                        "${elk_prefix}"
-                    ],
-                    [
-                        "AWS/AutoScaling",
-                        "GroupTotalInstances",
-                        ".",
-                        "."
-                    ]
-                ],
-                "region": "${region}",
-                "title": "KibanaASG"
-            }
-        },
-        {
-            "type": "metric",
-            "x": 12,
-            "y": 6,
-            "width": 6,
-            "height": 6,
-            "properties": {
-                "view": "timeSeries",
-                "stacked": true,
-                "metrics": [
-                    [
-                        "AWS/EC2",
-                        "CPUUtilization",
-                        "AutoScalingGroupName",
-                        "${elk_prefix}-kibana"
-                    ],
-                    [
-                        "AWS/AutoScaling",
-                        "GroupTotalInstances",
-                        ".",
-                        "."
-                    ]
-                ],
-                "region": "${region}",
-                "title": "Kibana"
-            }
-        },
-        {
-            "type": "metric",
             "x": 0,
             "y": 6,
             "width": 6,
@@ -202,20 +148,6 @@
                 "region": "${region}",
                 "stacked": false,
                 "title": "AlfrescoErrorsCount",
-                "view": "timeSeries"
-            }
-        },
-        {
-            "type": "log",
-            "x": 0,
-            "y": 18,
-            "width": 24,
-            "height": 6,
-            "properties": {
-                "query": "SOURCE '${elk_prefix}/esmigration' | SOURCE '${elk_prefix}/kibana' | SOURCE '${elk_prefix}/logstash' | SOURCE '${elk_prefix}/redis' | filter @message like /Error/\n| stats count(*) as errCount by bin(5m)\n| sort errCount desc",
-                "region": "${region}",
-                "stacked": false,
-                "title": "ElasticSearch",
                 "view": "timeSeries"
             }
         },

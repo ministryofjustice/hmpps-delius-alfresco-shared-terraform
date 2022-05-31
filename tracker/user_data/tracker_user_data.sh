@@ -48,12 +48,8 @@ EOF
 cat << EOF > ~/bootstrap_vars.yml
 - mount_point: "${cache_home}"
 - device_name: "${ebs_device}"
-- elasticsearch_url: "${elasticsearch_url}"
-- monitoring_host: "${elasticsearch_url}"
-- elasticsearch_cluster_name: "${elasticsearch_cluster_name}"
-- elasticsearch_ssl: "true"
 - internal_domain: "${private_domain}"
-- bucket_name: "${bucket_name}" 
+- bucket_name: "${bucket_name}"
 - bucket_encrypt_type: "${bucket_encrypt_type}"
 - bucket_key_id: "${bucket_key_id}"
 - db_user: "{{ lookup('aws_ssm', '${db_user}', region='${region}') }}"

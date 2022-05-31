@@ -46,12 +46,8 @@ cat << EOF > ~/requirements.yml
 EOF
 
 cat << EOF > ~/bootstrap_vars.yml
-- elasticsearch_url: "${elasticsearch_url}"
-- monitoring_host: "${elasticsearch_url}"
-- elasticsearch_cluster_name: "${elasticsearch_cluster_name}"
-- elasticsearch_ssl: "true"
 - internal_domain: "${private_domain}"
-- bucket_name: "${bucket_name}" 
+- bucket_name: "${bucket_name}"
 - bucket_encrypt_type: "${bucket_encrypt_type}"
 - bucket_key_id: "${bucket_key_id}"
 - remote_user_filename: "${bastion_inventory}"

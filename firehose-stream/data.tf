@@ -30,15 +30,6 @@ data "terraform_remote_state" "s3bucket" {
 #-------------------------------------------------------------
 ### Getting the elk details
 #-------------------------------------------------------------
-data "terraform_remote_state" "elk" {
-  backend = "s3"
-
-  config = {
-    bucket = var.remote_state_bucket_name
-    key    = "alfresco/elk-service/terraform.tfstate"
-    region = var.region
-  }
-}
 
 # IAM Templates
 data "aws_iam_policy_document" "firehose-role-assume" {
