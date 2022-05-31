@@ -279,11 +279,6 @@ variable "solr_config" {
   default = {}
 }
 
-variable "elasticsearch_props" {
-  type    = map(string)
-  default = {}
-}
-
 variable "alf_deploy_iwp_fix" {
   default = 0
 }

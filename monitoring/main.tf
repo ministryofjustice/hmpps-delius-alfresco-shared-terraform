@@ -34,16 +34,6 @@ data "terraform_remote_state" "asg" {
   }
 }
 
-data "terraform_remote_state" "elk-service" {
-  backend = "s3"
-
-  config = {
-    bucket = var.remote_state_bucket_name
-    key    = "alfresco/elk-service/terraform.tfstate"
-    region = var.region
-  }
-}
-
 #-------------------------------------------------------------
 ### Getting the rds details
 #-------------------------------------------------------------
@@ -128,6 +118,4 @@ locals {
   inst_alert_threshold          = lookup(var.alfresco_asg_props, "min_elb_capacity", 1)
   messaging_status              = lookup(var.alf_ops_alerts, "messaging_status", "disabled")
   datapoints_to_alarm           = lookup(var.alf_ops_alerts, "datapoints_to_alarm", "1")
-  elasticsearch_domain          = data.terraform_remote_state.elk-service.outputs.elk_service["domain_name"]
 }
-

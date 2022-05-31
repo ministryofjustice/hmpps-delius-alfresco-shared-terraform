@@ -100,19 +100,6 @@ data "terraform_remote_state" "security-groups" {
 }
 
 #-------------------------------------------------------------
-### Getting the elk-migration details
-#-------------------------------------------------------------
-data "terraform_remote_state" "elk-service" {
-  backend = "s3"
-
-  config = {
-    bucket = var.remote_state_bucket_name
-    key    = "alfresco/elk-service/terraform.tfstate"
-    region = var.region
-  }
-}
-
-#-------------------------------------------------------------
 ### Getting the latest amazon ami
 #-------------------------------------------------------------
 data "aws_ami" "amazon_ami" {
@@ -195,16 +182,10 @@ locals {
   tomcat_host                  = "alfresco"
   vpc_id                       = data.terraform_remote_state.common.outputs.vpc_id
 
-  elasticsearch_props = {
-    url          = data.terraform_remote_state.elk-service.outputs.elk_service["es_url"]
-    cluster_name = data.terraform_remote_state.elk-service.outputs.elk_service["domain_name"]
-  }
 
   instance_security_groups = [
     data.terraform_remote_state.security-groups.outputs.security_groups_sg_internal_instance_id,
     data.terraform_remote_state.common.outputs.common_sg_outbound_id,
-    data.terraform_remote_state.elk-service.outputs.elk_service["access_sg"],
     data.terraform_remote_state.security-groups.outputs.security_groups_bastion_in_sg_id,
   ]
 }
-

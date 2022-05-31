@@ -17,8 +17,6 @@ data "template_file" "master_user_data" {
     private_zone_id            = local.private_zone_id
     account_id                 = local.account_id
     internal_domain            = local.internal_domain
-    elasticsearch_url          = local.elasticsearch_props["url"]
-    elasticsearch_cluster_name = local.elasticsearch_props["cluster_name"]
     cluster_subnet             = ""
     cluster_name               = "${local.environment_identifier}-public-ecs-cluster"
     db_name                    = local.db_name
