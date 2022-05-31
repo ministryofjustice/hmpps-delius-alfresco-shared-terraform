@@ -4,8 +4,7 @@ project.branch = 'master'
 
 def environments = [
   'delius-training-test',
-  'delius-test',
-  'delius-po-test2'
+  'delius-test'
 ]
 
 def prepare_env() {
