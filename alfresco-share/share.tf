@@ -27,7 +27,7 @@ module "ecs_service" {
   container_definitions = templatefile(
     "${path.module}/templates/task_definitions/${local.task_definition_file}",
     {
-      image_url            = format("%s:%s", local.alfresco_share_props["image_url"], local.alfresco_share_props["version"])
+      image_url            = format("%s:%s", local.alfresco_share_props["image_url"], local.prefix == "tf-alf-dev" ? "latest" : local.alfresco_share_props["version"])
       container_name       = local.container_name
       region               = local.region
       loggroup             = module.create_loggroup.loggroup_name
