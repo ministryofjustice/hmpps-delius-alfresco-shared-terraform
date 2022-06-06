@@ -8,7 +8,6 @@ def environments = [
   'alfresco-sbx',
   'delius-core-dev',
   'delius-training-test',
-  'delius-po-test2',
   'delius-test',
 ]
 
