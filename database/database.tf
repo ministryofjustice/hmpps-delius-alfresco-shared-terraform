@@ -36,7 +36,13 @@ module "database" {
   snapshot_identifier             = lookup(var.alf_rds_props, "snapshot_identifier", "alfresco-snapshot")
   storage_encrypted               = true
   storage_type                    = lookup(var.alf_rds_props, "storage_type", "gp2")
-  tags                            = local.tags
   username                        = local.db_user_name
   vpc_security_group_ids          = flatten(local.security_group_ids)
+
+  tags = merge(
+    local.tags,
+    {
+      "autostop-${var.environment_type}" = "Phase1"
+    }
+  )
 }
