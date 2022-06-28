@@ -44,8 +44,7 @@
       "Principal": {
         "AWS": [
           "arn:aws:iam::010587221707:root",
-          "arn:aws:iam::205048117103:root",
-          "arn:aws:iam::130975965028:root"
+          "arn:aws:iam::205048117103:root"
         ]
       },
       "Action": [
@@ -63,8 +62,7 @@
       "Principal": {
         "AWS": [
           "arn:aws:iam::010587221707:root",
-          "arn:aws:iam::205048117103:root",
-          "arn:aws:iam::130975965028:root"
+          "arn:aws:iam::205048117103:root"
         ]
       },
       "Action": ["kms:CreateGrant", "kms:ListGrants", "kms:RevokeGrant"],

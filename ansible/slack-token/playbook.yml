@@ -35,7 +35,6 @@
         - 010587221707 #pre-prod
         - 205048117103 #stage
         # - 050243167760 #prod
-        - 130975965028 #perf
 
 
     # - name: Create ssm param entry

@@ -6,10 +6,6 @@
     "vol_kms_id": "f32be75c-beb8-409c-a970-db9de7201473"
   },
   "targets": {
-    "delius-perf": {
-      "id": "alfresco-database",
-      "account_id": "130975965028"
-    },
     "delius-stage": {
       "id": "alfresco-database",
       "account_id": "205048117103"
