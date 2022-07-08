@@ -6,7 +6,7 @@ module "database" {
   source                          = "../modules/db_instance"
   allocated_storage               = lookup(var.alf_rds_props, "allocated_storage", 30)
   allow_major_version_upgrade     = false
-  apply_immediately               = false
+  apply_immediately               = true
   auto_minor_version_upgrade      = false
   backup_retention_period         = var.alf_data_import == "enabled" ? 0 : lookup(var.alf_rds_props, "backup_retention_period", 28)
   backup_window                   = lookup(var.alf_rds_props, "backup_window", "02:00-04:00")

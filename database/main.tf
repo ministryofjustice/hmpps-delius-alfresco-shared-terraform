@@ -132,68 +132,71 @@ module "db_subnet_group" {
   tags        = local.tags
 }
 
+# Commenting this parameter group because alfresco-database instance uses the default parameter now, not these custom ones.
+# After this terraform has been applied (which will remove the parameter group), this code block can be removed.
 ############################################
 # CREATE PARAMETER GROUP
 ############################################
-
-module "parameter_group" {
-  source = "../modules/rds/db_parameter_group"
-
-  create      = true
-  identifier  = local.common_name
-  name_prefix = "${local.common_name}-"
-  family      = local.family
-
-  parameters = flatten(var.alf_db_parameters)
-
-  tags = local.tags
-}
-
-# ENBALE FOR RESTORE AND ATTACH TO PRIMARY NODE
-# module "restore_parameter_group" {
+# module "parameter_group" {
 #   source = "../modules/rds/db_parameter_group"
 
 #   create      = true
-#   identifier  = "${local.common_name}-restore"
-#   name_prefix = "${local.common_name}-restore-"
-#   family      = "${local.family}"
+#   identifier  = local.common_name
+#   name_prefix = "${local.common_name}-"
+#   family      = local.family
 
-#   parameters = [
-#     {
-#       name         = "maintenance_work_mem"
-#       value        = 1048576
-#       apply_method = "pending-reboot"
-#     },
-#     {
-#       name         = "max_wal_size"
-#       value        = 256
-#       apply_method = "pending-reboot"
-#     },
-#     {
-#       name         = "checkpoint_timeout"
-#       value        = 1800
-#       apply_method = "pending-reboot"
-#     },
-#     {
-#       name         = "synchronous_commit"
-#       value        = "Off"
-#       apply_method = "pending-reboot"
-#     },
-#     {
-#       name         = "wal_buffers"
-#       value        = 8192
-#       apply_method = "pending-reboot"
-#     },
-#     {
-#       name         = "autovacuum"
-#       value        = "Off"
-#       apply_method = "pending-reboot"
-#     }
-#   ]
+#   parameters = flatten(var.alf_db_parameters)
 
-#   tags = "${local.tags}"
+#   tags = local.tags
 # }
 
+# # ENBALE FOR RESTORE AND ATTACH TO PRIMARY NODE
+# # module "restore_parameter_group" {
+# #   source = "../modules/rds/db_parameter_group"
+
+# #   create      = true
+# #   identifier  = "${local.common_name}-restore"
+# #   name_prefix = "${local.common_name}-restore-"
+# #   family      = "${local.family}"
+
+# #   parameters = [
+# #     {
+# #       name         = "maintenance_work_mem"
+# #       value        = 1048576
+# #       apply_method = "pending-reboot"
+# #     },
+# #     {
+# #       name         = "max_wal_size"
+# #       value        = 256
+# #       apply_method = "pending-reboot"
+# #     },
+# #     {
+# #       name         = "checkpoint_timeout"
+# #       value        = 1800
+# #       apply_method = "pending-reboot"
+# #     },
+# #     {
+# #       name         = "synchronous_commit"
+# #       value        = "Off"
+# #       apply_method = "pending-reboot"
+# #     },
+# #     {
+# #       name         = "wal_buffers"
+# #       value        = 8192
+# #       apply_method = "pending-reboot"
+# #     },
+# #     {
+# #       name         = "autovacuum"
+# #       value        = "Off"
+# #       apply_method = "pending-reboot"
+# #     }
+# #   ]
+
+# #   tags = "${local.tags}"
+# # }
+
+# Unlike the commented-out block above relating to parameter groups (see note above), there are still numerous rds snapshots referencing
+#   the option group. So this can only be commented out when the snapshots are removed
 ############################################
 # CREATE DB OPTIONS
 ############################################
