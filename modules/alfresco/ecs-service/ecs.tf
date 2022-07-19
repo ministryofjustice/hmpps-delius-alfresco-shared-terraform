@@ -32,11 +32,15 @@ resource "aws_ecs_task_definition" "task_def" {
 }
 
 resource "aws_ecs_service" "ecs_service" {
-  name                              = var.ecs_config["name"]
-  cluster                           = var.ecs_config["ecs_cluster_name"]
-  task_definition                   = aws_ecs_task_definition.task_def.arn
-  desired_count                     = tonumber(var.ecs_config["desired_count"])
-  health_check_grace_period_seconds = tonumber(var.health_check_grace_period_seconds)
+  name                               = var.ecs_config["name"]
+  cluster                            = var.ecs_config["ecs_cluster_name"]
+  task_definition                    = aws_ecs_task_definition.task_def.arn
+  desired_count                      = tonumber(var.ecs_config["desired_count"])
+  health_check_grace_period_seconds  = tonumber(var.health_check_grace_period_seconds)
+  deployment_minimum_healthy_percent = var.deployment_minimum_healthy_percent
+  deployment_maximum_percent         = var.deployment_maximum_percent
+
+
   network_configuration {
     security_groups = var.security_groups
     subnets         = var.subnet_ids
