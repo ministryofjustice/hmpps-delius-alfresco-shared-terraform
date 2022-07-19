@@ -3,7 +3,7 @@ alf_config_map = {
   asg_ami  = "ami-0e59db63f84d51a1a"
   ami_name = "HMPPS Alfresco *"
   image_id = "ami-0e59db63f84d51a1a"
-  version  = "4.1.13"
+  version  = "4.1.14"
 }
 
 solr_config_map = {
