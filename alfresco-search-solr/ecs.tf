@@ -56,6 +56,10 @@ resource "aws_ecs_service" "ecs_service" {
   cluster         = data.terraform_remote_state.ecs_cluster.outputs.info["ecs_cluster_name"]
   task_definition = aws_ecs_task_definition.task_def.arn
   desired_count   = var.alf_stop_services == "yes" ? 0 : 1
+
+  deployment_minimum_healthy_percent = 0
+  deployment_maximum_percent         = 100
+
   network_configuration {
     security_groups = [
       aws_security_group.app.id,
