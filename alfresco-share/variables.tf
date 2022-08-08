@@ -23,7 +23,6 @@ variable "alfresco_share_props" {
     alfresco_port     = "8080"
     target_group_port = "8070"
     image_url         = "895523100917.dkr.ecr.eu-west-2.amazonaws.com/hmpps/alfresco-share"
-    version           = "R4.1.5"
     desired_count     = "1"
     cookie_duration   = "3600"
     ssm_prefix        = "/alfresco/ecs"
@@ -33,6 +32,12 @@ variable "alfresco_share_props" {
 variable "alfresco_share_configs" {
   type    = map(string)
   default = {}
+}
+
+variable "alfresco_share_image_version" {
+  description = "alfresco-share container image version. Supplied through hmpps-alfresco-infra-versions repository or the .env file locally."
+  type    = string
+  default = "latest"
 }
 
 variable "alf_stop_services" {
