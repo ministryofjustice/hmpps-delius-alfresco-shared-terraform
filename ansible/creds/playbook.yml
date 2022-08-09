@@ -2,7 +2,7 @@
 - name: get aws creds from iam role for execution
   sts_assume_role:
     role_arn: "{{ target_iam_role }}"
-    role_session_name: "builder_{{ 99999999 | random | to_uuid }}"
+    role_session_name: "builder_{{ ansible_date_time.iso8601_basic_short }}"
     profile: "{{ iam_user_profile }}"
   register: assumed_role
 

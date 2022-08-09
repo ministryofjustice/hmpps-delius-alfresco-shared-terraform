@@ -10,7 +10,7 @@ terraform {
 ####################################################
 
 locals {
-  alfresco_content_props   = merge(var.alfresco_content_props, var.alfresco_content_configs, var.alf_config_map)
+  alfresco_content_props   = merge(var.alfresco_content_props, var.alfresco_content_configs)
   region                   = var.region
   account_id               = data.terraform_remote_state.common.outputs.common_account_id
   vpc_id                   = data.terraform_remote_state.common.outputs.vpc_id

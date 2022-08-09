@@ -22,7 +22,6 @@ variable "alfresco_content_props" {
     app_port        = "8080"
     heap_size       = "1500"
     image_url       = "895523100917.dkr.ecr.eu-west-2.amazonaws.com/hmpps/alfresco-content"
-    version         = "R4.1.5"
     ssm_prefix      = "/alfresco/ecs"
     desired_count   = "1"
     cookie_duration = "3600"
@@ -32,6 +31,12 @@ variable "alfresco_content_props" {
 variable "alfresco_content_configs" {
   type    = map(string)
   default = {}
+}
+
+variable "alfresco_content_image_version" {
+  description = "alfresco-content container image version. Supplied through hmpps-alfresco-infra-versions repository or the .env file locally."
+  type    = string
+  default = "latest"
 }
 
 variable "alf_stop_services" {
