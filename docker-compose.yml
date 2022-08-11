@@ -12,4 +12,6 @@ services:
       - ENVIRONMENT_NAME=${ENVIRONMENT_NAME:-alfresco-dev}
       - RUNNING_IN_CONTAINER=True
       - COMPONENT=${COMPONENT}
+      - TF_VAR_alfresco_content_image_version=${TF_VAR_alfresco_content_image_version:-latest}
+      - TF_VAR_alfresco_share_image_version=${TF_VAR_alfresco_share_image_version:-latest}
       - TF_VAR_alf_push_to_cloudwatch=${TF_VAR_alf_push_to_cloudwatch:-no}
