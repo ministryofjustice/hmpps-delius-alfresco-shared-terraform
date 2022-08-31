@@ -28,69 +28,6 @@ locals {
 # SECURITY GROUPS
 #######################################
 #-------------------------------------------------------------
-### external lb sg
-#-------------------------------------------------------------
-resource "aws_security_group_rule" "external_lb_ingress_http" {
-  security_group_id = local.external_lb_sg_id
-  from_port         = 80
-  to_port           = 80
-  protocol          = "tcp"
-  type              = "ingress"
-  description       = "${local.common_name}-lb-external-sg-http"
-  cidr_blocks       = local.allowed_cidr_block
-}
-
-resource "aws_security_group_rule" "external_lb_ingress_https" {
-  security_group_id = local.external_lb_sg_id
-  from_port         = 443
-  to_port           = 443
-  protocol          = "tcp"
-  type              = "ingress"
-  description       = "${local.common_name}-lb-external-sg-https"
-  cidr_blocks       = local.allowed_cidr_block
-}
-
-resource "aws_security_group_rule" "external_lb_ingress_sharepoint" {
-  security_group_id = local.external_lb_sg_id
-  from_port         = 7070
-  to_port           = 7070
-  protocol          = "tcp"
-  type              = "ingress"
-  description       = "${local.common_name}-lb-external-sg-sharepoint"
-  cidr_blocks = local.allowed_cidr_block
-}
-
-resource "aws_security_group_rule" "external_lb_egress_http" {
-  security_group_id        = local.external_lb_sg_id
-  type                     = "egress"
-  from_port                = 80
-  to_port                  = 80
-  protocol                 = "tcp"
-  source_security_group_id = local.internal_inst_sg_id
-  description              = "${local.common_name}-instance-internal-http"
-}
-
-resource "aws_security_group_rule" "external_lb_egress_https" {
-  security_group_id        = local.external_lb_sg_id
-  type                     = "egress"
-  from_port                = 443
-  to_port                  = 443
-  protocol                 = "tcp"
-  source_security_group_id = local.internal_inst_sg_id
-  description              = "${local.common_name}-instance-internal-https"
-}
-
-resource "aws_security_group_rule" "external_lb_egress_sharepoint" {
-  security_group_id        = local.external_lb_sg_id
-  type                     = "egress"
-  from_port                = 7070
-  to_port                  = 7070
-  protocol                 = "tcp"
-  source_security_group_id = local.internal_inst_sg_id
-  description              = "${local.common_name}-instance-internal-sharepoint"
-}
-
-#-------------------------------------------------------------
 ### internal instance sg
 #-------------------------------------------------------------
 resource "aws_security_group_rule" "internal_lb_ingress_http" {
