@@ -15,7 +15,7 @@ variable "alf_ecs_config" {
   default = {
     ecs_instance_type             = "m5.xlarge"
     node_max_count                = "5"
-    node_min_count                = "3"
+    node_min_count                = "2"
     ecs_cluster_target_capacity   = "100"
     ecs_maximum_scaling_step_size = "10"
     ecs_cluster_namespace_name    = "alf_app_ecs.local"

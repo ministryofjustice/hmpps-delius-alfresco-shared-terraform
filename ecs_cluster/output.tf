@@ -14,3 +14,7 @@ output "capacity_provider" {
     name = aws_ecs_capacity_provider.ecs_capacity_provider.name
   }
 }
+
+output "az1_capacity_provider" {
+  value = aws_ecs_capacity_provider.ecs_az1_capacity_provider
+}
