@@ -48,13 +48,7 @@ locals {
   url_path_patterns = [
     "/solr/*"
   ]
-  load_balancer_targets = [
-    {
-      target_group_arn = aws_lb_target_group.app.arn
-      container_name   = local.container_name
-      container_port   = local.solr_port
-    }
-  ]
+
   ebs_volumes = [
     {
       autoprovision = false
