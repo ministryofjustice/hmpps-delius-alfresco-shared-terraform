@@ -3,7 +3,7 @@ data "aws_subnet" "selected" {
 }
 
 data "aws_ssm_parameter" "snapshot" {
-  name = "/alfresco/solr/ebs/snapshot_ids/${data.aws_subnet.selected.availability_zone}"
+  name = "/alfresco/solr/ebs/snapshot_id"
 }
 
 resource "aws_ebs_volume" "data" {
