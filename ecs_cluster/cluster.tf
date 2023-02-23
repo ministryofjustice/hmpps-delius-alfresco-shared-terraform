@@ -14,6 +14,11 @@ resource "aws_ecs_cluster" "ecs" {
   ]
   default_capacity_provider_strategy {
     capacity_provider = aws_ecs_capacity_provider.ecs_capacity_provider.name
+    base              = 3
+    weight            = 3
+  }
+  default_capacity_provider_strategy {
+    capacity_provider = aws_ecs_capacity_provider.ecs_az1_capacity_provider.name
     weight            = 1
   }
   setting {
