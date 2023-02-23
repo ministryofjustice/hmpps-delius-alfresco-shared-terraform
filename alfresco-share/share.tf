@@ -7,7 +7,6 @@ module "ecs_service" {
     account_id            = local.account_id
     log_group_arn         = module.create_loggroup.loggroup_arn
     desired_count         = var.alf_stop_services == "yes" ? 0 : tonumber(local.alfresco_share_props["desired_count"])
-    capacity_provider     = data.terraform_remote_state.ecs_cluster.outputs.capacity_provider["name"]
     deployment_controller = "ECS"
     namespace_id          = local.ecs_cluster_namespace_id
     fluentbit_s3_arn      = format("%s/%s", local.config_bucket_arn, local.fluentbit_s3_path)
