@@ -51,8 +51,7 @@ resource "aws_ecs_task_definition" "task_def" {
 }
 
 resource "aws_ecs_service" "ecs_service" {
-  for_each        = toset(local.subnet_ids)
-  name            = format("%s-%s", local.application_name, each.key)
+  name            = local.application_name
   cluster         = data.terraform_remote_state.ecs_cluster.outputs.info["ecs_cluster_name"]
   task_definition = aws_ecs_task_definition.task_def.arn
   desired_count   = var.alf_stop_services == "yes" ? 0 : 1
@@ -65,10 +64,17 @@ resource "aws_ecs_service" "ecs_service" {
       aws_security_group.app.id,
       data.terraform_remote_state.common.outputs.common_sg_outbound_id
     ]
-    subnets = tolist([each.key])
+    subnets = [data.terraform_remote_state.common.outputs.private_subnet_map["az1"]]
   }
+
   capacity_provider_strategy {
-    capacity_provider = data.terraform_remote_state.ecs_cluster.outputs.capacity_provider["name"]
+    capacity_provider = data.terraform_remote_state.ecs_cluster.outputs.az1_capacity_provider.name
+    base              = 1
+    weight            = 2
+  }
+
+  capacity_provider_strategy {
+    capacity_provider = data.terraform_remote_state.ecs_cluster.outputs.capacity_provider.name
     weight            = 1
   }
 
@@ -80,13 +86,10 @@ resource "aws_ecs_service" "ecs_service" {
     registry_arn   = aws_service_discovery_service.svc_record.arn
     container_name = local.application_name
   }
-  dynamic "load_balancer" {
-    for_each = local.load_balancer_targets
-    content {
-      target_group_arn = load_balancer.value.target_group_arn
-      container_name   = load_balancer.value.container_name
-      container_port   = load_balancer.value.container_port
-    }
+  load_balancer {
+    target_group_arn = aws_lb_target_group.app.arn
+    container_name   = local.container_name
+    container_port   = local.solr_port
   }
 
   ordered_placement_strategy {
@@ -96,7 +99,7 @@ resource "aws_ecs_service" "ecs_service" {
 
   placement_constraints {
     type       = "memberOf"
-    expression = "attribute:ecs.availability-zone in [eu-west-2a, eu-west-2b, eu-west-2c]"
+    expression = "attribute:ecs.availability-zone in [eu-west-2a]"
   }
 }
 

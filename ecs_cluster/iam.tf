@@ -2,7 +2,7 @@
 resource "aws_iam_role" "ecs_host_role" {
   name               = "${local.common_name}-host-iam"
   assume_role_policy = data.aws_iam_policy_document.ecs_assume_role_template.json
-  tags = local.tags
+  tags               = local.tags
 }
 
 # ECS Host Policies
@@ -19,7 +19,7 @@ data "aws_iam_policy" "AmazonSSMManagedInstanceCore" {
 
 resource "aws_iam_role_policy_attachment" "AmazonSSMManagedInstanceCore" {
   policy_arn = data.aws_iam_policy.AmazonSSMManagedInstanceCore.arn
-  role = aws_iam_role.ecs_host_role.name
+  role       = aws_iam_role.ecs_host_role.name
 }
 
 # ECS Host Profile

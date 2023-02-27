@@ -40,14 +40,9 @@ resource "aws_ecs_service" "ecs_service" {
   deployment_minimum_healthy_percent = var.deployment_minimum_healthy_percent
   deployment_maximum_percent         = var.deployment_maximum_percent
 
-
   network_configuration {
     security_groups = var.security_groups
     subnets         = var.subnet_ids
-  }
-  capacity_provider_strategy {
-    capacity_provider = var.ecs_config["capacity_provider"]
-    weight            = 1
   }
 
   deployment_controller {
@@ -75,6 +70,11 @@ resource "aws_ecs_service" "ecs_service" {
   placement_constraints {
     type       = "memberOf"
     expression = "attribute:ecs.availability-zone in [eu-west-2a, eu-west-2b, eu-west-2c]"
+  }
+
+  lifecycle {
+    # ignore changes to capacity_provider_strategy as config is inherited from cluster defaults
+    ignore_changes = [capacity_provider_strategy]
   }
 }
 

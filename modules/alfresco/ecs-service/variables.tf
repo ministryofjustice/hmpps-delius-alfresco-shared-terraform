@@ -11,7 +11,6 @@ variable "ecs_config" {
     log_group_arn         = "arn"
     ecs_cluster_name      = "ecs cluster name"
     desired_count         = "1"
-    capacity_provider     = "capacity_provider"
     deployment_controller = "ECS"
     namespace_id          = "namespace id"
     grace_period          = "0"
