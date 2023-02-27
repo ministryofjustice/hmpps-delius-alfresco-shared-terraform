@@ -74,7 +74,7 @@ resource "aws_ecs_service" "ecs_service" {
   }
 
   capacity_provider_strategy {
-    capacity_provider = data.terraform_remote_state.ecs_cluster.outputs.capacity_provider["name"]
+    capacity_provider = data.terraform_remote_state.ecs_cluster.outputs.capacity_provider.name
     weight            = 1
   }
 

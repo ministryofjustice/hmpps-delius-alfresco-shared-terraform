@@ -9,10 +9,7 @@ output "info" {
 }
 
 output "capacity_provider" {
-  value = {
-    arn = aws_ecs_capacity_provider.ecs_capacity_provider.arn
-    name = aws_ecs_capacity_provider.ecs_capacity_provider.name
-  }
+  value = aws_ecs_capacity_provider.ecs_capacity_provider
 }
 
 output "az1_capacity_provider" {
