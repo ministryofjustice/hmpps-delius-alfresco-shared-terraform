@@ -23,6 +23,6 @@ variable "alf_ecs_config" {
 }
 
 variable "alf_config_overrides" {
-  type = map(string)
+  type    = map(string)
   default = {}
 }

@@ -1,7 +1,7 @@
 resource "aws_placement_group" "ecs" {
   name     = local.common_name
   strategy = "spread"
-  tags = local.tags
+  tags     = local.tags
 }
 
 # Host Launch Configuration
