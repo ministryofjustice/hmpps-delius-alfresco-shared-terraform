@@ -3,7 +3,7 @@ resource "aws_ssm_parameter" "config" {
   description = "Runtime configuration for ECS container"
   type        = "SecureString"
   value = templatefile(
-    "${path.module}/templates/config/runtime.conf",
+    "${path.module}/../templates/config/alfresco-runtime.conf",
     {
       db_name                               = data.terraform_remote_state.rds.outputs.rds_creds["db_name"]
       db_user                               = data.aws_ssm_parameter.db_user.value
@@ -33,6 +33,7 @@ resource "aws_ssm_parameter" "config" {
       db_pool_evict_interval                = 300000
       db_pool_evict_num_tests               = 5
       content_transformer_default_timeoutMs = 90000
+      solr_http_socket_timeout              = 10000
     }
   )
   tags = local.tags
