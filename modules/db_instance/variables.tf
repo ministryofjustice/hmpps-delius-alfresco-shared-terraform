@@ -11,6 +11,16 @@ variable "allocated_storage" {
   description = "The allocated storage in gigabytes"
 }
 
+variable "max_allocated_storage" {
+  description = "Specifies the value for Storage Autoscaling. Represents the upper limit to which Amazon RDS can automatically scale the storage of the DB instance. Setting to 0 disables Storage Autoscaling."
+  default     = 0
+
+  validation {
+    condition     = var.max_allocated_storage == 0 || var.max_allocated_storage >= var.allocated_storage
+    error_message = "max_allocated_storage must set to 0 or be greater than or equal to allocated_storage."
+  }
+}
+
 variable "storage_type" {
   description = "One of 'standard' (magnetic), 'gp2' (general purpose SSD), or 'io1' (provisioned IOPS SSD). The default is 'io1' if iops is specified, 'standard' if not. Note that this behaviour is different from the AWS web console, where the default is 'gp2'."
   default     = "gp2"
