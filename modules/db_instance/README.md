@@ -51,19 +51,21 @@
 
 ## Outputs
 
-| Name                               | Description                                                                                                 |
-|------------------------------------|-------------------------------------------------------------------------------------------------------------|
-| this_db_instance_address           | The address of the RDS instance                                                                             |
-| this_db_instance_arn               | The ARN of the RDS instance                                                                                 |
-| this_db_instance_availability_zone | The availability zone of the RDS instance                                                                   |
-| this_db_instance_endpoint          | The connection endpoint                                                                                     |
-| this_db_instance_hosted_zone_id    | The canonical hosted zone ID of the DB instance (to be used in a Route 53 Alias record)                     |
-| this_db_instance_id                | The RDS instance ID                                                                                         |
-| this_db_instance_name              | The database name                                                                                           |
-| this_db_instance_password          | The database password (this password may be old, because Terraform doesn't track it after initial creation) |
-| this_db_instance_port              | The database port                                                                                           |
-| this_db_instance_resource_id       | The RDS Resource ID of this instance                                                                        |
-| this_db_instance_status            | The RDS instance status                                                                                     |
-| this_db_instance_username          | The master username for the database                                                                        |
+| Name                                   | Description                                                                                                 |
+|----------------------------------------|-------------------------------------------------------------------------------------------------------------|
+| this_db_instance_address               | The address of the RDS instance                                                                             |
+| this_db_instance_arn                   | The ARN of the RDS instance                                                                                 |
+| this_db_instance_availability_zone     | The availability zone of the RDS instance                                                                   |
+| this_db_instance_endpoint              | The connection endpoint                                                                                     |
+| this_db_instance_hosted_zone_id        | The canonical hosted zone ID of the DB instance (to be used in a Route 53 Alias record)                     |
+| this_db_instance_id                    | The RDS instance ID                                                                                         |
+| this_db_instance_name                  | The database name                                                                                           |
+| this_db_instance_password              | The database password (this password may be old, because Terraform doesn't track it after initial creation) |
+| this_db_instance_port                  | The database port                                                                                           |
+| this_db_instance_resource_id           | The RDS Resource ID of this instance                                                                        |
+| this_db_instance_status                | The RDS instance status                                                                                     |
+| this_db_instance_username              | The master username for the database                                                                        |
+| this_db_instance_allocated_storage     | The allocated storage in gibibytes                                                                          |
+| this_db_instance_max_allocated_storage | The upper limit to which Amazon RDS can automatically scale the storage of the DB instance                  |
 
 <!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
