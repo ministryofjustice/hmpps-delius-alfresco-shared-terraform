@@ -14,6 +14,7 @@ variable "alf_rds_props" {
     iops                    = 10
     storage_type            = "gp2"
     allocated_storage       = 30
+    max_allocated_storage   = 0
     maintenance_window      = "Sun:06:00-Sun:08:00"
     backup_window           = "22:00-00:00"
     backup_retention_period = 28

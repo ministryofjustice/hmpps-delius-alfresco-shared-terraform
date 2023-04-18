@@ -22,6 +22,7 @@ module "database" {
   iops                            = lookup(var.alf_rds_props, "iops", 10)
   kms_key_id                      = module.kms_key.kms_arn
   maintenance_window              = lookup(var.alf_rds_props, "maintenance_window", "wed:19:30-wed:21:30")
+  max_allocated_storage           = lookup(var.alf_rds_props, "max_allocated_storage", 0)
   monitoring_interval             = 30
   monitoring_role_arn             = module.rds_monitoring_role.iamrole_arn
   monitoring_role_name            = module.rds_monitoring_role.iamrole_name

@@ -9,9 +9,11 @@ output "rds_creds" {
 
 output "info" {
   value = {
-    address           = module.database.db_instance_address
-    endpoint          = module.database.db_instance_endpoint
-    id                = module.database.db_instance_id
-    security_group_id = data.terraform_remote_state.security-groups.outputs.security_groups_sg_rds_id
+    address               = module.database.db_instance_address
+    endpoint              = module.database.db_instance_endpoint
+    id                    = module.database.db_instance_id
+    allocated_storage     = module.database.db_instance_allocated_storage
+    max_allocated_storage = module.database.db_instance_max_allocated_storage
+    security_group_id     = data.terraform_remote_state.security-groups.outputs.security_groups_sg_rds_id
   }
 }

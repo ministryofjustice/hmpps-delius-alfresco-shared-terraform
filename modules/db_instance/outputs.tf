@@ -104,6 +104,24 @@ locals {
     ),
     0,
   )
+  db_allocated_storage = element(
+    concat(
+      coalescelist(
+        aws_db_instance.inst.*.allocated_storage,
+      ),
+      [""],
+    ),
+    0,
+  )
+  db_max_allocated_storage = element(
+    concat(
+      coalescelist(
+        aws_db_instance.inst.*.max_allocated_storage,
+      ),
+      [""],
+    ),
+    0,
+  )
 }
 
 output "db_instance_address" {
@@ -166,3 +184,12 @@ output "db_instance_port" {
   value       = local.db_instance_port
 }
 
+output "db_instance_allocated_storage" {
+  description = "The allocated storage in gibibytes (GiB)"
+  value = local.db_allocated_storage
+}
+
+output "db_instance_max_allocated_storage" {
+  description = "The upper limit to which Amazon RDS can automatically scale the storage of the DB instance"
+  value = local.db_max_allocated_storage
+}

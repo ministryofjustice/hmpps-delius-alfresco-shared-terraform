@@ -97,6 +97,8 @@ locals {
   config-bucket                 = data.terraform_remote_state.common.outputs.common_s3-config-bucket
   account_id                    = data.terraform_remote_state.common.outputs.common_account_id
   db_instance_id                = data.terraform_remote_state.rds.outputs.info.id
+  allocated_storage             = data.terraform_remote_state.rds.outputs.info.allocated_storage
+  max_allocated_storage         = data.terraform_remote_state.rds.outputs.info.max_allocated_storage
   load_balancer_arn_suffix      = data.aws_lb.asg_lb.arn_suffix
   solr_load_balancer_arn_suffix = data.aws_lb.solr_lb.arn_suffix
   target_group_suffix           = data.aws_lb_target_group.asg_target_group.arn_suffix
@@ -118,4 +120,7 @@ locals {
   inst_alert_threshold          = lookup(var.alfresco_asg_props, "min_elb_capacity", 1)
   messaging_status              = lookup(var.alf_ops_alerts, "messaging_status", "disabled")
   datapoints_to_alarm           = lookup(var.alf_ops_alerts, "datapoints_to_alarm", "1")
+
+  # threshold for database storage alert is 10% of allocated storage or 10% of max allocated storage if max allocated storage is set
+  database_storage_alert_threshold = local.max_allocated_storage > 0 ? local.max_allocated_storage * 0.1 : local.allocated_storage * 0.1
 }

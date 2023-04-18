@@ -140,3 +140,22 @@ resource "aws_cloudwatch_metric_alarm" "swap_usage_critical" {
   }
 }
 
+resource "aws_cloudwatch_metric_alarm" "free_storage_space_warning" {
+  alarm_name          = "${local.application}_database_free-storage-space_${local.warning_suffix}"
+  actions_enabled     = local.messaging_status == "enabled" ? true : false
+  comparison_operator = "LessThanThreshold"
+  evaluation_periods  = local.evaluation_periods
+  metric_name         = "FreeStorageSpace"
+  namespace           = "AWS/RDS"
+  period              = local.alarm_period
+  statistic           = "Average"
+  threshold           = local.database_storage_alert_threshold
+  alarm_description   = "Database free storage space less than 10% of total storage space. Please contact ${local.support_team}"
+  alarm_actions       = [aws_sns_topic.alarm_notification.arn]
+  ok_actions          = [aws_sns_topic.alarm_notification.arn]
+  datapoints_to_alarm = local.datapoints_to_alarm
+
+  dimensions = {
+    DBInstanceIdentifier = local.db_instance_id
+  }
+}
