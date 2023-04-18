@@ -14,11 +14,6 @@ variable "allocated_storage" {
 variable "max_allocated_storage" {
   description = "Specifies the value for Storage Autoscaling. Represents the upper limit to which Amazon RDS can automatically scale the storage of the DB instance. Setting to 0 disables Storage Autoscaling."
   default     = 0
-
-  validation {
-    condition     = var.max_allocated_storage == 0 || var.max_allocated_storage >= var.allocated_storage
-    error_message = "max_allocated_storage must set to 0 or be greater than or equal to allocated_storage."
-  }
 }
 
 variable "storage_type" {
