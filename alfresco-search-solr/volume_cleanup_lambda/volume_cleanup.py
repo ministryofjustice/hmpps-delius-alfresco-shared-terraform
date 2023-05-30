@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+import os
+
 import json
 import boto3
 from datetime import datetime, timedelta, timezone
@@ -8,13 +10,13 @@ from datetime import datetime, timedelta, timezone
 client = boto3.client('ec2')
 
 def handler(event, context):
-    three_days_ago = datetime.now(timezone.utc) - timedelta(days=3)
+    three_days_ago = datetime.now(timezone.utc) - timedelta(days=os.getenv("DAYS_LIMIT"))
     volume_response = client.describe_volumes(
         Filters=[
             {
                 'Name': 'tag:Name',
                 'Values': [
-                    'ecs-alfresco-search-solr-task-definition*'
+                    'ecs-alfresco-search-solr-task-definition*-alfresco-search-solr-cache-vol-*'
                 ]
             },
             {
@@ -30,7 +32,7 @@ def handler(event, context):
 
     for volume in volumes_to_delete:
         print("Deleting volume: ", volume['VolumeId'])
-        client.delete_volume(VolumeId=volume['VolumeId'], DryRun=True)
+        #client.delete_volume(VolumeId=volume['VolumeId'], DryRun=True)
     
     print("Search solr EBS volumes cleanup has been completed")
 

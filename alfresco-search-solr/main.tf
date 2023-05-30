@@ -44,6 +44,7 @@ locals {
   solr_port                    = tonumber(local.alfresco_search_solr_props["app_port"])
   http_protocol                = "HTTP"
   lambda_name                  = "${var.environment_identifier}-${local.application_short_name}-cleanup-scheduler"
+  lambda_file                  = "volume_cleanup"
   sns_topic_arn                = data.terraform_remote_state.monitoring.outputs.sns_topic_arn
   cleanup_scheduler_log_group  = "/aws/lambda/${local.lambda_name}"
   container_name               = local.application_name

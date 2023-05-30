@@ -158,7 +158,7 @@ resource "aws_iam_policy" "cleanup_scheduler" {
   name        = "${local.prefix}-${local.application_name}-cleanup-scheduler-role"
   path        = "/"
   description = "${local.prefix}-${local.application_name}-cleanup-scheduler-role"
-  policy      = "${file("./templates/policies/ebs-vols-cleanup-policy.tpl")}" 
+  policy      = file("./templates/policies/ebs-vols-cleanup-policy.tpl")
 }
 
 resource "aws_iam_role" "cleanup_scheduler" {

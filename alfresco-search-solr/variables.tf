@@ -62,7 +62,7 @@ variable "cleanup_scheduler_expression" {
 
 variable "solr_cache_vols_days_limit" {
   description = "Set days limit of how old a solr cache EBS volume should be. If unattached solr cache volumes are older than  this days limit number, the volume will be removed using the cleanup scheduler"
-  default = 3
+  default = 5
 }
 
 variable "enable_cleanup_scheduler" {

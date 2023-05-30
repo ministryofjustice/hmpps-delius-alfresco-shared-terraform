@@ -45,7 +45,7 @@ resource "aws_cloudwatch_metric_alarm" "lambda_errors_alert" {
   treat_missing_data  = "notBreaching"
   tags                = local.tags
   dimensions = {
-    FunctionName = "${aws_lambda_function.ebs-vols-cleanup-scheduler.function_name}"
-    Resource     = "${aws_lambda_function.ebs-vols-cleanup-scheduler.function_name}"
+    FunctionName = aws_lambda_function.ebs-vols-cleanup-scheduler.function_name
+    Resource     = aws_lambda_function.ebs-vols-cleanup-scheduler.function_name
   }
 }
