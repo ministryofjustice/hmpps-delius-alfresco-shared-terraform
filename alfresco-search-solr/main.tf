@@ -43,6 +43,9 @@ locals {
   ebs_type                     = local.alfresco_search_solr_props["ebs_type"]
   solr_port                    = tonumber(local.alfresco_search_solr_props["app_port"])
   http_protocol                = "HTTP"
+  lambda_name                  = "${var.environment_identifier}-${local.application_short_name}-cleanup-scheduler"
+  sns_topic_arn                = data.terraform_remote_state.monitoring.outputs.sns_topic_arn
+  cleanup_scheduler_log_group  = "/aws/lambda/${local.lambda_name}"
   container_name               = local.application_name
   task_definition_file         = var.alf_push_to_cloudwatch == "yes" ? "task_definition-cloudwatch.conf" : "task_definition.conf"
   url_path_patterns = [
