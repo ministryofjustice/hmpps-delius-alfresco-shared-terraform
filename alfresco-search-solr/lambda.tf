@@ -43,11 +43,6 @@ resource "aws_cloudwatch_event_target" "cleanup_scheduler_event_target" {
   arn      = "${aws_lambda_function.ebs-vols-cleanup-scheduler.arn}"
   rule     = aws_cloudwatch_event_rule.cleanup_scheduler_event_rule.name
   target_id = "${aws_lambda_function.ebs-vols-cleanup-scheduler.id}AM"
-  #input     = <<JSON
-  #  {
-  #    "ec2type": "${local.dis_instance_type_am}"
-  #  } 
-  #JSON
 }
 
 #------------------------------------------------------------------------------------------------------------------
