@@ -10,7 +10,7 @@ from datetime import datetime, timedelta, timezone
 client = boto3.client('ec2')
 
 def handler(event, context):
-    three_days_ago = datetime.now(timezone.utc) - timedelta(days=os.getenv("DAYS_LIMIT"))
+    three_days_ago = datetime.now(timezone.utc) - timedelta(days=int(os.getenv("DAYS_LIMIT")))
     volume_response = client.describe_volumes(
         Filters=[
             {
