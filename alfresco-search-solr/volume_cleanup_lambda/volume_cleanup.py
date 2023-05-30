@@ -3,14 +3,12 @@
 
 import json
 import boto3
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 client = boto3.client('ec2')
 
 def handler(event, context):
-    three_days_ago = datetime.now() - timedelta(days=3)
-    timestamp_format = '%Y-%m-%dT%H:%M:%S.%fZ'
-    creation_date_filter = three_days_ago.strftime(timestamp_format)
+    three_days_ago = datetime.now(timezone.utc) - timedelta(days=3)
     volume_response = client.describe_volumes(
         Filters=[
             {
@@ -25,15 +23,12 @@ def handler(event, context):
                     'available'
                 ]
             },
-            {
-                'Name': 'create-time',
-                'Values': ["<="+creation_date_filter]
-            }
         ]
     )
 
+    volumes_to_delete = [ volume for volume in volume_response['Volumes'] if volume['CreateTime'] <= three_days_ago ]
 
-    for volume in volume_response['Volumes']:
+    for volume in volumes_to_delete:
         print("Deleting volume: ", volume['VolumeId'])
         client.delete_volume(VolumeId=volume['VolumeId'], DryRun=True)
     
