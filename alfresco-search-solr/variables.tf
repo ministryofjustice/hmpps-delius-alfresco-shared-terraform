@@ -54,3 +54,17 @@ variable "alf_stop_services" {
 variable "alf_push_to_cloudwatch" {
   default = "no"
 }
+
+variable "cleanup_scheduler_expression" {
+  description = "Schedule to run solr EBS vols cleanup scheduler on a daily basis"
+  default = "cron(00 07 * * ? *)"
+}
+
+variable "solr_cache_vols_days_limit" {
+  description = "Set days limit of how old a solr cache EBS volume should be. If unattached solr cache volumes are older than  this days limit number, the volume will be removed using the cleanup scheduler"
+  default = 5
+}
+
+variable "enable_cleanup_scheduler" {
+  default = true
+}

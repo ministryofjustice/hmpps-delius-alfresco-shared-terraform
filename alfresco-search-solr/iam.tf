@@ -1,4 +1,7 @@
-# task
+#------------------------------------------------------------------------------------------------------------------
+# ECS SOLR Task IAM role & policy
+#------------------------------------------------------------------------------------------------------------------
+
 data "aws_iam_policy_document" "task_policy" {
   statement {
     sid    = "AllowUseOfKmsKey"
@@ -145,5 +148,47 @@ resource "aws_iam_policy" "task_policy" {
 resource "aws_iam_role_policy_attachment" "task_policy_attachment" {
   role       = aws_iam_role.task.name
   policy_arn = aws_iam_policy.task_policy.arn
+}
+
+#------------------------------------------------------------------------------------------------------------------
+# EBS vol cleanup scheduler lambda IAM role & policy
+#------------------------------------------------------------------------------------------------------------------
+
+resource "aws_iam_policy" "cleanup_scheduler" {
+  name        = "${local.prefix}-${local.application_name}-cleanup-scheduler-role"
+  path        = "/"
+  description = "${local.prefix}-${local.application_name}-cleanup-scheduler-role"
+  policy      = file("./templates/policies/ebs-vols-cleanup-policy.tpl")
+}
+
+resource "aws_iam_role" "cleanup_scheduler" {
+  name               = "${local.prefix}-${local.application_name}-cleanup-scheduler-role"
+  assume_role_policy = <<EOF
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Action": "sts:AssumeRole",
+      "Principal": {
+        "Service": "lambda.amazonaws.com"
+      },
+      "Effect": "Allow",
+      "Sid": ""
+    }
+  ]
+}
+EOF
+
+  tags = merge(
+    local.tags,
+    {
+      "Name" = "${local.prefix}-${local.lambda_name}"
+    },
+  )
+}
+
+resource "aws_iam_role_policy_attachment" "cleanup_scheduler" {
+  role       = aws_iam_role.cleanup_scheduler.name
+  policy_arn = aws_iam_policy.cleanup_scheduler.arn
 }
 

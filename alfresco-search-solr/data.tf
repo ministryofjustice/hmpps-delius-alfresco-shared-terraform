@@ -98,3 +98,16 @@ data "terraform_remote_state" "firehose" {
     region = var.region
   }
 }
+
+#-------------------------------------------------------------
+## Getting the monitoring resources details
+#-------------------------------------------------------------
+data "terraform_remote_state" "monitoring" {
+  backend = "s3"
+
+  config = {
+    bucket = var.remote_state_bucket_name
+    key    = "alfresco/monitoring/terraform.tfstate"
+    region = var.region
+  }
+}
