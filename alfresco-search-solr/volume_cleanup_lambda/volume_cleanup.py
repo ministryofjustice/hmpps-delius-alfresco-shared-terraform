@@ -32,7 +32,7 @@ def handler(event, context):
 
     for volume in volumes_to_delete:
         print("Deleting volume: ", volume['VolumeId'])
-        client.delete_volume(VolumeId=volume['VolumeId'], DryRun=True)
+        client.delete_volume(VolumeId=volume['VolumeId'])
     
     print("Search solr EBS volumes cleanup has been completed")
 
