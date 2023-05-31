@@ -57,7 +57,7 @@ variable "alf_push_to_cloudwatch" {
 
 variable "cleanup_scheduler_expression" {
   description = "Schedule to run solr EBS vols cleanup scheduler on a daily basis"
-  default = "cron(00 07 * * ? *)"
+  default = "cron(00 08 * * ? *)"
 }
 
 variable "solr_cache_vols_days_limit" {
