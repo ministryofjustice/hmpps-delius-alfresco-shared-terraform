@@ -10,7 +10,7 @@ from datetime import datetime, timedelta, timezone
 client = boto3.client('ec2')
 
 def handler(event, context):
-    three_days_ago = datetime.now(timezone.utc) - timedelta(days=int(os.getenv("DAYS_LIMIT")))
+    n_days_ago = datetime.now(timezone.utc) - timedelta(days=int(os.getenv("DAYS_LIMIT")))
     volume_response = client.describe_volumes(
         Filters=[
             {
@@ -28,7 +28,7 @@ def handler(event, context):
         ]
     )
 
-    volumes_to_delete = [ volume for volume in volume_response['Volumes'] if volume['CreateTime'] <= three_days_ago ]
+    volumes_to_delete = [ volume for volume in volume_response['Volumes'] if volume['CreateTime'] <= n_days_ago ]
 
     for volume in volumes_to_delete:
         print("Deleting volume: ", volume['VolumeId'])
