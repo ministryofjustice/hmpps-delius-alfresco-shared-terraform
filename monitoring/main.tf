@@ -21,6 +21,26 @@ data "terraform_remote_state" "common" {
   }
 }
 
+data "terraform_remote_state" "internal-load-balancer" {
+  backend = "s3"
+
+  config = {
+    bucket = var.remote_state_bucket_name
+    key    = "alfresco/app-internal-load-balancer/terraform.tfstate"
+    region = var.region
+  }
+}
+
+data "terraform_remote_state" "alfresco-content" {
+  backend = "s3"
+
+  config = {
+    bucket = var.remote_state_bucket_name
+    key    = "alfresco/alfresco-content/terraform.tfstate"
+    region = var.region
+  }
+}
+
 #-------------------------------------------------------------
 ### Getting the asg details
 #-------------------------------------------------------------
@@ -65,26 +85,6 @@ data "aws_ssm_parameter" "ssm_token" {
   name = var.alf_ops_alerts["ssm_token"]
 }
 
-# getting lb details
-data "aws_lb" "asg_lb" {
-  arn = data.terraform_remote_state.asg.outputs.asg_elb_id
-}
-
-# target group
-data "aws_lb_target_group" "asg_target_group" {
-  name = "${data.terraform_remote_state.common.outputs.short_environment_identifier}-alf-app"
-}
-
-# getting lb details
-data "aws_lb" "solr_lb" {
-  arn = data.terraform_remote_state.solr.outputs.alb_id
-}
-
-# target group
-data "aws_lb_target_group" "solr_target_group" {
-  name = "${data.terraform_remote_state.common.outputs.short_environment_identifier}-solr"
-}
-
 ####################################################
 # Locals
 ####################################################
@@ -99,10 +99,6 @@ locals {
   db_instance_id                = data.terraform_remote_state.rds.outputs.info.id
   allocated_storage             = data.terraform_remote_state.rds.outputs.info.allocated_storage
   max_allocated_storage         = data.terraform_remote_state.rds.outputs.info.max_allocated_storage
-  load_balancer_arn_suffix      = data.aws_lb.asg_lb.arn_suffix
-  solr_load_balancer_arn_suffix = data.aws_lb.solr_lb.arn_suffix
-  target_group_suffix           = data.aws_lb_target_group.asg_target_group.arn_suffix
-  solr_target_group_suffix      = data.aws_lb_target_group.solr_target_group.arn_suffix
   alarm_period                  = 300
   short_alarm_period            = 60
   evaluation_periods            = "1"

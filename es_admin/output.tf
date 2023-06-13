@@ -38,11 +38,6 @@ output "elk_s3_repo_name" {
   value = var.es_s3_repo_name
 }
 
-# ASG
-output "asg_prefix" {
-  value = local.asg_prefix
-}
-
 # restore status
 output "alf_restore_status" {
   value = var.alf_restore_status

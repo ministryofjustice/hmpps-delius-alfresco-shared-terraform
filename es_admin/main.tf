@@ -180,7 +180,6 @@ locals {
   public_subnet_ids            = [data.terraform_remote_state.common.outputs.public_subnet_ids]
   private_subnet_ids           = [data.terraform_remote_state.common.outputs.private_subnet_ids]
   elk_bucket_name              = data.terraform_remote_state.s3bucket.outputs.elk_backups_bucket_name
-  asg_prefix                   = data.terraform_remote_state.asg.outputs.asg_autoscale_name
   storage_s3bucket             = data.terraform_remote_state.s3bucket.outputs.s3bucket
   backups_bucket               = data.terraform_remote_state.s3bucket.outputs.alf_backups_bucket_name
   storage_kms_arn              = data.terraform_remote_state.s3bucket.outputs.s3bucket_kms_arn

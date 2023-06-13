@@ -5,6 +5,7 @@ output "info" {
     access_security_group = local.access_group_id
     end_point             = format("%s:%s", local.internal_private_dns_host, local.app_port)
     storage_bucket_name   = local.storage_bucket_name
+    tg_arn_suffix         = aws_lb_target_group.app.arn_suffix
   }
 }
 
