@@ -32,7 +32,7 @@ data "terraform_remote_state" "lb" {
 # locals
 
 locals {
-  load_balancer_id     = data.terraform_remote_state.lb.outputs.info["id"]
+  load_balancer_id     = data.terraform_remote_state.lb.outputs.info["arn"]
   application          = data.terraform_remote_state.common.outputs.alfresco_app_name
   common_name          = "${data.terraform_remote_state.common.outputs.short_environment_identifier}-${local.application}"
   tags                 = data.terraform_remote_state.common.outputs.common_tags
