@@ -55,6 +55,7 @@ module "ecs_service" {
       size          = 100
       type          = "gp3"
       kms_key_id    = local.storage_kms_arn
+      iops          = null
     }
   ]
   load_balancer_targets = [
