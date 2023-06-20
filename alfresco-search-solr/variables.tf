@@ -23,6 +23,7 @@ variable "alfresco_search_solr_props" {
     heap_size                 = "1500"
     image_url                 = "alfresco/alfresco-search-services"
     version                   = "2.0.2"
+    ebs_iops                  = "100"
     ebs_size                  = "100"
     ebs_type                  = "gp2"
     ssm_prefix                = "/alfresco/ecs"
