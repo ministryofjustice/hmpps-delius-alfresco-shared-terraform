@@ -51,7 +51,6 @@ variable "ebs_volumes" {
       type          = string
       size          = number
       kms_key_id    = string
-      iops          = number
     }
   ))
   default = []

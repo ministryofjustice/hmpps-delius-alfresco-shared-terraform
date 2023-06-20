@@ -23,7 +23,6 @@ resource "aws_ecs_task_definition" "task_def" {
         driver_opts = {
           volumetype = volume.value.type
           size       = volume.value.size
-          iops       = volume.value.iops
           encrypted  = true
           kmsKeyID   = volume.value.kms_key_id
         }
