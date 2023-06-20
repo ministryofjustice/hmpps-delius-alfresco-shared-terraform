@@ -20,6 +20,10 @@ resource "aws_launch_configuration" "ecs_host_lc" {
   user_data_base64 = base64encode(data.template_file.ecs_host_userdata_template.rendered)
   key_name         = local.ssh_deployer_key
 
+  root_block_device {
+    volume_type = "gp3"
+  }
+
   lifecycle {
     create_before_destroy = true
   }

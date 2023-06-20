@@ -53,9 +53,9 @@ module "ecs_service" {
       name          = local.cache_volume_name
       scope         = "shared"
       size          = 100
-      type          = "gp2"
+      type          = "gp3"
       kms_key_id    = local.storage_kms_arn
-      iops          = 300
+      iops          = null
     }
   ]
   load_balancer_targets = [

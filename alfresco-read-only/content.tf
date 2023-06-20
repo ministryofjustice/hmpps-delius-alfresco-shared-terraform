@@ -13,7 +13,7 @@ module "ecs_service" {
     config_bucket_arn     = local.config_bucket_arn
     grace_period          = "300"
   }
-  health_check_grace_period_seconds = "300"
+  health_check_grace_period_seconds  = "300"
   deployment_minimum_healthy_percent = 0
   deployment_maximum_percent         = 100
   security_groups = [
@@ -53,9 +53,9 @@ module "ecs_service" {
       name          = local.cache_volume_name
       scope         = "shared"
       size          = 100
-      type          = "gp2"
+      type          = "gp3"
+      iops          = null
       kms_key_id    = local.storage_kms_arn
-      iops          = 300
     }
   ]
   load_balancer_targets = [

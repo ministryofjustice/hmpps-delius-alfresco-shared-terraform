@@ -60,9 +60,9 @@ locals {
       name          = local.cache_volume_name
       scope         = "task"
       size          = 100
-      type          = "gp2"
+      type          = "gp3"
       kms_key_id    = local.storage_kms_arn
-      iops          = 300
+      iops          = null
     },
     {
       autoprovision = false
@@ -70,9 +70,9 @@ locals {
       name          = local.data_volume_name
       scope         = "shared"
       size          = local.alfresco_search_solr_props["ebs_size"]
-      type          = local.alfresco_search_solr_props["ebs_type"]
+      type          = "gp3"
       kms_key_id    = local.storage_kms_arn
-      iops          = tonumber(local.ebs_type == "gp2" ? 0 : local.ebs_iops)
+      iops          = try(local.ebs_iops, null)
     },
     {
       autoprovision = true
@@ -80,10 +80,9 @@ locals {
       name          = local.logs_volume_name
       scope         = "shared"
       size          = 100
-      type          = "gp2"
+      type          = "gp3"
+      ebs_iops          = null
       kms_key_id    = local.storage_kms_arn
-      iops          = 300
     }
   ]
 }
-

@@ -44,9 +44,9 @@ module "ecs_service" {
       name          = local.nginx_volume
       scope         = "shared"
       size          = 1
-      type          = "gp2"
+      type          = "gp3"
       kms_key_id    = local.storage_kms_arn
-      iops          = 100
+      iops          = null
     }
   ]
   load_balancer_targets = [

@@ -24,8 +24,8 @@ variable "alfresco_search_solr_props" {
     image_url                 = "alfresco/alfresco-search-services"
     version                   = "2.0.2"
     ebs_size                  = "100"
-    ebs_iops                  = "100"
-    ebs_type                  = "gp2"
+    ebs_iops                  = null
+    ebs_type                  = "gp3"
     ssm_prefix                = "/alfresco/ecs"
     desired_count             = "3"
     cookie_duration           = "3600"
@@ -57,12 +57,12 @@ variable "alf_push_to_cloudwatch" {
 
 variable "cleanup_scheduler_expression" {
   description = "Schedule to run solr EBS vols cleanup scheduler on a daily basis"
-  default = "cron(00 07 * * ? *)"
+  default     = "cron(00 07 * * ? *)"
 }
 
 variable "solr_cache_vols_days_limit" {
   description = "Set days limit of how old a solr cache EBS volume should be. If unattached solr cache volumes are older than  this days limit number, the volume will be removed using the cleanup scheduler"
-  default = 5
+  default     = 5
 }
 
 variable "enable_cleanup_scheduler" {
