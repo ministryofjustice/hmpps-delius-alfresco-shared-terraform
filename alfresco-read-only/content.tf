@@ -53,8 +53,7 @@ module "ecs_service" {
       name          = local.cache_volume_name
       scope         = "shared"
       size          = 100
-      type          = "gp3"
-      iops          = null
+      type          = "gp2"
       kms_key_id    = local.storage_kms_arn
     }
   ]
