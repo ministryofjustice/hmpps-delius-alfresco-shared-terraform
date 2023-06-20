@@ -24,8 +24,7 @@ variable "alfresco_search_solr_props" {
     image_url                 = "alfresco/alfresco-search-services"
     version                   = "2.0.2"
     ebs_size                  = "100"
-    ebs_iops                  = null
-    ebs_type                  = "gp3"
+    ebs_type                  = "gp2"
     ssm_prefix                = "/alfresco/ecs"
     desired_count             = "3"
     cookie_duration           = "3600"
