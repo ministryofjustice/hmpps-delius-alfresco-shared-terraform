@@ -81,7 +81,7 @@ locals {
       scope         = "shared"
       size          = 100
       type          = "gp3"
-      ebs_iops          = null
+      iops          = null
       kms_key_id    = local.storage_kms_arn
     }
   ]

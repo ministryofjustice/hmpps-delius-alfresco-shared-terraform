@@ -26,6 +26,7 @@ variable "alfresco_search_solr_props" {
     ebs_iops                  = "100"
     ebs_size                  = "100"
     ebs_type                  = "gp2"
+    ebs_iops                  = "100"
     ssm_prefix                = "/alfresco/ecs"
     desired_count             = "3"
     cookie_duration           = "3600"
