@@ -284,3 +284,32 @@ resource "aws_cloudwatch_metric_alarm" "ecs_az1_host_root_vol_capacity_critical"
 
   tags = local.tags
 }
+resource "aws_cloudwatch_metric_alarm" "ecs_cpu_critical" {
+  alarm_name          = "${local.application}_ecs_cpu_${local.warning_suffix}"
+  alarm_description   = "Triggers alarm if ECS CPU is critical"
+  namespace           = "AWS/ECS"
+  metric_name         = "CPUUtilization"
+  statistic           = "Average"
+  period              = "60"
+  evaluation_periods  = "5"
+  alarm_actions       = [aws_sns_topic.alarm_notification.arn]
+  ok_actions          = [aws_sns_topic.alarm_notification.arn]
+  threshold           = "80"
+  treat_missing_data  = "missing"
+  comparison_operator = "GreaterThanThreshold"
+}
+
+resource "aws_cloudwatch_metric_alarm" "ecs_memory_critical" {
+  alarm_name          = "${local.application}_ecs_memory_${local.warning_suffix}"
+  alarm_description   = "Triggers alarm if ECS memory is critical"
+  namespace           = "AWS/ECS"
+  metric_name         = "MemoryUtilization"
+  statistic           = "Average"
+  period              = "60"
+  evaluation_periods  = "5"
+  alarm_actions       = [aws_sns_topic.alarm_notification.arn]
+  ok_actions          = [aws_sns_topic.alarm_notification.arn]
+  threshold           = "80"
+  treat_missing_data  = "missing"
+  comparison_operator = "GreaterThanThreshold"
+}
