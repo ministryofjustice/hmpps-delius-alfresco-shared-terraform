@@ -31,6 +31,16 @@ data "terraform_remote_state" "internal-load-balancer" {
   }
 }
 
+data "terraform_remote_state" "ecs_cluster" {
+  backend = "s3"
+
+  config = {
+    bucket = var.remote_state_bucket_name
+    key    = "alfresco/ecs_cluster/terraform.tfstate"
+    region = var.region
+  }
+}
+
 data "terraform_remote_state" "alfresco-content" {
   backend = "s3"
 

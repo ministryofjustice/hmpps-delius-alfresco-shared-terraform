@@ -196,3 +196,91 @@ resource "aws_cloudwatch_metric_alarm" "content_4xx_anomaly_detection" {
     return_data = "true"
   }
 }
+
+resource "aws_cloudwatch_metric_alarm" "ecs_host_root_vol_capacity_warning" {
+  alarm_name                = "${local.application}_container-instance_root-volume-usage_${local.warning_suffix}"
+  alarm_description         = "The root volume of one or more alfresco ecs container instances is over 80% full. Check cloudwatch metrics for more details and take appropriate action."
+  comparison_operator       = "GreaterThanOrEqualToThreshold"
+  datapoints_to_alarm       = 1
+  evaluation_periods        = 1
+  threshold                 = 80
+  alarm_actions             = [aws_sns_topic.alarm_notification.arn]
+  ok_actions                = [aws_sns_topic.alarm_notification.arn]
+  treat_missing_data        = "ignore"
+
+  metric_query {
+    id          = "q1"
+    expression  = "SELECT MAX(disk_used_percent) FROM SCHEMA(CWAgent, AutoScalingGroupName,InstanceId,device,fstype,path) WHERE AutoScalingGroupName = '${data.terraform_remote_state.ecs_cluster.outputs.ecs_auto_sacling_group.name}'"
+    label       = "highest_ecs_container_instance_root_vol_usage_percentage"
+    return_data = "true"
+    period      = 300
+  }
+
+  tags = local.tags
+}
+
+resource "aws_cloudwatch_metric_alarm" "ecs_host_root_vol_capacity_critical" {
+  alarm_name                = "${local.application}_container-instance_root-volume-usage_${local.critical_suffix}"
+  alarm_description         = "The root volume of one or more alfresco ecs container instances is over 90% full. Check cloudwatch metrics for more details and take appropriate action."
+  comparison_operator       = "GreaterThanOrEqualToThreshold"
+  datapoints_to_alarm       = 1
+  evaluation_periods        = 1
+  threshold                 = 90
+  alarm_actions             = [aws_sns_topic.alarm_notification.arn]
+  ok_actions                = [aws_sns_topic.alarm_notification.arn]
+  treat_missing_data        = "ignore"
+
+  metric_query {
+    id          = "q1"
+    expression  = "SELECT MAX(disk_used_percent) FROM SCHEMA(CWAgent, AutoScalingGroupName,InstanceId,device,fstype,path) WHERE AutoScalingGroupName = '${data.terraform_remote_state.ecs_cluster.outputs.ecs_auto_sacling_group.name}'"
+    label       = "highest_ecs_container_instance_root_vol_usage_percentage"
+    return_data = "true"
+    period      = 300
+  }
+
+  tags = local.tags
+}
+
+resource "aws_cloudwatch_metric_alarm" "ecs_az1_host_root_vol_capacity_warning" {
+  alarm_name                = "${local.application}_container-instance_root-volume-usage_${local.warning_suffix}"
+  alarm_description         = "The root volume of one or more alfresco ecs container instances is over 80% full. Check cloudwatch metrics for more details and take appropriate action."
+  comparison_operator       = "GreaterThanOrEqualToThreshold"
+  datapoints_to_alarm       = 1
+  evaluation_periods        = 1
+  threshold                 = 80
+  alarm_actions             = [aws_sns_topic.alarm_notification.arn]
+  ok_actions                = [aws_sns_topic.alarm_notification.arn]
+  treat_missing_data        = "ignore"
+
+  metric_query {
+    id          = "q1"
+    expression  = "SELECT MAX(disk_used_percent) FROM SCHEMA(CWAgent, AutoScalingGroupName,InstanceId,device,fstype,path) WHERE AutoScalingGroupName = '${data.terraform_remote_state.ecs_cluster.outputs.ecs_az1_auto_sacling_group.name}'"
+    label       = "highest_ecs_container_instance_root_vol_usage_percentage"
+    return_data = "true"
+    period      = 300
+  }
+
+  tags = local.tags
+}
+
+resource "aws_cloudwatch_metric_alarm" "ecs_az1_host_root_vol_capacity_critical" {
+  alarm_name                = "${local.application}_container-instance_root-volume-usage_${local.critical_suffix}"
+  alarm_description         = "The root volume of one or more alfresco ecs container instances is over 90% full. Check cloudwatch metrics for more details and take appropriate action."
+  comparison_operator       = "GreaterThanOrEqualToThreshold"
+  datapoints_to_alarm       = 1
+  evaluation_periods        = 1
+  threshold                 = 90
+  alarm_actions             = [aws_sns_topic.alarm_notification.arn]
+  ok_actions                = [aws_sns_topic.alarm_notification.arn]
+  treat_missing_data        = "ignore"
+
+  metric_query {
+    id          = "q1"
+    expression  = "SELECT MAX(disk_used_percent) FROM SCHEMA(CWAgent, AutoScalingGroupName,InstanceId,device,fstype,path) WHERE AutoScalingGroupName = '${data.terraform_remote_state.ecs_cluster.outputs.ecs_az1_auto_sacling_group.name}'"
+    label       = "highest_ecs_container_instance_root_vol_usage_percentage"
+    return_data = "true"
+    period      = 300
+  }
+
+  tags = local.tags
+}
