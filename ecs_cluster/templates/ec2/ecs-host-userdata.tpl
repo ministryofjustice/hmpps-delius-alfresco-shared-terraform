@@ -1,7 +1,7 @@
 #!/bin/bash
 set -x
 # Install additional packages
-sudo yum install -y amazon-efs-utils nfs-utils jq awslogs unzip
+sudo yum install -y amazon-efs-utils nfs-utils jq amazon-cloudwatch-agent unzip
 # Install and start SSM Agent service - will always want the latest - used for remote access via aws console/cli
 # Avoids need to manage users identity in 2 places and install ansible/dependencies
 sudo yum install -y https://s3.amazonaws.com/ec2-downloads-windows/SSMAgent/latest/linux_amd64/amazon-ssm-agent.rpm
@@ -36,57 +36,83 @@ echo "ECS_CLUSTER=${ecs_cluster_name}" >> /etc/ecs/ecs.config
 echo "ECS_AWSVPC_BLOCK_IMDS=true" >> /etc/ecs/ecs.config
 # Required for ecs tasks in awsvpc mode to pull images remotely
 echo "ECS_ENABLE_TASK_ENI=true" >> /etc/ecs/ecs.config
-# Enabled log drivers
-echo "ECS_AVAILABLE_LOGGING_DRIVERS=[\"awslogs\",\"fluentd\"]" >> /etc/ecs/ecs.config
 
-# Inject the CloudWatch Logs configuration file contents
-export INSTANCE_ID="`curl http://169.254.169.254/latest/meta-data/instance-id`"
-cat > /etc/awslogs/awslogs.conf <<- EOF
-[general]
-state_file = /var/lib/awslogs/agent-state
-
-[/var/log/dmesg]
-file = /var/log/dmesg
-log_group_name = ${log_group_name}
-log_stream_name = $INSTANCE_ID/dmesg
-
-[/var/log/messages]
-file = /var/log/messages
-log_group_name = ${log_group_name}
-log_stream_name = $INSTANCE_ID/messages
-datetime_format = %b %d %H:%M:%S
-
-[/var/log/docker]
-file = /var/log/docker
-log_group_name = ${log_group_name}
-log_stream_name = $INSTANCE_ID/docker
-datetime_format = %Y-%m-%dT%H:%M:%S.%f
-
-[/var/log/ecs/ecs-init.log]
-file = /var/log/ecs/ecs-init.log
-log_group_name = ${log_group_name}
-log_stream_name = $INSTANCE_ID/ecs-init
-datetime_format = %Y-%m-%dT%H:%M:%SZ
-
-[/var/log/ecs/ecs-agent.log]
-file = /var/log/ecs/ecs-agent.log.*
-log_group_name = ${log_group_name}
-log_stream_name = $INSTANCE_ID/ecs-agent
-datetime_format = %Y-%m-%dT%H:%M:%SZ
-
-[/var/log/ecs/audit.log]
-file = /var/log/ecs/audit.log.*
-log_group_name = ${log_group_name}
-log_stream_name = $INSTANCE_ID/ecs-audit
-datetime_format = %Y-%m-%dT%H:%M:%SZ
-
+cat > /opt/aws/amazon-cloudwatch-agent/etc/amazon-cloudwatch-agent.json <<- EOF
+{
+  "agent": {
+    "metrics_collection_interval": 60,
+    "run_as_user": "root"
+  },
+  "logs": {
+    "logs_collected": {
+      "files": {
+        "collect_list": [
+          {
+            "file_path": "/var/log/dmesg",
+            "log_group_name": "${log_group_name}",
+            "log_stream_name": "{instance_id}/dmesg",
+            "retention_in_days": -1
+          },
+          {
+            "file_path": "/var/log/ecs/audit.log.*",
+            "log_group_name": "${log_group_name}",
+            "log_stream_name": "{instance_id}/ecs-audit",
+            "retention_in_days": -1,
+            "timestamp_format": "%Y-%m-%dT%H:%M:%SZ"
+          },
+          {
+            "file_path": "/var/log/ecs/ecs-agent.log.*",
+            "log_group_name": "${log_group_name}",
+            "log_stream_name": "{instance_id}/ecs-agent",
+            "retention_in_days": -1,
+            "timestamp_format": "%Y-%m-%dT%H:%M:%SZ"
+          },
+          {
+            "file_path": "/var/log/ecs/ecs-init.log",
+            "log_group_name": "${log_group_name}",
+            "log_stream_name": "{instance_id}/ecs-init",
+            "retention_in_days": -1,
+            "timestamp_format": "%Y-%m-%dT%H:%M:%SZ"
+          },
+          {
+            "file_path": "/var/log/messages",
+            "log_group_name": "${log_group_name}",
+            "log_stream_name": "{instance_id}/messages",
+            "retention_in_days": -1,
+            "timestamp_format": "%b %d %H:%M:%S"
+          }
+        ]
+      }
+    }
+  },
+  "metrics": {
+    "append_dimensions": {
+      "AutoScalingGroupName": "\$${aws:AutoScalingGroupName}",
+      "InstanceId": "\$${aws:InstanceId}"
+    },
+    "metrics_collected": {
+      "disk": {
+        "measurement": [
+          "used_percent"
+        ],
+        "metrics_collection_interval": 60,
+        "resources": [
+          "/"
+        ]
+      },
+      "mem": {
+        "measurement": [
+          "mem_used_percent"
+        ],
+        "metrics_collection_interval": 60
+      }
+    }
+  }
+}
 EOF
 
-# Set the region to send CloudWatch Logs data to (the region where the container instance is located)
-sed -i -e "s/region = us-east-1/region = ${region}/g" /etc/awslogs/awscli.conf
+sudo systemctl enable amazon-cloudwatch-agent
+sudo systemctl start amazon-cloudwatch-agent
 
-# Start the awslogs service
-sudo systemctl enable awslogsd.service
-sudo systemctl start awslogsd
 sudo systemctl restart docker
 # ECS service is started by cloud-init once this userdata script has returned
