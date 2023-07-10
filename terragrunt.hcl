@@ -35,7 +35,7 @@ terraform {
 # Generate an AWS provider block
 generate "provider" {
   path      = "provider.tf"
-  if_exists = "overwrite_terragrunt"
+  if_exists = "skip"
   contents  = <<EOF
 provider "aws" {
   region  = "${get_env("TG_REGION", "AWS-REGION")}"
