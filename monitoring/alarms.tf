@@ -197,6 +197,43 @@ resource "aws_cloudwatch_metric_alarm" "content_4xx_anomaly_detection" {
   }
 }
 
+resource "aws_cloudwatch_metric_alarm" "ecs_cpu_critical" {
+  alarm_name          = "${local.application}_ecs_cpu_${local.warning_suffix}"
+  alarm_description   = "Triggers alarm if ECS CPU is critical"
+
+  metric_name = "CpuUtilized"
+  namespace   = "ECS/ContainerInsights"
+  period      = 60
+  statistic   = "Average"
+
+  dimensions = {
+    ClusterName = "tf-alf-dev-alf-app-services"
+    ServiceName = "alfresco-read"
+  }
+
+  alarm_actions       = [aws_sns_topic.alarm_notification.arn]
+  ok_actions          = [aws_sns_topic.alarm_notification.arn]
+  threshold           = "80"
+  evaluation_periods  = 2
+  treat_missing_data  = "missing"
+  comparison_operator = "GreaterThanThreshold"
+}
+
+resource "aws_cloudwatch_metric_alarm" "ecs_memory_critical" {
+  alarm_name          = "${local.application}_ecs_memory_${local.warning_suffix}"
+  alarm_description   = "Triggers alarm if ECS memory is critical"
+  namespace           = "AWS/ECS"
+  metric_name         = "MemoryUtilization"
+  statistic           = "Average"
+  period              = "60"
+  evaluation_periods  = "5"
+  alarm_actions       = [aws_sns_topic.alarm_notification.arn]
+  ok_actions          = [aws_sns_topic.alarm_notification.arn]
+  threshold           = "80"
+  treat_missing_data  = "missing"
+  comparison_operator = "GreaterThanThreshold"
+}
+
 resource "aws_cloudwatch_metric_alarm" "ecs_host_root_vol_capacity_warning" {
   alarm_name                = "${local.application}_container-instance_root-volume-usage_${local.warning_suffix}"
   alarm_description         = "The root volume of one or more alfresco ecs container instances is over 80% full. Check cloudwatch metrics for more details and take appropriate action."
@@ -242,7 +279,7 @@ resource "aws_cloudwatch_metric_alarm" "ecs_host_root_vol_capacity_critical" {
 }
 
 resource "aws_cloudwatch_metric_alarm" "ecs_az1_host_root_vol_capacity_warning" {
-  alarm_name                = "${local.application}_container-instance_root-volume-usage_${local.warning_suffix}"
+  alarm_name                = "${local.application}_container-instance_root-volume-usage-az1_${local.warning_suffix}"
   alarm_description         = "The root volume of one or more alfresco ecs container instances is over 80% full. Check cloudwatch metrics for more details and take appropriate action."
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   datapoints_to_alarm       = 1
@@ -264,7 +301,7 @@ resource "aws_cloudwatch_metric_alarm" "ecs_az1_host_root_vol_capacity_warning" 
 }
 
 resource "aws_cloudwatch_metric_alarm" "ecs_az1_host_root_vol_capacity_critical" {
-  alarm_name                = "${local.application}_container-instance_root-volume-usage_${local.critical_suffix}"
+  alarm_name                = "${local.application}_container-instance_root-volume-usage-az1_${local.critical_suffix}"
   alarm_description         = "The root volume of one or more alfresco ecs container instances is over 90% full. Check cloudwatch metrics for more details and take appropriate action."
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   datapoints_to_alarm       = 1
