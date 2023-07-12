@@ -197,36 +197,58 @@ resource "aws_cloudwatch_metric_alarm" "content_4xx_anomaly_detection" {
   }
 }
 
-resource "aws_cloudwatch_metric_alarm" "ecs_cpu_critical" {
-  alarm_name          = "${local.application}_ecs_cpu_${local.warning_suffix}"
-  alarm_description   = "Triggers alarm if ECS CPU is critical"
 
+resource "aws_cloudwatch_metric_alarm" "ecs_cpu_critical" {
+  for_each            = toset(var.service_names)
+  alarm_name          = "${local.application}_ecs_${each.value}-cpu_${local.warning_suffix}"
+  alarm_description   = "Triggers alarm if ECS CPU is critical"
   metric_name = "CpuUtilized"
   namespace   = "ECS/ContainerInsights"
   period      = 60
   statistic   = "Average"
-
   dimensions = {
-    ClusterName = "tf-alf-dev-alf-app-services"
-    ServiceName = "alfresco-read"
+    ClusterName = "tf-alf-${var.environment_name}-alf-app-services"
+    ServiceName = "alfresco-${each.value}"
   }
-
   alarm_actions       = [aws_sns_topic.alarm_notification.arn]
   ok_actions          = [aws_sns_topic.alarm_notification.arn]
   threshold           = "80"
-  evaluation_periods  = 2
+  evaluation_periods  = 3
   treat_missing_data  = "missing"
   comparison_operator = "GreaterThanThreshold"
 }
 
+resource "aws_cloudwatch_metric_alarm" "ecs_task_count_critical" {
+  for_each            = toset(var.service_names)
+  alarm_name          = "${local.application}_ecs_${each.value}-task-count_${local.critical_suffix}"
+  alarm_description   = "Triggers alarm if ECS task count for ${each.value} is zero"
+  metric_name = "RunningTaskCount"
+  namespace   = "ECS/ContainerInsights"
+  period      = 60
+  statistic   = "Average"
+  dimensions = {
+    ClusterName = "tf-alf-${var.environment_name}-alf-app-services"
+    ServiceName = "alfresco-${each.value}"
+  }
+  alarm_actions       = [aws_sns_topic.alarm_notification.arn]
+  ok_actions          = [aws_sns_topic.alarm_notification.arn]
+  threshold           = "0"
+  evaluation_periods  = 3
+  treat_missing_data  = "missing"
+  comparison_operator = "LessThanOrEqualToThreshold"
+}
+
 resource "aws_cloudwatch_metric_alarm" "ecs_memory_critical" {
-  alarm_name          = "${local.application}_ecs_memory_${local.warning_suffix}"
+  alarm_name          = "${local.application}_ecs_cluster-memory_${local.warning_suffix}"
   alarm_description   = "Triggers alarm if ECS memory is critical"
-  namespace           = "AWS/ECS"
-  metric_name         = "MemoryUtilization"
-  statistic           = "Average"
-  period              = "60"
-  evaluation_periods  = "5"
+  metric_name = "MemoryUtilization"
+  namespace   = "AWS/ECS"
+  period      = 60
+  statistic   = "Average"
+  dimensions = {
+    ClusterName = "tf-alf-${var.environment_name}-alf-app-services"
+  }
+  evaluation_periods  = 3
   alarm_actions       = [aws_sns_topic.alarm_notification.arn]
   ok_actions          = [aws_sns_topic.alarm_notification.arn]
   threshold           = "80"
