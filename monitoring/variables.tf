@@ -33,6 +33,18 @@ variable "alf_ops_alerts" {
   }
 }
 
+variable "service_names" {
+  type    = list(string)
+  default = [
+    "content",
+    "search-solr",
+    "read",
+    "transform",
+    "share-ecs",
+    "proxy"
+  ]
+}
+
 #ASG
 variable "alfresco_asg_props" {
   type = map(string)
