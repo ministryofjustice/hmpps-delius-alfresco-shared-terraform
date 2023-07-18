@@ -35,8 +35,8 @@ variable "alfresco_content_configs" {
 
 variable "alfresco_content_image_version" {
   description = "alfresco-content container image version. Supplied through hmpps-alfresco-infra-versions repository or the .env file locally."
-  type    = string
-  default = "latest"
+  type        = string
+  default     = "latest"
 }
 
 variable "alf_stop_services" {

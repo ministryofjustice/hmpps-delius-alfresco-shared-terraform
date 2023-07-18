@@ -1,10 +1,16 @@
-[   
+[
     {
         "name": "${container_name}",
         "image": "${image_url}",
         "cpu": ${cpu},
         "memory": ${memory},
         "essential": true,
+        "environment": [
+            {
+                "name": "CATALINA_TMPDIR",
+                "value": "${cache_location}/temp"
+            }
+        ],
         "secrets": [
             {
                 "name": "JAVA_OPTS",
@@ -32,6 +38,6 @@
                 "containerPath": "${cache_location}",
                 "sourceVolume": "${cache_volume_name}"
             }
-        ]   
+        ]
     }
 ]
