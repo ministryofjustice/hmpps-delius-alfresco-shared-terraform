@@ -207,7 +207,7 @@ resource "aws_cloudwatch_metric_alarm" "ecs_cpu_critical" {
   period      = 60
   statistic   = "Average"
   dimensions = {
-    ClusterName = "tf-alf-${var.environment_name}-alf-app-services"
+    ClusterName = "${local.cluster_prefix}-alf-app-services"
     ServiceName = "alfresco-${each.value}"
   }
   alarm_actions       = [aws_sns_topic.alarm_notification.arn]
@@ -227,7 +227,7 @@ resource "aws_cloudwatch_metric_alarm" "ecs_task_count_critical" {
   period      = 60
   statistic   = "Average"
   dimensions = {
-    ClusterName = "tf-alf-${var.environment_name}-alf-app-services"
+    ClusterName = "${local.cluster_prefix}-alf-app-services"
     ServiceName = "alfresco-${each.value}"
   }
   alarm_actions       = [aws_sns_topic.alarm_notification.arn]
@@ -239,14 +239,16 @@ resource "aws_cloudwatch_metric_alarm" "ecs_task_count_critical" {
 }
 
 resource "aws_cloudwatch_metric_alarm" "ecs_memory_critical" {
-  alarm_name          = "${local.application}_ecs_cluster-memory_${local.warning_suffix}"
-  alarm_description   = "Triggers alarm if ECS memory is critical"
+  for_each            = toset(var.service_names)
+  alarm_name          = "${local.application}_ecs_${each.value}-memory_${local.critical_suffix}"
+  alarm_description   = "Triggers alarm if ECS memory for ${each.value} is critical"
   metric_name = "MemoryUtilization"
   namespace   = "AWS/ECS"
   period      = 60
   statistic   = "Average"
   dimensions = {
-    ClusterName = "tf-alf-${var.environment_name}-alf-app-services"
+    ClusterName = "${local.cluster_prefix}-alf-app-services"
+    ServiceName = "alfresco-${each.value}"
   }
   evaluation_periods  = 3
   alarm_actions       = [aws_sns_topic.alarm_notification.arn]
