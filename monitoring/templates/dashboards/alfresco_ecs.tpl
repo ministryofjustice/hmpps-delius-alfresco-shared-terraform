@@ -8,7 +8,7 @@
             "type": "metric",
             "properties": {
                 "metrics": [
-                    [ "ECS/ContainerInsights", "CpuUtilized", "ServiceName", "alfresco-content", "ClusterName", "tf-alf-${environment_name}-alf-app-services", { "label": "alfresco-content" } ]
+                    [ "ECS/ContainerInsights", "CpuUtilized", "ServiceName", "alfresco-content", "ClusterName", "${cluster_prefix}-alf-app-services", { "label": "alfresco-content" } ]
                 ],
                 "view": "timeSeries",
                 "stacked": true,
@@ -26,7 +26,7 @@
             "type": "metric",
             "properties": {
                 "metrics": [
-                    [ "ECS/ContainerInsights", "MemoryUtilized", "ServiceName", "alfresco-content", "ClusterName", "tf-alf-${environment_name}-alf-app-services", { "label": "alfresco-content" } ]
+                    [ "ECS/ContainerInsights", "MemoryUtilized", "ServiceName", "alfresco-content", "ClusterName", "${cluster_prefix}-alf-app-services", { "label": "alfresco-content" } ]
                 ],
                 "view": "timeSeries",
                 "stacked": true,
@@ -44,7 +44,7 @@
             "type": "metric",
             "properties": {
                 "metrics": [
-                    [ "ECS/ContainerInsights", "CpuUtilized", "ServiceName", "alfresco-search-solr", "ClusterName", "tf-alf-${environment_name}-alf-app-services", { "label": "alfresco-search-solr" } ]
+                    [ "ECS/ContainerInsights", "CpuUtilized", "ServiceName", "alfresco-search-solr", "ClusterName", "${cluster_prefix}-alf-app-services", { "label": "alfresco-search-solr" } ]
                 ],
                 "view": "timeSeries",
                 "stacked": true,
@@ -62,7 +62,7 @@
             "type": "metric",
             "properties": {
                 "metrics": [
-                    [ "ECS/ContainerInsights", "MemoryUtilized", "ServiceName", "alfresco-search-solr", "ClusterName", "tf-alf-${environment_name}-alf-app-services", { "label": "alfresco-search-solr" } ]
+                    [ "ECS/ContainerInsights", "MemoryUtilized", "ServiceName", "alfresco-search-solr", "ClusterName", "${cluster_prefix}-alf-app-services", { "label": "alfresco-search-solr" } ]
                 ],
                 "view": "timeSeries",
                 "stacked": true,
@@ -80,7 +80,7 @@
             "type": "metric",
             "properties": {
                 "metrics": [
-                    [ "ECS/ContainerInsights", "CpuUtilized", "ServiceName", "alfresco-read", "ClusterName", "tf-alf-${environment_name}-alf-app-services", { "label": "alfresco-read" } ]
+                    [ "ECS/ContainerInsights", "CpuUtilized", "ServiceName", "alfresco-read", "ClusterName", "${cluster_prefix}-alf-app-services", { "label": "alfresco-read" } ]
                 ],
                 "view": "timeSeries",
                 "stacked": true,
@@ -98,7 +98,7 @@
             "type": "metric",
             "properties": {
                 "metrics": [
-                    [ "ECS/ContainerInsights", "MemoryUtilized", "ServiceName", "alfresco-read", "ClusterName", "tf-alf-${environment_name}-alf-app-services", { "label": "alfresco-read" } ]
+                    [ "ECS/ContainerInsights", "MemoryUtilized", "ServiceName", "alfresco-read", "ClusterName", "${cluster_prefix}-alf-app-services", { "label": "alfresco-read" } ]
                 ],
                 "view": "timeSeries",
                 "stacked": true,
@@ -116,7 +116,7 @@
             "type": "metric",
             "properties": {
                 "metrics": [
-                    [ "ECS/ContainerInsights", "CpuUtilized", "ServiceName", "alfresco-transform", "ClusterName", "tf-alf-${environment_name}-alf-app-services", { "label": "alfresco-transform" } ]
+                    [ "ECS/ContainerInsights", "CpuUtilized", "ServiceName", "alfresco-transform", "ClusterName", "${cluster_prefix}-alf-app-services", { "label": "alfresco-transform" } ]
                 ],
                 "view": "timeSeries",
                 "stacked": true,
@@ -134,7 +134,7 @@
             "type": "metric",
             "properties": {
                 "metrics": [
-                    [ "ECS/ContainerInsights", "MemoryUtilized", "ServiceName", "alfresco-transform", "ClusterName", "tf-alf-${environment_name}-alf-app-services", { "label": "alfresco-transform" } ]
+                    [ "ECS/ContainerInsights", "MemoryUtilized", "ServiceName", "alfresco-transform", "ClusterName", "${cluster_prefix}-alf-app-services", { "label": "alfresco-transform" } ]
                 ],
                 "view": "timeSeries",
                 "stacked": true,
@@ -152,7 +152,7 @@
             "type": "metric",
             "properties": {
                 "metrics": [
-                    [ "ECS/ContainerInsights", "CpuUtilized", "ServiceName", "alfresco-share-ecs", "ClusterName", "tf-alf-${environment_name}-alf-app-services", { "label": "alfresco-share-ecs" } ]
+                    [ "ECS/ContainerInsights", "CpuUtilized", "ServiceName", "alfresco-share-ecs", "ClusterName", "${cluster_prefix}-alf-app-services", { "label": "alfresco-share-ecs" } ]
                 ],
                 "view": "timeSeries",
                 "stacked": true,
@@ -170,7 +170,7 @@
             "type": "metric",
             "properties": {
                 "metrics": [
-                    [ "ECS/ContainerInsights", "MemoryUtilized", "ServiceName", "alfresco-share-ecs", "ClusterName", "tf-alf-${environment_name}-alf-app-services", { "label": "alfresco-share-ecs" } ]
+                    [ "ECS/ContainerInsights", "MemoryUtilized", "ServiceName", "alfresco-share-ecs", "ClusterName", "${cluster_prefix}-alf-app-services", { "label": "alfresco-share-ecs" } ]
                 ],
                 "view": "timeSeries",
                 "stacked": true,
@@ -188,7 +188,7 @@
             "type": "metric",
             "properties": {
                 "metrics": [
-                    [ "ECS/ContainerInsights", "CpuUtilized", "ServiceName", "alfresco-proxy", "ClusterName", "tf-alf-${environment_name}-alf-app-services", { "label": "alfresco-proxy" } ]
+                    [ "ECS/ContainerInsights", "CpuUtilized", "ServiceName", "alfresco-proxy", "ClusterName", "${cluster_prefix}-alf-app-services", { "label": "alfresco-proxy" } ]
                 ],
                 "view": "timeSeries",
                 "stacked": true,
@@ -206,7 +206,7 @@
             "type": "metric",
             "properties": {
                 "metrics": [
-                    [ "ECS/ContainerInsights", "MemoryUtilized", "ServiceName", "alfresco-proxy", "ClusterName", "tf-alf-${environment_name}-alf-app-services", { "label": "alfresco-proxy" } ]
+                    [ "ECS/ContainerInsights", "MemoryUtilized", "ServiceName", "alfresco-proxy", "ClusterName", "${cluster_prefix}-alf-app-services", { "label": "alfresco-proxy" } ]
                 ],
                 "view": "timeSeries",
                 "stacked": true,

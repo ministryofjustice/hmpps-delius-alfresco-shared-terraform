@@ -7,5 +7,6 @@ data "template_file" "alfresco_ecs" {
   template = "${file("${path.module}/templates/dashboards/alfresco_ecs.tpl")}"
   vars = {
     environment_name = "${var.environment_name}"
+    cluster_prefix   = local.cluster_prefix
   }
 }
