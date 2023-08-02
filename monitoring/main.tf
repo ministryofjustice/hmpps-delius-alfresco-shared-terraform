@@ -109,6 +109,7 @@ locals {
   db_instance_id                = data.terraform_remote_state.rds.outputs.info.id
   allocated_storage             = data.terraform_remote_state.rds.outputs.info.allocated_storage
   max_allocated_storage         = data.terraform_remote_state.rds.outputs.info.max_allocated_storage
+  cluster_prefix                = data.terraform_remote_state.common.outputs.short_environment_identifier
   alarm_period                  = 300
   short_alarm_period            = 60
   evaluation_periods            = "1"

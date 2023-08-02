@@ -207,7 +207,7 @@ resource "aws_cloudwatch_metric_alarm" "ecs_cpu_critical" {
   period      = 60
   statistic   = "Average"
   dimensions = {
-    ClusterName = "tf-alf-${local.environment}-alf-app-services"
+    ClusterName = "${local.cluster_prefix}-alf-app-services"
     ServiceName = "alfresco-${each.value}"
   }
   alarm_actions       = [aws_sns_topic.alarm_notification.arn]
@@ -227,7 +227,7 @@ resource "aws_cloudwatch_metric_alarm" "ecs_task_count_critical" {
   period      = 60
   statistic   = "Average"
   dimensions = {
-    ClusterName = "tf-alf-${local.environment}-alf-app-services"
+    ClusterName = "${local.cluster_prefix}-alf-app-services"
     ServiceName = "alfresco-${each.value}"
   }
   alarm_actions       = [aws_sns_topic.alarm_notification.arn]
@@ -247,7 +247,7 @@ resource "aws_cloudwatch_metric_alarm" "ecs_memory_critical" {
   period      = 60
   statistic   = "Average"
   dimensions = {
-    ClusterName = "tf-alf-${local.environment}-alf-app-services"
+    ClusterName = "${local.cluster_prefix}-alf-app-services"
     ServiceName = "alfresco-${each.value}"
   }
   evaluation_periods  = 3
