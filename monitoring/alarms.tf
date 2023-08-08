@@ -200,10 +200,10 @@ resource "aws_cloudwatch_metric_alarm" "content_4xx_anomaly_detection" {
 
 resource "aws_cloudwatch_metric_alarm" "ecs_cpu_critical" {
   for_each            = toset(var.service_names)
-  alarm_name          = "${local.application}_ecs_${each.value}-cpu_${local.warning_suffix}"
-  alarm_description   = "Triggers alarm if ECS CPU is critical"
-  metric_name = "CpuUtilized"
-  namespace   = "ECS/ContainerInsights"
+  alarm_name          = "${local.application}_ecs_${each.value}-cpu_${local.critical_suffix}"
+  alarm_description   = "Triggers alarm if ECS CPU for ${each.value} is critical"
+  metric_name = "CPUUtilization"
+  namespace   = "AWS/ECS"
   period      = 60
   statistic   = "Average"
   dimensions = {
