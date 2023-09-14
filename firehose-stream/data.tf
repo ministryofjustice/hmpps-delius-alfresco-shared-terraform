@@ -44,17 +44,18 @@ data "aws_iam_policy_document" "firehose-role-assume" {
 
 # policy
 data "aws_iam_policy_document" "firehose_policy" {
-  statement {
-    sid    = "PushLogsToES"
-    effect = "Allow"
-    actions = [
-      "es:*"
-    ]
-    resources = [
-      local.es_cluster_arn,
-      format("%s/*", local.es_cluster_arn)
-    ]
-  }
+  # Commented out pending testing
+  # statement {
+  #   sid    = "PushLogsToES"
+  #   effect = "Allow"
+  #   actions = [
+  #     "es:*"
+  #   ]
+  #   resources = [
+  #     local.es_cluster_arn,
+  #     format("%s/*", local.es_cluster_arn)
+  #   ]
+  # }
   statement {
     sid    = "AccessS3Bucket"
     effect = "Allow"
