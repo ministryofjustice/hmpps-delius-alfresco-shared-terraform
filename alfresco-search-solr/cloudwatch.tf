@@ -15,7 +15,7 @@ module "create_loggroup" {
 #------------------------------------------------------------------------------------------------------------------
 
 resource "aws_cloudwatch_log_group" "cleanup_scheduler" {
-  name              = local.cleanup_scheduler_log_group 
+  name              = local.cleanup_scheduler_log_group
   retention_in_days = var.alf_cloudwatch_log_retention
   tags = merge(
     local.tags,

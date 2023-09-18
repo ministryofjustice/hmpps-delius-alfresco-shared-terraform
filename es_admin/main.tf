@@ -74,19 +74,6 @@ data "terraform_remote_state" "network-security-groups" {
 }
 
 #-------------------------------------------------------------
-### Getting the asg details
-#-------------------------------------------------------------
-data "terraform_remote_state" "asg" {
-  backend = "s3"
-
-  config = {
-    bucket = var.remote_state_bucket_name
-    key    = "alfresco/asg/terraform.tfstate"
-    region = var.region
-  }
-}
-
-#-------------------------------------------------------------
 ### Getting the rds details
 #-------------------------------------------------------------
 data "terraform_remote_state" "rds" {
@@ -95,19 +82,6 @@ data "terraform_remote_state" "rds" {
   config = {
     bucket = var.remote_state_bucket_name
     key    = "alfresco/database/terraform.tfstate"
-    region = var.region
-  }
-}
-
-#-------------------------------------------------------------
-### Getting the efs details
-#-------------------------------------------------------------
-data "terraform_remote_state" "efs" {
-  backend = "s3"
-
-  config = {
-    bucket = var.remote_state_bucket_name
-    key    = "alfresco/efs/terraform.tfstate"
     region = var.region
   }
 }
@@ -189,7 +163,6 @@ locals {
   db_host                      = data.terraform_remote_state.rds.outputs.info["address"]
   mon_jenkins_sg               = data.terraform_remote_state.security-groups.outputs.security_groups_map["mon_jenkins"]
   sg_rds_id                    = data.terraform_remote_state.security-groups.outputs.security_groups_sg_rds_id
-  alf_efs_dns_name             = data.terraform_remote_state.efs.outputs.efs_dns_name
   alf_efs_sg                   = data.terraform_remote_state.security-groups.outputs.security_groups_sg_efs_sg_id
 
   monitoring_groups = [
