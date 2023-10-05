@@ -33,7 +33,8 @@ cat << EOF > ~/requirements.yml
 - name: elasticbeats
   src: https://github.com/ministryofjustice/hmpps-beats-monitoring
 - name: users
-  src: singleplatform-eng.users
+  src: https://github.com/singleplatform-eng/ansible-users
+  version: v1.2.6
 - name: ansible-esadmin-role
   src: https://github.com/ministryofjustice/hmpps-ansible-esadmin-role
   version: "${esadmin_version}"
