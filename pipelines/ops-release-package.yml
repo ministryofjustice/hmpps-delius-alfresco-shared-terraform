@@ -3,7 +3,7 @@ version: 0.2
 
 env:
   variables:
-    TARGET_PIPELINE_NAME: alf-infra-build-delius-core-dev
+    TARGET_PIPELINE_NAME: alf-infra-build-delius-mis-dev
     PRE_BUILD_ACTION: "lambda_packages"
     PRE_BUILD_TARGET: "functions"
   parameter-store:

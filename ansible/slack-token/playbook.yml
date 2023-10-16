@@ -28,7 +28,6 @@
         account_id: "{{ item }}"
       loop:
         - 563502482979 #alf-dev
-        - 723123699647 #delius-core-non-prod
         - 728765553488 #delius-test
         - 330914586320 #delius-training
         - 010587221707 #pre-prod

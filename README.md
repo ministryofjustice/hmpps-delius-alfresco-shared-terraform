@@ -42,11 +42,11 @@ Example
 
 ## REMOTE STATE
 
-Bucket name: [tf-eu-west-2-hmpps-delius-core-dev-remote-state](https://s3.console.aws.amazon.com/s3/object/tf-eu-west-2-hmpps-delius-core-dev-remote-state/vpc/terraform.tfstate?region=eu-west-2&tab=overview)
+Bucket name: [tf-eu-west-2-hmpps-<env-name>-remote-state](https://s3.console.aws.amazon.com/s3/object/tf-eu-west-2-hmpps-<env-name>-remote-state/vpc/terraform.tfstate?region=eu-west-2&tab=overview)
 
 ## DEPLOYER KEY
 
-The deployer key is stored in AWS [Parameter store](https://eu-west-2.console.aws.amazon.com/systems-manager/parameters/tf-eu-west-2-hmpps-delius-core-dev-alfresco-ssh-private-key/description?region=eu-west-2)
+The deployer key is stored in AWS [Parameter store](https://eu-west-2.console.aws.amazon.com/systems-manager/parameters/tf-eu-west-2-hmpps-<env-name>-alfresco-ssh-private-key/description?region=eu-west-2)
 
 ```
 terragrunt output ssh_private_key_pem
