@@ -5,8 +5,6 @@ project.alfresco  = 'hmpps-delius-alfresco-shared-terraform'
 
 def environments = [
   'alfresco-dev',
-  'alfresco-sbx',
-  'delius-core-dev',
   'delius-test',
 ]
 
