@@ -22,7 +22,7 @@ resource "aws_lambda_function" "content" {
     aws_cloudwatch_log_group.lambda,
     aws_s3_bucket_object.build_code,
   ]
-  runtime = "python3.7"
+  runtime = "python3.9"
   tags = merge(
     local.tags,
     {
@@ -59,7 +59,7 @@ resource "aws_lambda_function" "list" {
     aws_cloudwatch_log_group.lambda,
     aws_s3_bucket_object.build_code,
   ]
-  runtime = "python3.7"
+  runtime = "python3.9"
   tags = merge(
     local.tags,
     {

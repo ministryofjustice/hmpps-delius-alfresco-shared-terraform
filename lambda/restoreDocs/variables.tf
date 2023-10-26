@@ -27,7 +27,7 @@ variable "alf_ops_alerts" {
     slack_channel_name  = "delius-alerts-alfresco-nonprod"
     log_level           = "info"
     messaging_status    = "disabled"
-    runtime             = "python3.7"
+    runtime             = "python3.9"
     ssm_token           = "manual-ops-alerts-slack-token"
     datapoints_to_alarm = "1"
   }

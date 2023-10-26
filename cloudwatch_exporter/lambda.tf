@@ -16,7 +16,7 @@ resource "aws_lambda_function" "lambda" {
     aws_iam_role.lambda,
     aws_cloudwatch_log_group.lambda,
   ]
-  runtime = "python3.7"
+  runtime = "python3.9"
   timeout = var.alf_lambda_timeout
   tags = merge(
     local.tags,
