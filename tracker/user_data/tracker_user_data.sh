@@ -42,7 +42,7 @@ cat << EOF > ~/requirements.yml
   src: https://github.com/ministryofjustice/hmpps-alfresco-bootstrap
   version: ${alfresco_version}
 - name: users
-  src: singleplatform-eng.users
+  src: https://github.com/singleplatform-eng/ansible-users
 EOF
 
 cat << EOF > ~/bootstrap_vars.yml

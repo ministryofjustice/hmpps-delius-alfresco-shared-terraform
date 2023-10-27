@@ -39,7 +39,7 @@ cat << EOF > ~/requirements.yml
   src: https://github.com/ministryofjustice/hmpps-logstash
   version: ${logstash_version}
 - name: users
-  src: singleplatform-eng.users
+  src: https://github.com/singleplatform-eng/ansible-users
 - name: solr
   src: https://github.com/ministryofjustice/hmpps-solr-bootstrap.git
   version: ${solr_version}
