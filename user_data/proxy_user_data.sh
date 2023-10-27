@@ -30,7 +30,7 @@ cat << EOF > ~/requirements.yml
   src: https://github.com/ministryofjustice/hmpps-bootstrap
   version: centos
 - name: users
-  src: singleplatform-eng.users
+  src: https://github.com/singleplatform-eng/ansible-users
 
 EOF
 

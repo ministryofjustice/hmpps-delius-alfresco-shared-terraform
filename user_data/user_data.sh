@@ -43,7 +43,7 @@ cat << EOF > ~/requirements.yml
   src: https://github.com/ministryofjustice/hmpps-alfresco-bootstrap
   version: ${alfresco_version}
 - name: users
-  src: singleplatform-eng.users
+  src: https://github.com/singleplatform-eng/ansible-users
 
 EOF
 
@@ -55,7 +55,7 @@ cat << EOF > ~/bootstrap_vars.yml
 - elasticsearch_cluster_name: "${elasticsearch_cluster_name}"
 - elasticsearch_ssl: "true"
 - internal_domain: "${private_domain}"
-- bucket_name: "${bucket_name}" 
+- bucket_name: "${bucket_name}"
 - bucket_encrypt_type: "${bucket_encrypt_type}"
 - bucket_key_id: "${bucket_key_id}"
 - db_user: "{{ lookup('aws_ssm', '${db_user}', region='${region}') }}"
