@@ -77,6 +77,11 @@ locals {
     monitoring_client   = data.terraform_remote_state.security-groups.outputs.sg_monitoring_client
   }
 
+  bastion_cidr = {
+    dev = "10.161.98.0/28"
+    prod = "10.160.98.0/28"
+  }
+
   allowed_cidr_block = [
     distinct(concat(var.user_access_cidr_blocks, var.alfresco_access_cidr_blocks)),
     data.terraform_remote_state.common.outputs.nat_gateway_ips,
@@ -92,6 +97,7 @@ module "security_groups" {
   allowed_cidr_block      = flatten(local.allowed_cidr_block)
   common_name             = local.common_name
   environment_identifier  = local.environment_identifier
+  environment_name        = var.environment_name
   region                  = local.region
   tags                    = local.tags
   vpc_id                  = local.vpc_id
@@ -108,6 +114,7 @@ module "security_groups" {
   alfresco_smb_port       = "445"
   alfresco_arcp_port      = "7070"
   alfresco_apache_jserv   = "8009"
+  bastion_cidr            = local.bastion_cidr
 }
 
 #-------------------------------------------------------------

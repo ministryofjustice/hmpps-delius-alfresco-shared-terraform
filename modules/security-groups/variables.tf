@@ -1,6 +1,9 @@
 variable "environment_identifier" {
 }
 
+variable "environment_name" {
+}
+
 variable "region" {
 }
 
@@ -66,3 +69,6 @@ variable "sg_map_ids" {
   type = map(string)
 }
 
+variable "bastion_cidr" {
+  type = map(string)
+}
