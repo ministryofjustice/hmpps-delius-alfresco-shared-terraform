@@ -97,6 +97,7 @@ module "security_groups" {
   allowed_cidr_block      = flatten(local.allowed_cidr_block)
   common_name             = local.common_name
   environment_identifier  = local.environment_identifier
+  environment_name        = var.environment_name
   region                  = local.region
   tags                    = local.tags
   vpc_id                  = local.vpc_id
@@ -113,7 +114,7 @@ module "security_groups" {
   alfresco_smb_port       = "445"
   alfresco_arcp_port      = "7070"
   alfresco_apache_jserv   = "8009"
-  bastion_cidr = local.bastion_cidr
+  bastion_cidr            = local.bastion_cidr
 }
 
 #-------------------------------------------------------------

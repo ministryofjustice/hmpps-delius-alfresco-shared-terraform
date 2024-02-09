@@ -1,6 +1,9 @@
 variable "environment_identifier" {
 }
 
+variable "environment_name" {
+}
+
 variable "region" {
 }
 

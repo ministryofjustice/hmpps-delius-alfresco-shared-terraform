@@ -111,14 +111,14 @@ resource "aws_security_group_rule" "rds_sg_egress_postgres" {
   description              = "${local.common_name}-rds-sg"
 }
 
-resource "aws_security_group_rule" "rds_sg_egress_postgres" {
-  security_group_id        = local.db_sg_id
-  type                     = "ingress"
-  from_port                = "5432"
-  to_port                  = "5432"
-  protocol                 = "tcp"
-  cidr_blocks = (var.environment_identifier == "delius-prod" || var.environment_identifier == "delius-pre-prod") ? var.bastion_cidr.prod : var.bastion_cidr.dev
-  description              = "${local.common_name}-rds-bastion-access"
+resource "aws_security_group_rule" "rds_sg_ingress_postgres" {
+  security_group_id = local.db_sg_id
+  type              = "ingress"
+  from_port         = "5432"
+  to_port           = "5432"
+  protocol          = "tcp"
+  cidr_blocks       = [(var.environment_name == "delius-prod" || var.environment_name == "delius-pre-prod") ? var.bastion_cidr.prod : var.bastion_cidr.dev]
+  description       = "${local.common_name}-rds-bastion-access"
 }
 
 #-------------------------------------------------------------
