@@ -66,3 +66,6 @@ variable "sg_map_ids" {
   type = map(string)
 }
 
+variable "bastion_cidr" {
+  type = map(string)
+}
