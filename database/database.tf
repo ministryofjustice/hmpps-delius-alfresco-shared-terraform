@@ -3,6 +3,7 @@
 ############################################
 
 module "database" {
+  count                           = var.environment == "pre-prod" ? 0 : 1
   source                          = "../modules/db_instance"
   allocated_storage               = lookup(var.alf_rds_props, "allocated_storage", 30)
   allow_major_version_upgrade     = false

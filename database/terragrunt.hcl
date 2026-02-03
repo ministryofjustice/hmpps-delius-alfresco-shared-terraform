@@ -9,3 +9,11 @@ dependencies {
     "../security-groups"
   ]
 }
+
+dependency "common" {
+  config_path = "../common"
+}
+
+inputs = {
+  environment = dependency.common.outputs.environment
+}
