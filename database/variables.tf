@@ -94,3 +94,7 @@ variable "alf_db_options" {
   description = "A list of Options to apply."
   default     = []
 }
+
+variable "environment" {
+  type = string
+}
